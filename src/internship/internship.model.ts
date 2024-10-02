@@ -1,6 +1,5 @@
 import { IEnterprise } from 'enterprise/enterprise.model';
 import { IStudent } from 'student/student.model';
-import { IRecordTime } from 'utils/model.utils';
 
 // Interfaces
 export interface IInternship {

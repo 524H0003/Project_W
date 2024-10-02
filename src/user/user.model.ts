@@ -1,6 +1,5 @@
 import { IDevice } from 'device/device.model';
 import { IFile } from 'file/file.model';
-import { IRecordTime } from 'utils/model.utils';
 
 // Interfaces
 export interface IUserAuthentication {
