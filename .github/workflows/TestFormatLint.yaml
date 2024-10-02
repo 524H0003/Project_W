@@ -1,0 +1,59 @@
+name: Test Format Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: 'The triathlon'
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 5
+
+    permissions:
+      contents: write
+      actions: write
+      checks: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: ikalnytskyi/action-setup-postgres@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('./package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm run triathlon
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          skip_dirty_check: false
+
+      - name: Jest Coverage Comment
+        uses: MishaKav/jest-coverage-comment@main
+        id: coverageComment
+        with:
+          title: Test report
+          coverage-title: Coverage result
+          coverage-path: ./coverage/coverage.txt
+          create-new-comment: true
+          junitxml-path: ./reports/junit.xml

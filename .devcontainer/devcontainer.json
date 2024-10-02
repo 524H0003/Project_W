@@ -1,0 +1,43 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+{
+	"containerEnv": { "POSTGRES_HOST": "host.docker.internal" },
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"NicholasHsiang.vscode-javascript-comment",
+				"MichaelCurrin.auto-commit-msg",
+				"dbaeumer.vscode-eslint",
+				"GitHub.vscode-pull-request-github",
+				"Orta.vscode-jest",
+				"esbenp.prettier-vscode",
+				"mutantdino.resourcemonitor",
+				"redhat.vscode-yaml",
+				"PeterSchmalfeldt.explorer-exclude",
+				"vscodevim.vim",
+				"aaron-bond.better-comments",
+				"formulahendry.auto-rename-tag",
+				"github.vscode-github-actions",
+				"wayou.vscode-todo-highlight",
+				"ms-vscode.js-debug",
+				"ms-vscode.vscode-typescript-next"
+			]
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {
+			"ppa": "false",
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/node:1": {
+			"installYarnUsingApt": true,
+			"nodeGypDependencies": true,
+			"nvmVersion": "latest",
+			"pnpmVersion": "latest",
+			"version": "latest"
+		}
+	},
+	"forwardPorts": [3000, 2053],
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+	"name": "PlaceRV-backend",
+	"runArgs": ["--add-host=host.docker.internal:host-gateway"]
+}

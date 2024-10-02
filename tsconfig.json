@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"baseUrl": "src",
+		"declaration": true,
+		"emitDecoratorMetadata": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"forceConsistentCasingInFileNames": true,
+		"incremental": false,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"noFallthroughCasesInSwitch": false,
+		"noImplicitAny": false,
+		"outDir": "dist",
+		"removeComments": false,
+		"rootDir": "src",
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"strictBindCallApply": false,
+		"strictNullChecks": false,
+		"target": "ESNext",
+		"useDefineForClassFields": false
+	},
+	"exclude": [
+		"./**/*.d.ts",
+		"dist",
+		"*.config.*",
+		"./src/types.ts",
+		"./src/models.ts"
+	]
+}

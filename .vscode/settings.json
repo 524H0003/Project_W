@@ -1,0 +1,165 @@
+{
+	"debug.javascript.autoAttachFilter": "disabled",
+	"editor.detectIndentation": false,
+	"editor.foldingImportsByDefault": true,
+	"editor.insertSpaces": false,
+	"editor.tabSize": 2,
+	"explorerExclude.backup": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"**/*.example*": true,
+		"**/*.js": true,
+		"**/*.json": false,
+		"**/*.tsbuildinfo": true,
+		"**/*spec*": true,
+		"**/schema.gql": false,
+		".adminjs": true,
+		".devcontainer": true,
+		".git": true,
+		".github": true,
+		".gitignore": false,
+		".prettierrc": true,
+		"LICENSE": true,
+		"coverage": true,
+		"dist": true,
+		"node_modules": true,
+		"reports": true,
+		"secrets": true,
+		"src/types.ts": true,
+		"src/models.ts": true
+	},
+	"files.eol": "\n",
+	"files.exclude": {
+		"**/.git": false,
+		"**/.svn": false,
+		"**/.hg": false,
+		"**/CVS": false,
+		"**/.DS_Store": false,
+		"**/Thumbs.db": false,
+		"**/*.example*": false,
+		"**/*.js": false,
+		"**/*.json": false,
+		"**/*.tsbuildinfo": false,
+		"**/*spec*": false,
+		"**/schema.gql": false,
+		".adminjs": false,
+		".devcontainer": false,
+		".git": false,
+		".github": false,
+		".gitignore": false,
+		".prettierrc": false,
+		"LICENSE": false,
+		"coverage": false,
+		"dist": false,
+		"node_modules": false,
+		"reports": false,
+		"secrets": false,
+		"src/types.ts": false,
+		"src/models.ts": false
+	},
+	"jest.outputConfig": {
+		"clearOnRun": "terminal"
+	},
+	"jest.runMode": {
+		"coverage": true,
+		"showInlineError": true,
+		"type": "on-demand"
+	},
+	"testing.openTesting": "neverOpen",
+	"todohighlight.keywords": [
+		{
+			"backgroundColor": "#00bfff",
+			"color": "#4b3621",
+			"isWholeLine": true,
+			"text": " Queries"
+		},
+		{
+			"backgroundColor": "#69359c",
+			"color": "#e3a857",
+			"isWholeLine": true,
+			"text": " Mutations"
+		},
+		{
+			"backgroundColor": "#E4D6A7",
+			"color": "#1C110A",
+			"isWholeLine": true,
+			"text": " Relationships"
+		},
+		{
+			"backgroundColor": "#CDE7B0",
+			"color": "#BE6E46",
+			"isWholeLine": true,
+			"text": " Infomations"
+		},
+		{
+			"backgroundColor": "#FF3366",
+			"color": "#011627",
+			"isWholeLine": true,
+			"text": " Sensitive infomations"
+		},
+		{
+			"backgroundColor": "#4464AD",
+			"color": "#FFC759",
+			"isWholeLine": true,
+			"text": " Methods"
+		},
+		{
+			"backgroundColor": "#420039",
+			"color": "#FFC1CF",
+			"isWholeLine": true,
+			"text": " Database requests"
+		},
+		{
+			"backgroundColor": "#ECB0E1",
+			"color": "#A31621",
+			"isWholeLine": true,
+			"text": " Interfaces"
+		},
+		{
+			"backgroundColor": "#E94F37",
+			"color": "#F6F7EB",
+			"isWholeLine": true,
+			"text": " Enums"
+		},
+		{
+			"backgroundColor": "#A50104",
+			"color": "#FCBA04",
+			"isWholeLine": true,
+			"text": " Number.prototype"
+		},
+		{
+			"backgroundColor": "#659157",
+			"color": "#FFCAB1",
+			"isWholeLine": true,
+			"text": " Array.prototype"
+		},
+		{
+			"backgroundColor": "#022B3A",
+			"color": "#B89685",
+			"isWholeLine": true,
+			"text": " String.prototype"
+		},
+		{
+			"backgroundColor": "#FDFFFF",
+			"color": "#B10F2E",
+			"isWholeLine": true,
+			"text": " Global functions"
+		},
+		{
+			"backgroundColor": "#E27396",
+			"color": "#7DDF64",
+			"isWholeLine": true,
+			"text": " Defines"
+		},
+		{
+			"backgroundColor": "#32021F",
+			"color": "#99E1D9",
+			"isWholeLine": true,
+			"text": " Time Record"
+		}
+	]
+}

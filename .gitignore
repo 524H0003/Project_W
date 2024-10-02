@@ -1,0 +1,68 @@
+# compiled output
+**/dist
+/node_modules
+package-lock.json
+.adminjs
+src/models.ts
+src/types.ts
+*.tsbuildinfo
+types/src
+src/**/*.js*
+**/*.d.ts
+public/*
+!public/*.server.*
+**/*.js.map
+**/*.js
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/reports
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# temp directory
+.temp
+.tmp
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# GraphQl files
+**/schema.gql
+
+# Secret files
+secrets/*.pem
+**/*.env*

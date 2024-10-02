@@ -1,0 +1,11 @@
+{
+	"exclude": [
+		"**/*.spec.ts",
+		"**/schema.gql",
+		"*.config.*",
+		"dist",
+		"./*.d.ts",
+		"**/build.ts"
+	],
+	"extends": "./tsconfig.json"
+}

@@ -1,0 +1,32 @@
+{
+	"configurations": [
+		{
+			"command": "npm run build",
+			"name": "Debug build",
+			"request": "launch",
+			"type": "node-terminal"
+		},
+		{
+			"command": "npm run test:debug",
+			"name": "Debug Jest tests",
+			"request": "launch",
+			"type": "node-terminal"
+		},
+		{
+			"command": "npm run start:debug",
+			"name": "Debug NestJS",
+			"request": "launch",
+			"type": "node-terminal"
+		},
+		{
+			"command": "npx jest --testPathPattern=${fileBasename} --openHandlesTimeout=0",
+			"name": "Debug Jest current file",
+			"request": "launch",
+			"type": "node-terminal"
+		}
+	],
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0"
+}
