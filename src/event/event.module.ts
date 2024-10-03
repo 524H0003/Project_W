@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { registerEnumType } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EventTypeModule } from 'eventType/eventType.module';
-import { Event } from './event.entity';
-import { EventStatus } from './event.model';
+import { Event, EventCreator, EventParticipator } from './event.entity';
+import { EventStatus, EventType } from './event.model';
 
-@Module({ imports: [TypeOrmModule.forFeature([Event]), EventTypeModule] })
+@Module({
+	imports: [TypeOrmModule.forFeature([Event, EventParticipator, EventCreator])],
+})
 export class EventModule {
 	constructor() {
-		registerEnumType(EventStatus, { name: 'EventStatus' });
+		registerEnumType(EventStatus, { name: 'event_status' });
+		registerEnumType(EventType, { name: 'event_type' });
 	}
 }

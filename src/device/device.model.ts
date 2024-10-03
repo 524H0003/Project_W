@@ -1,4 +1,4 @@
-import { ISession } from 'types';
+import { ISession } from 'session/session.model';
 import { IUser } from 'user/user.model';
 
 // Interfaces

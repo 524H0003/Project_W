@@ -35,7 +35,7 @@ export class AuthService extends Cryption {
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
 					await this.usrSvc.update({
 						...newUser,
-						avatarFilePath: avatarFile?.path,
+						avatarPath: avatarFile?.path,
 					});
 					return this.dvcSvc.getTokens(newUser, mtdt);
 				}

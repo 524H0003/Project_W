@@ -1,35 +1,25 @@
 import {
 	BaseEntity,
-	CreateDateColumn,
 	DeepPartial,
 	FindOptionsWhere,
 	PrimaryGeneratedColumn,
 	Repository,
 	SaveOptions,
-	UpdateDateColumn,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
-import { IRecordTime } from 'types';
 
 export type FindOptionsWithCustom<T> = FindOptionsWhere<T> & {
 	deep?: number;
 	relations?: string[];
 };
 
-export class SensitiveInfomations extends BaseEntity implements IRecordTime {
+export class SensitiveInfomations extends BaseEntity {
 	constructor() {
 		super();
 	}
 
 	// Sensitive Infomations
 	@PrimaryGeneratedColumn('uuid') id: string;
-
-	// Time Record
-	@CreateDateColumn()
-	createdAt: Date;
-
-	@UpdateDateColumn()
-	updatedAt: Date;
 }
 
 export class DatabaseRequests<T extends SensitiveInfomations> {

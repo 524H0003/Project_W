@@ -1,10 +1,13 @@
-import { IInternship } from 'internship/internship.model';
-import { IFaculty } from 'types';
-import { IUser } from 'user/user.model';
+import { IEmployee } from 'employee/employee.model';
+import { IStudent } from 'student/student.model';
 
 // Interfaces
-export interface IEnterprise extends IUser {
-	website: string;
-	internships: IInternship[];
-	faculty: IFaculty;
+export interface IEnterprise {
+	name: string;
+	description: string;
+	industry: string;
+	avatarPath: string;
+
+	employees: IEmployee[];
+	students: IStudent[];
 }

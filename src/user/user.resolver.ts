@@ -3,7 +3,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 import { RoleGuard, Roles } from 'auth/auth.guard';
 import { isUUID } from 'class-validator';
 import { User } from './user.entity';
-import { Role } from './user.model';
+import { UserRole } from './user.model';
 import { UserService } from './user.service';
 
 @Resolver(() => User)
@@ -13,7 +13,7 @@ export class UserResolver {
 
 	// Queries
 	@Query(() => User)
-	@Roles([Role.USER])
+	@Roles([UserRole.student])
 	async user(@Args('id') id: string) {
 		if (isUUID(id)) {
 			const user = await this.usrSvc.id(id);
@@ -23,7 +23,7 @@ export class UserResolver {
 	}
 
 	@Query(() => [User])
-	@Roles([Role.ADMIN])
+	@Roles([UserRole.faculty])
 	async userAll() {
 		return (await this.usrSvc.all()).map((_) => _.info);
 	}

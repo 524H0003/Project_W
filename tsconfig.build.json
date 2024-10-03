@@ -5,7 +5,9 @@
 		"*.config.*",
 		"dist",
 		"./*.d.ts",
-		"**/build.ts"
+		"**/build.ts",
+		"./src/types.ts",
+		"./src/models.ts"
 	],
 	"extends": "./tsconfig.json"
 }

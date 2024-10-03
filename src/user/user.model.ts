@@ -1,4 +1,5 @@
 import { IDevice } from 'device/device.model';
+import { IEventParticipator } from 'event/event.model';
 import { IFile } from 'file/file.model';
 
 // Interfaces
@@ -8,19 +9,27 @@ export interface IUserAuthentication {
 }
 
 export interface IUserInfo {
-	name: string;
-	email: string;
-	phone: string;
-	address: string;
-
-	avatarFilePath?: string;
-
-	roles?: Role[];
+	fullName: string;
+	avatarPath: string;
+	role: UserRole;
 }
 
-export interface IUser extends IUserAuthentication, IUserInfo {
+export interface IUserTimeRecord {
+	lastLogin: Date;
+}
+
+export interface IUserStatus {
+	isActive: boolean;
+}
+
+export interface IUser
+	extends IUserAuthentication,
+		IUserInfo,
+		IUserTimeRecord,
+		IUserStatus {
 	devices?: IDevice[];
 	uploadFiles?: IFile[];
+	participatedEvents: IEventParticipator[];
 }
 
 export interface IUserRecieve {
@@ -32,11 +41,8 @@ export interface ILogin extends IUserAuthentication {}
 export interface ISignUp extends IUserAuthentication, IUserInfo {}
 
 // Enums
-export enum Role {
-	USER = 'USER',
-	ADMIN = 'ADMIN',
-	STAFF = 'STAFF',
-	STUDENT = 'STUDENT',
-	ENTERPRISE = 'ENTERPRISE',
-	FACULTY = 'FACULTY',
+export enum UserRole {
+	student = 'student',
+	faculty = 'faculty',
+	enterprise = 'enterprise',
 }

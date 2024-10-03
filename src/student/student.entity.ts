@@ -1,32 +1,25 @@
-import { Event } from 'event/event.entity';
-import { Faculty } from 'faculty/faculty.entity';
-import { Internship } from 'internship/internship.entity';
-import { ChildEntity, Column, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Enterprise } from 'enterprise/enterprise.entity';
+import { ChildEntity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudent } from './student.model';
 
 @ChildEntity()
 export class Student extends User implements IStudent {
 	// Relationships
-	@ManyToOne(() => Faculty, (_: Faculty) => _.students)
-	faculty: Faculty;
-
-	@OneToMany(() => Internship, (_: Internship) => _.trainee)
-	internships: Internship[];
-
-	@ManyToMany(() => Event, (_: Event) => _.watchingBy)
-	careEvents: Event[];
+	@ManyToOne(() => Enterprise, (_: Enterprise) => _.students)
+	@JoinColumn({ name: 'current_enterprise_id' })
+	currentEnterprise: Enterprise;
 
 	// Infomations
-	@Column()
-	code: string;
+	@Column({ name: 'string' })
+	major: string;
 
-	@Column()
-	class: string;
+	@Column({ name: 'skills', type: 'text' })
+	skills: string;
 
-	@Column()
-	yearOfStudy: number;
+	@Column({ name: 'graduation_year' })
+	graduationYear: number;
 
-	@Column({ default: true })
-	isMale: boolean;
+	@Column({ name: 'enrollment_year' })
+	enrollmentYear: number;
 }

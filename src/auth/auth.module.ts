@@ -5,10 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { DeviceModule } from 'device/device.module';
 import { EnterpriseModule } from 'enterprise/enterprise.module';
 import { EventModule } from 'event/event.module';
-import { FacultyModule } from 'faculty/faculty.module';
 import { FileModule } from 'file/file.module';
-import { InternshipModule } from 'internship/internship.module';
-import { StudentModule } from 'student/student.module';
 import { UserModule } from 'user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -31,14 +28,11 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
 			},
 		}),
 		// Foreign modules
+		FileModule,
 		forwardRef(() => DeviceModule),
 		forwardRef(() => UserModule),
-		InternshipModule,
 		EnterpriseModule,
-		FacultyModule,
 		EventModule,
-		StudentModule,
-		FileModule,
 	],
 	providers: [
 		AuthService,

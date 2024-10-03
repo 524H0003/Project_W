@@ -1,25 +1,39 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Event } from 'event/event.entity';
-import { Faculty } from 'faculty/faculty.entity';
-import { Internship } from 'internship/internship.entity';
-import { ChildEntity, Column, ManyToOne, OneToMany } from 'typeorm';
-import { User } from 'user/user.entity';
+import { Employee } from 'employee/employee.entity';
+import { Student } from 'student/student.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { BlackBox } from 'utils/model.utils';
+import { SensitiveInfomations } from 'utils/typeorm.utils';
 import { IEnterprise } from './enterprise.model';
 
 @ObjectType()
-@ChildEntity()
-export class Enterprise extends User implements IEnterprise {
+@Entity({ name: 'Enterprise' })
+export class Enterprise extends SensitiveInfomations implements IEnterprise {
 	// Relationships
-	@OneToMany(() => Internship, (_: Internship) => _.enterprise)
-	internships: Internship[];
+	@OneToMany(() => Employee, (_: Employee) => _.enterprise)
+	employees: Employee[];
 
-	@OneToMany(() => Event, (_: Event) => _.createdBy)
-	events: Event[];
+	@OneToMany(() => Student, (_: Student) => _.currentEnterprise)
+	students: Student[];
 
-	@ManyToOne(() => Faculty, (_: Faculty) => _.enterprises)
-	faculty: Faculty;
 	// Infomations
 	@Field()
-	@Column()
-	website: string;
+	@Column({ name: 'name' })
+	name: string;
+
+	@Field()
+	@Column({ name: 'description' })
+	description: string;
+
+	@Field()
+	@Column({ name: 'industry' })
+	industry: string;
+
+	@Field()
+	@Column({ name: 'image_path' })
+	avatarPath: string;
+
+	// Embedded Entity
+	@Column(() => BlackBox, { prefix: false })
+	blackBox: BlackBox;
 }

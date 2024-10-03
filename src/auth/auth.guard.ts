@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 import UAParser from 'ua-parser-js';
-import { Role } from 'user/user.model';
+import { UserRole } from 'user/user.model';
 import { matching } from 'utils/utils';
 
 /**
@@ -26,7 +26,7 @@ function convertForGql(context: ExecutionContext) {
  * ! WARNING: it's must be (data: unknown, context: ExecutionContext) => {}
  * ! to void error [ExceptionsHandler] Cannot read properties of undefined (reading 'getType')
  */
-export const Roles = Reflector.createDecorator<Role[]>(),
+export const Roles = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),
 	CurrentUser = createParamDecorator(
 		(data: unknown, context: ExecutionContext) => convertForGql(context).user,

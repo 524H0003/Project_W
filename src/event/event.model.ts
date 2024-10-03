@@ -1,25 +1,61 @@
-import { IEnterprise } from 'enterprise/enterprise.model';
-import { IEventType } from 'eventType/eventType.model';
 import { IStudent } from 'student/student.model';
 
 // Interfaces
 export interface IEvent {
-	createdBy: IEnterprise;
-	watchingBy: IStudent[];
-	startDate: Date;
-	endDate: Date;
+	createdBy: IEventCreator;
+	participators: IEventParticipator[];
 	title: string;
 	description: string;
+	startDate: Date;
+	endDate: Date;
+	type: EventType;
 	status: EventStatus;
-	positionsAvaliable: number;
+	positionsAvailable: number;
 	maxParticipants: number;
 	location: string;
-	eventType: IEventType;
+	applicationDeadline: Date;
+	requiredSkills: string;
+	additionalFields: any;
+}
+
+export interface IEventCreator {
+	createdEvents: IEvent[];
+}
+
+export interface IEventParticipator {
+	from: IEvent;
+	participatedBy: IStudent;
+	isAttended: boolean;
+	registeredAt: Date;
+	interviewAt: Date;
+	interviewNote: string;
+	additionalData: any;
 }
 
 // Enums
 export enum EventStatus {
-	ONGOING = 'ONGOING',
-	ENDED = 'ENDED',
-	PENDING = 'PENDING',
+	draft = 'draft',
+	published = 'published',
+	cancelled = 'cancelled',
+	completed = 'completed',
+}
+
+export enum EventType {
+	internship = 'internship',
+	job_fair = 'job_fair',
+	workshop = 'workshop',
+	seminar = 'seminar',
+}
+
+export enum EventParticipatorStatus {
+	registered = 'registered',
+	confirmed = 'confirmed',
+	cancelled = 'cancelled',
+	attended = 'attended',
+}
+
+export enum EventParticipatorRole {
+	attendee = 'attendee',
+	organizer = 'organizer',
+	speaker = 'speaker',
 }

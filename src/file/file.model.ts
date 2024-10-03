@@ -1,4 +1,4 @@
-import { IUser } from 'types';
+import { IUser } from 'user/user.model';
 
 // Interfaces
 export interface IFile {
