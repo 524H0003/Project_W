@@ -67,6 +67,7 @@ export class User extends SensitiveInfomations implements IUser {
 		name: 'role',
 		type: 'enum',
 		enum: UserRole,
+		enumName: 'user_role',
 	})
 	role: UserRole;
 

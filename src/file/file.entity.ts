@@ -27,7 +27,12 @@ export class File extends SensitiveInfomations implements IFile {
 	@Column({ name: 'title', type: 'text' })
 	title: string;
 
-	@Column({ name: 'document_type', type: 'enum', enum: FileType })
+	@Column({
+		name: 'document_type',
+		type: 'enum',
+		enum: FileType,
+		enumName: 'document_type',
+	})
 	type: FileType;
 
 	@Column({ name: 'uploaded_at', type: 'timestamp with time zone' })

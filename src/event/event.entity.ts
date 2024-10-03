@@ -59,6 +59,7 @@ export class Event extends SensitiveInfomations implements IEvent {
 		type: 'enum',
 		enum: EventStatus,
 		default: EventStatus.draft,
+		enumName: 'event_status',
 	})
 	status: EventStatus;
 
@@ -66,6 +67,7 @@ export class Event extends SensitiveInfomations implements IEvent {
 		name: 'event_type',
 		type: 'enum',
 		enum: EventType,
+		enumName: 'event_type',
 		default: EventType.internship,
 	})
 	type: EventType;
@@ -127,6 +129,7 @@ export class EventParticipator
 		name: 'status',
 		type: 'enum',
 		enum: EventParticipatorStatus,
+		enumName: 'participation_status',
 	})
 	status: EventParticipatorStatus;
 
@@ -134,6 +137,7 @@ export class EventParticipator
 		name: 'role',
 		type: 'enum',
 		enum: EventParticipatorRole,
+		enumName: 'participation_role',
 	})
 	role: EventParticipatorRole;
 }

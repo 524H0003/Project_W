@@ -15,6 +15,7 @@ export class Employee extends EventCreator implements IEmployee {
 		type: 'enum',
 		enum: EmployeePosition,
 		default: EmployeePosition.other,
+		enumName: 'enterprise_position',
 	})
 	position: EmployeePosition;
 }
