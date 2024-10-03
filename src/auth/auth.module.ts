@@ -4,7 +4,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { DeviceModule } from 'device/device.module';
 import { EnterpriseModule } from 'enterprise/enterprise.module';
-import { EventModule } from 'event/event.module';
 import { FileModule } from 'file/file.module';
 import { UserModule } from 'user/user.module';
 import { AuthController } from './auth.controller';
@@ -32,7 +31,6 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
 		forwardRef(() => DeviceModule),
 		forwardRef(() => UserModule),
 		EnterpriseModule,
-		EventModule,
 	],
 	providers: [
 		AuthService,

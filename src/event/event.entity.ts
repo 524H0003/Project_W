@@ -1,3 +1,4 @@
+import { File } from 'file/file.entity';
 import { Student } from 'student/student.entity';
 import {
 	ChildEntity,
@@ -37,17 +38,20 @@ export class Event extends SensitiveInfomations implements IEvent {
 	@OneToMany(() => EventParticipator, (_: EventParticipator) => _.from)
 	participators: EventParticipator[];
 
+	@OneToMany(() => File, (_: File) => _.atEvent)
+	documents: File[];
+
 	// Infomations
 	@Column({ name: 'description', type: 'text' })
 	description: string;
 
-	@Column({ name: 'title' })
+	@Column({ name: 'title', type: 'text' })
 	title: string;
 
-	@Column({ name: 'max_participants' })
+	@Column({ name: 'max_participants', type: 'int4' })
 	maxParticipants: number;
 
-	@Column({ name: 'positions_available' })
+	@Column({ name: 'positions_available', type: 'int4' })
 	positionsAvailable: number;
 
 	@Column({
@@ -66,16 +70,16 @@ export class Event extends SensitiveInfomations implements IEvent {
 	})
 	type: EventType;
 
-	@Column({ name: 'location' })
+	@Column({ name: 'location', type: 'text' })
 	location: string;
 
-	@Column({ name: 'start_date' })
+	@Column({ name: 'start_date', type: 'timestamp with time zone' })
 	startDate: Date;
 
-	@Column({ name: 'end_date' })
+	@Column({ name: 'end_date', type: 'timestamp with time zone' })
 	endDate: Date;
 
-	@Column({ name: 'application_deadline' })
+	@Column({ name: 'application_deadline', type: 'date' })
 	applicationDeadline: Date;
 
 	@Column({ name: 'required_skills', type: 'text' })
@@ -107,10 +111,10 @@ export class EventParticipator
 	@Column({ name: 'attendance' })
 	isAttended: boolean;
 
-	@Column({ name: 'registered_at' })
+	@Column({ name: 'registered_at', type: 'timestamp with time zone' })
 	registeredAt: Date;
 
-	@Column({ name: 'interview_time' })
+	@Column({ name: 'interview_time', type: 'timestamp with time zone' })
 	interviewAt: Date;
 
 	@Column({ name: 'interview_notes', type: 'text' })
@@ -123,7 +127,6 @@ export class EventParticipator
 		name: 'status',
 		type: 'enum',
 		enum: EventParticipatorStatus,
-		default: EventParticipatorStatus.registered,
 	})
 	status: EventParticipatorStatus;
 
@@ -131,7 +134,6 @@ export class EventParticipator
 		name: 'role',
 		type: 'enum',
 		enum: EventParticipatorRole,
-		default: EventParticipatorRole.attendee,
 	})
 	role: EventParticipatorRole;
 }

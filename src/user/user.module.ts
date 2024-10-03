@@ -3,6 +3,7 @@ import { registerEnumType } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'auth/auth.module';
 import { EmployeeModule } from 'employee/employee.module';
+import { EventModule } from 'event/event.module';
 import { FacultyModule } from 'faculty/faculty.module';
 import { StudentModule } from 'student/student.module';
 import { UserController } from './user.controller';
@@ -18,6 +19,7 @@ import { UserService } from './user.service';
 		StudentModule,
 		FacultyModule,
 		EmployeeModule,
+		EventModule,
 	],
 	providers: [UserResolver, UserService],
 	exports: [UserService],

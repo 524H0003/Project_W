@@ -8,7 +8,7 @@ import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
 import { execute } from 'utils/test.utils';
 import { User } from './user.entity';
-import { Role } from './user.model';
+import { UserRole } from './user.model';
 import { UserModule } from './user.module';
 
 const fileName = curFile(__filename),
@@ -84,7 +84,7 @@ describe('findOne', () => {
 
 describe('findAll', () => {
 	it('success', async () => {
-		await usrRepo.save({ id: usrRaw.id, roles: [Role.ADMIN] });
+		await usrRepo.save({ id: usrRaw.id, roles: [UserRole.faculty] });
 
 		await execute(
 			() =>

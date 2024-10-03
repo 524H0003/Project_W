@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestModule } from 'module/test.module';
-import { Role } from 'user/user.model';
+import { UserRole } from 'user/user.model';
 import { RoleGuard } from './auth.guard';
 import { AuthModule } from './auth.module';
 
@@ -35,21 +35,21 @@ describe('canActivate', () => {
 	});
 
 	it("success when user's roles match the required roles", async () => {
-		const req = { user: { roles: [Role.ADMIN] } };
+		const req = { user: { roles: [UserRole.faculty] } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
-			.mockReturnValueOnce([Role.ADMIN]),
+			.mockReturnValueOnce([UserRole.faculty]),
 			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
 		expect(await roleGrd.canActivate(ctx)).toBe(true);
 	});
 
 	it("fail due to user's roles not match the required roles", async () => {
-		const req = { user: { roles: [Role.USER] } };
+		const req = { user: { roles: [UserRole.student] } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
-			.mockReturnValueOnce([Role.ADMIN]);
+			.mockReturnValueOnce([UserRole.faculty]);
 		jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
 		expect(await roleGrd.canActivate(ctx)).toBe(false);
 	});

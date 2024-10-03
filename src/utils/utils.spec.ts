@@ -1,4 +1,4 @@
-import { Role } from 'user/user.model';
+import { UserRole } from 'user/user.model';
 import './utils';
 import { matching } from './utils';
 
@@ -28,32 +28,42 @@ describe('Number', () => {
 describe('matching', () => {
 	describe('return true', () => {
 		it('case #1', () => {
-			expect(matching([Role.ADMIN], [Role.ADMIN])).toEqual(true);
+			expect(matching([UserRole.faculty], [UserRole.faculty])).toEqual(true);
 		});
 
 		it('case #2', () => {
-			expect(matching([Role.ADMIN, Role.USER], [Role.ADMIN])).toEqual(true);
+			expect(
+				matching([UserRole.faculty, UserRole.student], [UserRole.faculty]),
+			).toEqual(true);
 		});
 
 		it('case #3', () => {
 			expect(
-				matching([Role.ADMIN, Role.USER], [Role.ADMIN, Role.USER]),
+				matching(
+					[UserRole.faculty, UserRole.student],
+					[UserRole.faculty, UserRole.student],
+				),
 			).toEqual(true);
 		});
 	});
 
 	describe('return false', () => {
 		it('case #1', () => {
-			expect(matching([Role.ADMIN], [Role.USER])).toEqual(false);
+			expect(matching([UserRole.faculty], [UserRole.student])).toEqual(false);
 		});
 
 		it('case #2', () => {
-			expect(matching([Role.ADMIN], [Role.ADMIN, Role.USER])).toEqual(false);
+			expect(
+				matching([UserRole.faculty], [UserRole.faculty, UserRole.student]),
+			).toEqual(false);
 		});
 
 		it('case #3', () => {
 			expect(
-				matching([Role.ADMIN, Role.USER], [Role.ADMIN, Role.STAFF]),
+				matching(
+					[UserRole.faculty, UserRole.student],
+					[UserRole.faculty, UserRole.enterprise],
+				),
 			).toEqual(false);
 		});
 	});

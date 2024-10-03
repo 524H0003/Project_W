@@ -18,19 +18,19 @@ export class Enterprise extends SensitiveInfomations implements IEnterprise {
 
 	// Infomations
 	@Field()
-	@Column({ name: 'name' })
+	@Column({ name: 'name', type: 'text' })
 	name: string;
 
 	@Field()
-	@Column({ name: 'description' })
+	@Column({ name: 'description', type: 'text' })
 	description: string;
 
 	@Field()
-	@Column({ name: 'industry' })
+	@Column({ name: 'industry', type: 'text' })
 	industry: string;
 
 	@Field()
-	@Column({ name: 'image_path' })
+	@Column({ name: 'image_path', type: 'text' })
 	avatarPath: string;
 
 	// Embedded Entity

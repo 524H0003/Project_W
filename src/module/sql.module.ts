@@ -14,6 +14,7 @@ const sqlOptions = (
 	password: cfgSvc.get('POSTGRES_PASS'),
 	database: type === 'deploy' ? cfgSvc.get('POSTGRES_DB') : type,
 	synchronize: true,
+	schema: type === 'deploy' ? 'backend' : 'public',
 });
 
 export const SqlModule = (type: 'deploy' | 'test') =>

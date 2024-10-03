@@ -138,7 +138,7 @@ export class FileService extends DatabaseRequests<File> {
 				deep: 2,
 				relations: ['createdBy'],
 			});
-			if (user?.id === file.createdBy.id || file.forEveryone) return filename;
+			if (user?.id === file.createdBy.id) return filename;
 		}
 		return false;
 	}

@@ -41,8 +41,7 @@ describe('seeUploadedFile', () => {
 		({ headers } = await req
 			.post('/auth/signup')
 			.attach('avatar', Buffer.from('test', 'base64'), 'avatar.png')
-			.field('name', rawUsr.name)
-			.field('phone', rawUsr.phone)
+			.field('name', rawUsr.fullName)
 			.field('email', rawUsr.email)
 			.field('password', rawUsr.password));
 		usr = await usrRepo.findOne({ where: { email: rawUsr.email } });
@@ -65,9 +64,7 @@ describe('seeUploadedFile', () => {
 	it('success', async () => {
 		await execute(
 			() =>
-				req
-					.get(`/file/${usr.avatarFilePath}`)
-					.set('Cookie', headers['set-cookie']),
+				req.get(`/file/${usr.avatarPath}`).set('Cookie', headers['set-cookie']),
 			{
 				exps: [
 					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
@@ -77,7 +74,7 @@ describe('seeUploadedFile', () => {
 	});
 
 	it('failed', async () => {
-		await execute(() => req.get(`/file/${usr.avatarFilePath}`), {
+		await execute(() => req.get(`/file/${usr.avatarPath}`), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 				{
