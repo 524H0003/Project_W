@@ -1,7 +1,7 @@
-import { Enterprise } from 'enterprise/enterprise.entity';
 import { ChildEntity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudent } from './student.model';
+import { Enterprise } from 'enterprise/enterprise.entity';
 
 @ChildEntity()
 export class Student extends User implements IStudent {
@@ -11,7 +11,7 @@ export class Student extends User implements IStudent {
 	currentEnterprise: Enterprise;
 
 	// Infomations
-	@Column({ name: 'string' })
+	@Column({ name: 'major' })
 	major: string;
 
 	@Column({ name: 'skills', type: 'text' })

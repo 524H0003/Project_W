@@ -5,31 +5,41 @@ import { execute } from 'app/utils/test.utils';
 import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
-import { User } from './user.entity';
 import { UserModule } from './user.module';
+import { User } from './user.entity';
+import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 const fileName = curFile(__filename);
-let usr: User, req: TestAgent, app: INestApplication;
+let rawUsr: User,
+	usr: User,
+	req: TestAgent,
+	app: INestApplication,
+	usrRepo: Repository<User>;
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
 		imports: [UserModule, TestModule],
 	}).compile();
 
-	app = module.createNestApplication();
+	(app = module.createNestApplication()),
+		(usrRepo = module.get(getRepositoryToken(User)));
 
 	await app.use(cookieParser()).init();
 });
 
 beforeEach(() => {
-	(req = request(app.getHttpServer())), (usr = User.test(fileName));
+	(req = request(app.getHttpServer())), (rawUsr = User.test(fileName));
 });
 
 describe('getUser', () => {
 	let headers: object;
 
 	beforeEach(
-		async () => ({ headers } = await req.post('/auth/signup').send(usr)),
+		async () => (
+			({ headers } = await req.post('/auth/signup').send(rawUsr)),
+			(usr = await usrRepo.findOne({ where: { email: rawUsr.email } }))
+		),
 	);
 
 	it('success', async () => {
@@ -47,7 +57,7 @@ describe('getUser', () => {
 	});
 
 	it('fail', async () => {
-		await execute(() => req.post('/user').send(usr), {
+		await execute(() => req.post('/user').send(rawUsr), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
 			],

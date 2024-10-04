@@ -7,12 +7,12 @@ import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
+import { UserModule } from './user.module';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
-import { UserModule } from './user.module';
 
 const fileName = curFile(__filename),
-	userGet = 'address avatarFilePath email name phone roles ';
+	userGet = 'fullName role';
 let app: INestApplication,
 	usr: User,
 	req: TestAgent,
@@ -84,7 +84,7 @@ describe('findOne', () => {
 
 describe('findAll', () => {
 	it('success', async () => {
-		await usrRepo.save({ id: usrRaw.id, roles: [UserRole.faculty] });
+		await usrRepo.save({ id: usrRaw.id, role: UserRole.faculty });
 
 		await execute(
 			() =>

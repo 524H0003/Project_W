@@ -34,8 +34,8 @@ describe('canActivate', () => {
 		expect(await roleGrd.canActivate(ctx)).toBe(true);
 	});
 
-	it("success when user's roles match the required roles", async () => {
-		const req = { user: { roles: [UserRole.faculty] } };
+	it("success when user's role match the required roles", async () => {
+		const req = { user: { role: UserRole.faculty } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
@@ -45,7 +45,7 @@ describe('canActivate', () => {
 	});
 
 	it("fail due to user's roles not match the required roles", async () => {
-		const req = { user: { roles: [UserRole.student] } };
+		const req = { user: { role: UserRole.student } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)

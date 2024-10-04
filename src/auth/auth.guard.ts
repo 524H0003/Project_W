@@ -9,6 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 import { matching } from 'app/utils/utils';
 import UAParser from 'ua-parser-js';
+import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 
 /**
@@ -56,9 +57,9 @@ export class RoleGuard extends AuthGuard('access') {
 		const roles = this.reflector.get(Roles, context.getHandler());
 		if (roles) {
 			const req = this.getRequest(context),
-				user = req.user;
+				user = req.user as User;
 
-			return matching(user.roles, roles);
+			return matching([user.role], roles);
 		}
 		throw new InternalServerErrorException(
 			'Function not defined roles/permissions',

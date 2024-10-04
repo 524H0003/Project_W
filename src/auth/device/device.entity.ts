@@ -1,8 +1,8 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Session } from 'auth/session/session.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { User } from 'user/user.entity';
 import { IDevice } from './device.model';
+import { User } from 'user/user.entity';
 
 @Entity()
 export class Device extends SensitiveInfomations implements IDevice {

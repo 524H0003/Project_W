@@ -1,7 +1,7 @@
-import { Enterprise } from 'enterprise/enterprise.entity';
 import { ChildEntity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { EmployeePosition, IEmployee } from './employee.model';
 import { EventCreator } from 'event/creator/creator.entity';
+import { Enterprise } from 'enterprise/enterprise.entity';
 
 @ChildEntity()
 export class Employee extends EventCreator implements IEmployee {

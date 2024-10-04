@@ -1,10 +1,10 @@
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import {
 	EventParticipatorRole,
 	EventParticipatorStatus,
 	IEventParticipator,
 } from './participator.model';
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Event } from 'event/event.entity';
 import { Student } from 'university/student/student.entity';
 

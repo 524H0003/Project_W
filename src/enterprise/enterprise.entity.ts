@@ -30,7 +30,11 @@ export class Enterprise extends SensitiveInfomations implements IEnterprise {
 	industry: string;
 
 	@Field()
-	@Column({ name: 'image_path', type: 'text' })
+	@Column({
+		name: 'image_path',
+		type: 'text',
+		default: 'defaultUser.server.jpg',
+	})
 	avatarPath: string;
 
 	// Embedded Entity

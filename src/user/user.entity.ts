@@ -1,4 +1,4 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { hash } from 'app/utils/auth.utils';
 import { BlackBox } from 'app/utils/model.utils';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
@@ -9,15 +9,15 @@ import { IFile } from 'file/file.model';
 import { IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany, TableInheritance } from 'typeorm';
 import { IUser, IUserAuthentication, IUserInfo, UserRole } from './user.model';
+import { Reciever } from 'notification/reciever/reciever.entity';
 import { File } from 'file/file.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
-import { Reciever } from 'notification/reciever/reciever.entity';
 
 @ObjectType()
 @Entity({ name: 'User' })
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends SensitiveInfomations implements IUser {
-	constructor(payload: IUserInfo & IUserAuthentication) {
+	constructor(payload: Omit<IUserInfo, 'avatarPath'> & IUserAuthentication) {
 		super();
 		Object.assign(this, payload);
 	}
@@ -53,20 +53,24 @@ export class User extends SensitiveInfomations implements IUser {
 
 	// Infomations
 	@Field()
-	@Column({ name: 'image_path', default: 'defaultUser.server.jpg' })
+	@Column({
+		default: 'defaultUser.server.jpg',
+		name: 'image_path',
+		type: 'text',
+	})
 	avatarPath: string;
 
 	@IsString()
 	@Field()
-	@Column({ name: 'full_name' })
+	@Column({ name: 'full_name', type: 'text' })
 	fullName: string;
 
 	@IsEmail()
 	@Field()
-	@Column({ name: 'email' })
+	@Column({ name: 'email', type: 'text' })
 	email: string;
 
-	@Field(() => [UserRole])
+	@Field(() => UserRole)
 	@Column({
 		name: 'role',
 		type: 'enum',
@@ -84,15 +88,17 @@ export class User extends SensitiveInfomations implements IUser {
 	})
 	password: string;
 
-	@Column({ name: 'last_login' })
+	@Column({
+		name: 'last_login',
+		type: 'timestamp with time zone',
+		default: () => 'CURRENT_TIMESTAMP',
+	})
 	lastLogin: Date;
 
-	// Status
-	@Column({ name: 'is_active' })
+	@Column({ name: 'is_active', default: false })
 	isActive: boolean;
 
 	// Embedded Entity
-	@HideField()
 	@Column(() => BlackBox, { prefix: false })
 	blackBox: BlackBox;
 
@@ -103,7 +109,6 @@ export class User extends SensitiveInfomations implements IUser {
 
 	static test(from: string) {
 		const n = new User({
-			avatarPath: null,
 			email: (20).alpha + '@gmail.com',
 			password: 'Aa1!000000000000',
 			fullName: from,

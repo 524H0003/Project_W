@@ -1,5 +1,3 @@
-import { BlackBox } from 'app/utils/model.utils';
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import {
 	Column,
 	Entity,
@@ -11,9 +9,11 @@ import {
 } from 'typeorm';
 import { EventStatus, EventType, IEvent } from './event.model';
 import { EventParticipator } from './participator/participator.entity';
-import { EventCreator } from './creator/creator.entity';
 import { File } from 'file/file.entity';
 import { EventTag } from './tag/tag.entity';
+import { BlackBox } from 'app/utils/model.utils';
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import { EventCreator } from './creator/creator.entity';
 
 @Entity({ name: 'Event' })
 export class Event extends SensitiveInfomations implements IEvent {
