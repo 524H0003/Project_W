@@ -29,7 +29,6 @@ export const SqlModule = (type: 'deploy' | 'test') =>
 				return {
 					...sqlOptions(type, cfgSvc),
 					autoLoadEntities: true,
-					synchronize: true,
 				};
 			else
 				return {

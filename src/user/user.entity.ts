@@ -11,6 +11,7 @@ import { Column, Entity, OneToMany, TableInheritance } from 'typeorm';
 import { IUser, IUserAuthentication, IUserInfo, UserRole } from './user.model';
 import { File } from 'file/file.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
+import { Reciever } from 'notification/reciever/reciever.entity';
 
 @ObjectType()
 @Entity({ name: 'User' })
@@ -46,6 +47,9 @@ export class User extends SensitiveInfomations implements IUser {
 		(_: EventParticipator) => _.participatedBy,
 	)
 	participatedEvents: EventParticipator[];
+
+	@OneToMany(() => Reciever, (_: Reciever) => _.to)
+	recievedNotifications: Reciever[];
 
 	// Infomations
 	@Field()

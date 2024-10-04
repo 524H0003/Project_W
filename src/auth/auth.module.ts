@@ -11,6 +11,7 @@ import { UserModule } from 'user/user.module';
 import { DeviceModule } from 'auth/device/device.module';
 import { FileModule } from 'file/file.module';
 import { EventModule } from 'event/event.module';
+import { NotificationModule } from 'notification/notification.module';
 
 @Module({
 	imports: [
@@ -29,6 +30,7 @@ import { EventModule } from 'event/event.module';
 		}),
 		// Foreign modules
 		EventModule,
+		NotificationModule,
 		FileModule,
 		forwardRef(() => DeviceModule),
 		forwardRef(() => UserModule),

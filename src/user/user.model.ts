@@ -1,6 +1,7 @@
 import { IDevice } from 'auth/device/device.model';
 import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
+import { IReciever } from 'notification/reciever/reciever.model';
 
 // Interfaces
 export interface IUserAuthentication {
@@ -27,6 +28,7 @@ export interface IUser
 		IUserInfo,
 		IUserTimeRecord,
 		IUserStatus {
+	recievedNotifications: IReciever[];
 	devices?: IDevice[];
 	uploadFiles?: IFile[];
 	participatedEvents: IEventParticipator[];
