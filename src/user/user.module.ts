@@ -3,8 +3,7 @@ import { registerEnumType } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'auth/auth.module';
 import { EventModule } from 'event/event.module';
-import { FacultyModule } from 'university/faculty/faculty.module';
-import { StudentModule } from 'university/student/student.module';
+import { University } from 'university/university.module';
 import { UserController } from './user.controller';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
@@ -15,8 +14,7 @@ import { UserService } from './user.service';
 	imports: [
 		TypeOrmModule.forFeature([User]),
 		forwardRef(() => AuthModule),
-		StudentModule,
-		FacultyModule,
+		University,
 		EventModule,
 	],
 	providers: [UserResolver, UserService],
