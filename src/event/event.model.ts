@@ -1,10 +1,12 @@
 import { IEventCreator } from './creator/creator.model';
 import { IEventParticipator } from './participator/participator.model';
+import { ITag } from './tag/tag.model';
 
 // Interfaces
 export interface IEvent {
 	createdBy: IEventCreator;
 	participators: IEventParticipator[];
+	tags: ITag[];
 	title: string;
 	description: string;
 	startDate: Date;

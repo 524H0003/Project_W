@@ -1,10 +1,19 @@
 import { BlackBox } from 'app/utils/model.utils';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+	Column,
+	Entity,
+	JoinColumn,
+	JoinTable,
+	ManyToMany,
+	ManyToOne,
+	OneToMany,
+} from 'typeorm';
 import { EventStatus, EventType, IEvent } from './event.model';
 import { EventParticipator } from './participator/participator.entity';
 import { EventCreator } from './creator/creator.entity';
 import { File } from 'file/file.entity';
+import { EventTag } from './tag/tag.entity';
 
 @Entity({ name: 'Event' })
 export class Event extends SensitiveInfomations implements IEvent {
@@ -18,6 +27,10 @@ export class Event extends SensitiveInfomations implements IEvent {
 
 	@OneToMany(() => File, (_: File) => _.atEvent)
 	documents: File[];
+
+	@ManyToMany(() => EventTag)
+	@JoinTable({ name: 'event_tag' })
+	tags: EventTag[];
 
 	// Infomations
 	@Column({ name: 'description', type: 'text' })

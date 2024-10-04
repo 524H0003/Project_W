@@ -5,9 +5,17 @@ import { EventCreator } from './creator/creator.entity';
 import { EventStatus, EventType } from './event.model';
 import { EventParticipator } from './participator/participator.entity';
 import { Event } from './event.entity';
+import { EventTag } from './tag/tag.entity';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Event, EventParticipator, EventCreator])],
+	imports: [
+		TypeOrmModule.forFeature([
+			Event,
+			EventParticipator,
+			EventCreator,
+			EventTag,
+		]),
+	],
 })
 export class EventModule {
 	constructor() {
