@@ -1,8 +1,8 @@
 import { ApolloDriver } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { SqlModule } from 'app/module/sql.module';
 import { AuthMiddleware } from 'auth/auth.middleware';
-import { SqlModule } from 'module/sql.module';
 import { loadEnv } from './config.module';
 
 @Module({

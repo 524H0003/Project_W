@@ -1,6 +1,6 @@
 import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
-import 'utils/utils';
+import 'app/utils/utils';
 
 export const loadEnv = (type: 'deploy' | 'test') =>
 	// Load .env

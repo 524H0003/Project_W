@@ -1,5 +1,6 @@
+import { BlackBox } from 'app/utils/model.utils';
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { File } from 'file/file.entity';
-import { Student } from 'student/student.entity';
 import {
 	ChildEntity,
 	Column,
@@ -8,9 +9,8 @@ import {
 	ManyToOne,
 	OneToMany,
 } from 'typeorm';
+import { Student } from 'university/student/student.entity';
 import { User } from 'user/user.entity';
-import { BlackBox } from 'utils/model.utils';
-import { SensitiveInfomations } from 'utils/typeorm.utils';
 import {
 	EventParticipatorRole,
 	EventParticipatorStatus,

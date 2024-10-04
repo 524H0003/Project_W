@@ -17,9 +17,12 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+	DatabaseRequests,
+	FindOptionsWithCustom,
+} from 'app/utils/typeorm.utils';
 import { Repository } from 'typeorm';
 import { User } from 'user/user.entity';
-import { DatabaseRequests, FindOptionsWithCustom } from 'utils/typeorm.utils';
 import { File } from './file.entity';
 
 @Injectable()

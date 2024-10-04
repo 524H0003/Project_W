@@ -2,12 +2,12 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hash } from 'app/utils/auth.utils';
+import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { SessionService } from 'auth/session/session.service';
 import { Repository } from 'typeorm';
 import { UserRecieve } from 'user/user.class';
 import { User } from 'user/user.entity';
-import { hash } from 'utils/auth.utils';
-import { DatabaseRequests } from 'utils/typeorm.utils';
 import { Device } from './device.entity';
 
 @Injectable()

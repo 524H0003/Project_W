@@ -1,7 +1,7 @@
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Event } from 'event/event.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
-import { SensitiveInfomations } from 'utils/typeorm.utils';
 import { FileType, IFile } from './file.model';
 
 @Entity({ name: 'Document' })

@@ -1,7 +1,7 @@
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Session } from 'auth/session/session.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { User } from 'user/user.entity';
-import { SensitiveInfomations } from 'utils/typeorm.utils';
 import { IDevice } from './device.model';
 
 @Entity()

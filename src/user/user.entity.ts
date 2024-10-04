@@ -1,4 +1,8 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { hash } from 'app/utils/auth.utils';
+import { BlackBox } from 'app/utils/model.utils';
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import { InterfaceCasting } from 'app/utils/utils';
 import { Device } from 'auth/device/device.entity';
 import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
 import { EventParticipator } from 'event/event.entity';
@@ -6,10 +10,6 @@ import { File } from 'file/file.entity';
 import { IFile } from 'file/file.model';
 import { IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany, TableInheritance } from 'typeorm';
-import { hash } from 'utils/auth.utils';
-import { BlackBox } from 'utils/model.utils';
-import { SensitiveInfomations } from 'utils/typeorm.utils';
-import { InterfaceCasting } from 'utils/utils';
 import { IUser, IUserAuthentication, IUserInfo, UserRole } from './user.model';
 
 @ObjectType()

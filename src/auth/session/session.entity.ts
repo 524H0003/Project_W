@@ -1,6 +1,6 @@
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Device } from 'auth/device/device.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { SensitiveInfomations } from 'utils/typeorm.utils';
 import { ISession } from './session.model';
 
 @Entity()

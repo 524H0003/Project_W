@@ -1,4 +1,4 @@
-import { IStudent } from 'student/student.model';
+import { IStudent } from 'university/student/student.model';
 
 // Interfaces
 export interface IEvent {

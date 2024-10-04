@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Employee } from 'employee/employee.entity';
-import { Student } from 'student/student.entity';
+import { BlackBox } from 'app/utils/model.utils';
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import { Employee } from 'enterprise/employee/employee.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { BlackBox } from 'utils/model.utils';
-import { SensitiveInfomations } from 'utils/typeorm.utils';
+import { Student } from 'university/student/student.entity';
 import { IEnterprise } from './enterprise.model';
 
 @ObjectType()

@@ -7,6 +7,7 @@ export interface IEmployee extends IUser {
 	position: EmployeePosition;
 }
 
+// Enums
 export enum EmployeePosition {
 	manager = 'manager',
 	hr = 'hr',

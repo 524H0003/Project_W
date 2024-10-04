@@ -1,5 +1,5 @@
-import { IEmployee } from 'employee/employee.model';
-import { IStudent } from 'student/student.model';
+import { IEmployee } from 'enterprise/employee/employee.model';
+import { IStudent } from 'university/student/student.model';
 
 // Interfaces
 export interface IEnterprise {

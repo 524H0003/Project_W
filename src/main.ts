@@ -7,11 +7,12 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { config as awsCfg } from 'aws-sdk';
 import cookieParser from 'cookie-parser';
+import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import { Event } from 'event/event.entity';
+import { Event, EventCreator } from 'event/event.entity';
 import express from 'express';
-import { Faculty } from 'faculty/faculty.entity';
-import { Student } from 'student/student.entity';
+import { Faculty } from 'university/faculty/faculty.entity';
+import { Student } from 'university/student/student.entity';
 import { AppModule } from './app.module';
 import { Device } from './auth/device/device.entity';
 import { User } from './user/user.entity';
@@ -38,7 +39,7 @@ async function bootstrap() {
 	AdminJS.registerAdapter({ Resource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
 	const admin = new AdminJS({
-			resources: [User, Device, Student, Enterprise, Faculty, Event],
+			resources: [Student],
 		}),
 		adminRouter = buildAuthenticatedRouter(
 			admin,

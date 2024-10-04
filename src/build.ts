@@ -62,7 +62,7 @@ IKeysOut.saveSync();
 const modelsProject = new Project(),
 	modelsFiles = modelsProject.addSourceFilesAtPaths([
 		'src/**/*model*.ts',
-		'src/utils/utils.ts',
+		'src/app/utils/utils.ts',
 	]),
 	modelsOut = modelsProject.createSourceFile('./src/types.ts', '', {
 		overwrite: true,
