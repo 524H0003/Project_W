@@ -1,4 +1,5 @@
-import { IStudent } from 'university/student/student.model';
+import { IEventCreator } from './creator/creator.model';
+import { IEventParticipator } from './participator/participator.model';
 
 // Interfaces
 export interface IEvent {
@@ -18,20 +19,6 @@ export interface IEvent {
 	additionalFields: any;
 }
 
-export interface IEventCreator {
-	createdEvents: IEvent[];
-}
-
-export interface IEventParticipator {
-	from: IEvent;
-	participatedBy: IStudent;
-	isAttended: boolean;
-	registeredAt: Date;
-	interviewAt: Date;
-	interviewNote: string;
-	additionalData: any;
-}
-
 // Enums
 export enum EventStatus {
 	draft = 'draft',
@@ -45,17 +32,4 @@ export enum EventType {
 	job_fair = 'job_fair',
 	workshop = 'workshop',
 	seminar = 'seminar',
-}
-
-export enum EventParticipatorStatus {
-	registered = 'registered',
-	confirmed = 'confirmed',
-	cancelled = 'cancelled',
-	attended = 'attended',
-}
-
-export enum EventParticipatorRole {
-	attendee = 'attendee',
-	organizer = 'organizer',
-	speaker = 'speaker',
 }

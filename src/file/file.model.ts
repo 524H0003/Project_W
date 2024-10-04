@@ -3,12 +3,12 @@ import { IUser } from 'user/user.model';
 
 // Interfaces
 export interface IFile {
-	path: string;
 	createdBy: IUser;
 	atEvent: IEvent;
 	title: string;
-	uploadedAt: Date;
+	path: string;
 	type: FileType;
+	uploadedAt: Date;
 }
 
 // Enums

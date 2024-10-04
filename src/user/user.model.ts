@@ -1,5 +1,5 @@
 import { IDevice } from 'auth/device/device.model';
-import { IEventParticipator } from 'event/event.model';
+import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 
 // Interfaces

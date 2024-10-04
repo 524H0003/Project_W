@@ -2,14 +2,15 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { DeviceModule } from 'auth/device/device.module';
 import { EnterpriseModule } from 'enterprise/enterprise.module';
-import { FileModule } from 'file/file.module';
-import { UserModule } from 'user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AccessStrategy } from './strategies/access.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
+import { UserModule } from 'user/user.module';
+import { DeviceModule } from 'auth/device/device.module';
+import { FileModule } from 'file/file.module';
+import { EventModule } from 'event/event.module';
 
 @Module({
 	imports: [
@@ -27,6 +28,7 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
 			},
 		}),
 		// Foreign modules
+		EventModule,
 		FileModule,
 		forwardRef(() => DeviceModule),
 		forwardRef(() => UserModule),

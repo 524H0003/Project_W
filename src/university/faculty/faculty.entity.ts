@@ -1,4 +1,4 @@
-import { EventCreator } from 'event/event.entity';
+import { EventCreator } from 'event/creator/creator.entity';
 import { ChildEntity, Column } from 'typeorm';
 import { IFaculty } from './faculty.model';
 
