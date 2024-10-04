@@ -1,16 +1,16 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { TestModule } from 'app/module/test.module';
+import { execute } from 'app/utils/test.utils';
 import { AuthModule } from 'auth/auth.module';
 import cookieParser from 'cookie-parser';
 import { FileController } from 'file/file.controller';
 import { FileModule } from 'file/file.module';
-import { TestModule } from 'module/test.module';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
 import { User } from 'user/user.entity';
-import { execute } from 'utils/test.utils';
 
 const fileName = curFile(__filename);
 let rawUsr: User,

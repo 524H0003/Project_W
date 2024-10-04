@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { TestModule } from 'app/module/test.module';
+import { execute } from 'app/utils/test.utils';
 import cookieParser from 'cookie-parser';
-import { TestModule } from 'module/test.module';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
-import { execute } from 'utils/test.utils';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
 import { UserModule } from './user.module';
