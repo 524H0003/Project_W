@@ -13,7 +13,7 @@ import express from 'express';
 import { Faculty } from 'faculty/faculty.entity';
 import { Student } from 'student/student.entity';
 import { AppModule } from './app.module';
-import { Device } from './device/device.entity';
+import { Device } from './auth/device/device.entity';
 import { User } from './user/user.entity';
 
 async function bootstrap() {

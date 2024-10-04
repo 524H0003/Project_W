@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SessionService } from 'session/session.service';
+import { SessionService } from 'auth/session/session.service';
 import { Repository } from 'typeorm';
 import { UserRecieve } from 'user/user.class';
 import { User } from 'user/user.entity';

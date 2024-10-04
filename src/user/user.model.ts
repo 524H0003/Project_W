@@ -1,4 +1,4 @@
-import { IDevice } from 'device/device.model';
+import { IDevice } from 'auth/device/device.model';
 import { IEventParticipator } from 'event/event.model';
 import { IFile } from 'file/file.model';
 

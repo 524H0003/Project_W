@@ -1,4 +1,4 @@
-import { Session } from 'session/session.entity';
+import { Session } from 'auth/session/session.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { User } from 'user/user.entity';
 import { SensitiveInfomations } from 'utils/typeorm.utils';

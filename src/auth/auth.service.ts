@@ -5,8 +5,8 @@ import {
 	Injectable,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DeviceService } from 'auth/device/device.service';
 import { compareSync } from 'bcrypt';
-import { DeviceService } from 'device/device.service';
 import { FileService } from 'file/file.service';
 import { User } from 'user/user.entity';
 import { ILogin, ISignUp } from 'user/user.model';

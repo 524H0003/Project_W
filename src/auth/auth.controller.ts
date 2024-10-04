@@ -13,11 +13,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
+import { DeviceService } from 'auth/device/device.service';
+import { SessionService } from 'auth/session/session.service';
 import { compareSync } from 'bcrypt';
-import { DeviceService } from 'device/device.service';
 import { CookieOptions, Request, Response } from 'express';
 import { memoryStorage } from 'multer';
-import { SessionService } from 'session/session.service';
 import { UserRecieve } from 'user/user.class';
 import { ILogin, ISignUp } from 'user/user.model';
 import { hash } from 'utils/auth.utils';

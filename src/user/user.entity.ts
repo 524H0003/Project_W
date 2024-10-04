@@ -1,6 +1,6 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Device } from 'auth/device/device.entity';
 import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
-import { Device } from 'device/device.entity';
 import { EventParticipator } from 'event/event.entity';
 import { File } from 'file/file.entity';
 import { IFile } from 'file/file.model';

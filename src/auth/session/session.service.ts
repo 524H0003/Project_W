@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeviceService } from 'device/device.service';
+import { DeviceService } from 'auth/device/device.service';
 import { DeepPartial, Repository } from 'typeorm';
 import { UserRecieve } from 'user/user.class';
 import { DatabaseRequests } from 'utils/typeorm.utils';
