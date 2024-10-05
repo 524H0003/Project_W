@@ -10,7 +10,7 @@ import { DeviceService } from 'auth/device/device.service';
 import { compareSync } from 'bcrypt';
 import { FileService } from 'file/file.service';
 import { User } from 'user/user.entity';
-import { ILogin, ISignUp } from 'user/user.model';
+import { ILogin, ISignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
 
 @Injectable()
@@ -25,10 +25,16 @@ export class AuthService extends Cryption {
 		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
 	}
 
-	async signUp(input: ISignUp, mtdt: string, avatar: Express.Multer.File) {
-		const user = await this.usrSvc.email(input.email);
+	async signUp(
+		input: ISignUp,
+		mtdt: string,
+		avatar: Express.Multer.File,
+		options?: { role?: UserRole; type?: typeof User },
+	) {
+		const user = await this.usrSvc.email(input.email),
+			{ role = UserRole.undefined, type = User } = options || {};
 		if (!user) {
-			const newUserRaw = new User({ ...input });
+			const newUserRaw = new type({ ...input });
 			return await validation(newUserRaw, async () => {
 				if (newUserRaw.hashedPassword) {
 					const newUser = await this.usrSvc.assign(newUserRaw),
@@ -36,6 +42,7 @@ export class AuthService extends Cryption {
 					await this.usrSvc.update({
 						...newUser,
 						avatarPath: avatarFile?.path,
+						role,
 					});
 					return this.dvcSvc.getTokens(newUser, mtdt);
 				}

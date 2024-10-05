@@ -12,7 +12,7 @@ import { User } from './user.entity';
 import { UserRole } from './user.model';
 
 const fileName = curFile(__filename),
-	userGet = 'fullName role';
+	userGet = 'fullName';
 let app: INestApplication,
 	usr: User,
 	req: TestAgent,
@@ -40,6 +40,8 @@ beforeEach(async () => {
 
 describe('findOne', () => {
 	it('success', async () => {
+		await usrRepo.save({ id: usrRaw.id, role: UserRole.student });
+
 		await execute(
 			() =>
 				req

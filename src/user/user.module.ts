@@ -13,7 +13,7 @@ import { UserService } from './user.service';
 	imports: [
 		TypeOrmModule.forFeature([User]),
 		forwardRef(() => AuthModule),
-		University,
+		forwardRef(() => University),
 	],
 	providers: [UserResolver, UserService],
 	exports: [UserService],

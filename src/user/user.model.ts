@@ -12,7 +12,6 @@ export interface IUserAuthentication {
 export interface IUserInfo {
 	fullName: string;
 	avatarPath: string;
-	role: UserRole;
 }
 
 export interface IUserTimeRecord {
@@ -23,10 +22,15 @@ export interface IUserStatus {
 	isActive: boolean;
 }
 
+export interface IUserSensitive {
+	role: UserRole;
+}
+
 export interface IUser
 	extends IUserAuthentication,
 		IUserInfo,
 		IUserTimeRecord,
+		IUserSensitive,
 		IUserStatus {
 	recievedNotifications: IReciever[];
 	devices?: IDevice[];

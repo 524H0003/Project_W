@@ -42,7 +42,12 @@ export class AuthController {
 	private readonly rfsKey = this.cfgSvc.get('REFRESH_KEY');
 	private readonly acsKey = this.cfgSvc.get('ACCESS_KEY');
 
-	clearCookies(request: Request, response: Response, acs = true, rfs = true) {
+	protected clearCookies(
+		request: Request,
+		response: Response,
+		acs = true,
+		rfs = true,
+	) {
 		for (const cki in request.cookies)
 			if (
 				(compareSync(this.acsKey, cki.substring(this.ckiPfx.length)) && acs) ||
@@ -51,7 +56,11 @@ export class AuthController {
 				response.clearCookie(cki, this.ckiOpt);
 	}
 
-	sendBack(request: Request, response: Response, usrRcv: UserRecieve): void {
+	protected sendBack(
+		request: Request,
+		response: Response,
+		usrRcv: UserRecieve,
+	): void {
 		this.clearCookies(request, response);
 		response
 			.cookie(
