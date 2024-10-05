@@ -47,4 +47,6 @@ export enum UserRole {
 	student = 'student',
 	faculty = 'faculty',
 	enterprise = 'enterprise',
+	undefined = 'undefined',
+	admin = 'admin',
 }

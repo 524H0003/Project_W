@@ -16,4 +16,5 @@ export enum FileType {
 	resume = 'resume',
 	report = 'report',
 	certificate = 'certificate',
+	other = 'other',
 }

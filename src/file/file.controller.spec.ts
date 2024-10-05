@@ -11,12 +11,15 @@ import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
 import { User } from 'user/user.entity';
+import { UserRole } from 'user/user.model';
+import { UserService } from 'user/user.service';
 
 const fileName = curFile(__filename);
 let rawUsr: User,
 	req: TestAgent,
 	app: INestApplication,
-	usrRepo: Repository<User>;
+	usrRepo: Repository<User>,
+	usrSvc: UserService;
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
@@ -25,6 +28,7 @@ beforeAll(async () => {
 	}).compile();
 
 	(app = module.createNestApplication()),
+		(usrSvc = module.get(UserService)),
 		(usrRepo = module.get(getRepositoryToken(User)));
 
 	await app.use(cookieParser()).init();
@@ -41,10 +45,12 @@ describe('seeUploadedFile', () => {
 		({ headers } = await req
 			.post('/auth/signup')
 			.attach('avatar', Buffer.from('test', 'base64'), 'avatar.png')
-			.field('name', rawUsr.fullName)
+			.field('fullName', rawUsr.fullName)
 			.field('email', rawUsr.email)
-			.field('password', rawUsr.password));
-		usr = await usrRepo.findOne({ where: { email: rawUsr.email } });
+			.field('password', rawUsr.password)),
+			(usr = await usrRepo.findOne({ where: { email: rawUsr.email } }));
+
+		await usrSvc.updateRole(usr.id, UserRole.admin);
 	});
 
 	it('success on server files', async () => {

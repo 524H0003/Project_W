@@ -16,7 +16,7 @@ export class File extends SensitiveInfomations implements IFile {
 	@JoinColumn({ name: 'user_id' })
 	createdBy: User;
 
-	@ManyToOne(() => Event, (_: Event) => _.documents)
+	@ManyToOne(() => Event, (_: Event) => _.documents, { nullable: true })
 	@JoinColumn({ name: 'event_id' })
 	atEvent: Event;
 
@@ -24,7 +24,7 @@ export class File extends SensitiveInfomations implements IFile {
 	@Column({ name: 'file_path', type: 'text' })
 	path: string;
 
-	@Column({ name: 'title', type: 'text' })
+	@Column({ name: 'title', type: 'text', default: 'user_file' })
 	title: string;
 
 	@Column({
@@ -32,9 +32,14 @@ export class File extends SensitiveInfomations implements IFile {
 		type: 'enum',
 		enum: FileType,
 		enumName: 'document_type',
+		default: FileType.other,
 	})
 	type: FileType;
 
-	@Column({ name: 'uploaded_at', type: 'timestamp with time zone' })
+	@Column({
+		name: 'uploaded_at',
+		type: 'timestamp with time zone',
+		default: () => 'CURRENT_TIMESTAMP',
+	})
 	uploadedAt: Date;
 }

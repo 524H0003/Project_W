@@ -17,7 +17,9 @@ import { EventParticipator } from 'event/participator/participator.entity';
 @Entity({ name: 'User' })
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends SensitiveInfomations implements IUser {
-	constructor(payload: Omit<IUserInfo, 'avatarPath'> & IUserAuthentication) {
+	constructor(
+		payload: Omit<IUserInfo, 'avatarPath' | 'role'> & IUserAuthentication,
+	) {
 		super();
 		Object.assign(this, payload);
 	}
@@ -76,6 +78,7 @@ export class User extends SensitiveInfomations implements IUser {
 		type: 'enum',
 		enum: UserRole,
 		enumName: 'user_role',
+		default: UserRole.undefined,
 	})
 	role: UserRole;
 
@@ -112,7 +115,6 @@ export class User extends SensitiveInfomations implements IUser {
 			email: (20).alpha + '@gmail.com',
 			password: 'Aa1!000000000000',
 			fullName: from,
-			role: UserRole.student,
 		});
 		if (n.hashedPassword) return n;
 	}
