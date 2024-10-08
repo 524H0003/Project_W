@@ -44,16 +44,17 @@ export class FileService extends DatabaseRequests<File> {
 		});
 	}
 
-	private s3Svc =
-		new S3Client({
-			forcePathStyle: true,
-			region: this.cfgSvc.get('AWS_REGION'),
-			endpoint: this.cfgSvc.get('AWS_ENDPOINT'),
-			credentials: {
-				accessKeyId: this.cfgSvc.get('AWS_ACCESS_KEY_ID'),
-				secretAccessKey: this.cfgSvc.get('AWS_SECRET_ACCESS_KEY'),
-			},
-		}) || null;
+	private s3Svc = this.cfgSvc.get('AWS_REGION')
+		? new S3Client({
+				forcePathStyle: true,
+				region: this.cfgSvc.get('AWS_REGION'),
+				endpoint: this.cfgSvc.get('AWS_ENDPOINT'),
+				credentials: {
+					accessKeyId: this.cfgSvc.get('AWS_ACCESS_KEY_ID'),
+					secretAccessKey: this.cfgSvc.get('AWS_SECRET_ACCESS_KEY'),
+				},
+			})
+		: null;
 	private serverFilesReg = /^.*\.server\.(.*)/g;
 	private rootDir = this.cfgSvc.get('SERVER_PUBLIC');
 
