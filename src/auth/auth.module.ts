@@ -12,6 +12,7 @@ import { EnterpriseModule } from 'enterprise/enterprise.module';
 import { AuthController } from './auth.controller';
 import { AccessStrategy } from './strategies/access.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
+import { LocalHostStrategy } from './strategies/localhost.strategy';
 
 @Module({
 	imports: [
@@ -41,6 +42,7 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
 		// Strategies
 		AccessStrategy,
 		RefreshStrategy,
+		LocalHostStrategy,
 	],
 	controllers: [AuthController],
 	exports: [AuthService],

@@ -4,7 +4,6 @@ import { Cryption } from 'app/utils/auth.utils';
 import { AuthService } from 'auth/auth.service';
 import { ILogin, ISignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
-import { Student } from './student.entity';
 
 @Injectable()
 export class StudentService extends Cryption {
@@ -32,7 +31,7 @@ export class StudentService extends Cryption {
 					} as ISignUp,
 					mtdt,
 					null,
-					{ role: UserRole.student, type: Student },
+					{ role: UserRole.student },
 				);
 			}
 			throw new BadRequestException('Invalid student email');

@@ -7,8 +7,8 @@ export class InterfaceCasting<T, K extends keyof T> {
 		get.forEach((_) => (this[String(_)] = input[_]));
 	}
 
-	static quick<T, K extends keyof T>(input: T, get: readonly K[]) {
-		return new InterfaceCasting(input, get);
+	static quick<T, K extends keyof T>(input: T, get: readonly K[]): T {
+		return new InterfaceCasting(input, get) as T;
 	}
 }
 

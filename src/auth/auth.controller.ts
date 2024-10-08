@@ -23,6 +23,7 @@ import { UserRecieve } from 'user/user.class';
 import { ILogin, ISignUp } from 'user/user.model';
 import { MetaData } from './auth.guard';
 import { AuthService } from './auth.service';
+import { LocalHostStrategy } from './strategies/localhost.strategy';
 
 @Controller('auth')
 export class AuthController {
@@ -81,6 +82,7 @@ export class AuthController {
 	}
 
 	@Post('login')
+	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(NoFilesInterceptor())
 	async login(
 		@Req() request: Request,
@@ -96,6 +98,7 @@ export class AuthController {
 	}
 
 	@Post('signup')
+	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Req() request: Request,

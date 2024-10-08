@@ -1,10 +1,10 @@
 import { IEvent } from 'event/event.model';
-import { IStudent } from 'university/student/student.model';
+import { IUser } from 'user/user.model';
 
 // Interfaces
 export interface IEventParticipator {
 	from: IEvent;
-	participatedBy: IStudent;
+	participatedBy: IUser;
 	role: EventParticipatorRole;
 	status: EventParticipatorStatus;
 	isAttended: boolean;

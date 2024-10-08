@@ -43,6 +43,4 @@ export class StudentController extends AuthController {
 			await this.StuSvc.login(body, mtdt),
 		);
 	}
-
-	async signUp(): Promise<void> {}
 }

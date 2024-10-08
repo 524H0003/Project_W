@@ -6,9 +6,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cryption, validation } from 'app/utils/auth.utils';
+import { InterfaceCasting } from 'app/utils/utils';
 import { DeviceService } from 'auth/device/device.service';
 import { compareSync } from 'bcrypt';
 import { FileService } from 'file/file.service';
+import { ILoginKeys, ISignUpKeys } from 'models';
 import { User } from 'user/user.entity';
 import { ILogin, ISignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
@@ -29,12 +31,13 @@ export class AuthService extends Cryption {
 		input: ISignUp,
 		mtdt: string,
 		avatar: Express.Multer.File,
-		options?: { role?: UserRole; type?: typeof User },
+		options?: { role?: UserRole },
 	) {
+		input = InterfaceCasting.quick(input, ISignUpKeys);
 		const user = await this.usrSvc.email(input.email),
-			{ role = UserRole.undefined, type = User } = options || {};
+			{ role = UserRole.undefined } = options || {};
 		if (!user) {
-			const newUserRaw = new type({ ...input });
+			const newUserRaw = new User({ ...input });
 			return await validation(newUserRaw, async () => {
 				if (newUserRaw.hashedPassword) {
 					const newUser = await this.usrSvc.assign(newUserRaw),
@@ -52,6 +55,7 @@ export class AuthService extends Cryption {
 	}
 
 	async login(input: ILogin, mtdt: string) {
+		input = InterfaceCasting.quick(input, ILoginKeys);
 		const user = await this.usrSvc.email(input.email);
 		if (user) {
 			const isPasswordMatched = compareSync(

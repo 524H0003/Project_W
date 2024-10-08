@@ -6,7 +6,7 @@ import {
 } from './participator.model';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Event } from 'event/event.entity';
-import { Student } from 'university/student/student.entity';
+import { User } from 'user/user.entity';
 
 @Entity({ name: 'EventParticipation' })
 export class EventParticipator
@@ -18,9 +18,9 @@ export class EventParticipator
 	@JoinColumn({ name: 'event_id' })
 	from: Event;
 
-	@ManyToOne(() => Student, (_: Student) => _.user.participatedEvents)
+	@ManyToOne(() => User, (_: User) => _.participatedEvents)
 	@JoinColumn({ name: 'user_id' })
-	participatedBy: Student;
+	participatedBy: User;
 
 	// Infomations
 	@Column({ name: 'attendance' })
