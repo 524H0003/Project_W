@@ -3,7 +3,7 @@ import { Device } from 'auth/device/device.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { ISession } from './session.model';
 
-@Entity()
+@Entity({ name: 'auth_session' })
 export class Session extends SensitiveInfomations implements ISession {
 	constructor(input: ISession) {
 		super();

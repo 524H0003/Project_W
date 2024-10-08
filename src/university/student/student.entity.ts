@@ -1,10 +1,14 @@
-import { ChildEntity, Column, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudent } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
 
-@ChildEntity()
-export class Student extends User implements IStudent {
+@Entity({ name: 'Student' })
+export class Student implements IStudent {
+	// Core Entity
+	@Column(() => User, { prefix: false })
+	user: User;
+
 	// Relationships
 	@ManyToOne(() => Enterprise, (_: Enterprise) => _.students)
 	@JoinColumn({ name: 'current_enterprise_id' })

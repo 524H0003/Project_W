@@ -1,6 +1,7 @@
-import { IUser } from 'user/user.model';
+import { IEventCreator } from 'event/creator/creator.model';
 
 // Interfaces
-export interface IFaculty extends IUser {
+export interface IFaculty {
+	user: IEventCreator;
 	department: string;
 }

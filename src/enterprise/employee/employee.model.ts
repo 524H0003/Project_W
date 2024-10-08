@@ -1,7 +1,10 @@
 import { IEnterprise } from 'enterprise/enterprise.model';
-import { IUser } from 'user/user.model';
+import { IEventCreator } from 'event/creator/creator.model';
 
-export interface IEmployee extends IUser {
+// Interfaces
+export interface IEmployee {
+	user: IEventCreator;
+
 	enterprise: IEnterprise;
 
 	position: EmployeePosition;

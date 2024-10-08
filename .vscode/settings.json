@@ -131,6 +131,12 @@
 			"color": "#99E1D9",
 			"isWholeLine": true,
 			"text": " Embedded Entity"
+		},
+		{
+			"backgroundColor": "#FBFEF9",
+			"color": "#191923",
+			"isWholeLine": true,
+			"text": " Core Entity"
 		}
 	]
 }

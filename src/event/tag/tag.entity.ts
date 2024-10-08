@@ -4,7 +4,7 @@ import { ITag } from './tag.model';
 import { BlackBox } from 'app/utils/model.utils';
 import { Event } from 'event/event.entity';
 
-@Entity({ name: 'EventTag' })
+@Entity({ name: 'Tag' })
 export class EventTag extends SensitiveInfomations implements ITag {
 	// Relationships
 	@ManyToMany(() => Event)

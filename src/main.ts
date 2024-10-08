@@ -9,11 +9,9 @@ import { config as awsCfg } from 'aws-sdk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { Event } from 'event/event.entity';
-import { Employee } from 'enterprise/employee/employee.entity';
-import { Faculty } from 'university/faculty/faculty.entity';
-import { Student } from 'university/student/student.entity';
 import { AppModule } from './app.module';
 import { Notification } from 'notification/notification.entity';
+import { User } from 'user/user.entity';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
@@ -37,7 +35,7 @@ async function bootstrap() {
 	AdminJS.registerAdapter({ Resource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
 	const admin = new AdminJS({
-			resources: [Student, Faculty, Employee, Event, Notification],
+			resources: [User, Event, Notification],
 		}),
 		adminRouter = buildAuthenticatedRouter(
 			admin,

@@ -29,7 +29,7 @@ export class Event extends SensitiveInfomations implements IEvent {
 	documents: File[];
 
 	@ManyToMany(() => EventTag)
-	@JoinTable({ name: 'event_tag' })
+	@JoinTable({ name: 'EventTag' })
 	tags: EventTag[];
 
 	// Infomations

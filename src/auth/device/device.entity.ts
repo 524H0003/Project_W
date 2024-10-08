@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { IDevice } from './device.model';
 import { User } from 'user/user.entity';
 
-@Entity()
+@Entity({ name: 'auth_device' })
 export class Device extends SensitiveInfomations implements IDevice {
 	constructor(payload: IDevice) {
 		super();

@@ -18,7 +18,7 @@ export class EventParticipator
 	@JoinColumn({ name: 'event_id' })
 	from: Event;
 
-	@ManyToOne(() => Student, (_: Student) => _.participatedEvents)
+	@ManyToOne(() => Student, (_: Student) => _.user.participatedEvents)
 	@JoinColumn({ name: 'user_id' })
 	participatedBy: Student;
 
