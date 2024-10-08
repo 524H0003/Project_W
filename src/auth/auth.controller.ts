@@ -13,16 +13,17 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
+import { hash } from 'app/utils/auth.utils';
+import { DeviceService } from 'auth/device/device.service';
+import { SessionService } from 'auth/session/session.service';
 import { compareSync } from 'bcrypt';
-import { DeviceService } from 'device/device.service';
 import { CookieOptions, Request, Response } from 'express';
 import { memoryStorage } from 'multer';
-import { SessionService } from 'session/session.service';
 import { UserRecieve } from 'user/user.class';
 import { ILogin, ISignUp } from 'user/user.model';
-import { hash } from 'utils/auth.utils';
 import { MetaData } from './auth.guard';
 import { AuthService } from './auth.service';
+import { LocalHostStrategy } from './strategies/localhost.strategy';
 
 @Controller('auth')
 export class AuthController {
@@ -42,7 +43,12 @@ export class AuthController {
 	private readonly rfsKey = this.cfgSvc.get('REFRESH_KEY');
 	private readonly acsKey = this.cfgSvc.get('ACCESS_KEY');
 
-	clearCookies(request: Request, response: Response, acs = true, rfs = true) {
+	protected clearCookies(
+		request: Request,
+		response: Response,
+		acs = true,
+		rfs = true,
+	) {
 		for (const cki in request.cookies)
 			if (
 				(compareSync(this.acsKey, cki.substring(this.ckiPfx.length)) && acs) ||
@@ -51,7 +57,11 @@ export class AuthController {
 				response.clearCookie(cki, this.ckiOpt);
 	}
 
-	sendBack(request: Request, response: Response, usrRcv: UserRecieve): void {
+	protected sendBack(
+		request: Request,
+		response: Response,
+		usrRcv: UserRecieve,
+	): void {
 		this.clearCookies(request, response);
 		response
 			.cookie(
@@ -72,6 +82,7 @@ export class AuthController {
 	}
 
 	@Post('login')
+	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(NoFilesInterceptor())
 	async login(
 		@Req() request: Request,
@@ -87,6 +98,7 @@ export class AuthController {
 	}
 
 	@Post('signup')
+	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Req() request: Request,

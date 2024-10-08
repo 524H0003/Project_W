@@ -1,13 +1,16 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
 import { User } from './user.entity';
+import { UserService } from './user.service';
+import { CurrentUser } from 'auth/auth.guard';
 
 @Controller('user')
 export class UserController {
+	constructor(private usrSvc: UserService) {}
+
 	@Post('')
 	@UseGuards(AuthGuard('access'))
-	getUser(@Req() req: Request) {
-		if (req.user) return (req.user as User).info;
+	getUser(@CurrentUser() usr: User) {
+		if (usr) return new User(usr).info;
 	}
 }

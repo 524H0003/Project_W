@@ -5,13 +5,15 @@ import {
 	Injectable,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Cryption, validation } from 'app/utils/auth.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { DeviceService } from 'auth/device/device.service';
 import { compareSync } from 'bcrypt';
-import { DeviceService } from 'device/device.service';
 import { FileService } from 'file/file.service';
+import { ILoginKeys, ISignUpKeys } from 'models';
 import { User } from 'user/user.entity';
-import { ILogin, ISignUp } from 'user/user.model';
+import { ILogin, ISignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
-import { Cryption, validation } from 'utils/auth.utils';
 
 @Injectable()
 export class AuthService extends Cryption {
@@ -25,8 +27,15 @@ export class AuthService extends Cryption {
 		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
 	}
 
-	async signUp(input: ISignUp, mtdt: string, avatar: Express.Multer.File) {
-		const user = await this.usrSvc.email(input.email);
+	async signUp(
+		input: ISignUp,
+		mtdt: string,
+		avatar: Express.Multer.File,
+		options?: { role?: UserRole },
+	) {
+		input = InterfaceCasting.quick(input, ISignUpKeys);
+		const user = await this.usrSvc.email(input.email),
+			{ role = UserRole.undefined } = options || {};
 		if (!user) {
 			const newUserRaw = new User({ ...input });
 			return await validation(newUserRaw, async () => {
@@ -35,7 +44,8 @@ export class AuthService extends Cryption {
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
 					await this.usrSvc.update({
 						...newUser,
-						avatarFilePath: avatarFile?.path,
+						avatarPath: avatarFile?.path,
+						role,
 					});
 					return this.dvcSvc.getTokens(newUser, mtdt);
 				}
@@ -45,6 +55,7 @@ export class AuthService extends Cryption {
 	}
 
 	async login(input: ILogin, mtdt: string) {
+		input = InterfaceCasting.quick(input, ILoginKeys);
 		const user = await this.usrSvc.email(input.email);
 		if (user) {
 			const isPasswordMatched = compareSync(

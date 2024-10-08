@@ -7,16 +7,11 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { config as awsCfg } from 'aws-sdk';
 import cookieParser from 'cookie-parser';
-import { Enterprise } from 'enterprise/enterprise.entity';
-import { Event } from 'event/event.entity';
-import { EventType } from 'eventType/eventType.entity';
 import express from 'express';
-import { Faculty } from 'faculty/faculty.entity';
-import { Internship } from 'internship/internship.entity';
-import { Student } from 'student/student.entity';
+import { Event } from 'event/event.entity';
 import { AppModule } from './app.module';
-import { Device } from './device/device.entity';
-import { User } from './user/user.entity';
+import { Notification } from 'notification/notification.entity';
+import { User } from 'user/user.entity';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
@@ -39,18 +34,7 @@ async function bootstrap() {
 		cfgSvc = app.get(ConfigService);
 	AdminJS.registerAdapter({ Resource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
-	const admin = new AdminJS({
-			resources: [
-				User,
-				Device,
-				Student,
-				Enterprise,
-				Faculty,
-				Internship,
-				Event,
-				EventType,
-			],
-		}),
+	const admin = new AdminJS({ resources: [User, Event, Notification] }),
 		adminRouter = buildAuthenticatedRouter(
 			admin,
 			{
@@ -74,7 +58,10 @@ async function bootstrap() {
 	});
 
 	// Init multiple connection type
-	await app.use(admin.options.rootPath, adminRouter).init();
+	await app
+		.use(admin.options.rootPath, adminRouter)
+		.setGlobalPrefix('api/v1')
+		.init();
 	http.createServer(server).listen(cfgSvc.get('SERVER_PORT'));
 
 	if (existsSync(httpsPemFolder))

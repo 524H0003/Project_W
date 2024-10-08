@@ -1,6 +1,7 @@
-import { IDevice } from 'device/device.model';
+import { IDevice } from 'auth/device/device.model';
+import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
-import { IRecordTime } from 'utils/model.utils';
+import { IReciever } from 'notification/reciever/reciever.model';
 
 // Interfaces
 export interface IUserAuthentication {
@@ -9,19 +10,32 @@ export interface IUserAuthentication {
 }
 
 export interface IUserInfo {
-	name: string;
-	email: string;
-	phone: string;
-	address: string;
-
-	avatarFilePath?: string;
-
-	roles?: Role[];
+	fullName: string;
+	avatarPath: string;
 }
 
-export interface IUser extends IUserAuthentication, IUserInfo {
+export interface IUserTimeRecord {
+	lastLogin: Date;
+}
+
+export interface IUserStatus {
+	isActive: boolean;
+}
+
+export interface IUserSensitive {
+	role: UserRole;
+}
+
+export interface IUser
+	extends IUserAuthentication,
+		IUserInfo,
+		IUserTimeRecord,
+		IUserSensitive,
+		IUserStatus {
+	recievedNotifications: IReciever[];
 	devices?: IDevice[];
 	uploadFiles?: IFile[];
+	participatedEvents: IEventParticipator[];
 }
 
 export interface IUserRecieve {
@@ -33,11 +47,10 @@ export interface ILogin extends IUserAuthentication {}
 export interface ISignUp extends IUserAuthentication, IUserInfo {}
 
 // Enums
-export enum Role {
-	USER = 'USER',
-	ADMIN = 'ADMIN',
-	STAFF = 'STAFF',
-	STUDENT = 'STUDENT',
-	ENTERPRISE = 'ENTERPRISE',
-	FACULTY = 'FACULTY',
+export enum UserRole {
+	student = 'student',
+	faculty = 'faculty',
+	enterprise = 'enterprise',
+	undefined = 'undefined',
+	admin = 'admin',
 }

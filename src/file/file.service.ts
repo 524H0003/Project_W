@@ -17,9 +17,12 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+	DatabaseRequests,
+	FindOptionsWithCustom,
+} from 'app/utils/typeorm.utils';
 import { Repository } from 'typeorm';
 import { User } from 'user/user.entity';
-import { DatabaseRequests, FindOptionsWithCustom } from 'utils/typeorm.utils';
 import { File } from './file.entity';
 
 @Injectable()
@@ -41,16 +44,17 @@ export class FileService extends DatabaseRequests<File> {
 		});
 	}
 
-	private s3Svc =
-		new S3Client({
-			forcePathStyle: true,
-			region: this.cfgSvc.get('AWS_REGION'),
-			endpoint: this.cfgSvc.get('AWS_ENDPOINT'),
-			credentials: {
-				accessKeyId: this.cfgSvc.get('AWS_ACCESS_KEY_ID'),
-				secretAccessKey: this.cfgSvc.get('AWS_SECRET_ACCESS_KEY'),
-			},
-		}) || null;
+	private s3Svc = this.cfgSvc.get('AWS_REGION')
+		? new S3Client({
+				forcePathStyle: true,
+				region: this.cfgSvc.get('AWS_REGION'),
+				endpoint: this.cfgSvc.get('AWS_ENDPOINT'),
+				credentials: {
+					accessKeyId: this.cfgSvc.get('AWS_ACCESS_KEY_ID'),
+					secretAccessKey: this.cfgSvc.get('AWS_SECRET_ACCESS_KEY'),
+				},
+			})
+		: null;
 	private serverFilesReg = /^.*\.server\.(.*)/g;
 	private rootDir = this.cfgSvc.get('SERVER_PUBLIC');
 
@@ -138,7 +142,7 @@ export class FileService extends DatabaseRequests<File> {
 				deep: 2,
 				relations: ['createdBy'],
 			});
-			if (user?.id === file.createdBy.id || file.forEveryone) return filename;
+			if (user?.id === file.createdBy.id) return filename;
 		}
 		return false;
 	}

@@ -1,30 +1,30 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
-import {
-	IsEmail,
-	IsNumberString,
-	IsString,
-	IsStrongPassword,
-} from 'class-validator';
-import { Device } from 'device/device.entity';
-import { File } from 'file/file.entity';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { hash } from 'app/utils/auth.utils';
+import { BlackBox } from 'app/utils/model.utils';
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { Device } from 'auth/device/device.entity';
+import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
 import { IFile } from 'file/file.model';
 import { IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany, TableInheritance } from 'typeorm';
-import { hash } from 'utils/auth.utils';
-import { SensitiveInfomations } from 'utils/typeorm.utils';
-import { InterfaceCasting } from 'utils/utils';
-import { IUser, Role } from './user.model';
+import { IUser, IUserAuthentication, IUserInfo, UserRole } from './user.model';
+import { Reciever } from 'notification/reciever/reciever.entity';
+import { EventParticipator } from 'event/participator/participator.entity';
+import { File } from 'file/file.entity';
 
 @ObjectType()
-@Entity()
+@Entity({ name: 'User' })
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends SensitiveInfomations implements IUser {
-	constructor(payload: IUser) {
+	constructor(
+		payload: Omit<IUserInfo, 'avatarPath' | 'role'> & IUserAuthentication,
+	) {
 		super();
 		Object.assign(this, payload);
 	}
 
-	@Column()
+	@Column({ name: 'password_hash' })
 	private _hashedPassword: string;
 
 	get hashedPassword() {
@@ -38,41 +38,49 @@ export class User extends SensitiveInfomations implements IUser {
 	set hashedPassword(i: any) {}
 
 	// Relationships
-	@HideField()
 	@OneToMany(() => Device, (_: Device) => _.owner)
 	devices?: Device[];
 
 	@OneToMany(() => File, (_) => _.createdBy)
 	uploadFiles?: IFile[];
 
+	@OneToMany(
+		() => EventParticipator,
+		(_: EventParticipator) => _.participatedBy,
+	)
+	participatedEvents: EventParticipator[];
+
+	@OneToMany(() => Reciever, (_: Reciever) => _.to)
+	recievedNotifications: Reciever[];
+
 	// Infomations
-	@Field({ nullable: true })
-	@Column({ nullable: true })
-	avatarFilePath?: string;
+	@Field()
+	@Column({
+		default: 'defaultUser.server.jpg',
+		name: 'image_path',
+		type: 'text',
+	})
+	avatarPath: string;
 
 	@IsString()
 	@Field()
-	@Column()
-	name: string;
+	@Column({ name: 'full_name', type: 'text' })
+	fullName: string;
 
 	@IsEmail()
 	@Field()
-	@Column()
+	@Column({ name: 'email', type: 'text' })
 	email: string;
 
-	@IsString()
-	@Field()
-	@Column()
-	address: string = '';
-
-	@IsNumberString()
-	@Field()
-	@Column()
-	phone: string;
-
-	@Field(() => [Role])
-	@Column({ type: 'enum', enum: Role, array: true, default: [Role.USER] })
-	roles: Role[];
+	@Field(() => UserRole)
+	@Column({
+		name: 'role',
+		type: 'enum',
+		enum: UserRole,
+		enumName: 'user_role',
+		default: UserRole.undefined,
+	})
+	role: UserRole;
 
 	@IsStrongPassword({
 		minLength: 16,
@@ -83,6 +91,20 @@ export class User extends SensitiveInfomations implements IUser {
 	})
 	password: string;
 
+	@Column({
+		name: 'last_login',
+		type: 'timestamp with time zone',
+		default: () => 'CURRENT_TIMESTAMP',
+	})
+	lastLogin: Date;
+
+	@Column({ name: 'is_active', default: false })
+	isActive: boolean;
+
+	// Embedded Entity
+	@Column(() => BlackBox, { prefix: false })
+	blackBox: BlackBox;
+
 	// Methods
 	get info() {
 		return InterfaceCasting.quick(this, IUserInfoKeys);
@@ -90,13 +112,9 @@ export class User extends SensitiveInfomations implements IUser {
 
 	static test(from: string) {
 		const n = new User({
-			avatarFilePath: null,
 			email: (20).alpha + '@gmail.com',
 			password: 'Aa1!000000000000',
-			name: from,
-			roles: [Role.USER],
-			phone: (10).numeric,
-			address: (20).string,
+			fullName: from,
 		});
 		if (n.hashedPassword) return n;
 	}

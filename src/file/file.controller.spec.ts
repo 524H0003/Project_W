@@ -1,22 +1,25 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { TestModule } from 'app/module/test.module';
+import { execute } from 'app/utils/test.utils';
 import { AuthModule } from 'auth/auth.module';
 import cookieParser from 'cookie-parser';
 import { FileController } from 'file/file.controller';
 import { FileModule } from 'file/file.module';
-import { TestModule } from 'module/test.module';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
 import { User } from 'user/user.entity';
-import { execute } from 'utils/test.utils';
+import { UserRole } from 'user/user.model';
+import { UserService } from 'user/user.service';
 
 const fileName = curFile(__filename);
 let rawUsr: User,
 	req: TestAgent,
 	app: INestApplication,
-	usrRepo: Repository<User>;
+	usrRepo: Repository<User>,
+	usrSvc: UserService;
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
@@ -25,6 +28,7 @@ beforeAll(async () => {
 	}).compile();
 
 	(app = module.createNestApplication()),
+		(usrSvc = module.get(UserService)),
 		(usrRepo = module.get(getRepositoryToken(User)));
 
 	await app.use(cookieParser()).init();
@@ -41,11 +45,12 @@ describe('seeUploadedFile', () => {
 		({ headers } = await req
 			.post('/auth/signup')
 			.attach('avatar', Buffer.from('test', 'base64'), 'avatar.png')
-			.field('name', rawUsr.name)
-			.field('phone', rawUsr.phone)
+			.field('fullName', rawUsr.fullName)
 			.field('email', rawUsr.email)
-			.field('password', rawUsr.password));
-		usr = await usrRepo.findOne({ where: { email: rawUsr.email } });
+			.field('password', rawUsr.password)),
+			(usr = await usrRepo.findOne({ where: { email: rawUsr.email } }));
+
+		await usrSvc.updateRole(usr.id, UserRole.admin);
 	});
 
 	it('success on server files', async () => {
@@ -65,9 +70,7 @@ describe('seeUploadedFile', () => {
 	it('success', async () => {
 		await execute(
 			() =>
-				req
-					.get(`/file/${usr.avatarFilePath}`)
-					.set('Cookie', headers['set-cookie']),
+				req.get(`/file/${usr.avatarPath}`).set('Cookie', headers['set-cookie']),
 			{
 				exps: [
 					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
@@ -77,7 +80,7 @@ describe('seeUploadedFile', () => {
 	});
 
 	it('failed', async () => {
-		await execute(() => req.get(`/file/${usr.avatarFilePath}`), {
+		await execute(() => req.get(`/file/${usr.avatarPath}`), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 				{

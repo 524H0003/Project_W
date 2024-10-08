@@ -4,24 +4,26 @@
 	"editor.foldingImportsByDefault": true,
 	"editor.insertSpaces": false,
 	"editor.tabSize": 2,
-	"explorerExclude.backup": {
-		"**/.git": true,
-		"**/.svn": true,
-		"**/.hg": true,
-		"**/CVS": true,
-		"**/.DS_Store": true,
-		"**/Thumbs.db": true,
+	"explorerExclude.backup": {},
+	"files.eol": "\n",
+	"files.exclude": {
 		"**/*.example*": true,
 		"**/*.js": true,
-		"**/*.json": false,
+		"**/*.json": true,
 		"**/*.tsbuildinfo": true,
 		"**/*spec*": true,
-		"**/schema.gql": false,
+		"**/.DS_Store": true,
+		"**/.git": true,
+		"**/.hg": true,
+		"**/.svn": true,
+		"**/CVS": true,
+		"**/Thumbs.db": true,
+		"**/schema.gql": true,
 		".adminjs": true,
 		".devcontainer": true,
 		".git": true,
 		".github": true,
-		".gitignore": false,
+		".gitignore": true,
 		".prettierrc": true,
 		"LICENSE": true,
 		"coverage": true,
@@ -29,41 +31,10 @@
 		"node_modules": true,
 		"reports": true,
 		"secrets": true,
-		"src/types.ts": true,
-		"src/models.ts": true
+		"src/models.ts": true,
+		"src/types.ts": true
 	},
-	"files.eol": "\n",
-	"files.exclude": {
-		"**/.git": false,
-		"**/.svn": false,
-		"**/.hg": false,
-		"**/CVS": false,
-		"**/.DS_Store": false,
-		"**/Thumbs.db": false,
-		"**/*.example*": false,
-		"**/*.js": false,
-		"**/*.json": false,
-		"**/*.tsbuildinfo": false,
-		"**/*spec*": false,
-		"**/schema.gql": false,
-		".adminjs": false,
-		".devcontainer": false,
-		".git": false,
-		".github": false,
-		".gitignore": false,
-		".prettierrc": false,
-		"LICENSE": false,
-		"coverage": false,
-		"dist": false,
-		"node_modules": false,
-		"reports": false,
-		"secrets": false,
-		"src/types.ts": false,
-		"src/models.ts": false
-	},
-	"jest.outputConfig": {
-		"clearOnRun": "terminal"
-	},
+	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,
@@ -159,7 +130,13 @@
 			"backgroundColor": "#32021F",
 			"color": "#99E1D9",
 			"isWholeLine": true,
-			"text": " Time Record"
+			"text": " Embedded Entity"
+		},
+		{
+			"backgroundColor": "#FBFEF9",
+			"color": "#191923",
+			"isWholeLine": true,
+			"text": " Core Entity"
 		}
 	]
 }

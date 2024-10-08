@@ -1,46 +1,87 @@
-import { Enterprise } from 'enterprise/enterprise.entity';
-import { EventType } from 'eventType/eventType.entity';
-import { Student } from 'student/student.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
-import { SensitiveInfomations } from 'utils/typeorm.utils';
-import { EventStatus, IEvent } from './event.model';
+import {
+	Column,
+	Entity,
+	JoinColumn,
+	JoinTable,
+	ManyToMany,
+	ManyToOne,
+	OneToMany,
+} from 'typeorm';
+import { EventStatus, EventType, IEvent } from './event.model';
+import { EventParticipator } from './participator/participator.entity';
+import { File } from 'file/file.entity';
+import { EventTag } from './tag/tag.entity';
+import { BlackBox } from 'app/utils/model.utils';
+import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import { EventCreator } from './creator/creator.entity';
 
-@Entity()
+@Entity({ name: 'Event' })
 export class Event extends SensitiveInfomations implements IEvent {
 	// Relationships
-	@ManyToOne(() => Enterprise, (_: Enterprise) => _.events)
-	createdBy: Enterprise;
+	@ManyToOne(() => EventCreator, (_: EventCreator) => _.createdEvents)
+	@JoinColumn({ name: 'creator_id' })
+	createdBy: EventCreator;
 
-	@ManyToMany(() => Student, (_: Student) => _.careEvents)
-	@JoinTable()
-	watchingBy: Student[];
+	@OneToMany(() => EventParticipator, (_: EventParticipator) => _.from)
+	participators: EventParticipator[];
 
-	@ManyToOne(() => EventType, (_) => _.events)
-	eventType: EventType;
+	@OneToMany(() => File, (_: File) => _.atEvent)
+	documents: File[];
+
+	@ManyToMany(() => EventTag)
+	@JoinTable({ name: 'EventTag' })
+	tags: EventTag[];
 
 	// Infomations
-	@Column({ type: 'text' })
+	@Column({ name: 'description', type: 'text' })
 	description: string;
 
-	@Column()
+	@Column({ name: 'title', type: 'text' })
 	title: string;
 
-	@Column({ type: 'enum', enum: EventStatus, default: EventStatus.PENDING })
-	status: EventStatus;
-
-	@Column()
+	@Column({ name: 'max_participants', type: 'int4' })
 	maxParticipants: number;
 
-	@Column()
-	positionsAvaliable: number;
+	@Column({ name: 'positions_available', type: 'int4' })
+	positionsAvailable: number;
 
-	@Column()
+	@Column({
+		name: 'status',
+		type: 'enum',
+		enum: EventStatus,
+		default: EventStatus.draft,
+		enumName: 'event_status',
+	})
+	status: EventStatus;
+
+	@Column({
+		name: 'event_type',
+		type: 'enum',
+		enum: EventType,
+		enumName: 'event_type',
+		default: EventType.internship,
+	})
+	type: EventType;
+
+	@Column({ name: 'location', type: 'text' })
 	location: string;
 
-	// Time Record
-	@Column()
+	@Column({ name: 'start_date', type: 'timestamp with time zone' })
 	startDate: Date;
 
-	@Column()
+	@Column({ name: 'end_date', type: 'timestamp with time zone' })
 	endDate: Date;
+
+	@Column({ name: 'application_deadline', type: 'date' })
+	applicationDeadline: Date;
+
+	@Column({ name: 'required_skills', type: 'text' })
+	requiredSkills: string;
+
+	@Column({ name: 'additional_fields', type: 'jsonb' })
+	additionalFields: any;
+
+	// Embedded Entity
+	@Column(() => BlackBox, { prefix: false })
+	blackBox: BlackBox;
 }

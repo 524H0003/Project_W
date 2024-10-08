@@ -1,16 +1,16 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { execute } from 'app/utils/test.utils';
+import { Repository } from 'typeorm';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { TestModule } from 'app/module/test.module';
 import cookieParser from 'cookie-parser';
-import { Device } from 'device/device.entity';
-import { TestModule } from 'module/test.module';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
-import { Repository } from 'typeorm';
-import { User } from 'user/user.entity';
-import { execute } from 'utils/test.utils';
 import { AuthModule } from './auth.module';
+import { User } from 'user/user.entity';
+import { Device } from './device/device.entity';
 
 const fileName = curFile(__filename);
 

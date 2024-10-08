@@ -2,18 +2,17 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { DeviceModule } from 'device/device.module';
-import { EnterpriseModule } from 'enterprise/enterprise.module';
 import { EventModule } from 'event/event.module';
-import { FacultyModule } from 'faculty/faculty.module';
+import { DeviceModule } from 'auth/device/device.module';
 import { FileModule } from 'file/file.module';
-import { InternshipModule } from 'internship/internship.module';
-import { StudentModule } from 'student/student.module';
 import { UserModule } from 'user/user.module';
-import { AuthController } from './auth.controller';
+import { NotificationModule } from 'notification/notification.module';
 import { AuthService } from './auth.service';
+import { EnterpriseModule } from 'enterprise/enterprise.module';
+import { AuthController } from './auth.controller';
 import { AccessStrategy } from './strategies/access.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
+import { LocalHostStrategy } from './strategies/localhost.strategy';
 
 @Module({
 	imports: [
@@ -31,20 +30,19 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
 			},
 		}),
 		// Foreign modules
+		EventModule,
+		NotificationModule,
+		FileModule,
 		forwardRef(() => DeviceModule),
 		forwardRef(() => UserModule),
-		InternshipModule,
 		EnterpriseModule,
-		FacultyModule,
-		EventModule,
-		StudentModule,
-		FileModule,
 	],
 	providers: [
 		AuthService,
 		// Strategies
 		AccessStrategy,
 		RefreshStrategy,
+		LocalHostStrategy,
 	],
 	controllers: [AuthController],
 	exports: [AuthService],

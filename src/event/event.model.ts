@@ -1,26 +1,37 @@
-import { IEnterprise } from 'enterprise/enterprise.model';
-import { IEventType } from 'eventType/eventType.model';
-import { IStudent } from 'student/student.model';
-import { IRecordTime } from 'types';
+import { IEventCreator } from './creator/creator.model';
+import { IEventParticipator } from './participator/participator.model';
+import { ITag } from './tag/tag.model';
 
 // Interfaces
 export interface IEvent {
-	createdBy: IEnterprise;
-	watchingBy: IStudent[];
-	startDate: Date;
-	endDate: Date;
+	createdBy: IEventCreator;
+	participators: IEventParticipator[];
+	tags: ITag[];
 	title: string;
 	description: string;
+	startDate: Date;
+	endDate: Date;
+	type: EventType;
 	status: EventStatus;
-	positionsAvaliable: number;
+	positionsAvailable: number;
 	maxParticipants: number;
 	location: string;
-	eventType: IEventType;
+	applicationDeadline: Date;
+	requiredSkills: string;
+	additionalFields: any;
 }
 
 // Enums
 export enum EventStatus {
-	ONGOING = 'ONGOING',
-	ENDED = 'ENDED',
-	PENDING = 'PENDING',
+	draft = 'draft',
+	published = 'published',
+	cancelled = 'cancelled',
+	completed = 'completed',
+}
+
+export enum EventType {
+	internship = 'internship',
+	job_fair = 'job_fair',
+	workshop = 'workshop',
+	seminar = 'seminar',
 }

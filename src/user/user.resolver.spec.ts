@@ -1,18 +1,18 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { TestModule } from 'app/module/test.module';
+import { execute } from 'app/utils/test.utils';
 import cookieParser from 'cookie-parser';
-import { TestModule } from 'module/test.module';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
-import { execute } from 'utils/test.utils';
-import { User } from './user.entity';
-import { Role } from './user.model';
 import { UserModule } from './user.module';
+import { User } from './user.entity';
+import { UserRole } from './user.model';
 
 const fileName = curFile(__filename),
-	userGet = 'address avatarFilePath email name phone roles ';
+	userGet = 'fullName';
 let app: INestApplication,
 	usr: User,
 	req: TestAgent,
@@ -40,6 +40,8 @@ beforeEach(async () => {
 
 describe('findOne', () => {
 	it('success', async () => {
+		await usrRepo.save({ id: usrRaw.id, role: UserRole.student });
+
 		await execute(
 			() =>
 				req
@@ -84,7 +86,7 @@ describe('findOne', () => {
 
 describe('findAll', () => {
 	it('success', async () => {
-		await usrRepo.save({ id: usrRaw.id, roles: [Role.ADMIN] });
+		await usrRepo.save({ id: usrRaw.id, role: UserRole.faculty });
 
 		await execute(
 			() =>

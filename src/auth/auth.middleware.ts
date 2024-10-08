@@ -1,9 +1,9 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Cryption } from 'app/utils/auth.utils';
 import { compareSync } from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
-import { Cryption } from 'utils/auth.utils';
 
 @Injectable()
 export class AuthMiddleware extends Cryption implements NestMiddleware {

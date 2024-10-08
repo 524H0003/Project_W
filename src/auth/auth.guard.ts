@@ -7,9 +7,10 @@ import {
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
+import { matching } from 'app/utils/utils';
 import UAParser from 'ua-parser-js';
-import { Role } from 'user/user.model';
-import { matching } from 'utils/utils';
+import { User } from 'user/user.entity';
+import { UserRole } from 'user/user.model';
 
 /**
  * * Convert context's request to graphql's request
@@ -26,7 +27,7 @@ function convertForGql(context: ExecutionContext) {
  * ! WARNING: it's must be (data: unknown, context: ExecutionContext) => {}
  * ! to void error [ExceptionsHandler] Cannot read properties of undefined (reading 'getType')
  */
-export const Roles = Reflector.createDecorator<Role[]>(),
+export const Roles = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),
 	CurrentUser = createParamDecorator(
 		(data: unknown, context: ExecutionContext) => convertForGql(context).user,
@@ -56,9 +57,9 @@ export class RoleGuard extends AuthGuard('access') {
 		const roles = this.reflector.get(Roles, context.getHandler());
 		if (roles) {
 			const req = this.getRequest(context),
-				user = req.user;
+				user = req.user as User;
 
-			return matching(user.roles, roles);
+			return matching([user.role], roles);
 		}
 		throw new InternalServerErrorException(
 			'Function not defined roles/permissions',
