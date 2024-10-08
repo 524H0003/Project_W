@@ -33,11 +33,7 @@ export class Student implements IStudent {
 				email = `5${(7).numeric}@student.tdtu.edu.vn`,
 				password = StudentService.defaultPassword,
 			} = options || {},
-			n = new User({
-				email,
-				password,
-				fullName: from,
-			});
+			n = new User({ email, password, fullName: from });
 		if (n.hashedPassword) return n;
 	}
 }

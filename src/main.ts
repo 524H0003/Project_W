@@ -34,9 +34,7 @@ async function bootstrap() {
 		cfgSvc = app.get(ConfigService);
 	AdminJS.registerAdapter({ Resource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
-	const admin = new AdminJS({
-			resources: [User, Event, Notification],
-		}),
+	const admin = new AdminJS({ resources: [User, Event, Notification] }),
 		adminRouter = buildAuthenticatedRouter(
 			admin,
 			{

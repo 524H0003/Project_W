@@ -25,10 +25,7 @@ export class StudentService extends Cryption {
 				input.password === StudentService.defaultPassword
 			) {
 				return this.authSvc.signUp(
-					{
-						...input,
-						fullName: input.email,
-					} as ISignUp,
+					{ ...input, fullName: input.email } as ISignUp,
 					mtdt,
 					null,
 					{ role: UserRole.student },
