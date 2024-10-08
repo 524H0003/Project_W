@@ -12,7 +12,6 @@ src/**/*.js*
 public/*
 !public/*.server.*
 **/*.js.map
-**/*.js
 
 # Logs
 logs
