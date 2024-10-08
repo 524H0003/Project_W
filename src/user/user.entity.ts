@@ -10,8 +10,8 @@ import { IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany, TableInheritance } from 'typeorm';
 import { IUser, IUserAuthentication, IUserInfo, UserRole } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
-import { File } from 'file/file.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
+import { File } from 'file/file.entity';
 
 @ObjectType()
 @Entity({ name: 'User' })

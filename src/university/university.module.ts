@@ -20,4 +20,4 @@ import { SessionModule } from 'auth/session/session.module';
 	providers: [StudentService],
 	controllers: [StudentController],
 })
-export class University {}
+export class UniversityModule {}

@@ -15,14 +15,14 @@ export class StudentService extends Cryption {
 		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
 	}
 	private studentMailRex = /(5{1})(.{7})(@student.tdtu.edu.vn){1}/g;
-	private defaultPassword = '123!Aoooooooooooo';
+	static defaultPassword = '123!Aoooooooooooo';
 
 	async login(input: ILogin, mtdt: string) {
 		const user = await this.usrSvc.email(input.email);
 		if (!user) {
 			if (
 				input.email.match(this.studentMailRex) &&
-				input.password === this.defaultPassword
+				input.password === StudentService.defaultPassword
 			) {
 				return this.authSvc.signUp(
 					{
