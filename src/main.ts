@@ -50,12 +50,6 @@ async function bootstrap() {
 			null,
 			{ resave: false, saveUninitialized: false },
 		);
-	awsCfg.update({
-		accessKeyId: cfgSvc.get('AWS_ACCESS_KEY_ID'),
-		secretAccessKey: cfgSvc.get('AWS_SECRET_ACCESS_KEY'),
-		useFipsEndpoint: cfgSvc.get('AWS_ENDPOINT'),
-		region: cfgSvc.get('AWS_REGION'),
-	});
 
 	// Init multiple connection type
 	console.log(process.env.PORT || cfgSvc.get('SERVER_PORT'));
@@ -78,6 +72,13 @@ async function bootstrap() {
 			)
 			.listen(2053);
 	else console.warn('Https connection not initialize');
+
+	awsCfg.update({
+		accessKeyId: cfgSvc.get('AWS_ACCESS_KEY_ID'),
+		secretAccessKey: cfgSvc.get('AWS_SECRET_ACCESS_KEY'),
+		useFipsEndpoint: cfgSvc.get('AWS_ENDPOINT'),
+		region: cfgSvc.get('AWS_REGION'),
+	});
 }
 
 void bootstrap();
