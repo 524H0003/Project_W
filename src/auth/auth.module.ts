@@ -13,6 +13,7 @@ import { AuthController } from './auth.controller';
 import { AccessStrategy } from './strategies/access.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
 import { LocalHostStrategy } from './strategies/localhost.strategy';
+import { HookModule } from './hook/hook.module';
 
 @Module({
 	imports: [
@@ -36,6 +37,7 @@ import { LocalHostStrategy } from './strategies/localhost.strategy';
 		forwardRef(() => DeviceModule),
 		forwardRef(() => UserModule),
 		EnterpriseModule,
+		HookModule,
 	],
 	providers: [
 		AuthService,
