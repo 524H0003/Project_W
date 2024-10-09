@@ -1,1 +1,1 @@
-web: ip a && npm run start:prod
+web: ping db.anhvietnguyen.id.vn && npm run start:prod
