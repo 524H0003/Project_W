@@ -32,6 +32,7 @@ async function bootstrap() {
 			.use(cookieParser())
 			.useGlobalPipes(new ValidationPipe()),
 		cfgSvc = app.get(ConfigService);
+	console.log(process.env.PORT || cfgSvc.get('SERVER_PORT'));
 	AdminJS.registerAdapter({ Resource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
 	const admin = new AdminJS({ resources: [User, Event, Notification] }),
@@ -52,7 +53,6 @@ async function bootstrap() {
 		);
 
 	// Init multiple connection type
-	console.log(process.env.PORT || cfgSvc.get('SERVER_PORT'));
 	await app
 		.use(admin.options.rootPath, adminRouter)
 		.setGlobalPrefix('api/v1')
