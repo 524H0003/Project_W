@@ -1,1 +1,1 @@
-web: npm run start:prod
+web: ip a && npm run start:prod

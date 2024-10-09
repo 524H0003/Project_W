@@ -32,7 +32,6 @@ async function bootstrap() {
 			.use(cookieParser())
 			.useGlobalPipes(new ValidationPipe()),
 		cfgSvc = app.get(ConfigService);
-	console.log(process.env.PORT || cfgSvc.get('SERVER_PORT'));
 	AdminJS.registerAdapter({ Resource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
 	const admin = new AdminJS({ resources: [User, Event, Notification] }),
