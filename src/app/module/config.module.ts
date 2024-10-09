@@ -29,7 +29,7 @@ export const loadEnv = (type: 'deploy' | 'test') =>
 			// Server config
 			SERVER_SECRET: Joi.string().default((64).alpha),
 			SERVER_IN_DEV: Joi.bool().default(true),
-			SERVER_PORT: Joi.number().default(process.env.PORT || 3000),
+			SERVER_PORT: Joi.number().default(3000),
 			SERVER_COOKIE_PREFIX: Joi.string().default((12).alpha),
 			SERVER_PUBLIC: Joi.string().default('./public/'),
 			// AES
