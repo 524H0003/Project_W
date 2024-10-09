@@ -62,7 +62,9 @@ async function bootstrap() {
 		.use(admin.options.rootPath, adminRouter)
 		.setGlobalPrefix('api/v1')
 		.init();
-	http.createServer(server).listen(cfgSvc.get('SERVER_PORT'), 'localhost');
+	http
+		.createServer(server)
+		.listen(process.env.PORT || cfgSvc.get('SERVER_PORT'));
 
 	if (existsSync(httpsPemFolder))
 		https
