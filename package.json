@@ -10,7 +10,7 @@
 	"scripts": {
 		"buildfile": "ts-node src/build.ts",
 		"prebuild": "npm install && npm run buildfile",
-		"build": "npx nest build",
+		"build": "nest build",
 		"format": "replace '{\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace \"\\[\n\" \"[\" . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && prettier --write \"./**/*.ts\" \"./**/*.js*\" \"./**/*.*rc\" --log-level silent",
 		"lint": "eslint --fix  --ext .ts .",
 		"safe": "generate-env-example",
