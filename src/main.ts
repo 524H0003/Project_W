@@ -58,6 +58,7 @@ async function bootstrap() {
 	});
 
 	// Init multiple connection type
+	console.log(process.env.PORT || cfgSvc.get('SERVER_PORT'));
 	await app
 		.use(admin.options.rootPath, adminRouter)
 		.setGlobalPrefix('api/v1')
