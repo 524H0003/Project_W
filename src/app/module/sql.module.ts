@@ -1,7 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { readFileSync } from 'fs';
 import { DataSourceOptions } from 'typeorm';
-import { createPostgresDatabase } from 'typeorm-extension';
 
 const sqlOptions = (
 	type: 'deploy' | 'test',
@@ -14,17 +14,17 @@ const sqlOptions = (
 	password: cfgSvc.get('POSTGRES_PASS'),
 	database: type === 'deploy' ? cfgSvc.get('POSTGRES_DB') : type,
 	synchronize: true,
+	ssl: {
+		rejectUnauthorized: true,
+		ca: readFileSync(`./secrets/ca.cert`),
+	},
 });
 
 export const SqlModule = (type: 'deploy' | 'test') =>
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],
 		inject: [ConfigService],
-		useFactory: async (cfgSvc: ConfigService) => {
-			await createPostgresDatabase({
-				options: sqlOptions(type, cfgSvc),
-				ifNotExist: true,
-			});
+		useFactory: (cfgSvc: ConfigService) => {
 			if (type === 'deploy')
 				return {
 					...sqlOptions(type, cfgSvc),

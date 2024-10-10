@@ -60,17 +60,21 @@ async function bootstrap() {
 		.createServer(server)
 		.listen(process.env.PORT || cfgSvc.get('SERVER_PORT'));
 
-	if (existsSync(httpsPemFolder))
-		https
-			.createServer(
-				{
-					key: readFileSync(`${httpsPemFolder}/key.pem`),
-					cert: readFileSync(`${httpsPemFolder}/cert.pem`),
-				},
-				server,
-			)
-			.listen(2053);
-	else console.warn('Https connection not initialize');
+	try {
+		if (existsSync(httpsPemFolder)) {
+			https
+				.createServer(
+					{
+						key: readFileSync(`${httpsPemFolder}/key.pem`),
+						cert: readFileSync(`${httpsPemFolder}/cert.pem`),
+					},
+					server,
+				)
+				.listen(2053);
+		}
+	} catch {
+		console.warn('Https connection not initialize');
+	}
 
 	awsCfg.update({
 		accessKeyId: cfgSvc.get('AWS_ACCESS_KEY_ID'),
