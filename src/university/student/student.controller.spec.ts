@@ -21,7 +21,7 @@ let dvcRepo: Repository<Device>,
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-		imports: [UniversityModule, TestModule],
+		imports: [TestModule, UniversityModule],
 	}).compile();
 
 	(dvcRepo = module.get(getRepositoryToken(Device))),

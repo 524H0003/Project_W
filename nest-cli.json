@@ -1,6 +1,10 @@
 {
 	"$schema": "https://json.schemastore.org/nest-cli",
 	"collection": "@nestjs/schematics",
-	"compilerOptions": { "deleteOutDir": true },
+	"compilerOptions": {
+		"assets": ["**/*.hbs"],
+		"deleteOutDir": true,
+		"watchAssets": true
+	},
 	"sourceRoot": "src"
 }

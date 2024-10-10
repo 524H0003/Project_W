@@ -1,6 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'app/utils/auth.utils';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
@@ -9,24 +7,18 @@ import { Repository } from 'typeorm';
 import { UserRecieve } from 'user/user.class';
 import { User } from 'user/user.entity';
 import { Device } from './device.entity';
+import { SignService } from 'auth/auth.service';
 
 @Injectable()
 export class DeviceService extends DatabaseRequests<Device> {
 	constructor(
 		@InjectRepository(Device) repo: Repository<Device>,
-		private jwtSvc: JwtService,
-		private cfgSvc: ConfigService,
 		@Inject(forwardRef(() => SessionService))
 		private sesSvc: SessionService,
+		@Inject(forwardRef(() => SignService))
+		private signSvc: SignService,
 	) {
 		super(repo);
-	}
-	// session secret
-	private readonly scr = this.cfgSvc.get('REFRESH_SECRET');
-	private readonly exp = this.cfgSvc.get('REFRESH_EXPIRE');
-
-	refreshTokenSign(id: string) {
-		return this.jwtSvc.sign({ id }, { secret: this.scr, expiresIn: this.exp });
 	}
 
 	async getTokens(user: User, mtdt: string) {
@@ -40,8 +32,8 @@ export class DeviceService extends DatabaseRequests<Device> {
 				parrent: device.id,
 				device,
 			}),
-			refreshToken = this.refreshTokenSign(session.id),
-			accessToken = this.jwtSvc.sign({ id: user.id });
+			refreshToken = this.signSvc.refresh(session.id),
+			accessToken = this.signSvc.access(user.id);
 
 		await this.save({ ...device, child: session.id });
 

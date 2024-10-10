@@ -12,6 +12,7 @@ import { IUser, IUserAuthentication, IUserInfo, UserRole } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
+import { Hook } from 'auth/hook/hook.entity';
 
 @ObjectType()
 @Entity({ name: 'User' })
@@ -28,8 +29,7 @@ export class User extends SensitiveInfomations implements IUser {
 	private _hashedPassword: string;
 
 	get hashedPassword() {
-		if (this.password || this._hashedPassword) {
-			if (this._hashedPassword) return this._hashedPassword;
+		if (this.password) {
 			return (this._hashedPassword = hash(this.password));
 		}
 		return this._hashedPassword;
@@ -39,10 +39,13 @@ export class User extends SensitiveInfomations implements IUser {
 
 	// Relationships
 	@OneToMany(() => Device, (_: Device) => _.owner)
-	devices?: Device[];
+	devices: Device[];
 
 	@OneToMany(() => File, (_) => _.createdBy)
-	uploadFiles?: IFile[];
+	uploadFiles: IFile[];
+
+	@OneToMany(() => Hook, (_: Hook) => _.from)
+	hooks: Hook[];
 
 	@OneToMany(
 		() => EventParticipator,

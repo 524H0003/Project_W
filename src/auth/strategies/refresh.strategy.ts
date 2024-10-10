@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
+import { SignService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -12,8 +12,8 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	constructor(
 		cfgSvc: ConfigService,
 		private sesSvc: SessionService,
-		private jwtSvc: JwtService,
 		private dvcSvc: DeviceService,
+		private signSvc: SignService,
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -31,8 +31,8 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 					success: true,
 					id: session.device.id, // for logout requests
 					ua: session.device.hashedUserAgent,
-					acsTkn: this.jwtSvc.sign({ id: session.device.owner.id }),
-					rfsTkn: this.dvcSvc.refreshTokenSign(payload.id),
+					acsTkn: this.signSvc.access(session.device.owner.id),
+					rfsTkn: this.signSvc.refresh(payload.id),
 				};
 			} else {
 				if ((await this.dvcSvc.id(session.device.id)).child === session.id)

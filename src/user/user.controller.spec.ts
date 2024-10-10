@@ -19,7 +19,7 @@ let rawUsr: User,
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-		imports: [UserModule, TestModule],
+		imports: [TestModule, UserModule],
 	}).compile();
 
 	(app = module.createNestApplication()),

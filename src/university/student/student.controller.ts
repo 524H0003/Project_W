@@ -16,6 +16,7 @@ import { AuthService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { ConfigService } from '@nestjs/config';
+import { HookService } from 'auth/hook/hook.service';
 
 @Controller('student')
 export class StudentController extends AuthController {
@@ -25,8 +26,9 @@ export class StudentController extends AuthController {
 		dvcSvc: DeviceService,
 		sesSvc: SessionService,
 		cfgSvc: ConfigService,
+		hookSvc: HookService,
 	) {
-		super(authSvc, dvcSvc, sesSvc, cfgSvc);
+		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
 	}
 
 	@Post('login')

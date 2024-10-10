@@ -7,13 +7,14 @@ import { DeviceModule } from 'auth/device/device.module';
 import { FileModule } from 'file/file.module';
 import { UserModule } from 'user/user.module';
 import { NotificationModule } from 'notification/notification.module';
-import { AuthService } from './auth.service';
+import { AuthService, SignService } from './auth.service';
 import { EnterpriseModule } from 'enterprise/enterprise.module';
 import { AuthController } from './auth.controller';
 import { AccessStrategy } from './strategies/access.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
 import { LocalHostStrategy } from './strategies/localhost.strategy';
 import { HookModule } from './hook/hook.module';
+import { HookStrategy } from './strategies/hook.strategy';
 
 @Module({
 	imports: [
@@ -41,12 +42,14 @@ import { HookModule } from './hook/hook.module';
 	],
 	providers: [
 		AuthService,
+		SignService,
 		// Strategies
 		AccessStrategy,
 		RefreshStrategy,
 		LocalHostStrategy,
+		HookStrategy,
 	],
 	controllers: [AuthController],
-	exports: [AuthService],
+	exports: [AuthService, SignService, DeviceModule, UserModule, HookModule],
 })
 export class AuthModule {}
