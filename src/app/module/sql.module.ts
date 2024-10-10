@@ -3,6 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { readFileSync } from 'fs';
 import { DataSourceOptions } from 'typeorm';
 
+function readSslCa() {
+	try {
+		return readFileSync(`./secrets/ca.cert`);
+	} catch {
+		return null;
+	}
+}
+
 const sqlOptions = (
 	type: 'deploy' | 'test',
 	cfgSvc: ConfigService,
@@ -16,7 +24,7 @@ const sqlOptions = (
 	synchronize: true,
 	ssl: {
 		rejectUnauthorized: true,
-		ca: readFileSync(`./secrets/ca.cert`),
+		ca: readSslCa(),
 	},
 });
 
