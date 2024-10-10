@@ -81,7 +81,6 @@ async function bootstrap() {
 	} catch {
 		console.warn('Https connection not initialize');
 	}
-
 }
 
 void bootstrap();
