@@ -15,7 +15,6 @@
 		"lint": "eslint --fix  --ext .ts .",
 		"safe": "generate-env-example",
 		"start": "nest start",
-		"prestart": "npm run prebuild",
 		"start:debug": "nest start --debug --watch",
 		"start:dev": "nest start --watch",
 		"start:prod": "node dist/main",
@@ -63,7 +62,7 @@
 	"devDependencies": {
 		"@apollo/server": "^4.10.5",
 		"@nestjs/apollo": "^12.2.0",
-		"@nestjs/cli": "^10.0.0",
+		"@nestjs/cli": "^10.4.5",
 		"@nestjs/schematics": "^10.0.0",
 		"@nestjs/testing": "^10.0.0",
 		"@swc/cli": "^0.4.0",

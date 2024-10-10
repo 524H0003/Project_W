@@ -1,5 +1,3 @@
-if (!navigator.userAgent.includes('Node.js')) (window as any).global = window;
-
 export class InterfaceCasting<T, K extends keyof T> {
 	[key: string]: any;
 

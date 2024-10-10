@@ -62,19 +62,25 @@ async function bootstrap() {
 		.use(admin.options.rootPath, adminRouter)
 		.setGlobalPrefix('api/v1')
 		.init();
-	http.createServer(server).listen(cfgSvc.get('SERVER_PORT'));
+	http
+		.createServer(server)
+		.listen(process.env.PORT || cfgSvc.get('SERVER_PORT'));
 
-	if (existsSync(httpsPemFolder))
-		https
-			.createServer(
-				{
-					key: readFileSync(`${httpsPemFolder}/key.pem`),
-					cert: readFileSync(`${httpsPemFolder}/cert.pem`),
-				},
-				server,
-			)
-			.listen(2053);
-	else console.warn('Https connection not initialize');
+	try {
+		if (existsSync(httpsPemFolder)) {
+			https
+				.createServer(
+					{
+						key: readFileSync(`${httpsPemFolder}/key.pem`),
+						cert: readFileSync(`${httpsPemFolder}/cert.pem`),
+					},
+					server,
+				)
+				.listen(2053);
+		}
+	} catch {
+		console.warn('Https connection not initialize');
+	}
 }
 
 void bootstrap();
