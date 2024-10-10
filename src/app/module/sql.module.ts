@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { readFileSync } from 'fs';
 import { TlsOptions } from 'tls';
 import { DataSourceOptions } from 'typeorm';
+import { createPostgresDatabase } from 'typeorm-extension';
 
 function readSslCa(): TlsOptions | boolean {
 	try {
@@ -23,14 +24,20 @@ const sqlOptions = (
 	password: cfgSvc.get('POSTGRES_PASS'),
 	database: type === 'deploy' ? cfgSvc.get('POSTGRES_DB') : type,
 	synchronize: true,
-	ssl: readSslCa(),
+	ssl: cfgSvc.get('POSTGRES_SSL') ? readSslCa() : false,
 });
 
 export const SqlModule = (type: 'deploy' | 'test') =>
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],
 		inject: [ConfigService],
-		useFactory: (cfgSvc: ConfigService) => {
+		useFactory: async (cfgSvc: ConfigService) => {
+			try {
+				await createPostgresDatabase({
+					options: sqlOptions(type, cfgSvc),
+					ifNotExist: true,
+				});
+			} catch {}
 			if (type === 'deploy')
 				return {
 					...sqlOptions(type, cfgSvc),
