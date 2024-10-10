@@ -1,13 +1,14 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { readFileSync } from 'fs';
+import { TlsOptions } from 'tls';
 import { DataSourceOptions } from 'typeorm';
 
-function readSslCa() {
+function readSslCa(): TlsOptions | boolean {
 	try {
-		return readFileSync(`./secrets/ca.cert`);
+		return { rejectUnauthorized: true, ca: readFileSync(`./secrets/ca.cert`) };
 	} catch {
-		return null;
+		return false;
 	}
 }
 
@@ -22,10 +23,7 @@ const sqlOptions = (
 	password: cfgSvc.get('POSTGRES_PASS'),
 	database: type === 'deploy' ? cfgSvc.get('POSTGRES_DB') : type,
 	synchronize: true,
-	ssl: {
-		rejectUnauthorized: true,
-		ca: readSslCa(),
-	},
+	ssl: readSslCa(),
 });
 
 export const SqlModule = (type: 'deploy' | 'test') =>
