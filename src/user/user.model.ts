@@ -7,17 +7,22 @@ import { IReciever } from 'notification/reciever/reciever.model';
 // Interfaces
 /**
  * Fileds for user authencation
- *
  * @interface
  */
 export interface IUserAuthentication {
+	/**
+	 * User's email address
+	 */
 	email: string;
+
+	/**
+	 * User's password
+	 */
 	password: string;
 }
 
 /**
  * Fields about user's infomations
- *
  * @interface
  */
 export interface IUserInfo {
@@ -44,7 +49,9 @@ export interface IUserStatus {
 }
 
 /**
- * @property {UserRole} role - the user's role
+ * Fields about user's sensitive infomations
+ *
+ * @interface
  */
 export interface IUserSensitive {
 	role: UserRole;
