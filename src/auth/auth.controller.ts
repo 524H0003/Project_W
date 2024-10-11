@@ -15,7 +15,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
-import { hash } from 'app/utils/auth.utils';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { compareSync } from 'bcrypt';
@@ -28,6 +27,7 @@ import { AuthService } from './auth.service';
 import { LocalHostStrategy } from './strategies/localhost.strategy';
 import { HookService } from './hook/hook.service';
 import { Hook } from './hook/hook.entity';
+import { hash } from 'app/utils/auth.utils';
 
 @Controller('auth')
 export class AuthController {

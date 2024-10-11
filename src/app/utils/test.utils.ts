@@ -1,13 +1,4 @@
-// ? The spy function ment to initiate functions need to be hooked
-export const spy = <T extends Record<string, any>>(
-	arr: { obj: T; key: (keyof T)[] }[],
-) =>
-	arr.forEach(({ obj, key }) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		//@ts-expect-error
-		key.forEach((k) => jest.spyOn(obj, k.toString())),
-	);
-
+// Interfaces
 interface Expectation<T, K extends keyof jest.Matchers<T>> {
 	type: K;
 	params: Parameters<jest.Matchers<T>[K]>;
@@ -18,10 +9,7 @@ interface Expectation<T, K extends keyof jest.Matchers<T>> {
 /**
  * A function run async functions and catch both throw errors and results
  * @param {T} func - the function to test
- * @param {Parameters<T>} params - the params for the function to test
- * @param {boolean} throwError - is the function going to throw errors?
- * @param {number} numOfRun - how many time function will run and the last one is going to test
- * @param {Expectation<T, K>[]} exps - expectations that function will return
+ * @param {object} options - the options to execute
  */
 export async function execute<
 	T extends (...args: any[]) => Promise<any>,

@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { hash } from 'app/utils/auth.utils';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { SessionService } from 'auth/session/session.service';
 import { Repository } from 'typeorm';
@@ -8,6 +7,7 @@ import { UserRecieve } from 'user/user.class';
 import { User } from 'user/user.entity';
 import { Device } from './device.entity';
 import { SignService } from 'auth/auth.service';
+import { hash } from 'app/utils/auth.utils';
 
 @Injectable()
 export class DeviceService extends DatabaseRequests<Device> {

@@ -2,6 +2,9 @@ import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
 import 'app/utils/utils';
 
+/**
+ * @ignore
+ */
 export const loadEnv =
 	// Load .env
 	ConfigModule.forRoot({

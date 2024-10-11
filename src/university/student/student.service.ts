@@ -7,6 +7,9 @@ import { UserService } from 'user/user.service';
 
 @Injectable()
 export class StudentService extends Cryption {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		cfgSvc: ConfigService,
 		private usrSvc: UserService,
@@ -16,6 +19,11 @@ export class StudentService extends Cryption {
 	}
 	private studentMailRex = /(5{1})(.{7})(@student.tdtu.edu.vn){1}/g;
 
+	/**
+	 * Login for student
+	 * @param {ILogin} input - the login input
+	 * @param {string} mtdt - the metadata
+	 */
 	async login(input: ILogin, mtdt: string) {
 		const user = await this.usrSvc.email(input.email);
 		if (!user) {

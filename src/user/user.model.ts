@@ -5,28 +5,56 @@ import { IFile } from 'file/file.model';
 import { IReciever } from 'notification/reciever/reciever.model';
 
 // Interfaces
+/**
+ * Fileds for user authencation
+ *
+ * @interface
+ */
 export interface IUserAuthentication {
 	email: string;
 	password: string;
 }
 
+/**
+ * Fields about user's infomations
+ *
+ * @interface
+ */
 export interface IUserInfo {
 	fullName: string;
 	avatarPath: string;
 }
 
+/**
+ * Fields about user's time record
+ *
+ * @interface
+ */
 export interface IUserTimeRecord {
 	lastLogin: Date;
 }
 
+/**
+ * Fields about user's status
+ *
+ * @interface
+ */
 export interface IUserStatus {
 	isActive: boolean;
 }
 
+/**
+ * @property {UserRole} role - the user's role
+ */
 export interface IUserSensitive {
 	role: UserRole;
 }
 
+/**
+ * User fields
+ *
+ * @interface
+ */
 export interface IUser
 	extends IUserAuthentication,
 		IUserInfo,
@@ -40,15 +68,34 @@ export interface IUser
 	hooks: IHook[];
 }
 
+/**
+ * Fields about user's recieved properties
+ *
+ * @interface
+ */
 export interface IUserRecieve {
 	accessToken: string;
 	refreshToken: string;
 }
 
+/**
+ * Login fields
+ *
+ * @interface
+ */
 export interface ILogin extends IUserAuthentication {}
+
+/**
+ * Sign up fields
+ *
+ * @interface
+ */
 export interface ISignUp extends IUserAuthentication, IUserInfo {}
 
 // Enums
+/**
+ * User roles
+ */
 export enum UserRole {
 	student = 'student',
 	faculty = 'faculty',

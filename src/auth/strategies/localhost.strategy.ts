@@ -6,9 +6,16 @@ import {
 	Injectable,
 } from '@nestjs/common';
 
+/**
+ * Only allow connections from localhost
+ */
 @Injectable()
 export class LocalHostStrategy implements CanActivate {
-	canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+	/**
+	 * Check the connection
+	 * @param {ExecutionContext} context - request's context
+	 */
+	canActivate(context: ExecutionContext): boolean {
 		const req = context.switchToHttp().getRequest(),
 			isLocalhost =
 				req.hostname === 'localhost' || req.hostname === '127.0.0.1';

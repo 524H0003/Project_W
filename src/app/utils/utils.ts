@@ -9,7 +9,9 @@ export class InterfaceCasting<T, K extends keyof T> {
 		return new InterfaceCasting(input, get) as T;
 	}
 }
-
+/**
+ * @ignore
+ */
 export const logMethodCall = methodDecorator({
 		prerun: (target: any, propertyKey: Function, args: any) => {
 			console.log(
@@ -86,6 +88,9 @@ export function methodDecorator(functions: {
 }
 
 // Defines
+/**
+ * @ignore
+ */
 const alphaChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
 	numChars = '0123456789';
 

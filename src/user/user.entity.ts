@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { hash } from 'app/utils/auth.utils';
 import { BlackBox } from 'app/utils/model.utils';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
@@ -13,6 +12,7 @@ import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
 import { Hook } from 'auth/hook/hook.entity';
+import { hash } from 'app/utils/auth.utils';
 
 @ObjectType()
 @Entity({ name: 'User' })
