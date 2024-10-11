@@ -5,6 +5,7 @@ import {
 	Injectable,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { Cryption, validation } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { DeviceService } from 'auth/device/device.service';
@@ -65,5 +66,52 @@ export class AuthService extends Cryption {
 			if (isPasswordMatched) return this.dvcSvc.getTokens(user, mtdt);
 		}
 		throw new BadRequestException('Invalid email or password');
+	}
+
+	changePassword(iUser: User, password: string) {
+		const user = new User(iUser);
+		user.password = password;
+		return validation(user, async () => {
+			if (user.hashedPassword) {
+				const newUser = await this.usrSvc.assign(user),
+					status = await this.usrSvc.update({ ...newUser });
+				return status;
+			}
+		});
+	}
+}
+
+@Injectable()
+export class SignService {
+	constructor(
+		private jwtSvc: JwtService,
+		private cfgSvc: ConfigService,
+	) {}
+
+	// session secret
+	private readonly rfsScr = this.cfgSvc.get('REFRESH_SECRET');
+	private readonly rfsExp = this.cfgSvc.get('REFRESH_EXPIRE');
+	private readonly acsScr = this.cfgSvc.get('ACCESS_SECRET');
+	private readonly acsExp = this.cfgSvc.get('ACCESS_EXPIRE');
+
+	refresh(id: string) {
+		return this.jwtSvc.sign(
+			{ id },
+			{ secret: this.rfsScr, expiresIn: this.rfsExp },
+		);
+	}
+
+	access(id: string) {
+		return this.jwtSvc.sign(
+			{ id },
+			{ secret: this.acsScr, expiresIn: this.acsExp },
+		);
+	}
+
+	verify(input: string, options?: { type: 'refresh' | 'access' }) {
+		const { type = 'access' } = options || {};
+		return this.jwtSvc.verify(input, {
+			secret: type === 'access' ? this.acsScr : this.rfsScr,
+		});
 	}
 }

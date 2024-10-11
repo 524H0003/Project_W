@@ -1,12 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { DeviceService } from 'auth/device/device.service';
 import { DeepPartial, Repository } from 'typeorm';
 import { UserRecieve } from 'user/user.class';
 import { Session } from './session.entity';
+import { SignService } from 'auth/auth.service';
 
 @Injectable()
 export class SessionService extends DatabaseRequests<Session> {
@@ -15,7 +15,8 @@ export class SessionService extends DatabaseRequests<Session> {
 		private cfgSvc: ConfigService,
 		@Inject(forwardRef(() => DeviceService))
 		private dvcSvc: DeviceService,
-		private jwtSvc: JwtService,
+		@Inject(forwardRef(() => SignService))
+		private signSvc: SignService,
 	) {
 		super(repo);
 	}
@@ -41,8 +42,8 @@ export class SessionService extends DatabaseRequests<Session> {
 		const newSession = await this.addNode(
 				await this.id(oldNodeId, { deep: 3, relations: ['device'] }),
 			),
-			refreshToken = this.dvcSvc.refreshTokenSign(newSession.id),
-			accessToken = this.jwtSvc.sign({ id: newSession.device.owner.id });
+			refreshToken = this.signSvc.refresh(newSession.id),
+			accessToken = this.signSvc.access(newSession.device.owner.id);
 
 		return new UserRecieve({ accessToken, refreshToken });
 	}

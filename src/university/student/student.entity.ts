@@ -2,7 +2,6 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudent } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import { StudentService } from './student.service';
 
 @Entity({ name: 'Student' })
 export class Student implements IStudent {
@@ -31,7 +30,7 @@ export class Student implements IStudent {
 	static test(from: string, options?: { email?: string; password?: string }) {
 		const {
 				email = `5${(7).numeric}@student.tdtu.edu.vn`,
-				password = StudentService.defaultPassword,
+				password = (16).string + '!!',
 			} = options || {},
 			n = new User({ email, password, fullName: from });
 		if (n.hashedPassword) return n;

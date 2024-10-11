@@ -12,6 +12,7 @@ src/**/*.js*
 public/*
 !public/*.server.*
 **/*.js.map
+documentation/
 
 # Logs
 logs

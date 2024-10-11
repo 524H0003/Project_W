@@ -1,4 +1,5 @@
 import { IDevice } from 'auth/device/device.model';
+import { IHook } from 'auth/hook/hook.model';
 import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 import { IReciever } from 'notification/reciever/reciever.model';
@@ -33,9 +34,10 @@ export interface IUser
 		IUserSensitive,
 		IUserStatus {
 	recievedNotifications: IReciever[];
-	devices?: IDevice[];
-	uploadFiles?: IFile[];
+	devices: IDevice[];
+	uploadFiles: IFile[];
 	participatedEvents: IEventParticipator[];
+	hooks: IHook[];
 }
 
 export interface IUserRecieve {

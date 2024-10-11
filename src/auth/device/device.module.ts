@@ -8,8 +8,8 @@ import { DeviceService } from './device.service';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([Device]),
 		forwardRef(() => AuthModule),
+		TypeOrmModule.forFeature([Device]),
 		forwardRef(() => SessionModule),
 	],
 	providers: [DeviceResolver, DeviceService],

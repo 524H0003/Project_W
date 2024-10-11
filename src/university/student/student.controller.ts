@@ -16,6 +16,7 @@ import { AuthService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { ConfigService } from '@nestjs/config';
+import { HookService } from 'auth/hook/hook.service';
 
 @Controller('student')
 export class StudentController extends AuthController {
@@ -25,8 +26,9 @@ export class StudentController extends AuthController {
 		dvcSvc: DeviceService,
 		sesSvc: SessionService,
 		cfgSvc: ConfigService,
+		hookSvc: HookService,
 	) {
-		super(authSvc, dvcSvc, sesSvc, cfgSvc);
+		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
 	}
 
 	@Post('login')
@@ -37,10 +39,22 @@ export class StudentController extends AuthController {
 		@Res({ passthrough: true }) response: Response,
 		@MetaData() mtdt: string,
 	) {
-		return this.sendBack(
-			request,
-			response,
-			await this.StuSvc.login(body, mtdt),
-		);
+		try {
+			return this.sendBack(
+				request,
+				response,
+				await this.StuSvc.login(body, mtdt),
+			);
+		} catch (error) {
+			switch ((error as { message: string }).message) {
+				case 'ERRNewUser':
+					return this.changePassword(request, response, body, mtdt);
+					break;
+
+				default:
+					throw error;
+					break;
+			}
+		}
 	}
 }

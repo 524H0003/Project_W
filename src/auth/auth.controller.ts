@@ -1,7 +1,9 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	HttpStatus,
+	Param,
 	ParseFilePipeBuilder,
 	Post,
 	Req,
@@ -21,9 +23,11 @@ import { CookieOptions, Request, Response } from 'express';
 import { memoryStorage } from 'multer';
 import { UserRecieve } from 'user/user.class';
 import { ILogin, ISignUp } from 'user/user.model';
-import { MetaData } from './auth.guard';
+import { CurrentUser, MetaData } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LocalHostStrategy } from './strategies/localhost.strategy';
+import { HookService } from './hook/hook.service';
+import { Hook } from './hook/hook.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -32,6 +36,7 @@ export class AuthController {
 		private dvcSvc: DeviceService,
 		private sesSvc: SessionService,
 		private cfgSvc: ConfigService,
+		private hookSvc: HookService,
 	) {}
 
 	private readonly ckiOpt: CookieOptions = {
@@ -61,7 +66,9 @@ export class AuthController {
 		request: Request,
 		response: Response,
 		usrRcv: UserRecieve,
+		options?: { msg?: string },
 	): void {
+		const { msg = 'true' } = options || {};
 		this.clearCookies(request, response);
 		response
 			.cookie(
@@ -78,7 +85,7 @@ export class AuthController {
 				this.ckiOpt,
 			)
 			.status(HttpStatus.ACCEPTED)
-			.json(true);
+			.send(msg);
 	}
 
 	@Post('login')
@@ -155,5 +162,39 @@ export class AuthController {
 				);
 			} else sendBack(await this.sesSvc.addTokens(request.user['id']));
 		}
+	}
+
+	@Post('change')
+	async changePassword(
+		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
+		@Body() body: { email: string },
+		@MetaData() mtdt: string,
+	) {
+		return this.sendBack(
+			request,
+			response,
+			await this.hookSvc.assign(body.email, request.hostname, mtdt),
+			{ msg: 'ReqPassChange' },
+		);
+	}
+
+	@Post('hook/:token')
+	@UseGuards(AuthGuard('hook'))
+	async recieveHook(
+		@Res({ passthrough: true }) response: Response,
+		@Param('token') signature: string,
+		@MetaData() mtdt: string,
+		@CurrentUser() hook: Hook,
+		@Body() body: { password: string },
+	) {
+		if (hook.mtdt === mtdt && signature == hook.signature && !hook.isUsed) {
+			await this.hookSvc.terminate(hook.id);
+			if (await this.authSvc.changePassword(hook.from, body.password)) {
+				response.send('success');
+				return;
+			}
+		}
+		throw new BadRequestException();
 	}
 }

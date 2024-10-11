@@ -15,21 +15,22 @@ export class StudentService extends Cryption {
 		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
 	}
 	private studentMailRex = /(5{1})(.{7})(@student.tdtu.edu.vn){1}/g;
-	static defaultPassword = '123!Aoooooooooooo';
 
 	async login(input: ILogin, mtdt: string) {
 		const user = await this.usrSvc.email(input.email);
 		if (!user) {
-			if (
-				input.email.match(this.studentMailRex) &&
-				input.password === StudentService.defaultPassword
-			) {
-				return this.authSvc.signUp(
-					{ ...input, fullName: input.email } as ISignUp,
+			if (input.email.match(this.studentMailRex)) {
+				await this.authSvc.signUp(
+					{
+						...input,
+						fullName: input.email,
+						password: (32).string + '!!',
+					} as ISignUp,
 					mtdt,
 					null,
 					{ role: UserRole.student },
 				);
+				throw new Error('ERRNewUser');
 			}
 			throw new BadRequestException('Invalid student email');
 		} else return this.authSvc.login(input, mtdt);
