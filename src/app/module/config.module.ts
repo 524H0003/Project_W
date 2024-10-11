@@ -2,7 +2,7 @@ import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
 import 'app/utils/utils';
 
-export const loadEnv = (type: 'deploy' | 'test') =>
+export const loadEnv =
 	// Load .env
 	ConfigModule.forRoot({
 		isGlobal: true,
@@ -15,16 +15,10 @@ export const loadEnv = (type: 'deploy' | 'test') =>
 			POSTGRES_PASS: Joi.string().default('postgres'),
 			POSTGRES_SSL: Joi.string().default(false),
 			// Access token
-			ACCESS_SECRET:
-				type === 'deploy'
-					? Joi.string().required()
-					: Joi.string().default((10).string),
+			ACCESS_SECRET: Joi.string().default((10).string),
 			ACCESS_EXPIRE: Joi.string().default('6m'),
 			// Refresh token
-			REFRESH_SECRET:
-				type === 'deploy'
-					? Joi.string().required()
-					: Joi.string().default((10).string),
+			REFRESH_SECRET: Joi.string().default((10).string),
 			REFRESH_EXPIRE: Joi.string().default('66d'),
 			REFRESH_USE: Joi.number().default(6),
 			// Server config

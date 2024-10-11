@@ -28,7 +28,7 @@ import { AuthModule } from 'auth/auth.module';
 		}),
 		// Sub modules
 		AuthModule,
-		loadEnv('deploy'),
+		loadEnv,
 		SqlModule('deploy'),
 	],
 })
