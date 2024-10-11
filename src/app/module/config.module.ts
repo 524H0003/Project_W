@@ -13,6 +13,7 @@ export const loadEnv = (type: 'deploy' | 'test') =>
 			POSTGRES_USER: Joi.string().default('postgres'),
 			POSTGRES_DB: Joi.string().default('postgres'),
 			POSTGRES_PASS: Joi.string().default('postgres'),
+			POSTGRES_SSL: Joi.string().default(false),
 			// Access token
 			ACCESS_SECRET:
 				type === 'deploy'
