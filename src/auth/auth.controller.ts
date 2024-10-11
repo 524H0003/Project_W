@@ -44,9 +44,8 @@ export class AuthController {
 		secure: true,
 		sameSite: 'lax',
 	};
-	private readonly ckiPfx = this.cfgSvc.get('SERVER_COOKIE_PREFIX');
-	private readonly rfsKey = this.cfgSvc.get('REFRESH_KEY');
-	private readonly acsKey = this.cfgSvc.get('ACCESS_KEY');
+	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
+	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
 
 	protected clearCookies(
 		request: Request,
@@ -56,8 +55,8 @@ export class AuthController {
 	) {
 		for (const cki in request.cookies)
 			if (
-				(compareSync(this.acsKey, cki.substring(this.ckiPfx.length)) && acs) ||
-				(compareSync(this.rfsKey, cki.substring(this.ckiPfx.length)) && rfs)
+				(compareSync(this.acsKey, cki) && acs) ||
+				(compareSync(this.rfsKey, cki) && rfs)
 			)
 				response.clearCookie(cki, this.ckiOpt);
 	}
@@ -73,7 +72,7 @@ export class AuthController {
 		response
 			.status(HttpStatus.ACCEPTED)
 			.cookie(
-				this.ckiPfx + hash(this.acsKey),
+				hash(this.acsKey),
 				this.authSvc.encrypt(
 					usrRcv.accessToken,
 					usrRcv.refreshToken.split('.')[2],
@@ -81,7 +80,7 @@ export class AuthController {
 				this.ckiOpt,
 			)
 			.cookie(
-				this.ckiPfx + hash(this.rfsKey),
+				hash(this.rfsKey),
 				this.authSvc.encrypt(usrRcv.refreshToken),
 				this.ckiOpt,
 			)
