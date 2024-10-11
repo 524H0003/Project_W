@@ -46,7 +46,15 @@ export class StudentController extends AuthController {
 				await this.StuSvc.login(body, mtdt),
 			);
 		} catch (error) {
-			console.log(error);
+			switch ((error as { message: string }).message) {
+				case 'ERRNewUser':
+					return this.changePassword(request, response, body, mtdt);
+					break;
+
+				default:
+					throw error;
+					break;
+			}
 		}
 	}
 }
