@@ -16,7 +16,7 @@ import { SignService } from 'auth/auth.service';
 			playground: false,
 		}),
 		JwtModule.register({ global: true }),
-		loadEnv('test'),
+		loadEnv,
 		SqlModule('test'),
 	],
 	providers: [SignService],
