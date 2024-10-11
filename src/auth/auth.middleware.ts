@@ -4,12 +4,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Cryption } from 'app/utils/auth.utils';
 import { compareSync } from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
+import { SignService } from './auth.service';
 
 @Injectable()
 export class AuthMiddleware extends Cryption implements NestMiddleware {
 	constructor(
 		private cfgSvc: ConfigService,
-		private jwtSvc: JwtService,
+		private signSvc: SignService,
 	) {
 		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
 	}
@@ -32,7 +33,7 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 		req.headers.authorization = `Bearer ${!isRefresh ? this.decrypt(acsTkn, tknPld.split('.')[2]) : tknPld}`;
 
 		try {
-			req.user = await this.jwtSvc.verify(
+			req.user = await this.signSvc.verify(
 				this.decrypt(acsTkn, tknPld.split('.')[2]),
 			);
 		} catch {}

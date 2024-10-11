@@ -4,6 +4,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { SqlModule } from 'app/module/sql.module';
 import { AuthMiddleware } from 'auth/auth.middleware';
 import { loadEnv } from './config.module';
+import { JwtModule } from '@nestjs/jwt';
+import { SignService } from 'auth/auth.service';
 
 @Module({
 	imports: [
@@ -13,9 +15,11 @@ import { loadEnv } from './config.module';
 			sortSchema: true,
 			playground: false,
 		}),
+		JwtModule.register({ global: true }),
 		loadEnv('test'),
 		SqlModule('test'),
 	],
+	providers: [SignService],
 })
 export class TestModule {
 	configure(consumer: MiddlewareConsumer) {

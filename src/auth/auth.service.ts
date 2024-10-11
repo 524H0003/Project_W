@@ -107,4 +107,11 @@ export class SignService {
 			{ secret: this.acsScr, expiresIn: this.acsExp },
 		);
 	}
+
+	verify(input: string, options?: { type: 'refresh' | 'access' }) {
+		const { type = 'access' } = options || {};
+		return this.jwtSvc.verify(input, {
+			secret: type === 'access' ? this.acsScr : this.rfsScr,
+		});
+	}
 }

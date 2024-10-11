@@ -1,9 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { EventModule } from 'event/event.module';
-import { DeviceModule } from 'auth/device/device.module';
 import { FileModule } from 'file/file.module';
 import { UserModule } from 'user/user.module';
 import { NotificationModule } from 'notification/notification.module';
@@ -15,22 +13,14 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
 import { LocalHostStrategy } from './strategies/localhost.strategy';
 import { HookModule } from './hook/hook.module';
 import { HookStrategy } from './strategies/hook.strategy';
+import { DeviceModule } from 'auth/device/device.module';
+import { UniversityModule } from 'university/university.module';
 
 @Module({
 	imports: [
 		// Authencation
 		PassportModule.register({ session: true }),
-		JwtModule.registerAsync({
-			global: true,
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: (cfgSvc: ConfigService) => {
-				return {
-					secret: cfgSvc.get('ACCESS_SECRET'),
-					signOptions: { expiresIn: cfgSvc.get('ACCESS_EXPIRE') },
-				};
-			},
-		}),
+		JwtModule.register({ global: true }),
 		// Foreign modules
 		EventModule,
 		NotificationModule,
@@ -39,6 +29,7 @@ import { HookStrategy } from './strategies/hook.strategy';
 		forwardRef(() => UserModule),
 		EnterpriseModule,
 		HookModule,
+		forwardRef(() => UniversityModule),
 	],
 	providers: [
 		AuthService,
