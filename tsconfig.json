@@ -18,8 +18,8 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"strictNullChecks": false,
 		"strictFunctionTypes": true,
+		"strictNullChecks": false,
 		"target": "ESNext",
 		"useDefineForClassFields": false
 	},
