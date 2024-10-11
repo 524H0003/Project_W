@@ -24,8 +24,7 @@ let next: NextFunction,
 	authSvc: AuthService,
 	cfgSvc: ConfigService,
 	acsKey: string,
-	rfsKey: string,
-	ckiSfx: string;
+	rfsKey: string;
 
 beforeEach(async () => {
 	const module: TestingModule = await Test.createTestingModule({
@@ -40,15 +39,14 @@ beforeEach(async () => {
 	(req = createRequest()),
 		(res = createResponse()),
 		(next = jest.fn()),
-		(acsKey = cfgSvc.get('ACCESS_KEY')),
-		(rfsKey = cfgSvc.get('REFRESH_KEY')),
-		(ckiSfx = cfgSvc.get('SERVER_COOKIE_PREFIX'));
+		(acsKey = cfgSvc.get('ACCESS_SECRET')),
+		(rfsKey = cfgSvc.get('REFRESH_SECRET'));
 });
 
 describe('use', () => {
 	beforeEach(() => {
-		req.cookies[`${ckiSfx + hash(rfsKey)}`] = authSvc.encrypt(rfsTkn);
-		req.cookies[`${ckiSfx + hash(acsKey)}`] = authSvc.encrypt(
+		req.cookies[`${hash(rfsKey)}`] = authSvc.encrypt(rfsTkn);
+		req.cookies[`${hash(acsKey)}`] = authSvc.encrypt(
 			acsTkn,
 			rfsTkn.split('.')[2],
 		);
