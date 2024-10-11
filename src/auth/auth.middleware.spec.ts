@@ -24,8 +24,7 @@ let next: NextFunction,
 	authSvc: AuthService,
 	cfgSvc: ConfigService,
 	acsKey: string,
-	rfsKey: string,
-	ckiSfx: string;
+	rfsKey: string;
 
 beforeEach(async () => {
 	const module: TestingModule = await Test.createTestingModule({
