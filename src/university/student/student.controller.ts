@@ -39,10 +39,14 @@ export class StudentController extends AuthController {
 		@Res({ passthrough: true }) response: Response,
 		@MetaData() mtdt: string,
 	) {
-		return this.sendBack(
-			request,
-			response,
-			await this.StuSvc.login(body, mtdt),
-		);
+		try {
+			return this.sendBack(
+				request,
+				response,
+				await this.StuSvc.login(body, mtdt),
+			);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 }

@@ -31,7 +31,7 @@ export class Student implements IStudent {
 	static test(from: string, options?: { email?: string; password?: string }) {
 		const {
 				email = `5${(7).numeric}@student.tdtu.edu.vn`,
-				password = StudentService.defaultPassword,
+				password = (16).string + '!!',
 			} = options || {},
 			n = new User({ email, password, fullName: from });
 		if (n.hashedPassword) return n;
