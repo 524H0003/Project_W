@@ -13,22 +13,24 @@ import { UserModule } from 'user/user.module';
 			imports: [ConfigModule],
 			inject: [ConfigService],
 			useFactory: (cfgSvc: ConfigService): MailerOptions => {
-				return {
-					transport: {
-						host: 'smtp.gmail.com',
-						secure: true,
-						auth: {
-							user: cfgSvc.get('SMTP_USER'),
-							pass: cfgSvc.get('SMTP_PASS'),
+				if (cfgSvc.get('SMTP_USER'))
+					return {
+						transport: {
+							host: 'smtp.gmail.com',
+							secure: true,
+							auth: {
+								user: cfgSvc.get('SMTP_USER'),
+								pass: cfgSvc.get('SMTP_PASS'),
+							},
 						},
-					},
-					defaults: { from: '"Unreal mail" <secret@student.tdtu.edu.vn>' },
-					template: {
-						dir: join(__dirname, 'templates'),
-						adapter: new HandlebarsAdapter(),
-						options: { strict: true },
-					},
-				};
+						defaults: { from: '"Unreal mail" <secret@student.tdtu.edu.vn>' },
+						template: {
+							dir: join(__dirname, 'templates'),
+							adapter: new HandlebarsAdapter(),
+							options: { strict: true },
+						},
+					};
+				else return {};
 			},
 		}),
 	],
