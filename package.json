@@ -66,6 +66,7 @@
 	},
 	"devDependencies": {
 		"@apollo/server": "^4.10.5",
+		"@compodoc/compodoc": "^1.1.25",
 		"@nestjs/apollo": "^12.2.0",
 		"@nestjs/cli": "^10.4.5",
 		"@nestjs/schematics": "^10.0.0",
