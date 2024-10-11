@@ -71,11 +71,7 @@ export class AuthController {
 		const { msg = 'true' } = options || {};
 		this.clearCookies(request, response);
 		response
-			.cookie(
-				this.ckiPfx + hash(this.rfsKey),
-				this.authSvc.encrypt(usrRcv.refreshToken),
-				this.ckiOpt,
-			)
+			.status(HttpStatus.ACCEPTED)
 			.cookie(
 				this.ckiPfx + hash(this.acsKey),
 				this.authSvc.encrypt(
@@ -84,7 +80,11 @@ export class AuthController {
 				),
 				this.ckiOpt,
 			)
-			.status(HttpStatus.ACCEPTED)
+			.cookie(
+				this.ckiPfx + hash(this.rfsKey),
+				this.authSvc.encrypt(usrRcv.refreshToken),
+				this.ckiOpt,
+			)
 			.send(msg);
 	}
 
