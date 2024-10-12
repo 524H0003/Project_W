@@ -5,18 +5,39 @@ import { compareSync } from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import { SignService } from './auth.service';
 
+/**
+ * Auth middleware
+ */
 @Injectable()
 export class AuthMiddleware extends Cryption implements NestMiddleware {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		private cfgSvc: ConfigService,
 		private signSvc: SignService,
 	) {
 		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
 	}
+	/**
+	 * @ignore
+	 */
 	private readonly rfsgrd = /\/(auth){1}\/(logout|refresh){1}/gi;
+	/**
+	 * @ignore
+	 */
 	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
+	/**
+	 * @ignore
+	 */
 	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
 
+	/**
+	 * Auth middleware processing request
+	 * @param {Request} req - client's request
+	 * @param {Response} res - server's response
+	 * @param {NextFunction} next - continueing processing client's request
+	 */
 	async use(req: Request, res: Response, next: NextFunction) {
 		const isRefresh = req.url.match(this.rfsgrd);
 

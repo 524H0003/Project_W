@@ -23,6 +23,7 @@ function convertForGql(context: ExecutionContext) {
 }
 
 /**
+ * @ignore
  * Decorators
  * ! WARNING: it's must be (data: unknown, context: ExecutionContext) => {}
  * ! to void error [ExceptionsHandler] Cannot read properties of undefined (reading 'getType')
@@ -41,16 +42,31 @@ export const Roles = Reflector.createDecorator<UserRole[]>(),
 			),
 	);
 
+/**
+ * Role method guard
+ */
 @Injectable()
 export class RoleGuard extends AuthGuard('access') {
+	/**
+	 * @ignore
+	 */
 	constructor(private reflector: Reflector) {
 		super();
 	}
 
+	/**
+	 * Convert client's request to suitable server request format
+	 * @param {ExecutionContext} ctx - client request's context
+	 */
 	getRequest(ctx: ExecutionContext) {
 		return convertForGql(ctx);
 	}
 
+	/**
+	 * Identify if user is allowed to access
+	 * @param {ExecutionContext} context - client request's context
+	 * @return {Promise<boolean>} allow if user valid
+	 */
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		if (this.reflector.get(AllowPublic, context.getHandler())) return true;
 		await super.canActivate(context); // ! Must run to check passport

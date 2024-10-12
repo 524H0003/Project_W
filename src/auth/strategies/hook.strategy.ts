@@ -5,8 +5,14 @@ import { IPayload } from 'auth/auth.interface';
 import { HookService } from 'auth/hook/hook.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
+/**
+ * Check the hook is valid
+ */
 @Injectable()
 export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		cfgSvc: ConfigService,
 		private hookSvc: HookService,
@@ -18,6 +24,10 @@ export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
 		});
 	}
 
+	/**
+	 * Validating the hook
+	 * @param {IPayload} payload - the payload from token
+	 */
 	async validate(payload: IPayload) {
 		const hook = await this.hookSvc.id(payload.id, { deep: 2 });
 		if (hook) return hook;

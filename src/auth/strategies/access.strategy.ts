@@ -5,8 +5,14 @@ import { IPayload } from 'auth/auth.interface';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'user/user.service';
 
+/**
+ * Check the access token from client
+ */
 @Injectable()
 export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		cfgSvc: ConfigService,
 		private usrSvc: UserService,
@@ -18,6 +24,10 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 		});
 	}
 
+	/**
+	 * Validating the access token from client
+	 * @param {IPayload} payload - the payload from token
+	 */
 	async validate(payload: IPayload) {
 		const user = await this.usrSvc.id(payload.id);
 		if (user) return user;

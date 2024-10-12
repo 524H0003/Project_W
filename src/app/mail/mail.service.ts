@@ -2,15 +2,27 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from 'user/user.service';
 
+/**
+ * Mail service
+ */
 @Injectable()
 export class MailService {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		private mailerService: MailerService,
 		private usrSvc: UserService,
 	) {}
 
-	async sendResetPassword(email: string, host: string, token: string) {
-		const url = `${host}/hook/${token}`,
+	/**
+	 * Sending email with context
+	 * @param {string} email - destination email
+	 * @param {string} host - the hostname of email requester
+	 * @param {string} signature - hook's signature
+	 */
+	async sendResetPassword(email: string, host: string, signature: string) {
+		const url = `${host}/hook/${signature}`,
 			usr = await this.usrSvc.email(email);
 
 		if (usr)

@@ -1,15 +1,31 @@
+/**
+ * Casting object to interface
+ */
 export class InterfaceCasting<T, K extends keyof T> {
 	[key: string]: any;
 
+	/**
+	 * Convert object to interface
+	 * @param {T} input - the input object
+	 * @param {K[]} get - the interface's properties
+	 */
 	constructor(input: T, get: readonly K[]) {
 		get.forEach((_) => (this[String(_)] = input[_]));
 	}
 
+	/**
+	 * Quick method to convert object to interface
+	 * @param {T} input - the input object
+	 * @param {K[]} get - the interface's properties
+	 * @return {InterfaceCasting} the result of casting
+	 */
 	static quick<T, K extends keyof T>(input: T, get: readonly K[]): T {
 		return new InterfaceCasting(input, get) as T;
 	}
 }
-
+/**
+ * @ignore
+ */
 export const logMethodCall = methodDecorator({
 		prerun: (target: any, propertyKey: Function, args: any) => {
 			console.log(
@@ -86,34 +102,84 @@ export function methodDecorator(functions: {
 }
 
 // Defines
+/**
+ * @ignore
+ */
 const alphaChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
 	numChars = '0123456789';
 
 declare global {
+	/**
+	 * Array interface
+	 */
 	interface Array<T> {
+		/**
+		 * Get random element
+		 */
 		readonly randomElement: T;
+		/**
+		 * Get elements contain substring
+		 */
 		get(subString: string): Array<T>;
+		/**
+		 * Get last element
+		 */
 		readonly lastElement: T;
 	}
+	/**
+	 * Number interface
+	 */
 	interface Number {
 		// number
+		/**
+		 * floor function
+		 */
 		readonly floor: number;
+		/**
+		 * round function
+		 */
 		readonly round: number;
+		/**
+		 * abs function
+		 */
 		readonly abs: number;
 
 		// string
+		/**
+		 * Generate alpha string with length
+		 */
 		readonly alpha: string;
+		/**
+		 * Generate numeric string with length
+		 */
 		readonly numeric: string;
+		/**
+		 * Generate string with length
+		 */
 		readonly string: string;
 
 		// file size
+		/**
+		 * byte from megabyte
+		 */
 		readonly mb: number;
 
-		// utils
+		/**
+		 * Get random number
+		 */
 		readonly random: number;
-		ra(input: () => Promise<any>): Promise<void>; // range() # like Python's range()
+		/**
+		 * range() # like Python's range()
+		 */
+		ra(input: () => Promise<any>): Promise<void>;
 	}
+	/**
+	 * String interface
+	 */
 	interface String {
+		/**
+		 * Get random character
+		 */
 		readonly randomChar: string;
 	}
 

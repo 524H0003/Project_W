@@ -18,8 +18,14 @@ import { SessionService } from 'auth/session/session.service';
 import { ConfigService } from '@nestjs/config';
 import { HookService } from 'auth/hook/hook.service';
 
+/**
+ * Student controller
+ */
 @Controller('student')
 export class StudentController extends AuthController {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		private StuSvc: StudentService,
 		authSvc: AuthService,
@@ -31,12 +37,19 @@ export class StudentController extends AuthController {
 		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
 	}
 
+	/**
+	 * Student login request
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {ILogin} body - the request context
+	 * @param {string} mtdt - the client meta data
+	 */
 	@Post('login')
 	@UseInterceptors(NoFilesInterceptor())
 	async login(
 		@Req() request: Request,
-		@Body() body: ILogin,
 		@Res({ passthrough: true }) response: Response,
+		@Body() body: ILogin,
 		@MetaData() mtdt: string,
 	) {
 		try {

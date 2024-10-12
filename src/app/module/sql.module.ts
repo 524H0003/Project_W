@@ -5,6 +5,10 @@ import { TlsOptions } from 'tls';
 import { DataSourceOptions } from 'typeorm';
 import { createPostgresDatabase } from 'typeorm-extension';
 
+/**
+ * Reading SSL certificate
+ * @return {TlsOptions | boolean} found certificate or not using ssl
+ */
 function readSslCa(): TlsOptions | boolean {
 	try {
 		return { rejectUnauthorized: true, ca: readFileSync(`./secrets/ca.cert`) };
@@ -13,6 +17,9 @@ function readSslCa(): TlsOptions | boolean {
 	}
 }
 
+/**
+ * @ignore
+ */
 const sqlOptions = (
 	type: 'deploy' | 'test',
 	cfgSvc: ConfigService,
@@ -27,6 +34,9 @@ const sqlOptions = (
 	ssl: cfgSvc.get('POSTGRES_SSL') ? readSslCa() : false,
 });
 
+/**
+ * @ignore
+ */
 export const SqlModule = (type: 'deploy' | 'test') =>
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],

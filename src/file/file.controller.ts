@@ -5,8 +5,14 @@ import { Response } from 'express';
 import { User } from 'user/user.entity';
 import { FileService } from './file.service';
 
+/**
+ * File controller
+ */
 @Controller('file')
 export class FileController {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		private fileSvc: FileService,
 		private cfgSvc: ConfigService,
@@ -14,6 +20,12 @@ export class FileController {
 
 	private rootDir = this.cfgSvc.get('SERVER_PUBLIC');
 
+	/**
+	 * Get uploaded file
+	 * @param {string} filename - the name of file
+	 * @param {Response} res - the server's response
+	 * @param {User} user - the current processing user
+	 */
 	@Get(':filename')
 	async seeUploadedFile(
 		@Param('filename') filename: string,

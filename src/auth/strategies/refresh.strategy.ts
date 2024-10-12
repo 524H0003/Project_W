@@ -7,8 +7,14 @@ import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
+/**
+ * Check the refresh token from client
+ */
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		cfgSvc: ConfigService,
 		private sesSvc: SessionService,
@@ -22,6 +28,10 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 		});
 	}
 
+	/**
+	 * Validating the refresh token
+	 * @param {IPayload} payload - the payload from token
+	 */
 	async validate(payload: IPayload) {
 		const session = await this.sesSvc.id(payload.id, { deep: 3 });
 		if (session) {

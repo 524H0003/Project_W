@@ -4,29 +4,51 @@ import { User } from 'user/user.entity';
 import { FileType, IFile } from './file.model';
 import { Event } from 'event/event.entity';
 
+/**
+ * File entity
+ */
 @Entity({ name: 'Document' })
 export class File extends SensitiveInfomations implements IFile {
+	/**
+	 * Create file with infomations
+	 * @param {IFile} payload - file's infomations
+	 */
 	constructor(payload: IFile) {
 		super();
 		Object.assign(this, payload);
 	}
 
 	// Relationships
+	/**
+	 * File creator
+	 */
 	@ManyToOne(() => User, (_: User) => _.uploadFiles)
 	@JoinColumn({ name: 'user_id' })
 	createdBy: User;
 
+	/**
+	 * File create for event
+	 */
 	@ManyToOne(() => Event, (_: Event) => _.documents, { nullable: true })
 	@JoinColumn({ name: 'event_id' })
 	atEvent: Event;
 
 	// Infomations
+	/**
+	 * File's path
+	 */
 	@Column({ name: 'file_path', type: 'text' })
 	path: string;
 
+	/**
+	 * File's title
+	 */
 	@Column({ name: 'title', type: 'text', default: 'user_file' })
 	title: string;
 
+	/**
+	 * File's type
+	 */
 	@Column({
 		name: 'document_type',
 		type: 'enum',
@@ -36,6 +58,9 @@ export class File extends SensitiveInfomations implements IFile {
 	})
 	type: FileType;
 
+	/**
+	 * File's upload time
+	 */
 	@Column({
 		name: 'uploaded_at',
 		type: 'timestamp with time zone',
