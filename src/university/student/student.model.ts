@@ -3,10 +3,33 @@ import { IUser } from 'user/user.model';
 
 // Interfaces
 export interface IStudent {
+	/**
+	 * @ignore
+	 */
 	user: IUser;
+
+	/**
+	 * Student's major
+	 */
 	major: string;
+
+	/**
+	 * Student graduation year
+	 */
 	graduationYear: number;
+
+	/**
+	 * Student enrollment year
+	 */
 	enrollmentYear: number;
+
+	/**
+	 * Student's skills
+	 */
 	skills: string;
+
+	/**
+	 * @ignore
+	 */
 	currentEnterprise: IEnterprise;
 }

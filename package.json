@@ -9,7 +9,7 @@
 	"types": "types.d.ts",
 	"scripts": {
 		"buildfile": "ts-node src/build.ts",
-		"doc": "compodoc src -p tsconfig.build.json",
+		"doc": "compodoc src -p tsconfig.doc.json",
 		"prebuild": "npm install && npm run buildfile",
 		"build": "nest build",
 		"format": "replace '{\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace \"\\[\n\" \"[\" . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && prettier --write \"./**/*.ts\" \"./**/*.js*\" \"./**/*.*rc\" --log-level silent",

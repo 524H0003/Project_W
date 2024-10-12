@@ -6,6 +6,9 @@ import { User } from './user.entity';
 import { UserRole } from './user.model';
 import { UserService } from './user.service';
 
+/**
+ * @ignore
+ */
 @Resolver(() => User)
 @UseGuards(RoleGuard)
 export class UserResolver {
