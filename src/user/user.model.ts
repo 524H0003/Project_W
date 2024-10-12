@@ -24,7 +24,13 @@ export interface IUserAuthentication {
  * Fields about user's infomations
  */
 export interface IUserInfo {
+	/**
+	 * User's full name
+	 */
 	fullName: string;
+	/**
+	 * User's avatar path
+	 */
 	avatarPath: string;
 }
 
@@ -32,6 +38,9 @@ export interface IUserInfo {
  * Fields about user's time record
  */
 export interface IUserTimeRecord {
+	/**
+	 * User's last login date
+	 */
 	lastLogin: Date;
 }
 
@@ -39,6 +48,9 @@ export interface IUserTimeRecord {
  * Fields about user's status
  */
 export interface IUserStatus {
+	/**
+	 * Is user active
+	 */
 	isActive: boolean;
 }
 
@@ -46,6 +58,9 @@ export interface IUserStatus {
  * Fields about user's sensitive infomations
  */
 export interface IUserSensitive {
+	/**
+	 * User's role
+	 */
 	role: UserRole;
 }
 
@@ -58,20 +73,44 @@ export interface IUser
 		IUserTimeRecord,
 		IUserSensitive,
 		IUserStatus {
+	/**
+	 * Recieved notifications
+	 */
 	recievedNotifications: IReciever[];
+
+	/**
+	 * Signed in devices
+	 */
 	devices: IDevice[];
+
+	/**
+	 * Uploaded files
+	 */
 	uploadFiles: IFile[];
+
+	/**
+	 * Participated events
+	 */
 	participatedEvents: IEventParticipator[];
+
+	/**
+	 * Hooks
+	 */
 	hooks: IHook[];
 }
 
 /**
  * Fields about user's recieved properties
- *
- * @interface
  */
 export interface IUserRecieve {
+	/**
+	 * Access token
+	 */
 	accessToken: string;
+
+	/**
+	 * Refresh token
+	 */
 	refreshToken: string;
 }
 

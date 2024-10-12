@@ -122,9 +122,21 @@ export class SignService {
 	) {}
 
 	// session secret
+	/**
+	 * @ignore
+	 */
 	private readonly rfsScr = this.cfgSvc.get('REFRESH_SECRET');
+	/**
+	 * @ignore
+	 */
 	private readonly rfsExp = this.cfgSvc.get('REFRESH_EXPIRE');
+	/**
+	 * @ignore
+	 */
 	private readonly acsScr = this.cfgSvc.get('ACCESS_SECRET');
+	/**
+	 * @ignore
+	 */
 	private readonly acsExp = this.cfgSvc.get('ACCESS_EXPIRE');
 
 	/**

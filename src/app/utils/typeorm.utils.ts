@@ -32,7 +32,13 @@ export class SensitiveInfomations extends BaseEntity {
 	@PrimaryGeneratedColumn('uuid') id: string;
 }
 
+/**
+ * Generic database requests
+ */
 export class DatabaseRequests<T extends SensitiveInfomations> {
+	/**
+	 * @ignore
+	 */
 	relations: string[];
 
 	/**

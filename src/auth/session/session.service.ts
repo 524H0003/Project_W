@@ -26,6 +26,9 @@ export class SessionService extends DatabaseRequests<Session> {
 	) {
 		super(repo);
 	}
+	/**
+	 * @ignore
+	 */
 	private readonly use = this.cfgSvc.get('REFRESH_USE');
 
 	/**

@@ -5,7 +5,13 @@ import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
  * Time record model
  */
 interface IRecordTime {
+	/**
+	 * Create data record
+	 */
 	createdAt: Date;
+	/**
+	 * Update date record
+	 */
 	updatedAt: Date;
 }
 

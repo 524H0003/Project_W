@@ -49,7 +49,9 @@ export class FileService extends DatabaseRequests<File> {
 			}
 		});
 	}
-
+	/**
+	 * @ignore
+	 */
 	private s3Svc = this.cfgSvc.get('AWS_REGION')
 		? new S3Client({
 				forcePathStyle: true,
@@ -61,7 +63,13 @@ export class FileService extends DatabaseRequests<File> {
 				},
 			})
 		: null;
+	/**
+	 * @ignore
+	 */
 	private serverFilesReg = /^.*\.server\.(.*)/g;
+	/**
+	 * @ignore
+	 */
 	private rootDir = this.cfgSvc.get('SERVER_PUBLIC');
 
 	/**

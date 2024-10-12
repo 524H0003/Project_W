@@ -26,6 +26,9 @@ export function hash(input: string): string {
 	return hashSync(input, (8).random + 4);
 }
 
+/**
+ * Cryption class
+ */
 export class Cryption {
 	/**
 	 * @ignore

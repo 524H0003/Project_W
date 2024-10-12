@@ -109,30 +109,77 @@ const alphaChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
 	numChars = '0123456789';
 
 declare global {
+	/**
+	 * Array interface
+	 */
 	interface Array<T> {
+		/**
+		 * Get random element
+		 */
 		readonly randomElement: T;
+		/**
+		 * Get elements contain substring
+		 */
 		get(subString: string): Array<T>;
+		/**
+		 * Get last element
+		 */
 		readonly lastElement: T;
 	}
+	/**
+	 * Number interface
+	 */
 	interface Number {
 		// number
+		/**
+		 * floor function
+		 */
 		readonly floor: number;
+		/**
+		 * round function
+		 */
 		readonly round: number;
+		/**
+		 * abs function
+		 */
 		readonly abs: number;
 
 		// string
+		/**
+		 * Generate alpha string with length
+		 */
 		readonly alpha: string;
+		/**
+		 * Generate numeric string with length
+		 */
 		readonly numeric: string;
+		/**
+		 * Generate string with length
+		 */
 		readonly string: string;
 
 		// file size
+		/**
+		 * byte from megabyte
+		 */
 		readonly mb: number;
 
-		// utils
+		/**
+		 * Get random number
+		 */
 		readonly random: number;
-		ra(input: () => Promise<any>): Promise<void>; // range() # like Python's range()
+		/**
+		 * range() # like Python's range()
+		 */
+		ra(input: () => Promise<any>): Promise<void>;
 	}
+	/**
+	 * String interface
+	 */
 	interface String {
+		/**
+		 * Get random character
+		 */
 		readonly randomChar: string;
 	}
 
