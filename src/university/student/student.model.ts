@@ -2,6 +2,9 @@ import { IEnterprise } from 'enterprise/enterprise.model';
 import { IUser } from 'user/user.model';
 
 // Interfaces
+/**
+ * Student model
+ */
 export interface IStudent {
 	/**
 	 * @ignore
@@ -29,7 +32,7 @@ export interface IStudent {
 	skills: string;
 
 	/**
-	 * @ignore
+	 * Student current working enterprise
 	 */
 	currentEnterprise: IEnterprise;
 }

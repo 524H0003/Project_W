@@ -25,8 +25,14 @@ import { Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
 
+/**
+ * File services
+ */
 @Injectable()
 export class FileService extends DatabaseRequests<File> {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		@InjectRepository(File) repo: Repository<File>,
 		private cfgSvc: ConfigService,
@@ -58,11 +64,21 @@ export class FileService extends DatabaseRequests<File> {
 	private serverFilesReg = /^.*\.server\.(.*)/g;
 	private rootDir = this.cfgSvc.get('SERVER_PUBLIC');
 
-	private asStream(response: GetObjectCommandOutput) {
+	/**
+	 * Convert to stream
+	 * @param {GetObjectCommandOutput} response - input
+	 * @return {Readable} output
+	 */
+	private asStream(response: GetObjectCommandOutput): Readable {
 		return response.Body as Readable;
 	}
 
-	private async asBuffer(response: GetObjectCommandOutput) {
+	/**
+	 * Convert to buffer
+	 * @param {GetObjectCommandOutput} response - input
+	 * @return {Promise<Buffer>} output
+	 */
+	private async asBuffer(response: GetObjectCommandOutput): Promise<Buffer> {
 		const stream = this.asStream(response);
 		const chunks: Buffer[] = [];
 		return new Promise<Buffer>((resolve, reject) => {
@@ -72,11 +88,11 @@ export class FileService extends DatabaseRequests<File> {
 		});
 	}
 
-	private async asString(response: GetObjectCommandOutput) {
-		const buffer = await this.asBuffer(response);
-		return buffer.toString();
-	}
-
+	/**
+	 * Send file to s3 server
+	 * @param {string} fileName - the name of sending file
+	 * @param {Buffer} input - file's buffer to send
+	 */
 	private async s3Send(fileName: string, input: Buffer) {
 		try {
 			await new Upload({
@@ -90,9 +106,14 @@ export class FileService extends DatabaseRequests<File> {
 		} catch {}
 	}
 
-	private async s3Recieve(filename: string) {
+	/**
+	 * Recieve file from s3 server
+	 * @param {string} filename - the name of recieving file
+	 * @return {Promise<Buffer>} the recieved file's buffer
+	 */
+	private async s3Recieve(filename: string): Promise<Buffer> {
 		try {
-			return await this.asBuffer(
+			return this.asBuffer(
 				await this.s3Svc.send(
 					new GetObjectCommand({
 						Bucket: this.cfgSvc.get('AWS_BUCKET'),
@@ -105,11 +126,18 @@ export class FileService extends DatabaseRequests<File> {
 		}
 	}
 
+	/**
+	 * Assign file to server
+	 * @param {Express.Multer.File} input - the file to assign
+	 * @param {User} createdBy - the file's assigner
+	 * @param {object} serverFilesOptions - optional options
+	 * @return {Promise<File>} the assigned file's infomations on database
+	 */
 	async assign(
 		input: Express.Multer.File,
 		createdBy: User,
 		serverFilesOptions?: { fileName: string },
-	) {
+	): Promise<File> {
 		if (!input?.buffer) return null;
 		const { fileName = '' } = serverFilesOptions || {};
 
@@ -125,7 +153,13 @@ export class FileService extends DatabaseRequests<File> {
 		if (!fileName) return this.save({ path, createdBy });
 	}
 
-	async recieve(filename: string, user: User) {
+	/**
+	 * Recieve file from server
+	 * @param {string} filename - the name of recieving file
+	 * @param {User} user - the user want to recieve file
+	 * @return {Promise<string>} the file name or rejecting request
+	 */
+	async recieve(filename: string, user: User): Promise<string> {
 		const fileOnline = await this.s3Recieve(filename);
 		if (fileOnline) {
 			writeFileSync(
@@ -144,9 +178,15 @@ export class FileService extends DatabaseRequests<File> {
 			});
 			if (user?.id === file.createdBy.id) return filename;
 		}
-		return false;
+		return String(false);
 	}
 
+	/**
+	 * Find file on database
+	 * @param {string} input - the file's name
+	 * @param {string} userId - the id of request's user
+	 * @param {FindOptionsWithCustom<File>} options - the function's option
+	 */
 	path(input: string, userId: string, options: FindOptionsWithCustom<File>) {
 		return this.findOne({ path: input, ...options, createdBy: { id: userId } });
 	}

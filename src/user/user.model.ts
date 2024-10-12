@@ -7,7 +7,6 @@ import { IReciever } from 'notification/reciever/reciever.model';
 // Interfaces
 /**
  * Fileds for user authencation
- * @interface
  */
 export interface IUserAuthentication {
 	/**
@@ -23,7 +22,6 @@ export interface IUserAuthentication {
 
 /**
  * Fields about user's infomations
- * @interface
  */
 export interface IUserInfo {
 	fullName: string;
@@ -32,8 +30,6 @@ export interface IUserInfo {
 
 /**
  * Fields about user's time record
- *
- * @interface
  */
 export interface IUserTimeRecord {
 	lastLogin: Date;
@@ -41,8 +37,6 @@ export interface IUserTimeRecord {
 
 /**
  * Fields about user's status
- *
- * @interface
  */
 export interface IUserStatus {
 	isActive: boolean;
@@ -50,17 +44,13 @@ export interface IUserStatus {
 
 /**
  * Fields about user's sensitive infomations
- *
- * @interface
  */
 export interface IUserSensitive {
 	role: UserRole;
 }
 
 /**
- * User fields
- *
- * @interface
+ * User model
  */
 export interface IUser
 	extends IUserAuthentication,
@@ -87,15 +77,11 @@ export interface IUserRecieve {
 
 /**
  * Login fields
- *
- * @interface
  */
 export interface ILogin extends IUserAuthentication {}
 
 /**
  * Sign up fields
- *
- * @interface
  */
 export interface ISignUp extends IUserAuthentication, IUserInfo {}
 
