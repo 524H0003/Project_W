@@ -11,6 +11,7 @@ import { LocalHostStrategy } from './strategies/localhost.strategy';
 import { HookModule } from './hook/hook.module';
 import { HookStrategy } from './strategies/hook.strategy';
 import { DeviceModule } from 'auth/device/device.module';
+import { RoleGuard } from './auth.guard';
 
 @Module({
 	imports: [
@@ -31,6 +32,7 @@ import { DeviceModule } from 'auth/device/device.module';
 		RefreshStrategy,
 		LocalHostStrategy,
 		HookStrategy,
+		RoleGuard,
 	],
 	controllers: [AuthController],
 	exports: [AuthService, SignService],

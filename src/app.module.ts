@@ -14,25 +14,22 @@ import { UniversityModule } from 'university/university.module';
 @Module({
 	imports: [
 		// GraphQL and Apollo SandBox
-		/**
-		 * ! Disabled GraphQL feature
-		 */
-		// GraphQLModule.forRoot<ApolloDriverConfig>({
-		// 	driver: ApolloDriver,
-		// 	// Avoid deprecated
-		// 	subscriptions: {
-		// 		'graphql-ws': true,
-		// 		'subscriptions-transport-ws': false,
-		// 	},
-		// 	// Code first
-		// 	autoSchemaFile: 'schema.gql',
-		// 	sortSchema: true,
-		// 	// Init Apollo SandBox
-		// 	playground: false,
-		// 	plugins: [ApolloServerPluginLandingPageLocalDefault()],
-		// 	includeStacktraceInErrorResponses: false,
-		// 	inheritResolversFromInterfaces: false,
-		// }),
+		GraphQLModule.forRoot<ApolloDriverConfig>({
+			driver: ApolloDriver,
+			// Avoid deprecated
+			subscriptions: {
+				'graphql-ws': true,
+				'subscriptions-transport-ws': false,
+			},
+			// Code first
+			autoSchemaFile: 'schema.gql',
+			sortSchema: true,
+			// Init Apollo SandBox
+			playground: false,
+			plugins: [ApolloServerPluginLandingPageLocalDefault()],
+			includeStacktraceInErrorResponses: false,
+			inheritResolversFromInterfaces: false,
+		}),
 		// Core modules
 		AuthModule,
 		loadEnv,
