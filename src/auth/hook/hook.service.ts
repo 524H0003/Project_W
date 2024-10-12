@@ -7,8 +7,14 @@ import { MailService } from 'app/mail/mail.service';
 import { UserRecieve } from 'user/user.class';
 import { SignService } from 'auth/auth.service';
 
+/**
+ * Hook service
+ */
 @Injectable()
 export class HookService extends DatabaseRequests<Hook> {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		@InjectRepository(Hook) repo: Repository<Hook>,
 		private mailSvc: MailService,
@@ -17,7 +23,18 @@ export class HookService extends DatabaseRequests<Hook> {
 		super(repo);
 	}
 
-	async assign(email: string, host: string, mtdt: string) {
+	/**
+	 * Assigning hook
+	 * @param {string} email - user's email
+	 * @param {string} host - request's hostname
+	 * @param {string} mtdt - client's metadata
+	 * @return {Promise<UserRecieve>} user's recieve infomations
+	 */
+	async assign(
+		email: string,
+		host: string,
+		mtdt: string,
+	): Promise<UserRecieve> {
 		const signature = (128).string,
 			hook = await this.save({
 				signature,
@@ -31,7 +48,12 @@ export class HookService extends DatabaseRequests<Hook> {
 		});
 	}
 
-	async terminate(id: string) {
-		await this.save({ id, isUsed: true });
+	/**
+	 * Assigning used status to hook
+	 * @param {string} id - hook's id
+	 * @return {Promise<Hook>} updated hook
+	 */
+	terminate(id: string): Promise<Hook> {
+		return this.save({ id, isUsed: true });
 	}
 }

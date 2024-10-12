@@ -6,6 +6,10 @@ import { loadEnv } from 'app/module/config.module';
 import { SqlModule } from 'app/module/sql.module';
 import { AuthMiddleware } from 'auth/auth.middleware';
 import { AuthModule } from 'auth/auth.module';
+import { EnterpriseModule } from 'enterprise/enterprise.module';
+import { EventModule } from 'event/event.module';
+import { NotificationModule } from 'notification/notification.module';
+import { UniversityModule } from 'university/university.module';
 
 @Module({
 	imports: [
@@ -26,10 +30,15 @@ import { AuthModule } from 'auth/auth.module';
 			includeStacktraceInErrorResponses: false,
 			inheritResolversFromInterfaces: false,
 		}),
-		// Sub modules
+		// Core modules
 		AuthModule,
 		loadEnv,
 		SqlModule('deploy'),
+		// Application modules
+		EventModule,
+		NotificationModule,
+		EnterpriseModule,
+		UniversityModule,
 	],
 })
 export class AppModule {

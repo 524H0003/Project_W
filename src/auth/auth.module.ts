@@ -22,14 +22,10 @@ import { UniversityModule } from 'university/university.module';
 		PassportModule.register({ session: true }),
 		JwtModule.register({ global: true }),
 		// Foreign modules
-		EventModule,
-		NotificationModule,
-		FileModule,
 		forwardRef(() => DeviceModule),
 		forwardRef(() => UserModule),
-		EnterpriseModule,
 		HookModule,
-		forwardRef(() => UniversityModule),
+		FileModule,
 	],
 	providers: [
 		AuthService,
@@ -41,6 +37,6 @@ import { UniversityModule } from 'university/university.module';
 		HookStrategy,
 	],
 	controllers: [AuthController],
-	exports: [AuthService, SignService, DeviceModule, UserModule, HookModule],
+	exports: [AuthService, SignService],
 })
 export class AuthModule {}

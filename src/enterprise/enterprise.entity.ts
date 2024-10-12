@@ -6,29 +6,50 @@ import { IEnterprise } from './enterprise.model';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 
+/**
+ * Enterprise entity
+ */
 @ObjectType()
 @Entity({ name: 'Enterprise' })
 export class Enterprise extends SensitiveInfomations implements IEnterprise {
 	// Relationships
+	/**
+	 * Enterprise's employees
+	 */
 	@OneToMany(() => Employee, (_: Employee) => _.enterprise)
 	employees: Employee[];
 
+	/**
+	 * Enterprise's students
+	 */
 	@OneToMany(() => Student, (_: Student) => _.currentEnterprise)
 	students: Student[];
 
 	// Infomations
+	/**
+	 * Enterprise's name
+	 */
 	@Field()
 	@Column({ name: 'name', type: 'text' })
 	name: string;
 
+	/**
+	 * Enterprise's name
+	 */
 	@Field()
 	@Column({ name: 'description', type: 'text' })
 	description: string;
 
+	/**
+	 * Enterprise's industry
+	 */
 	@Field()
 	@Column({ name: 'industry', type: 'text' })
 	industry: string;
 
+	/**
+	 * Enterprise's avatar path
+	 */
 	@Field()
 	@Column({
 		name: 'image_path',
@@ -38,6 +59,9 @@ export class Enterprise extends SensitiveInfomations implements IEnterprise {
 	avatarPath: string;
 
 	// Embedded Entity
+	/**
+	 * @ignore
+	 */
 	@Column(() => BlackBox, { prefix: false })
 	blackBox: BlackBox;
 }
