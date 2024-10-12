@@ -1,8 +1,26 @@
 // Interfaces
+/**
+ * Test's expectations
+ */
 interface Expectation<T, K extends keyof jest.Matchers<T>> {
+	/**
+	 * Expectation's type
+	 */
 	type: K;
+
+	/**
+	 * Expectation's param
+	 */
 	params: Parameters<jest.Matchers<T>[K]>;
+
+	/**
+	 * Is not?
+	 */
 	not?: boolean;
+
+	/**
+	 * Is debugging?
+	 */
 	debug?: boolean;
 }
 

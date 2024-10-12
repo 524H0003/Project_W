@@ -1,10 +1,24 @@
+/**
+ * Casting object to interface
+ */
 export class InterfaceCasting<T, K extends keyof T> {
 	[key: string]: any;
 
+	/**
+	 * Convert object to interface
+	 * @param {T} input - the input object
+	 * @param {K[]} get - the interface's properties
+	 */
 	constructor(input: T, get: readonly K[]) {
 		get.forEach((_) => (this[String(_)] = input[_]));
 	}
 
+	/**
+	 * Quick method to convert object to interface
+	 * @param {T} input - the input object
+	 * @param {K[]} get - the interface's properties
+	 * @return {InterfaceCasting} the result of casting
+	 */
 	static quick<T, K extends keyof T>(input: T, get: readonly K[]): T {
 		return new InterfaceCasting(input, get) as T;
 	}

@@ -1,6 +1,7 @@
 import {
 	BaseEntity,
 	DeepPartial,
+	DeleteResult,
 	FindOptionsWhere,
 	PrimaryGeneratedColumn,
 	Repository,
@@ -13,24 +14,43 @@ export type FindOptionsWithCustom<T> = FindOptionsWhere<T> & {
 	relations?: string[];
 };
 
+/**
+ * Sensitive infomations in entity
+ */
 export class SensitiveInfomations extends BaseEntity {
+	/**
+	 * @ignore
+	 */
 	constructor() {
 		super();
 	}
 
 	// Sensitive Infomations
+	/**
+	 * Unique identifier
+	 */
 	@PrimaryGeneratedColumn('uuid') id: string;
 }
 
 export class DatabaseRequests<T extends SensitiveInfomations> {
 	relations: string[];
 
+	/**
+	 * @ignore
+	 */
 	constructor(protected repo: Repository<T>) {
 		this.relations = [].concat(
 			...this.repo.metadata.relations.map((i) => this.exploreEntityMetadata(i)),
 		);
 	}
 
+	/**
+	 * Exploring entity relationships
+	 * @param {RelationMetadata} input - the entity with relationships
+	 * @param {string} parentName - discovered relationships
+	 * @param {string} avoidNames - relationships must be avoid
+	 * @return {Array<string>} array of relationships
+	 */
 	private exploreEntityMetadata(
 		input: RelationMetadata,
 		parentName: string = '',
@@ -56,6 +76,11 @@ export class DatabaseRequests<T extends SensitiveInfomations> {
 		);
 	}
 
+	/**
+	 * Finding objects
+	 * @param {FindOptionsWithCustom<T>} options - function's option
+	 * @return {Promise<T[]>} array of found objects
+	 */
 	protected find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
 		const { deep = 1, relations = [''], ...newOptions } = options || {};
 		return this.repo.find({
@@ -67,6 +92,11 @@ export class DatabaseRequests<T extends SensitiveInfomations> {
 		});
 	}
 
+	/**
+	 * Finding a object
+	 * @param {FindOptionsWithCustom<T>} options - function's option
+	 * @return {Promise<T>} found object
+	 */
 	protected findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
 		const { deep = 1, relations = [''], ...newOptions } = options || {};
 		return this.repo.findOne({
@@ -78,23 +108,51 @@ export class DatabaseRequests<T extends SensitiveInfomations> {
 		});
 	}
 
-	protected save(entity: DeepPartial<T>, options?: SaveOptions) {
+	/**
+	 * Saving a object
+	 * @param {DeepPartial<T>} entity - the saving object
+	 * @param {SaveOptions} options - function's option
+	 * @return {Promise<T>} the object from database
+	 */
+	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
 		return this.repo.save(entity, options) as Promise<T>;
 	}
 
-	protected delete(criteria: FindOptionsWhere<T>) {
+	/**
+	 * Deleting a object
+	 * @param {FindOptionsWhere<T>} criteria - the deleting object
+	 * @return {Promise<DeleteResult>} the deletion result
+	 */
+	protected delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
 		return this.repo.delete(criteria);
 	}
 
-	update(entity: DeepPartial<T>, options?: SaveOptions) {
+	/**
+	 * Updating a object
+	 * @param {DeepPartial<T>} entity - the updating object
+	 * @param {SaveOptions} options - function's option
+	 * @return {Promise<T>} the updated object
+	 */
+	update(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
 		return this.save(entity, options);
 	}
 
-	id(id: string, options?: FindOptionsWithCustom<T>) {
+	/**
+	 * Get object from id
+	 * @param {string} id - the object's id
+	 * @param {FindOptionsWithCustom<T>} options - function's option
+	 * @return {Promise<T>} found object
+	 */
+	id(id: string, options?: FindOptionsWithCustom<T>): Promise<T> {
 		return this.findOne({ id, ...options });
 	}
 
-	all(options?: FindOptionsWithCustom<T>) {
+	/**
+	 * Get all object
+	 * @param {FindOptionsWithCustom<T>} options - function's option
+	 * @return {Promise<T[]>} array of found object
+	 */
+	all(options?: FindOptionsWithCustom<T>): Promise<T[]> {
 		return this.find(options);
 	}
 }
