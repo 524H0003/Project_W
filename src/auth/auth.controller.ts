@@ -29,8 +29,14 @@ import { HookService } from './hook/hook.service';
 import { Hook } from './hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 
+/**
+ * Auth controller
+ */
 @Controller('auth')
 export class AuthController {
+	/**
+	 * @ignore
+	 */
 	constructor(
 		private authSvc: AuthService,
 		private dvcSvc: DeviceService,
@@ -47,11 +53,18 @@ export class AuthController {
 	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
 	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
 
+	/**
+	 * Clear client's cookies
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {boolean} acs - if clear access token
+	 * @param {boolean} rfs - if clear refresh token
+	 */
 	protected clearCookies(
 		request: Request,
 		response: Response,
-		acs = true,
-		rfs = true,
+		acs: boolean = true,
+		rfs: boolean = true,
 	) {
 		for (const cki in request.cookies)
 			if (
@@ -61,12 +74,20 @@ export class AuthController {
 				response.clearCookie(cki, this.ckiOpt);
 	}
 
+	/**
+	 * Send client user's recieve infomations
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {UserRecieve} usrRcv - user's recieve infomations
+	 * @param {object} options - function's option
+	 * @return {boolean} if function execute successfully
+	 */
 	protected sendBack(
 		request: Request,
 		response: Response,
 		usrRcv: UserRecieve,
 		options?: { msg?: string },
-	): void {
+	): boolean {
 		const { msg = 'true' } = options || {};
 		this.clearCookies(request, response);
 		response
@@ -85,8 +106,17 @@ export class AuthController {
 				this.ckiOpt,
 			)
 			.send(msg);
+		return true;
 	}
 
+	/**
+	 * User login
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {ILogin} body - login input
+	 * @param {string} mtdt - client's metadata
+	 * @return {Promise<boolean>} if function execute successfully
+	 */
 	@Post('login')
 	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(NoFilesInterceptor())
@@ -95,7 +125,7 @@ export class AuthController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: ILogin,
 		@MetaData() mtdt: string,
-	) {
+	): Promise<boolean> {
 		return this.sendBack(
 			request,
 			response,
@@ -103,12 +133,23 @@ export class AuthController {
 		);
 	}
 
+	/**
+	 * User sign up
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {ISignUp} body - sign up input
+	 * @param {string} mtdt - client's metadata
+	 * @param {Express.Multer.File} avatar - user's avatar
+	 * @return {Promise<boolean>} if function execute successfully
+	 */
 	@Post('signup')
 	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
 		@Body() body: ISignUp,
+		@MetaData() mtdt: string,
 		@UploadedFile(
 			new ParseFilePipeBuilder()
 				.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
@@ -119,9 +160,7 @@ export class AuthController {
 				}),
 		)
 		avatar: Express.Multer.File,
-		@Res({ passthrough: true }) response: Response,
-		@MetaData() mtdt: string,
-	) {
+	): Promise<boolean> {
 		return this.sendBack(
 			request,
 			response,
@@ -129,47 +168,71 @@ export class AuthController {
 		);
 	}
 
+	/**
+	 * User logout
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @return {Promise<boolean>} if function execute successfully
+	 */
 	@Post('logout')
 	@UseGuards(AuthGuard('refresh'))
 	async logout(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
-	) {
+	): Promise<boolean> {
 		await this.dvcSvc.remove(request.user['id']);
-		this.sendBack(request, response, { refreshToken: '', accessToken: '' });
+		return this.sendBack(request, response, {
+			refreshToken: '',
+			accessToken: '',
+		});
 	}
 
+	/**
+	 * User refreshing tokens
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {string} mtdt - client's metadata
+	 * @return {Promise<boolean>} if function execute successfully
+	 */
 	@Post('refresh')
 	@UseGuards(AuthGuard('refresh'))
 	async refresh(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@MetaData() mtdt: string,
-	) {
+	): Promise<boolean> {
 		const sendBack = (usrRcv: UserRecieve) =>
 			this.sendBack(request, response, usrRcv);
 		if (request.user['lockdown']) {
 			await this.dvcSvc.remove(request.user['id']);
-			sendBack({ refreshToken: '', accessToken: '' });
+			return sendBack({ refreshToken: '', accessToken: '' });
 		} else {
 			if (request.user['success'] && compareSync(mtdt, request.user['ua'])) {
-				sendBack(
+				return sendBack(
 					new UserRecieve({
 						accessToken: request.user['acsTkn'],
 						refreshToken: request.user['rfsTkn'],
 					}),
 				);
-			} else sendBack(await this.sesSvc.addTokens(request.user['id']));
+			} else return sendBack(await this.sesSvc.addTokens(request.user['id']));
 		}
 	}
 
+	/**
+	 * User change password
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {object} body - request input
+	 * @param {string} mtdt - client's metadata
+	 * @return {Promise<boolean>} if function execute successfully
+	 */
 	@Post('change')
 	async changePassword(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: { email: string },
 		@MetaData() mtdt: string,
-	) {
+	): Promise<boolean> {
 		return this.sendBack(
 			request,
 			response,
@@ -178,20 +241,29 @@ export class AuthController {
 		);
 	}
 
+	/**
+	 * Processing client's hook
+	 * @param {string} signature - hook's signature
+	 * @param {Response} response - server's response
+	 * @param {object} body - request input
+	 * @param {string} mtdt - client's metadata
+	 * @param {Hook} hook - recieved hook from client
+	 * @return {Promise<boolean>} if function execute successfully
+	 */
 	@Post('hook/:token')
 	@UseGuards(AuthGuard('hook'))
 	async recieveHook(
-		@Res({ passthrough: true }) response: Response,
 		@Param('token') signature: string,
+		@Res({ passthrough: true }) response: Response,
+		@Body() body: { password: string },
 		@MetaData() mtdt: string,
 		@CurrentUser() hook: Hook,
-		@Body() body: { password: string },
-	) {
+	): Promise<boolean> {
 		if (hook.mtdt === mtdt && signature == hook.signature && !hook.isUsed) {
 			await this.hookSvc.terminate(hook.id);
 			if (await this.authSvc.changePassword(hook.from, body.password)) {
 				response.send('success');
-				return;
+				return true;
 			}
 		}
 		throw new BadRequestException();
