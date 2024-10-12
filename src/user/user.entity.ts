@@ -6,7 +6,7 @@ import { Device } from 'auth/device/device.entity';
 import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
 import { IFile } from 'file/file.model';
 import { IUserInfoKeys } from 'models';
-import { Column, Entity, OneToMany, TableInheritance } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { IUser, IUserAuthentication, IUserInfo, UserRole } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
@@ -19,7 +19,6 @@ import { hash } from 'app/utils/auth.utils';
  */
 @ObjectType()
 @Entity({ name: 'User' })
-@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User extends SensitiveInfomations implements IUser {
 	/**
 	 * @param {object} payload - the user's infomations
