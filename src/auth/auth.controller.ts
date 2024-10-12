@@ -80,14 +80,14 @@ export class AuthController {
 	 * @param {Response} response - server's response
 	 * @param {UserRecieve} usrRcv - user's recieve infomations
 	 * @param {object} options - function's option
-	 * @return {boolean} if function execute successfully
+	 * @return {void}
 	 */
 	protected sendBack(
 		request: Request,
 		response: Response,
 		usrRcv: UserRecieve,
 		options?: { msg?: string },
-	): boolean {
+	): void {
 		const { msg = 'true' } = options || {};
 		this.clearCookies(request, response);
 		response
@@ -106,7 +106,6 @@ export class AuthController {
 				this.ckiOpt,
 			)
 			.send(msg);
-		return true;
 	}
 
 	/**
@@ -115,7 +114,7 @@ export class AuthController {
 	 * @param {Response} response - server's response
 	 * @param {ILogin} body - login input
 	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<boolean>} if function execute successfully
+	 * @return {Promise<void>}
 	 */
 	@Post('login')
 	@UseGuards(LocalHostStrategy)
@@ -125,12 +124,8 @@ export class AuthController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: ILogin,
 		@MetaData() mtdt: string,
-	): Promise<boolean> {
-		return this.sendBack(
-			request,
-			response,
-			await this.authSvc.login(body, mtdt),
-		);
+	): Promise<void> {
+		this.sendBack(request, response, await this.authSvc.login(body, mtdt));
 	}
 
 	/**
@@ -140,7 +135,7 @@ export class AuthController {
 	 * @param {ISignUp} body - sign up input
 	 * @param {string} mtdt - client's metadata
 	 * @param {Express.Multer.File} avatar - user's avatar
-	 * @return {Promise<boolean>} if function execute successfully
+	 * @return {Promise<void>}
 	 */
 	@Post('signup')
 	@UseGuards(LocalHostStrategy)
@@ -160,7 +155,7 @@ export class AuthController {
 				}),
 		)
 		avatar: Express.Multer.File,
-	): Promise<boolean> {
+	): Promise<void> {
 		return this.sendBack(
 			request,
 			response,
@@ -172,14 +167,14 @@ export class AuthController {
 	 * User logout
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
-	 * @return {Promise<boolean>} if function execute successfully
+	 * @return {Promise<void>}
 	 */
 	@Post('logout')
 	@UseGuards(AuthGuard('refresh'))
 	async logout(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
-	): Promise<boolean> {
+	): Promise<void> {
 		await this.dvcSvc.remove(request.user['id']);
 		return this.sendBack(request, response, {
 			refreshToken: '',
@@ -192,7 +187,7 @@ export class AuthController {
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
 	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<boolean>} if function execute successfully
+	 * @return {Promise<void>}
 	 */
 	@Post('refresh')
 	@UseGuards(AuthGuard('refresh'))
@@ -200,7 +195,7 @@ export class AuthController {
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@MetaData() mtdt: string,
-	): Promise<boolean> {
+	): Promise<void> {
 		const sendBack = (usrRcv: UserRecieve) =>
 			this.sendBack(request, response, usrRcv);
 		if (request.user['lockdown']) {
@@ -224,7 +219,7 @@ export class AuthController {
 	 * @param {Response} response - server's response
 	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<boolean>} if function execute successfully
+	 * @return {Promise<void>}
 	 */
 	@Post('change')
 	async changePassword(
@@ -232,7 +227,7 @@ export class AuthController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: { email: string },
 		@MetaData() mtdt: string,
-	): Promise<boolean> {
+	): Promise<void> {
 		return this.sendBack(
 			request,
 			response,

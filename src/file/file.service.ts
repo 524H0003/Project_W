@@ -186,7 +186,7 @@ export class FileService extends DatabaseRequests<File> {
 			});
 			if (user?.id === file.createdBy.id) return filename;
 		}
-		return String(false);
+		return null;
 	}
 
 	/**
