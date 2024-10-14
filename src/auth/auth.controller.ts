@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	HttpStatus,
@@ -38,11 +37,11 @@ export class AuthController {
 	 * @ignore
 	 */
 	constructor(
-		private authSvc: AuthService,
+		public authSvc: AuthService,
 		private dvcSvc: DeviceService,
 		private sesSvc: SessionService,
 		private cfgSvc: ConfigService,
-		private hookSvc: HookService,
+		public hookSvc: HookService,
 	) {}
 
 	private readonly ckiOpt: CookieOptions = {
@@ -212,7 +211,7 @@ export class AuthController {
 	}
 
 	/**
-	 * User change password
+	 * Send signature to email email
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
 	 * @param {object} body - request input
@@ -220,7 +219,7 @@ export class AuthController {
 	 * @return {Promise<void>}
 	 */
 	@Post('change')
-	async changePassword(
+	async requestViaEmail(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: { email: string },
@@ -229,34 +228,55 @@ export class AuthController {
 		return this.sendBack(
 			request,
 			response,
-			await this.hookSvc.assign(body.email, request.hostname, mtdt),
-			{ msg: 'ReqPassChange' },
+			await this.hookSvc.assignViaEmail(body.email, request.hostname, mtdt),
+			{ msg: 'RequestSignatureFromEmail' },
 		);
 	}
 
 	/**
-	 * Processing client's hook
+	 * Change user password
 	 * @param {string} signature - hook's signature
 	 * @param {Response} response - server's response
 	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @param {Hook} hook - recieved hook from client
 	 */
-	@Post('hook/:token')
+	@Post('change/:token')
 	@UseGuards(AuthGuard('hook'))
-	async recieveHook(
+	async changePassword(
 		@Param('token') signature: string,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: { password: string },
 		@MetaData() mtdt: string,
 		@CurrentUser() hook: Hook,
 	) {
-		if (hook.mtdt === mtdt && signature == hook.signature && !hook.isUsed) {
-			await this.hookSvc.terminate(hook.id);
+		try {
+			await this.hookSvc.validating(signature, mtdt, hook);
 			if (await this.authSvc.changePassword(hook.from, body.password)) {
 				response.send('Success');
 			}
+		} catch (error) {
+			throw error;
 		}
-		throw new BadRequestException();
+	}
+
+	/**
+	 * Change password via console
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {string} mtdt - client's metadata
+	 */
+	@Post('console')
+	protected async changePasswordViaConsole(
+		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
+		@MetaData() mtdt: string,
+	) {
+		return this.sendBack(
+			request,
+			response,
+			await this.hookSvc.assignViaConsole(request.hostname, mtdt),
+			{ msg: 'RequestSignatureFromConsole' },
+		);
 	}
 }

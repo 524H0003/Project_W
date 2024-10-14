@@ -31,6 +31,6 @@ export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
 	async validate(payload: IPayload) {
 		const hook = await this.hookSvc.id(payload.id, { deep: 2 });
 		if (hook) return hook;
-		throw new BadRequestException();
+		throw new BadRequestException('InvalidHook');
 	}
 }

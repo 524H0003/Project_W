@@ -22,7 +22,7 @@ export class Hook extends SensitiveInfomations implements IHook {
 	/**
 	 * Hook from user
 	 */
-	@ManyToOne(() => User, (_: User) => _.hooks)
+	@ManyToOne(() => User, (_: User) => _.hooks, { nullable: true })
 	from: User;
 
 	// Infomations
@@ -30,11 +30,6 @@ export class Hook extends SensitiveInfomations implements IHook {
 	 * Hook's signature
 	 */
 	@Column() signature: string;
-
-	/**
-	 * If hook used
-	 */
-	@Column({ default: false }) isUsed: boolean;
 
 	/**
 	 * Client's metadata

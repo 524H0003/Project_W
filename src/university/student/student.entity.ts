@@ -8,6 +8,13 @@ import { Enterprise } from 'enterprise/enterprise.entity';
  */
 @Entity({ name: 'Student' })
 export class Student implements IStudent {
+	/**
+	 * Create student entity with infomations
+	 */
+	constructor(payload: IStudent) {
+		Object.assign(this, payload);
+	}
+
 	// Core Entity
 	/**
 	 * @ignore
@@ -56,7 +63,15 @@ export class Student implements IStudent {
 				email = `5${(7).numeric}@student.tdtu.edu.vn`,
 				password = (16).string + '!!',
 			} = options || {},
-			n = new User({ email, password, fullName: from });
-		if (n.hashedPassword) return n;
+			user = new User({ email, password, fullName: from });
+		if (user.hashedPassword)
+			return new Student({
+				user,
+				major: (3).string,
+				graduationYear: (20).random,
+				enrollmentYear: (20).random,
+				skills: (3).string,
+				currentEnterprise: null,
+			});
 	}
 }

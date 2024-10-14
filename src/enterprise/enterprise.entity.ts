@@ -12,6 +12,15 @@ import { Student } from 'university/student/student.entity';
 @ObjectType()
 @Entity({ name: 'Enterprise' })
 export class Enterprise extends SensitiveInfomations implements IEnterprise {
+	/**
+	 * Create enterprise with infomations
+	 * @param {IEnterprise} payload - the infomations
+	 */
+	constructor(payload: Omit<IEnterprise, 'avatarPath'>) {
+		super();
+		Object.assign(this, payload);
+	}
+
 	// Relationships
 	/**
 	 * Enterprise's employees
@@ -64,4 +73,18 @@ export class Enterprise extends SensitiveInfomations implements IEnterprise {
 	 */
 	@Column(() => BlackBox, { prefix: false })
 	blackBox: BlackBox;
+
+	// Methods
+	/**
+	 * @ignore
+	 */
+	static test(from: string) {
+		return new Enterprise({
+			name: from,
+			description: (20).string,
+			industry: (20).string,
+			employees: [],
+			students: [],
+		});
+	}
 }

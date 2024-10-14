@@ -46,7 +46,7 @@ export class StudentService extends Cryption {
 				);
 				throw new Error('ERRNewUser');
 			}
-			throw new BadRequestException('Invalid student email');
+			throw new BadRequestException('InvalidStudentEmail');
 		} else return this.authSvc.login(input, mtdt);
 	}
 }

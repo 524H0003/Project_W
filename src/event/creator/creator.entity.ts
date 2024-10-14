@@ -8,6 +8,14 @@ import { User } from 'user/user.entity';
  */
 @Entity({ name: 'EventCreator' })
 export class EventCreator implements IEventCreator {
+	/**
+	 * Create event creator entity with infomations
+	 * @param {IEventCreator} payload - the infomations
+	 */
+	constructor(payload: IEventCreator) {
+		Object.assign(this, payload);
+	}
+
 	// Core Entity
 	/**
 	 * @ignore
@@ -21,4 +29,13 @@ export class EventCreator implements IEventCreator {
 	 */
 	@OneToMany(() => Event, (_: Event) => _.createdBy)
 	createdEvents: Event[];
+
+	// Methods
+	/**
+	 * @ignore
+	 */
+	static test(from: string, options?: { user?: User }) {
+		const { user = User.test(from) } = options || {};
+		return new EventCreator({ user, createdEvents: [] });
+	}
 }

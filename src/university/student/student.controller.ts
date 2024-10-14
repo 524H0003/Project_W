@@ -61,7 +61,7 @@ export class StudentController extends AuthController {
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'ERRNewUser':
-					return this.changePassword(request, response, body, mtdt);
+					return this.requestViaEmail(request, response, body, mtdt);
 					break;
 
 				default:
