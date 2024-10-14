@@ -58,11 +58,7 @@ export class HookService extends DatabaseRequests<Hook> {
 	 */
 	async assignViaConsole(host: string, mtdt: string): Promise<UserRecieve> {
 		const signature = (128).string,
-			hook = await this.save({
-				signature,
-				mtdt,
-				from: null,
-			});
+			hook = await this.save({ signature, mtdt, from: null });
 
 		console.log(
 			`${'-'.repeat(20)}\nOne time signature: ${signature}\n${'-'.repeat(20)}`,
