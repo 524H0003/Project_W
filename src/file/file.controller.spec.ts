@@ -43,7 +43,7 @@ describe('seeUploadedFile', () => {
 
 	beforeEach(async () => {
 		({ headers } = await req
-			.post('/auth/signup')
+			.post('/signup')
 			.attach('avatar', Buffer.from('test', 'base64'), 'avatar.png')
 			.field('fullName', rawUsr.fullName)
 			.field('email', rawUsr.email)

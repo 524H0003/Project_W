@@ -11,11 +11,6 @@ export interface IHook {
 	signature: string;
 
 	/**
-	 * If hook used
-	 */
-	isUsed: boolean;
-
-	/**
 	 * Hook from user
 	 */
 	from: IUser;

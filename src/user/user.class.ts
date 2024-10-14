@@ -1,4 +1,4 @@
-import { IUserRecieve } from './user.model';
+import { IUserInfo, IUserRecieve } from './user.model';
 
 /**
  * User recieve infomations
@@ -23,12 +23,18 @@ export class UserRecieve implements IUserRecieve {
 	refreshToken: string;
 
 	/**
+	 * User generic infomations
+	 */
+	info: IUserInfo;
+
+	/**
 	 * @ignore
 	 */
 	static get test() {
 		return new UserRecieve({
 			accessToken: (10).string,
 			refreshToken: (10).string,
+			info: {} as IUserInfo,
 		});
 	}
 }

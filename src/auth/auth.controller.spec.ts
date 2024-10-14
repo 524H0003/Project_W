@@ -41,7 +41,7 @@ beforeEach(() => {
 
 describe('signup', () => {
 	it('success', async () => {
-		await execute(() => req.post('/auth/signup').send(usr), {
+		await execute(() => req.post('/signup').send(usr), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -60,9 +60,9 @@ describe('signup', () => {
 	});
 
 	it('fail due to email already exist', async () => {
-		await req.post('/auth/signup').send(usr);
+		await req.post('/signup').send(usr);
 
-		await execute(() => req.post('/auth/signup').send(usr), {
+		await execute(() => req.post('/signup').send(usr), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],
@@ -71,10 +71,10 @@ describe('signup', () => {
 });
 
 describe('login', () => {
-	beforeEach(async () => await req.post('/auth/signup').send(usr));
+	beforeEach(async () => await req.post('/signup').send(usr));
 
 	it('success', async () => {
-		await execute(() => req.post('/auth/login').send(usr), {
+		await execute(() => req.post('/login').send(usr), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -96,7 +96,7 @@ describe('login', () => {
 	it('fail due to wrong password', async () => {
 		usr = new User({ ...usr, password: (12).string });
 
-		await execute(() => req.post('/auth/login').send(usr), {
+		await execute(() => req.post('/login').send(usr), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],
@@ -107,13 +107,11 @@ describe('login', () => {
 describe('logout', () => {
 	let headers: object;
 
-	beforeEach(
-		async () => ({ headers } = await req.post('/auth/signup').send(usr)),
-	);
+	beforeEach(async () => ({ headers } = await req.post('/signup').send(usr)));
 
 	it('success', async () => {
 		await execute(
-			() => req.post('/auth/logout').set('Cookie', headers['set-cookie']),
+			() => req.post('/logout').set('Cookie', headers['set-cookie']),
 			{
 				exps: [
 					{
@@ -133,7 +131,7 @@ describe('logout', () => {
 
 	it('fail due to not have valid cookies', async () => {
 		await execute(req.post, {
-			params: ['/auth/logout'],
+			params: ['/logout'],
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
 			],
@@ -144,13 +142,11 @@ describe('logout', () => {
 describe('refresh', () => {
 	let headers: object;
 
-	beforeEach(
-		async () => ({ headers } = await req.post('/auth/signup').send(usr)),
-	);
+	beforeEach(async () => ({ headers } = await req.post('/signup').send(usr)));
 
 	it('success', async () => {
 		await execute(
-			() => req.post('/auth/refresh').set('Cookie', headers['set-cookie']),
+			() => req.post('/refresh').set('Cookie', headers['set-cookie']),
 			{
 				exps: [
 					{
@@ -176,7 +172,7 @@ describe('refresh', () => {
 
 	it('fail due to not have valid cookies', async () => {
 		await execute(req.post, {
-			params: ['/auth/refresh'],
+			params: ['/refresh'],
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
 			],
@@ -187,7 +183,7 @@ describe('refresh', () => {
 		await execute(
 			async (headers: object) =>
 				({ headers } = await req
-					.post('/auth/refresh')
+					.post('/refresh')
 					.set('Cookie', headers['set-cookie'])),
 			{
 				numOfRun: rfsTms * 1.2,

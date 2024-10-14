@@ -130,11 +130,11 @@ export class User extends SensitiveInfomations implements IUser {
 	 * User's password
 	 */
 	@IsStrongPassword({
-		minLength: 16,
-		minLowercase: 1,
-		minUppercase: 1,
-		minNumbers: 1,
-		minSymbols: 1,
+		// minLength: 16,
+		// minLowercase: 1,
+		// minUppercase: 1,
+		// minNumbers: 1,
+		// minSymbols: 1,
 	})
 	password: string;
 
@@ -164,9 +164,9 @@ export class User extends SensitiveInfomations implements IUser {
 	// Methods
 	/**
 	 * A function return user's public infomations
-	 * @return {object} User's public infomations
+	 * @return {IUserInfo} User's public infomations
 	 */
-	get info(): object {
+	get info(): IUserInfo {
 		return InterfaceCasting.quick(this, IUserInfoKeys);
 	}
 

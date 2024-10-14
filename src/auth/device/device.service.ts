@@ -48,7 +48,7 @@ export class DeviceService extends DatabaseRequests<Device> {
 
 		await this.save({ ...device, child: session.id });
 
-		return new UserRecieve({ accessToken, refreshToken });
+		return new UserRecieve({ accessToken, refreshToken, info: user.info });
 	}
 
 	/**

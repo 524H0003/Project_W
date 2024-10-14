@@ -53,7 +53,7 @@ describe('use', () => {
 	});
 
 	it('refresh', async () => {
-		req.url = '/auth/refresh';
+		req.url = '/refresh';
 		await authMdw.use(req, res, next),
 			expect(req.headers.authorization).toBe(`Bearer ${rfsTkn}`),
 			expect(next).toHaveBeenCalled();
