@@ -22,7 +22,7 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 	/**
 	 * @ignore
 	 */
-	private readonly rfsgrd = /\/(auth){1}\/(logout|refresh){1}/gi;
+	private readonly rfsgrd = /(logout|refresh){1}/gi;
 	/**
 	 * @ignore
 	 */
