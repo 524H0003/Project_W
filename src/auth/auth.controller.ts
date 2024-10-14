@@ -31,7 +31,7 @@ import { hash } from 'app/utils/auth.utils';
 /**
  * Auth controller
  */
-@Controller('auth')
+@Controller('')
 export class AuthController {
 	/**
 	 * @ignore
