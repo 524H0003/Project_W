@@ -69,7 +69,11 @@ export class SessionService extends DatabaseRequests<Session> {
 			refreshToken = this.signSvc.refresh(newSession.id),
 			accessToken = this.signSvc.access(newSession.device.owner.id);
 
-		return new UserRecieve({ accessToken, refreshToken });
+		return new UserRecieve({
+			accessToken,
+			refreshToken,
+			info: newSession.device.owner.info,
+		});
 	}
 
 	/**

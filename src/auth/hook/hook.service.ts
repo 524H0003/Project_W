@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { MailService } from 'app/mail/mail.service';
 import { UserRecieve } from 'user/user.class';
 import { SignService } from 'auth/auth.service';
+import { IUserInfo } from 'user/user.model';
 
 /**
  * Hook service
@@ -45,6 +46,7 @@ export class HookService extends DatabaseRequests<Hook> {
 		return new UserRecieve({
 			accessToken: this.signSvc.access(hook.id),
 			refreshToken: this.signSvc.refresh(hook.from.id.length.string),
+			info: {} as IUserInfo,
 		});
 	}
 

@@ -112,6 +112,11 @@ export interface IUserRecieve {
 	 * Refresh token
 	 */
 	refreshToken: string;
+
+	/**
+	 * User generic infomations
+	 */
+	info: IUserInfo;
 }
 
 /**

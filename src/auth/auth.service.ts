@@ -67,7 +67,7 @@ export class AuthService extends Cryption {
 				}
 			});
 		}
-		throw new BadRequestException('Email already assigned');
+		throw new BadRequestException('ExistedUser');
 	}
 
 	/**
@@ -86,7 +86,7 @@ export class AuthService extends Cryption {
 			);
 			if (isPasswordMatched) return this.dvcSvc.getTokens(user, mtdt);
 		}
-		throw new BadRequestException('Invalid email or password');
+		throw new BadRequestException('InvalidAccessRequest');
 	}
 
 	/**

@@ -164,9 +164,9 @@ export class User extends SensitiveInfomations implements IUser {
 	// Methods
 	/**
 	 * A function return user's public infomations
-	 * @return {object} User's public infomations
+	 * @return {IUserInfo} User's public infomations
 	 */
-	get info(): object {
+	get info(): IUserInfo {
 		return InterfaceCasting.quick(this, IUserInfoKeys);
 	}
 

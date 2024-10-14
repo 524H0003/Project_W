@@ -88,7 +88,7 @@ export class AuthController {
 		usrRcv: UserRecieve,
 		options?: { msg?: string },
 	): void {
-		const { msg = 'true' } = options || {};
+		const { msg = usrRcv.info } = options || {};
 		this.clearCookies(request, response);
 		response
 			.status(HttpStatus.ACCEPTED)
@@ -105,7 +105,7 @@ export class AuthController {
 				this.authSvc.encrypt(usrRcv.refreshToken),
 				this.ckiOpt,
 			)
-			.send(msg);
+			.json(msg);
 	}
 
 	/**
@@ -176,10 +176,7 @@ export class AuthController {
 		@Res({ passthrough: true }) response: Response,
 	): Promise<void> {
 		await this.dvcSvc.remove(request.user['id']);
-		return this.sendBack(request, response, {
-			refreshToken: '',
-			accessToken: '',
-		});
+		return this.sendBack(request, response, UserRecieve.test);
 	}
 
 	/**
@@ -200,13 +197,14 @@ export class AuthController {
 			this.sendBack(request, response, usrRcv);
 		if (request.user['lockdown']) {
 			await this.dvcSvc.remove(request.user['id']);
-			return sendBack({ refreshToken: '', accessToken: '' });
+			return sendBack(UserRecieve.test);
 		} else {
 			if (request.user['success'] && compareSync(mtdt, request.user['ua'])) {
 				return sendBack(
 					new UserRecieve({
 						accessToken: request.user['acsTkn'],
 						refreshToken: request.user['rfsTkn'],
+						info: request.user['usrInfo'],
 					}),
 				);
 			} else return sendBack(await this.sesSvc.addTokens(request.user['id']));
@@ -243,7 +241,6 @@ export class AuthController {
 	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @param {Hook} hook - recieved hook from client
-	 * @return {Promise<boolean>} if function execute successfully
 	 */
 	@Post('hook/:token')
 	@UseGuards(AuthGuard('hook'))
@@ -253,12 +250,11 @@ export class AuthController {
 		@Body() body: { password: string },
 		@MetaData() mtdt: string,
 		@CurrentUser() hook: Hook,
-	): Promise<boolean> {
+	) {
 		if (hook.mtdt === mtdt && signature == hook.signature && !hook.isUsed) {
 			await this.hookSvc.terminate(hook.id);
 			if (await this.authSvc.changePassword(hook.from, body.password)) {
-				response.send('success');
-				return true;
+				response.send('Success');
 			}
 		}
 		throw new BadRequestException();

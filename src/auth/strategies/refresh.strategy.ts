@@ -43,6 +43,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 					ua: session.device.hashedUserAgent,
 					acsTkn: this.signSvc.access(session.device.owner.id),
 					rfsTkn: this.signSvc.refresh(payload.id),
+					usrInfo: session.device.owner.info,
 				};
 			} else {
 				if ((await this.dvcSvc.id(session.device.id)).child === session.id)
