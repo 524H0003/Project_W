@@ -63,7 +63,7 @@ export class Student implements IStudent {
 				email = `5${(7).numeric}@student.tdtu.edu.vn`,
 				password = (16).string + '!!',
 			} = options || {},
-			user = new User({ email, password, fullName: from });
+			user = User.test(from, { email, password });
 		if (user.hashedPassword)
 			return new Student({
 				user,

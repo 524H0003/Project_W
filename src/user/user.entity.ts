@@ -23,9 +23,7 @@ export class User extends SensitiveInfomations implements IUser {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
-	constructor(
-		payload: Omit<IUserInfo, 'avatarPath' | 'role'> & IUserAuthentication,
-	) {
+	constructor(payload: IUserAuthentication & { fullName: string }) {
 		super();
 		Object.assign(this, payload);
 	}
@@ -172,12 +170,16 @@ export class User extends SensitiveInfomations implements IUser {
 	/**
 	 * @ignore
 	 */
-	static test(from: string) {
-		const n = new User({
-			email: ((20).alpha + '@gmail.com').toLowerCase(),
-			password: 'Aa1!000000000000',
-			fullName: from,
-		});
+	static test(from: string, options?: { email?: string; password?: string }) {
+		const {
+				email = ((20).alpha + '@gmail.com').toLowerCase(),
+				password = 'Aa1!000000000000',
+			} = options || {},
+			n = new User({
+				email,
+				password,
+				fullName: from,
+			});
 		if (n.hashedPassword) return n;
 	}
 }
