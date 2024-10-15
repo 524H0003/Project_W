@@ -1,6 +1,5 @@
 import {
 	Body,
-	Controller,
 	HttpStatus,
 	Param,
 	ParseFilePipeBuilder,
@@ -31,7 +30,6 @@ import { hash } from 'app/utils/auth.utils';
 /**
  * Auth controller
  */
-@Controller('')
 export class AuthController {
 	/**
 	 * @ignore
@@ -44,13 +42,13 @@ export class AuthController {
 		public hookSvc: HookService,
 	) {}
 
+	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
+	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
 	private readonly ckiOpt: CookieOptions = {
 		httpOnly: true,
 		secure: true,
 		sameSite: 'lax',
 	};
-	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
-	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
 
 	/**
 	 * Clear client's cookies
@@ -87,7 +85,8 @@ export class AuthController {
 		usrRcv: UserRecieve,
 		options?: { msg?: string },
 	): void {
-		const { msg = usrRcv.info } = options || {};
+		const { msg = usrRcv.info } = options || {},
+			{ exp = null, iat = null } = usrRcv.payload || {};
 		this.clearCookies(request, response);
 		response
 			.status(HttpStatus.ACCEPTED)
@@ -104,7 +103,15 @@ export class AuthController {
 				this.authSvc.encrypt(usrRcv.refreshToken),
 				this.ckiOpt,
 			)
-			.json(msg);
+			.json({
+				session: {
+					access_token: usrRcv.accessToken,
+					refresh_token: usrRcv.refreshToken,
+					expires_in: exp - iat,
+					expires_at: exp,
+				},
+				user: msg,
+			});
 	}
 
 	/**
@@ -245,6 +252,7 @@ export class AuthController {
 	@UseGuards(AuthGuard('hook'))
 	async changePassword(
 		@Param('token') signature: string,
+		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: { password: string },
 		@MetaData() mtdt: string,
@@ -253,7 +261,9 @@ export class AuthController {
 		try {
 			await this.hookSvc.validating(signature, mtdt, hook);
 			if (await this.authSvc.changePassword(hook.from, body.password)) {
-				response.send('Success');
+				return this.sendBack(request, response, UserRecieve.test, {
+					msg: 'success',
+				});
 			}
 		} catch (error) {
 			throw error;
@@ -275,7 +285,7 @@ export class AuthController {
 		return this.sendBack(
 			request,
 			response,
-			await this.hookSvc.assignViaConsole(request.hostname, mtdt),
+			await this.hookSvc.assignViaConsole(mtdt),
 			{ msg: 'RequestSignatureFromConsole' },
 		);
 	}

@@ -1,35 +1,31 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
-	Injectable,
 	Post,
 	Req,
 	Res,
 	UseInterceptors,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 import { AuthController } from 'auth/auth.controller';
 import { MetaData } from 'auth/auth.guard';
-import { ILogin } from 'user/user.model';
-import { StudentService } from './student.service';
-import { Request, Response } from 'express';
 import { AuthService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
-import { SessionService } from 'auth/session/session.service';
-import { ConfigService } from '@nestjs/config';
 import { HookService } from 'auth/hook/hook.service';
+import { SessionService } from 'auth/session/session.service';
+import { Request, Response } from 'express';
+import { StudentController } from 'university/student/student.controller';
+import { ILogin } from 'user/user.model';
 
-/**
- * Student controller
- */
-@Injectable()
-@Controller('student')
-export class StudentController extends AuthController {
+@Controller('')
+export class AppController extends AuthController {
 	/**
 	 * @ignore
 	 */
 	constructor(
-		private StuSvc: StudentService,
+		private StuCon: StudentController,
 		authSvc: AuthService,
 		dvcSvc: DeviceService,
 		sesSvc: SessionService,
@@ -39,14 +35,6 @@ export class StudentController extends AuthController {
 		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
 	}
 
-	/**
-	 * Student login request
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
-	 * @param {ILogin} body - the request context
-	 * @param {string} mtdt - the client meta data
-	 * @return {Promise<void>}
-	 */
 	@Post('login')
 	@UseInterceptors(NoFilesInterceptor())
 	async login(
@@ -56,15 +44,11 @@ export class StudentController extends AuthController {
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
-			return this.sendBack(
-				request,
-				response,
-				await this.StuSvc.login(body, mtdt),
-			);
+			return this.StuCon.login(request, response, body, mtdt);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
-				case 'ERRNewUser':
-					return this.requestViaEmail(request, response, body, mtdt);
+				case 'InvalidStudentEmail':
+					throw new BadRequestException('InvalidUserRequest');
 					break;
 
 				default:

@@ -3,7 +3,7 @@ import { BlackBox } from 'app/utils/model.utils';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { Device } from 'auth/device/device.entity';
-import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 import { IFile } from 'file/file.model';
 import { IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany } from 'typeorm';
@@ -129,13 +129,12 @@ export class User extends SensitiveInfomations implements IUser {
 	/**
 	 * User's password
 	 */
-	@IsStrongPassword({
-		// minLength: 16,
-		// minLowercase: 1,
-		// minUppercase: 1,
-		// minNumbers: 1,
-		// minSymbols: 1,
-	})
+	// @IsStrongPassword({	// minLength: 16,
+	// minLowercase: 1,
+	// minUppercase: 1,
+	// minNumbers: 1,
+	// minSymbols: 1,
+	// })
 	password: string;
 
 	/**
@@ -175,7 +174,7 @@ export class User extends SensitiveInfomations implements IUser {
 	 */
 	static test(from: string) {
 		const n = new User({
-			email: (20).alpha + '@gmail.com',
+			email: ((20).alpha + '@gmail.com').toLowerCase(),
 			password: 'Aa1!000000000000',
 			fullName: from,
 		});

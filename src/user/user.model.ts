@@ -2,6 +2,7 @@ import { IDevice } from 'auth/device/device.model';
 import { IHook } from 'auth/hook/hook.model';
 import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
+import { JwtPayload } from 'jsonwebtoken';
 import { IReciever } from 'notification/reciever/reciever.model';
 
 // Interfaces
@@ -117,6 +118,11 @@ export interface IUserRecieve {
 	 * User generic infomations
 	 */
 	info: IUserInfo;
+
+	/**
+	 * Jwt payload
+	 */
+	payload: JwtPayload;
 }
 
 /**

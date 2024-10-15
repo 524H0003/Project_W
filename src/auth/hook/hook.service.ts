@@ -52,11 +52,10 @@ export class HookService extends DatabaseRequests<Hook> {
 
 	/**
 	 * Assigning hook via console
-	 * @param {string} host - request's hostname
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<UserRecieve>} user's recieve infomations
 	 */
-	async assignViaConsole(host: string, mtdt: string): Promise<UserRecieve> {
+	async assignViaConsole(mtdt: string): Promise<UserRecieve> {
 		const signature = (128).string,
 			hook = await this.save({ signature, mtdt, from: null });
 

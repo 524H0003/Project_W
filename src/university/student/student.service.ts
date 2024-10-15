@@ -38,7 +38,7 @@ export class StudentService extends Cryption {
 					{
 						...input,
 						fullName: input.email,
-						password: (16).string + '!1Aa',
+						password: (32).string + '!1Aa',
 					} as ISignUp,
 					mtdt,
 					null,

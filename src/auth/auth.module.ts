@@ -4,7 +4,6 @@ import { PassportModule } from '@nestjs/passport';
 import { FileModule } from 'file/file.module';
 import { UserModule } from 'user/user.module';
 import { AuthService, SignService } from './auth.service';
-import { AuthController } from './auth.controller';
 import { AccessStrategy } from './strategies/access.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
 import { LocalHostStrategy } from './strategies/localhost.strategy';
@@ -34,7 +33,6 @@ import { RoleGuard } from './auth.guard';
 		HookStrategy,
 		RoleGuard,
 	],
-	controllers: [AuthController],
 	exports: [AuthService, SignService],
 })
 export class AuthModule {}
