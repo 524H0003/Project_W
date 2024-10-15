@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { IStudentSignup } from './student.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IStudentInfoKeys } from 'models';
+import { ISignUpKeys, IStudentInfoKeys } from 'models';
 
 /**
  * Student service
@@ -41,20 +41,27 @@ export class StudentService extends DatabaseRequests<Student> {
 			if (input.email.match(this.studentMailRex)) {
 				await this.authSvc.signUp(
 					{
-						...input,
+						...InterfaceCasting.quick(input, ISignUpKeys),
 						fullName: input.email,
 						password: (32).string + '!1Aa',
 					} as ISignUp,
 					mtdt,
 					null,
-					{ role: UserRole.student },
+					{ role: UserRole.student, sendDevice: false },
 				);
-				await this.save({
-					user: await this.usrSvc.findOne({
-						email: input.email,
+				try {
+					await this.save({
+						user: await this.usrSvc.findOne({
+							email: input.email,
+						}),
 						...InterfaceCasting.quick(input, IStudentInfoKeys),
-					}),
-				});
+					});
+				} catch (error) {
+					await this.usrSvc.delete({ email: input.email });
+					throw new BadRequestException(
+						`Null value in field ${error['column']}`,
+					);
+				}
 				throw new Error('ERRNewUser');
 			}
 			throw new BadRequestException('InvalidStudentEmail');
