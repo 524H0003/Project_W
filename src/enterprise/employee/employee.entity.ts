@@ -49,7 +49,7 @@ export class Employee implements IEmployee {
 	static test(from: string) {
 		const { email = `${(7).string}@gmaill.vn`, password = (16).string + '!!' } =
 				{},
-			baseUser = new User({ email, password, fullName: from }),
+			baseUser = User.test(from, { email, password }),
 			user = EventCreator.test(from, { user: baseUser });
 		return new Employee({
 			user,

@@ -24,7 +24,10 @@ export interface IUserAuthentication {
 /**
  * Fields about user's infomations
  */
-export interface IUserInfo {
+export interface IUserInfo
+	extends IUserTimeRecord,
+		IUserStatus,
+		IUserSensitive {
 	/**
 	 * User's full name
 	 */
@@ -68,12 +71,7 @@ export interface IUserSensitive {
 /**
  * User model
  */
-export interface IUser
-	extends IUserAuthentication,
-		IUserInfo,
-		IUserTimeRecord,
-		IUserSensitive,
-		IUserStatus {
+export interface IUser extends IUserAuthentication, IUserInfo {
 	/**
 	 * Recieved notifications
 	 */
