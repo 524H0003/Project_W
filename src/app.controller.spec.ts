@@ -29,12 +29,12 @@ let dvcRepo: Repository<Device>,
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
 			imports: [
-				TestModule,
 				AuthModule,
 				DeviceModule,
 				SessionModule,
 				UniversityModule,
 				HookModule,
+				TestModule,
 			],
 			controllers: [AppController],
 		}).compile(),

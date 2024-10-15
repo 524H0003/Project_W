@@ -1,15 +1,20 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { AppController } from 'app.controller';
 import { TestModule } from 'app/module/test.module';
 import { execute } from 'app/utils/test.utils';
 import { AuthModule } from 'auth/auth.module';
+import { DeviceModule } from 'auth/device/device.module';
+import { HookModule } from 'auth/hook/hook.module';
+import { SessionModule } from 'auth/session/session.module';
 import cookieParser from 'cookie-parser';
 import { FileController } from 'file/file.controller';
 import { FileModule } from 'file/file.module';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
+import { UniversityModule } from 'university/university.module';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
@@ -23,8 +28,16 @@ let rawUsr: User,
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, FileModule, AuthModule],
-		controllers: [FileController],
+		imports: [
+			TestModule,
+			FileModule,
+			AuthModule,
+			DeviceModule,
+			HookModule,
+			SessionModule,
+			UniversityModule,
+		],
+		controllers: [FileController, AppController],
 	}).compile();
 
 	(app = module.createNestApplication()),
@@ -42,13 +55,15 @@ describe('seeUploadedFile', () => {
 	let headers: object, usr: User;
 
 	beforeEach(async () => {
-		({ headers } = await req
+		const e = await req
 			.post('/signup')
 			.attach('avatar', Buffer.from('test', 'base64'), 'avatar.png')
 			.field('fullName', rawUsr.fullName)
 			.field('email', rawUsr.email)
-			.field('password', rawUsr.password)),
-			(usr = await usrRepo.findOne({ where: { email: rawUsr.email } }));
+			.field('password', rawUsr.password);
+		usr = await usrRepo.findOne({ where: { email: rawUsr.email } });
+
+		headers = e.headers;
 
 		await usrSvc.updateRole(usr.id, UserRole.admin);
 	});

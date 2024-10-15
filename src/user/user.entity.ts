@@ -175,7 +175,7 @@ export class User extends SensitiveInfomations implements IUser {
 	 */
 	static test(from: string) {
 		const n = new User({
-			email: (20).alpha + '@gmail.com',
+			email: ((20).alpha + '@gmail.com').toLowerCase(),
 			password: 'Aa1!000000000000',
 			fullName: from,
 		});
