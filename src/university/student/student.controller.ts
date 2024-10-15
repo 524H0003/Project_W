@@ -11,7 +11,6 @@ import {
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 import { AuthController } from 'auth/auth.controller';
 import { MetaData } from 'auth/auth.guard';
-import { ILogin } from 'user/user.model';
 import { StudentService } from './student.service';
 import { Request, Response } from 'express';
 import { AuthService } from 'auth/auth.service';
@@ -20,6 +19,7 @@ import { SessionService } from 'auth/session/session.service';
 import { ConfigService } from '@nestjs/config';
 import { HookService } from 'auth/hook/hook.service';
 import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
+import { IStudentSignup } from './student.model';
 
 /**
  * Student controller
@@ -45,7 +45,7 @@ export class StudentController extends AuthController {
 	 * Student login request
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
-	 * @param {ILogin} body - the request context
+	 * @param {IStudentSignup} body - the request context
 	 * @param {string} mtdt - the client meta data
 	 * @return {Promise<void>}
 	 */
@@ -55,7 +55,7 @@ export class StudentController extends AuthController {
 	async login(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
-		@Body() body: ILogin,
+		@Body() body: IStudentSignup,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {

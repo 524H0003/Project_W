@@ -1,16 +1,26 @@
 import { IEnterprise } from 'enterprise/enterprise.model';
-import { IUser } from 'user/user.model';
+import { ISignUp, IUser } from 'user/user.model';
 
 // Interfaces
 /**
  * Student model
  */
-export interface IStudent {
+export interface IStudent extends IStudentInfo {
 	/**
 	 * @ignore
 	 */
 	user: IUser;
 
+	/**
+	 * Student current working enterprise
+	 */
+	currentEnterprise: IEnterprise;
+}
+
+/**
+ * Student general infomations
+ */
+export interface IStudentInfo {
 	/**
 	 * Student's major
 	 */
@@ -30,9 +40,9 @@ export interface IStudent {
 	 * Student's skills
 	 */
 	skills: string;
-
-	/**
-	 * Student current working enterprise
-	 */
-	currentEnterprise: IEnterprise;
 }
+
+/**
+ * Student signup
+ */
+export interface IStudentSignup extends IStudentInfo, ISignUp {}

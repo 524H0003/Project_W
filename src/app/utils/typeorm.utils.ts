@@ -35,7 +35,9 @@ export class SensitiveInfomations extends BaseEntity {
 /**
  * Generic database requests
  */
-export class DatabaseRequests<T extends SensitiveInfomations> {
+export class DatabaseRequests<
+	T extends SensitiveInfomations | { user: SensitiveInfomations },
+> {
 	/**
 	 * @ignore
 	 */
@@ -87,7 +89,7 @@ export class DatabaseRequests<T extends SensitiveInfomations> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T[]>} array of found objects
 	 */
-	protected find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
+	find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
 		const { deep = 1, relations = [''], ...newOptions } = options || {};
 		return this.repo.find({
 			where: <FindOptionsWhere<T>>newOptions,
@@ -103,7 +105,7 @@ export class DatabaseRequests<T extends SensitiveInfomations> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>} found object
 	 */
-	protected findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
+	findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
 		const { deep = 1, relations = [''], ...newOptions } = options || {};
 		return this.repo.findOne({
 			where: <FindOptionsWhere<T>>newOptions,
@@ -120,7 +122,7 @@ export class DatabaseRequests<T extends SensitiveInfomations> {
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<T>} the object from database
 	 */
-	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
+	save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
 		return this.repo.save(entity, options) as Promise<T>;
 	}
 
@@ -129,7 +131,7 @@ export class DatabaseRequests<T extends SensitiveInfomations> {
 	 * @param {FindOptionsWhere<T>} criteria - the deleting object
 	 * @return {Promise<DeleteResult>} the deletion result
 	 */
-	protected delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
+	delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
 		return this.repo.delete(criteria);
 	}
 
