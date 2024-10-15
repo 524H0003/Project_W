@@ -129,8 +129,7 @@ export class User extends SensitiveInfomations implements IUser {
 	/**
 	 * User's password
 	 */
-	// @IsStrongPassword({
-	// minLength: 16,
+	// @IsStrongPassword({	// minLength: 16,
 	// minLowercase: 1,
 	// minUppercase: 1,
 	// minNumbers: 1,
