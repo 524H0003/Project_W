@@ -1,28 +1,12 @@
-import {
-	Body,
-	HttpStatus,
-	Param,
-	ParseFilePipeBuilder,
-	Post,
-	Req,
-	Res,
-	UploadedFile,
-	UseGuards,
-	UseInterceptors,
-} from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { compareSync } from 'bcrypt';
 import { CookieOptions, Request, Response } from 'express';
-import { memoryStorage } from 'multer';
 import { UserRecieve } from 'user/user.class';
 import { ILogin, ISignUp } from 'user/user.model';
-import { CurrentUser, MetaData } from './auth.guard';
 import { AuthService } from './auth.service';
-import { LocalHostStrategy } from './strategies/localhost.strategy';
 import { HookService } from './hook/hook.service';
 import { Hook } from './hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
@@ -57,7 +41,7 @@ export class AuthController {
 	 * @param {boolean} acs - if clear access token
 	 * @param {boolean} rfs - if clear refresh token
 	 */
-	protected clearCookies(
+	private clearCookies(
 		request: Request,
 		response: Response,
 		acs: boolean = true,
@@ -122,14 +106,11 @@ export class AuthController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('login')
-	@UseGuards(LocalHostStrategy)
-	@UseInterceptors(NoFilesInterceptor())
 	async login(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
-		@Body() body: ILogin,
-		@MetaData() mtdt: string,
+		request: Request,
+		response: Response,
+		body: ILogin,
+		mtdt: string,
 	): Promise<void> {
 		this.sendBack(request, response, await this.authSvc.login(body, mtdt));
 	}
@@ -143,23 +124,11 @@ export class AuthController {
 	 * @param {Express.Multer.File} avatar - user's avatar
 	 * @return {Promise<void>}
 	 */
-	@Post('signup')
-	@UseGuards(LocalHostStrategy)
-	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
-		@Body() body: ISignUp,
-		@MetaData() mtdt: string,
-		@UploadedFile(
-			new ParseFilePipeBuilder()
-				.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-				.addMaxSizeValidator({ maxSize: (0.3).mb })
-				.build({
-					fileIsRequired: false,
-					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-				}),
-		)
+		request: Request,
+		response: Response,
+		body: ISignUp,
+		mtdt: string,
 		avatar: Express.Multer.File,
 	): Promise<void> {
 		return this.sendBack(
@@ -175,12 +144,7 @@ export class AuthController {
 	 * @param {Response} response - server's response
 	 * @return {Promise<void>}
 	 */
-	@Post('logout')
-	@UseGuards(AuthGuard('refresh'))
-	async logout(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
-	): Promise<void> {
+	async logout(request: Request, response: Response): Promise<void> {
 		await this.dvcSvc.remove(request.user['id']);
 		return this.sendBack(request, response, UserRecieve.test);
 	}
@@ -192,12 +156,10 @@ export class AuthController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('refresh')
-	@UseGuards(AuthGuard('refresh'))
 	async refresh(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
-		@MetaData() mtdt: string,
+		request: Request,
+		response: Response,
+		mtdt: string,
 	): Promise<void> {
 		const sendBack = (usrRcv: UserRecieve) =>
 			this.sendBack(request, response, usrRcv);
@@ -218,19 +180,18 @@ export class AuthController {
 	}
 
 	/**
-	 * Send signature to email email
+	 * Send signature to email
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
 	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('change')
 	async requestViaEmail(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
-		@Body() body: { email: string },
-		@MetaData() mtdt: string,
+		request: Request,
+		response: Response,
+		body: { email: string },
+		mtdt: string,
 	): Promise<void> {
 		return this.sendBack(
 			request,
@@ -247,17 +208,16 @@ export class AuthController {
 	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @param {Hook} hook - recieved hook from client
+	 * @return {Promise<void>}
 	 */
-	@Post('change/:token')
-	@UseGuards(AuthGuard('hook'))
 	async changePassword(
-		@Param('token') signature: string,
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
-		@Body() body: { password: string },
-		@MetaData() mtdt: string,
-		@CurrentUser() hook: Hook,
-	) {
+		signature: string,
+		request: Request,
+		response: Response,
+		body: { password: string },
+		mtdt: string,
+		hook: Hook,
+	): Promise<void> {
 		try {
 			await this.hookSvc.validating(signature, mtdt, hook);
 			if (await this.authSvc.changePassword(hook.from, body.password)) {
@@ -275,13 +235,13 @@ export class AuthController {
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
 	 * @param {string} mtdt - client's metadata
+	 * @return {Promise<void>}
 	 */
-	@Post('console')
 	protected async changePasswordViaConsole(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
-		@MetaData() mtdt: string,
-	) {
+		request: Request,
+		response: Response,
+		mtdt: string,
+	): Promise<void> {
 		return this.sendBack(
 			request,
 			response,
