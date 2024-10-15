@@ -44,13 +44,13 @@ export class AuthController {
 		public hookSvc: HookService,
 	) {}
 
+	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
+	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
 	private readonly ckiOpt: CookieOptions = {
 		httpOnly: true,
 		secure: true,
 		sameSite: 'lax',
 	};
-	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
-	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
 
 	/**
 	 * Clear client's cookies
@@ -87,7 +87,8 @@ export class AuthController {
 		usrRcv: UserRecieve,
 		options?: { msg?: string },
 	): void {
-		const { msg = usrRcv.info } = options || {};
+		const { msg = usrRcv.info } = options || {},
+			{ exp, iat } = usrRcv.payload;
 		this.clearCookies(request, response);
 		response
 			.status(HttpStatus.ACCEPTED)
@@ -104,7 +105,15 @@ export class AuthController {
 				this.authSvc.encrypt(usrRcv.refreshToken),
 				this.ckiOpt,
 			)
-			.json(msg);
+			.json({
+				session: {
+					access_token: usrRcv.accessToken,
+					refresh_token: usrRcv.refreshToken,
+					expires_in: exp - iat,
+					expires_at: exp,
+				},
+				user: msg,
+			});
 	}
 
 	/**

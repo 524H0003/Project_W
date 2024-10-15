@@ -1,3 +1,4 @@
+import { decode, JwtPayload } from 'jsonwebtoken';
 import { IUserInfo, IUserRecieve } from './user.model';
 
 /**
@@ -8,7 +9,7 @@ export class UserRecieve implements IUserRecieve {
 	 * Quick user recieve initiation
 	 * @param {object} payload - User recieve infomations
 	 */
-	constructor(payload: IUserRecieve) {
+	constructor(payload: Omit<IUserRecieve, 'payload'>) {
 		Object.assign(this, payload);
 	}
 
@@ -26,6 +27,13 @@ export class UserRecieve implements IUserRecieve {
 	 * User generic infomations
 	 */
 	info: IUserInfo;
+
+	/**
+	 * Jwt payload
+	 */
+	get payload(): JwtPayload {
+		return decode(this.accessToken) as JwtPayload;
+	}
 
 	/**
 	 * @ignore
