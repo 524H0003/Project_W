@@ -8,9 +8,9 @@ import { TestModule } from 'app/module/test.module';
 import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
-import { AuthModule } from './auth.module';
+import { AuthModule } from './auth/auth.module';
 import { User } from 'user/user.entity';
-import { Device } from './device/device.entity';
+import { Device } from './auth/device/device.entity';
 
 const fileName = curFile(__filename);
 

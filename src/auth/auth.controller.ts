@@ -1,6 +1,5 @@
 import {
 	Body,
-	Controller,
 	HttpStatus,
 	Param,
 	ParseFilePipeBuilder,
@@ -31,7 +30,6 @@ import { hash } from 'app/utils/auth.utils';
 /**
  * Auth controller
  */
-@Controller('')
 export class AuthController {
 	/**
 	 * @ignore
@@ -88,7 +86,7 @@ export class AuthController {
 		options?: { msg?: string },
 	): void {
 		const { msg = usrRcv.info } = options || {},
-			{ exp, iat } = usrRcv.payload;
+			{ exp = null, iat = null } = usrRcv.payload || {};
 		this.clearCookies(request, response);
 		response
 			.status(HttpStatus.ACCEPTED)
@@ -254,6 +252,7 @@ export class AuthController {
 	@UseGuards(AuthGuard('hook'))
 	async changePassword(
 		@Param('token') signature: string,
+		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: { password: string },
 		@MetaData() mtdt: string,
@@ -262,7 +261,9 @@ export class AuthController {
 		try {
 			await this.hookSvc.validating(signature, mtdt, hook);
 			if (await this.authSvc.changePassword(hook.from, body.password)) {
-				response.send('Success');
+				return this.sendBack(request, response, UserRecieve.test, {
+					msg: 'success',
+				});
 			}
 		} catch (error) {
 			throw error;
@@ -284,7 +285,7 @@ export class AuthController {
 		return this.sendBack(
 			request,
 			response,
-			await this.hookSvc.assignViaConsole(request.hostname, mtdt),
+			await this.hookSvc.assignViaConsole(mtdt),
 			{ msg: 'RequestSignatureFromConsole' },
 		);
 	}

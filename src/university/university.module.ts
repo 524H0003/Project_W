@@ -17,7 +17,8 @@ import { HookModule } from 'auth/hook/hook.module';
 		DeviceModule,
 		HookModule,
 	],
-	providers: [StudentService],
+	providers: [StudentService, StudentController],
 	controllers: [StudentController],
+	exports: [StudentController],
 })
 export class UniversityModule {}

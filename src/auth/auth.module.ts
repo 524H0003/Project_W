@@ -34,7 +34,6 @@ import { RoleGuard } from './auth.guard';
 		HookStrategy,
 		RoleGuard,
 	],
-	controllers: [AuthController],
 	exports: [AuthService, SignService],
 })
 export class AuthModule {}

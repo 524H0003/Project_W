@@ -23,7 +23,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} the user's infomations that found
 	 */
 	email(input: string): Promise<User> {
-		return this.findOne({ email: input });
+		return this.findOne({ email: input.toLowerCase() });
 	}
 
 	/**
