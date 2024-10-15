@@ -47,11 +47,11 @@ export class AuthService extends Cryption {
 		input: ISignUp,
 		mtdt: string,
 		avatar: Express.Multer.File,
-		options?: { role?: UserRole },
+		options?: { role?: UserRole; sendDevice?: boolean },
 	): Promise<UserRecieve> {
 		input = InterfaceCasting.quick(input, ISignUpKeys);
 		const user = await this.usrSvc.email(input.email),
-			{ role = UserRole.undefined } = options || {};
+			{ role = UserRole.undefined, sendDevice = true } = options || {};
 		if (!user) {
 			const newUserRaw = new User({ ...input });
 			return await validation(newUserRaw, async () => {
@@ -63,7 +63,8 @@ export class AuthService extends Cryption {
 						avatarPath: avatarFile?.path,
 						role,
 					});
-					return this.dvcSvc.getTokens(newUser, mtdt);
+					if (sendDevice) return this.dvcSvc.getTokens(newUser, mtdt);
+					return null;
 				}
 			});
 		}
