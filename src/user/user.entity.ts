@@ -175,11 +175,7 @@ export class User extends SensitiveInfomations implements IUser {
 				email = ((20).alpha + '@gmail.com').toLowerCase(),
 				password = 'Aa1!000000000000',
 			} = options || {},
-			n = new User({
-				email,
-				password,
-				fullName: from,
-			});
+			n = new User({ email, password, fullName: from });
 		if (n.hashedPassword) return n;
 	}
 }
