@@ -5,6 +5,7 @@ import {
 	Post,
 	Req,
 	Res,
+	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
@@ -18,6 +19,7 @@ import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { ConfigService } from '@nestjs/config';
 import { HookService } from 'auth/hook/hook.service';
+import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
 
 /**
  * Student controller
@@ -48,6 +50,7 @@ export class StudentController extends AuthController {
 	 * @return {Promise<void>}
 	 */
 	@Post('login')
+	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(NoFilesInterceptor())
 	async login(
 		@Req() request: Request,

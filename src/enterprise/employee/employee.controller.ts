@@ -10,7 +10,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { NoFilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthController } from 'auth/auth.controller';
 import { MetaData } from 'auth/auth.guard';
 import { UserRole } from 'user/user.model';
@@ -23,6 +23,7 @@ import { HookService } from 'auth/hook/hook.service';
 import { IEmployeeSignup } from './employee.model';
 import { AuthGuard } from '@nestjs/passport';
 import { Hook } from 'auth/hook/hook.entity';
+import { memoryStorage } from 'multer';
 
 /**
  * Employee controller
@@ -47,7 +48,7 @@ export class EmployeeController extends AuthController {
 	 */
 	@Post('signup')
 	@UseGuards(AuthGuard('hook'))
-	@UseInterceptors(NoFilesInterceptor())
+	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
