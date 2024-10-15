@@ -8,9 +8,14 @@ import { TestModule } from 'app/module/test.module';
 import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
-import { AuthModule } from './auth/auth.module';
 import { User } from 'user/user.entity';
 import { Device } from './auth/device/device.entity';
+import { AppController } from 'app.controller';
+import { AuthModule } from 'auth/auth.module';
+import { DeviceModule } from 'auth/device/device.module';
+import { SessionModule } from 'auth/session/session.module';
+import { HookModule } from 'auth/hook/hook.module';
+import { UniversityModule } from 'university/university.module';
 
 const fileName = curFile(__filename);
 
@@ -23,7 +28,15 @@ let dvcRepo: Repository<Device>,
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-			imports: [AuthModule, TestModule],
+			imports: [
+				TestModule,
+				AuthModule,
+				DeviceModule,
+				SessionModule,
+				UniversityModule,
+				HookModule,
+			],
+			controllers: [AppController],
 		}).compile(),
 		cfgSvc = module.get(ConfigService);
 
