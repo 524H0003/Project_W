@@ -51,9 +51,7 @@ export class StudentService extends DatabaseRequests<Student> {
 				);
 				try {
 					await this.save({
-						user: await this.usrSvc.findOne({
-							email: input.email,
-						}),
+						user: await this.usrSvc.findOne({ email: input.email }),
 						...InterfaceCasting.quick(input, IStudentInfoKeys),
 					});
 				} catch (error) {
