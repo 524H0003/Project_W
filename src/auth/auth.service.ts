@@ -56,7 +56,7 @@ export class AuthService extends Cryption {
 			const newUserRaw = new User({ ...input });
 			return await validation(newUserRaw, async () => {
 				if (newUserRaw.hashedPassword) {
-					const newUser = await this.usrSvc.assign(newUserRaw),
+					const newUser = await this.usrSvc.save(newUserRaw),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
 					await this.usrSvc.update({
 						...newUser,
@@ -100,7 +100,7 @@ export class AuthService extends Cryption {
 		user.password = password;
 		return validation(user, async () => {
 			if (user.hashedPassword) {
-				const newUser = await this.usrSvc.assign(user),
+				const newUser = await this.usrSvc.save(user),
 					status = await this.usrSvc.update({ ...newUser });
 				return status;
 			}

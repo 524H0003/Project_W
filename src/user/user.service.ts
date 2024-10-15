@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Repository } from 'typeorm';
@@ -23,17 +23,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} the user's infomations that found
 	 */
 	email(input: string): Promise<User> {
-		if (!input) throw new BadRequestException('InvalidEmail');
 		return this.findOne({ email: input.toLowerCase() });
-	}
-
-	/**
-	 * Assign new user
-	 * @param {User} newUser - the new user's infomations
-	 * @return {Promise<User>} the user's infomations
-	 */
-	async assign(newUser: User): Promise<User> {
-		return this.save(newUser);
 	}
 
 	/**

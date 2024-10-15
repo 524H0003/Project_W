@@ -1,24 +1,29 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Cryption } from 'app/utils/auth.utils';
+import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'auth/auth.service';
-import { ILogin, ISignUp, UserRole } from 'user/user.model';
+import { ISignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
+import { Student } from './student.entity';
+import { Repository } from 'typeorm';
+import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import { IStudentSignup } from './student.model';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IStudentInfoKeys } from 'models';
 
 /**
  * Student service
  */
 @Injectable()
-export class StudentService extends Cryption {
+export class StudentService extends DatabaseRequests<Student> {
 	/**
 	 * @ignore
 	 */
 	constructor(
-		cfgSvc: ConfigService,
 		private usrSvc: UserService,
 		private authSvc: AuthService,
+		@InjectRepository(Student) repo: Repository<Student>,
 	) {
-		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
+		super(repo);
 	}
 	/**
 	 * @ignore
@@ -27,10 +32,10 @@ export class StudentService extends Cryption {
 
 	/**
 	 * Login for student
-	 * @param {ILogin} input - the login input
+	 * @param {IStudentSignup} input - the login input
 	 * @param {string} mtdt - the metadata
 	 */
-	async login(input: ILogin, mtdt: string) {
+	async login(input: IStudentSignup, mtdt: string) {
 		const user = await this.usrSvc.email(input.email);
 		if (!user) {
 			if (input.email.match(this.studentMailRex)) {
@@ -44,6 +49,12 @@ export class StudentService extends Cryption {
 					null,
 					{ role: UserRole.student },
 				);
+				await this.save({
+					user: await this.usrSvc.findOne({
+						email: input.email,
+						...InterfaceCasting.quick(input, IStudentInfoKeys),
+					}),
+				});
 				throw new Error('ERRNewUser');
 			}
 			throw new BadRequestException('InvalidStudentEmail');

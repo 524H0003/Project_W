@@ -26,6 +26,7 @@ import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
 import { Request, Response } from 'express';
 import { memoryStorage } from 'multer';
 import { StudentController } from 'university/student/student.controller';
+import { IStudentSignup } from 'university/student/student.model';
 import { ILogin, ISignUp } from 'user/user.model';
 
 @Controller('')
@@ -48,7 +49,7 @@ export class AppController extends AuthController {
 	 * Login request
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
-	 * @param {ILogin} body - login input
+	 * @param {IStudentSignup | ILogin} body - login input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
@@ -57,11 +58,11 @@ export class AppController extends AuthController {
 	async login(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
-		@Body() body: ILogin,
+		@Body() body: IStudentSignup | ILogin,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
-			return this.StuCon.login(request, response, body, mtdt);
+			return this.StuCon.login(request, response, body as IStudentSignup, mtdt);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'InvalidStudentEmail':
