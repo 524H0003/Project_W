@@ -3,7 +3,7 @@ import { BlackBox } from 'app/utils/model.utils';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { Device } from 'auth/device/device.entity';
-import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 import { IFile } from 'file/file.model';
 import { IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany } from 'typeorm';
