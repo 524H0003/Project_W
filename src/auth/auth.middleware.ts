@@ -38,7 +38,7 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 	 * @param {Response} res - server's response
 	 * @param {NextFunction} next - continueing processing client's request
 	 */
-	async use(req: Request, res: Response, next: NextFunction) {
+	use(req: Request, res: Response, next: NextFunction) {
 		const isRefresh = req.url.match(this.rfsgrd);
 
 		let acsTkn: string, rfsTkn: string;
@@ -47,10 +47,11 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 			else if (compareSync(this.acsKey, cki)) acsTkn = req.cookies[cki];
 
 		const tknPld = this.decrypt(rfsTkn);
-		req.headers.authorization = `Bearer ${!isRefresh ? this.decrypt(acsTkn, tknPld.split('.')[2]) : tknPld}`;
+		if (!req.headers.authorization)
+			req.headers.authorization = `Bearer ${!isRefresh ? this.decrypt(acsTkn, tknPld.split('.')[2]) : tknPld}`;
 
 		try {
-			req.user = await this.signSvc.verify(
+			req.user = this.signSvc.verify(
 				this.decrypt(acsTkn, tknPld.split('.')[2]),
 			);
 		} catch {}
