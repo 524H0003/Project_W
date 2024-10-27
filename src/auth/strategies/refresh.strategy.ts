@@ -14,8 +14,19 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
  * Refresh request interface
  */
 export interface IRefreshResult {
+	/**
+	 * Refresh status
+	 */
 	status: 'success' | 'fail' | 'lockdown';
+
+	/**
+	 * The session's id
+	 */
 	sessionId: string;
+
+	/**
+	 * Client's user agent
+	 */
 	userAgent?: string;
 }
 

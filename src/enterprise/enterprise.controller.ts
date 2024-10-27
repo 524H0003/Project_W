@@ -20,6 +20,9 @@ import { ConfigService } from '@nestjs/config';
 import { HookService } from 'auth/hook/hook.service';
 import { Hook } from 'auth/hook/hook.entity';
 
+/**
+ * Enterprise controller
+ */
 @Controller('enterprise')
 export class EnterpriseController extends AuthController {
 	/**
