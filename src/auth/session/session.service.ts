@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { DeviceService } from 'auth/device/device.service';
-import { DeepPartial, DeleteResult, Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { UserRecieve } from 'user/user.class';
 import { Session } from './session.entity';
 import { SignService } from 'auth/auth.service';
@@ -59,12 +59,12 @@ export class SessionService extends DatabaseRequests<Session> {
 
 	/**
 	 * Return user's recieve infomations and add node to chain
-	 * @param {string} oldNodeId - the id of old node
+	 * @param {string} oldSessionId - the id of old session
 	 * @return {Promise<UserRecieve>} user's recieve infomations
 	 */
-	async addTokens(oldNodeId: string): Promise<UserRecieve> {
+	async addTokens(oldSessionId: string): Promise<UserRecieve> {
 		const newSession = await this.addNode(
-				await this.id(oldNodeId, { deep: 3, relations: ['device'] }),
+				await this.id(oldSessionId, { deep: 3, relations: ['device'] }),
 			),
 			refreshToken = this.signSvc.refresh(newSession.id),
 			accessToken = this.signSvc.access(newSession.device.owner.id);
@@ -72,7 +72,7 @@ export class SessionService extends DatabaseRequests<Session> {
 		return new UserRecieve({
 			accessToken,
 			refreshToken,
-			info: newSession.device.owner.info,
+			response: newSession.device.owner.info,
 		});
 	}
 
@@ -87,11 +87,17 @@ export class SessionService extends DatabaseRequests<Session> {
 	}
 
 	/**
-	 * Remove session
-	 * @param {string} id - the session id
-	 * @return {Promise<DeleteResult>} the delete result
+	 * Rotating token
+	 * @param {string} sessionId - the session id
 	 */
-	remove(id: string): Promise<DeleteResult> {
-		return this.delete({ id });
+	async rotateToken(sessionId: string) {
+		const session = await this.id(sessionId, { deep: 3 }),
+			refreshToken = this.signSvc.refresh(session.id),
+			accessToken = this.signSvc.access(session.device.owner.id);
+		return new UserRecieve({
+			refreshToken,
+			accessToken,
+			response: session.device.owner.info,
+		});
 	}
 }

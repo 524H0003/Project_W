@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { SessionService } from 'auth/session/session.service';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserRecieve } from 'user/user.class';
 import { User } from 'user/user.entity';
 import { Device } from './device.entity';
@@ -48,19 +48,10 @@ export class DeviceService extends DatabaseRequests<Device> {
 
 		await this.save({ ...device, child: session.id });
 
-		return new UserRecieve({ accessToken, refreshToken, info: user.info });
-	}
-
-	/**
-	 * Remove device from user
-	 * @param {string} id - the device id
-	 * @return {Promise<DeleteResult>} delete result
-	 */
-	async remove(id: string): Promise<DeleteResult> {
-		const { sessions } = await this.id(id, {});
-		await Promise.all(
-			sessions.map(async (i) => await this.sesSvc.remove(i.id)),
-		);
-		return this.delete({ id });
+		return new UserRecieve({
+			accessToken,
+			refreshToken,
+			response: device.owner.info,
+		});
 	}
 }

@@ -59,11 +59,9 @@ export class StudentController extends AuthController {
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
-			return this.sendBack(
-				request,
-				response,
-				await this.StuSvc.login(body, mtdt),
-			);
+			const usr = await this.StuSvc.login(body),
+				usrRcv = await this.dvcSvc.getTokens(usr, mtdt);
+			return this.sendToClient(request, response, usrRcv);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'ERRNewUser':

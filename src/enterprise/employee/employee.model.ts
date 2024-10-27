@@ -4,9 +4,19 @@ import { ISignUp } from 'user/user.model';
 
 // Interfaces
 /**
+ * Employee's general infomations
+ */
+export interface IEmployeeInfo {
+	/**
+	 * Employee's position
+	 */
+	position: EmployeePosition;
+}
+
+/**
  * Employee model
  */
-export interface IEmployee {
+export interface IEmployee extends IEmployeeInfo {
 	/**
 	 * @ignore
 	 */
@@ -16,17 +26,12 @@ export interface IEmployee {
 	 * Employee's working enterprise
 	 */
 	enterprise: IEnterprise;
-
-	/**
-	 * Employee's position
-	 */
-	position: EmployeePosition;
 }
 
 /**
  * Employee signup model
  */
-export interface IEmployeeSignup extends ISignUp {
+export interface IEmployeeSignup extends ISignUp, IEmployeeInfo {
 	/**
 	 * Signature to sign up
 	 */

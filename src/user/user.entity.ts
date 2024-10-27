@@ -53,19 +53,19 @@ export class User extends SensitiveInfomations implements IUser {
 	/**
 	 * User's device logged in
 	 */
-	@OneToMany(() => Device, (_: Device) => _.owner)
+	@OneToMany(() => Device, (_: Device) => _.owner, { onDelete: 'CASCADE' })
 	devices: Device[];
 
 	/**
 	 * User uploaded files
 	 */
-	@OneToMany(() => File, (_) => _.createdBy)
+	@OneToMany(() => File, (_) => _.createdBy, { onDelete: 'CASCADE' })
 	uploadFiles: IFile[];
 
 	/**
 	 * User hooks
 	 */
-	@OneToMany(() => Hook, (_: Hook) => _.from)
+	@OneToMany(() => Hook, (_: Hook) => _.from, { onDelete: 'CASCADE' })
 	hooks: Hook[];
 
 	/**
@@ -74,13 +74,14 @@ export class User extends SensitiveInfomations implements IUser {
 	@OneToMany(
 		() => EventParticipator,
 		(_: EventParticipator) => _.participatedBy,
+		{ onDelete: 'CASCADE' },
 	)
 	participatedEvents: EventParticipator[];
 
 	/**
 	 * User notifications
 	 */
-	@OneToMany(() => Reciever, (_: Reciever) => _.to)
+	@OneToMany(() => Reciever, (_: Reciever) => _.to, { onDelete: 'CASCADE' })
 	recievedNotifications: Reciever[];
 
 	// Infomations

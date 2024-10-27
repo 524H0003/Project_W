@@ -35,9 +35,7 @@ export class SensitiveInfomations extends BaseEntity {
 /**
  * Generic database requests
  */
-export class DatabaseRequests<
-	T extends SensitiveInfomations | { user: SensitiveInfomations },
-> {
+export class DatabaseRequests<T> {
 	/**
 	 * @ignore
 	 */

@@ -20,7 +20,7 @@ export class Session extends SensitiveInfomations implements ISession {
 	/**
 	 * Session from device
 	 */
-	@ManyToOne(() => Device, (_: Device) => _.sessions)
+	@ManyToOne(() => Device, (_: Device) => _.sessions, { onDelete: 'CASCADE' })
 	@JoinColumn({ name: 'device_id' })
 	device: Device;
 

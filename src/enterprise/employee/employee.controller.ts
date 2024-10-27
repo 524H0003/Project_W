@@ -24,11 +24,12 @@ import { IEmployeeSignup } from './employee.model';
 import { AuthGuard } from '@nestjs/passport';
 import { Hook } from 'auth/hook/hook.entity';
 import { memoryStorage } from 'multer';
+import { EmployeeService } from './employee.service';
 
 /**
  * Employee controller
  */
-@Controller('enterprise')
+@Controller('employee')
 export class EmployeeController extends AuthController {
 	/**
 	 * @ignore
@@ -39,6 +40,7 @@ export class EmployeeController extends AuthController {
 		sesSvc: SessionService,
 		cfgSvc: ConfigService,
 		public hookSvc: HookService,
+		private empSvc: EmployeeService,
 	) {
 		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
 	}
@@ -67,10 +69,10 @@ export class EmployeeController extends AuthController {
 	): Promise<void> {
 		try {
 			await this.hookSvc.validating(body.signature, mtdt, request.user as Hook);
-			return this.sendBack(
+			return this.sendToClient(
 				request,
 				response,
-				await this.authSvc.signUp(body, mtdt, avatar, {
+				await this.empSvc.signUp(body, mtdt, avatar, {
 					role: UserRole.enterprise,
 				}),
 			);

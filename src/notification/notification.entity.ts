@@ -16,7 +16,7 @@ export class Notification
 	/**
 	 * Notification send to
 	 */
-	@OneToMany(() => Reciever, (_: Reciever) => _.from)
+	@OneToMany(() => Reciever, (_: Reciever) => _.from, { onDelete: 'CASCADE' })
 	sent: Reciever[];
 
 	// Infomations

@@ -6,6 +6,7 @@ import { EventParticipator } from './participator/participator.entity';
 import { Event } from './event.entity';
 import { EventTag } from './tag/tag.entity';
 import { EventCreator } from './creator/creator.entity';
+import { EventCreatorService } from './creator/creator.service';
 
 @Module({
 	imports: [
@@ -16,6 +17,8 @@ import { EventCreator } from './creator/creator.entity';
 			EventTag,
 		]),
 	],
+	providers: [EventCreatorService],
+	exports: [EventCreatorService],
 })
 export class EventModule {
 	constructor() {

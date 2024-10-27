@@ -113,9 +113,9 @@ export interface IUserRecieve {
 	refreshToken: string;
 
 	/**
-	 * User generic infomations
+	 * Server's response
 	 */
-	info: IUserInfo;
+	response: string | IUserInfo;
 
 	/**
 	 * Jwt payload

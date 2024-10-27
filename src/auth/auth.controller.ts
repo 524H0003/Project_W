@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { HookService } from './hook/hook.service';
 import { Hook } from './hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
+import { IRefreshResult } from './strategies/refresh.strategy';
 
 /**
  * Auth controller
@@ -20,7 +21,7 @@ export class AuthController {
 	 */
 	constructor(
 		public authSvc: AuthService,
-		private dvcSvc: DeviceService,
+		public dvcSvc: DeviceService,
 		private sesSvc: SessionService,
 		private cfgSvc: ConfigService,
 		public hookSvc: HookService,
@@ -65,21 +66,17 @@ export class AuthController {
 	}
 
 	/**
-	 * Send client user's recieve infomations
+	 * Send client user's recieve infomations (raw method)
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
 	 * @param {UserRecieve} usrRcv - user's recieve infomations
-	 * @param {object} options - function's option
 	 * @return {void}
 	 */
-	protected sendBack(
+	sendToClient(
 		request: Request,
 		response: Response,
 		usrRcv: UserRecieve,
-		options?: { msg?: string },
 	): void {
-		const { msg = usrRcv.info } = options || {},
-			{ exp = null, iat = null } = usrRcv.payload || {};
 		this.clearCookies(request, response);
 		response
 			.status(HttpStatus.ACCEPTED)
@@ -100,10 +97,10 @@ export class AuthController {
 				session: {
 					access_token: usrRcv.accessToken,
 					refresh_token: usrRcv.refreshToken,
-					expires_in: exp - iat,
-					expires_at: exp,
+					expires_in: usrRcv.payload.exp - usrRcv.payload.iat,
+					expires_at: usrRcv.payload.exp,
 				},
-				user: msg,
+				user: usrRcv.response,
 			});
 	}
 
@@ -121,7 +118,9 @@ export class AuthController {
 		body: ILogin,
 		mtdt: string,
 	): Promise<void> {
-		this.sendBack(request, response, await this.authSvc.login(body, mtdt));
+		const usr = await this.authSvc.login(body),
+			usrRcv = await this.dvcSvc.getTokens(usr, mtdt);
+		return this.sendToClient(request, response, usrRcv);
 	}
 
 	/**
@@ -140,11 +139,9 @@ export class AuthController {
 		mtdt: string,
 		avatar: Express.Multer.File,
 	): Promise<void> {
-		return this.sendBack(
-			request,
-			response,
-			await this.authSvc.signUp(body, mtdt, avatar || null),
-		);
+		const usr = await this.authSvc.signUp(body, avatar || null),
+			usrRcv = await this.dvcSvc.getTokens(usr, mtdt);
+		return this.sendToClient(request, response, usrRcv);
 	}
 
 	/**
@@ -154,8 +151,15 @@ export class AuthController {
 	 * @return {Promise<void>}
 	 */
 	async logout(request: Request, response: Response): Promise<void> {
-		await this.dvcSvc.remove(request.user['id']);
-		return this.sendBack(request, response, UserRecieve.test);
+		const rfsRsl = request.user as IRefreshResult;
+		await this.dvcSvc.delete({
+			id: (await this.sesSvc.id(rfsRsl.sessionId)).device.id,
+		});
+		return this.sendToClient(
+			request,
+			response,
+			new UserRecieve({ response: 'LogoutSuccess' }),
+		);
 	}
 
 	/**
@@ -171,20 +175,17 @@ export class AuthController {
 		mtdt: string,
 	): Promise<void> {
 		const sendBack = (usrRcv: UserRecieve) =>
-			this.sendBack(request, response, usrRcv);
-		if (request.user['lockdown']) {
-			await this.dvcSvc.remove(request.user['id']);
-			return sendBack(UserRecieve.test);
+				this.sendToClient(request, response, usrRcv),
+			rfsRsl = request.user as IRefreshResult;
+		if (rfsRsl.status === 'lockdown') {
+			await this.dvcSvc.delete({
+				id: (await this.sesSvc.id(rfsRsl.sessionId)).device.id,
+			});
+			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));
 		} else {
-			if (request.user['success'] && compareSync(mtdt, request.user['ua'])) {
-				return sendBack(
-					new UserRecieve({
-						accessToken: request.user['acsTkn'],
-						refreshToken: request.user['rfsTkn'],
-						info: request.user['usrInfo'],
-					}),
-				);
-			} else return sendBack(await this.sesSvc.addTokens(request.user['id']));
+			if (rfsRsl.status === 'success' && compareSync(mtdt, rfsRsl.userAgent)) {
+				return sendBack(await this.sesSvc.rotateToken(rfsRsl.sessionId));
+			} else return sendBack(await this.sesSvc.addTokens(rfsRsl.sessionId));
 		}
 	}
 
@@ -202,11 +203,10 @@ export class AuthController {
 		body: { email: string },
 		mtdt: string,
 	): Promise<void> {
-		return this.sendBack(
+		return this.sendToClient(
 			request,
 			response,
 			await this.hookSvc.assignViaEmail(body.email, request.hostname, mtdt),
-			{ msg: 'RequestSignatureFromEmail' },
 		);
 	}
 
@@ -230,9 +230,11 @@ export class AuthController {
 		try {
 			await this.hookSvc.validating(signature, mtdt, hook);
 			if (await this.authSvc.changePassword(hook.from, body.password)) {
-				return this.sendBack(request, response, UserRecieve.test, {
-					msg: 'success',
-				});
+				return this.sendToClient(
+					request,
+					response,
+					new UserRecieve({ response: 'ChangePasswordSuccess' }),
+				);
 			}
 		} catch (error) {
 			throw error;
@@ -251,11 +253,10 @@ export class AuthController {
 		response: Response,
 		mtdt: string,
 	): Promise<void> {
-		return this.sendBack(
+		return this.sendToClient(
 			request,
 			response,
 			await this.hookSvc.assignViaConsole(mtdt),
-			{ msg: 'RequestSignatureFromConsole' },
 		);
 	}
 }

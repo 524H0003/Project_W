@@ -17,7 +17,7 @@
 		"safe": "generate-env-example",
 		"start": "nest start",
 		"prestart": "npm run buildfile",
-		"start:debug": "nest start --debug --watch",
+		"start:debug": "npm run buildfile && nest start --debug --watch",
 		"start:dev": "nest start --watch",
 		"start:prod": "node dist/main",
 		"pretest": "npm run buildfile",

@@ -22,13 +22,13 @@ export class Device extends SensitiveInfomations implements IDevice {
 	/**
 	 * Device's owner
 	 */
-	@ManyToOne(() => User, (_: User) => _.devices)
+	@ManyToOne(() => User, (_: User) => _.devices, { onDelete: 'CASCADE' })
 	owner: User;
 
 	/**
 	 * Device's sessions
 	 */
-	@OneToMany(() => Session, (_: Session) => _.device)
+	@OneToMany(() => Session, (_: Session) => _.device, { onDelete: 'CASCADE' })
 	sessions: Session[];
 
 	// Infomations

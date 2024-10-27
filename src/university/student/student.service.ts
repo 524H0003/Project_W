@@ -33,9 +33,8 @@ export class StudentService extends DatabaseRequests<Student> {
 	/**
 	 * Login for student
 	 * @param {IStudentSignup} input - the login input
-	 * @param {string} mtdt - the metadata
 	 */
-	async login(input: IStudentSignup, mtdt: string) {
+	async login(input: IStudentSignup) {
 		const user = await this.usrSvc.email(input.email);
 		if (!user) {
 			if (input.email.match(this.studentMailRex)) {
@@ -45,13 +44,12 @@ export class StudentService extends DatabaseRequests<Student> {
 						fullName: input.email,
 						password: (32).string + '!1Aa',
 					} as ISignUp,
-					mtdt,
 					null,
-					{ role: UserRole.student, sendDevice: false },
+					{ role: UserRole.student },
 				);
 				try {
 					await this.save({
-						user: await this.usrSvc.findOne({ email: input.email }),
+						user: await this.usrSvc.email(input.email),
 						...InterfaceCasting.quick(input, IStudentInfoKeys),
 					});
 				} catch (error) {
@@ -63,6 +61,6 @@ export class StudentService extends DatabaseRequests<Student> {
 				throw new Error('ERRNewUser');
 			}
 			throw new BadRequestException('InvalidStudentEmail');
-		} else return this.authSvc.login(input, mtdt);
+		} else return this.authSvc.login(input);
 	}
 }
