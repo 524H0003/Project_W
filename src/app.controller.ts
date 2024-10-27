@@ -29,6 +29,9 @@ import { StudentController } from 'university/student/student.controller';
 import { IStudentSignup } from 'university/student/student.model';
 import { ILogin, ISignUp } from 'user/user.model';
 
+/**
+ * Application Controller
+ */
 @Controller('')
 export class AppController extends AuthController {
 	/**

@@ -26,8 +26,17 @@ export class AuthController {
 		public hookSvc: HookService,
 	) {}
 
+	/**
+	 * @ignore
+	 */
 	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
+	/**
+	 * @ignore
+	 */
 	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
+	/**
+	 * @ignore
+	 */
 	private readonly ckiOpt: CookieOptions = {
 		httpOnly: true,
 		secure: true,
