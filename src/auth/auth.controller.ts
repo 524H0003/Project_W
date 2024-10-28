@@ -11,6 +11,7 @@ import { HookService } from './hook/hook.service';
 import { Hook } from './hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 import { IRefreshResult } from './strategies/refresh.strategy';
+import { User } from 'user/user.entity';
 
 /**
  * Auth controller
@@ -66,18 +67,19 @@ export class AuthController {
 	}
 
 	/**
-	 * Send client user's recieve infomations (raw method)
+	 * Send client user's recieve infomations
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
 	 * @param {UserRecieve} usrRcv - user's recieve infomations
 	 * @return {void}
 	 */
-	sendToClient(
+	responseWithUserRecieve(
 		request: Request,
 		response: Response,
 		usrRcv: UserRecieve,
 	): void {
 		this.clearCookies(request, response);
+
 		response
 			.status(HttpStatus.ACCEPTED)
 			.cookie(
@@ -105,6 +107,24 @@ export class AuthController {
 	}
 
 	/**
+	 * Send client user's recieve infomations
+	 * @param {Request} request - client's request
+	 * @param {Response} response - server's response
+	 * @param {User} user - user's recieve infomations
+	 * @return {Promise<void>}
+	 */
+	async responseWithUser(
+		request: Request,
+		response: Response,
+		user: User,
+		mtdt: string,
+	): Promise<void> {
+		const usrRcv = await this.dvcSvc.getTokens(user, mtdt);
+
+		return this.responseWithUserRecieve(request, response, usrRcv);
+	}
+
+	/**
 	 * User login
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
@@ -118,9 +138,12 @@ export class AuthController {
 		body: ILogin,
 		mtdt: string,
 	): Promise<void> {
-		const usr = await this.authSvc.login(body),
-			usrRcv = await this.dvcSvc.getTokens(usr, mtdt);
-		return this.sendToClient(request, response, usrRcv);
+		return this.responseWithUser(
+			request,
+			response,
+			await this.authSvc.login(body),
+			mtdt,
+		);
 	}
 
 	/**
@@ -139,9 +162,12 @@ export class AuthController {
 		mtdt: string,
 		avatar: Express.Multer.File,
 	): Promise<void> {
-		const usr = await this.authSvc.signUp(body, avatar || null),
-			usrRcv = await this.dvcSvc.getTokens(usr, mtdt);
-		return this.sendToClient(request, response, usrRcv);
+		return this.responseWithUser(
+			request,
+			response,
+			await this.authSvc.signUp(body, avatar || null),
+			mtdt,
+		);
 	}
 
 	/**
@@ -155,7 +181,7 @@ export class AuthController {
 		await this.dvcSvc.delete({
 			id: (await this.sesSvc.id(rfsRsl.sessionId)).device.id,
 		});
-		return this.sendToClient(
+		return this.responseWithUserRecieve(
 			request,
 			response,
 			new UserRecieve({ response: 'LogoutSuccess' }),
@@ -175,7 +201,7 @@ export class AuthController {
 		mtdt: string,
 	): Promise<void> {
 		const sendBack = (usrRcv: UserRecieve) =>
-				this.sendToClient(request, response, usrRcv),
+				this.responseWithUserRecieve(request, response, usrRcv),
 			rfsRsl = request.user as IRefreshResult;
 		if (rfsRsl.status === 'lockdown') {
 			await this.dvcSvc.delete({
@@ -203,7 +229,7 @@ export class AuthController {
 		body: { email: string },
 		mtdt: string,
 	): Promise<void> {
-		return this.sendToClient(
+		return this.responseWithUserRecieve(
 			request,
 			response,
 			await this.hookSvc.assignViaEmail(body.email, request.hostname, mtdt),
@@ -230,7 +256,7 @@ export class AuthController {
 		try {
 			await this.hookSvc.validating(signature, mtdt, hook);
 			if (await this.authSvc.changePassword(hook.from, body.password)) {
-				return this.sendToClient(
+				return this.responseWithUserRecieve(
 					request,
 					response,
 					new UserRecieve({ response: 'ChangePasswordSuccess' }),
@@ -253,7 +279,7 @@ export class AuthController {
 		response: Response,
 		mtdt: string,
 	): Promise<void> {
-		return this.sendToClient(
+		return this.responseWithUserRecieve(
 			request,
 			response,
 			await this.hookSvc.assignViaConsole(mtdt),

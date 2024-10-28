@@ -152,13 +152,4 @@ export class DatabaseRequests<T> {
 	id(id: string, options?: FindOptionsWithCustom<T>): Promise<T> {
 		return this.findOne({ id, ...options });
 	}
-
-	/**
-	 * Get all object
-	 * @param {FindOptionsWithCustom<T>} options - function's option
-	 * @return {Promise<T[]>} array of found object
-	 */
-	all(options?: FindOptionsWithCustom<T>): Promise<T[]> {
-		return this.find(options);
-	}
 }

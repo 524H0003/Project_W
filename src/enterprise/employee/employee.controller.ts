@@ -69,12 +69,15 @@ export class EmployeeController extends AuthController {
 	): Promise<void> {
 		try {
 			await this.hookSvc.validating(body.signature, mtdt, request.user as Hook);
-			return this.sendToClient(
+			return this.responseWithUser(
 				request,
 				response,
-				await this.empSvc.signUp(body, mtdt, avatar, {
-					role: UserRole.enterprise,
-				}),
+				(
+					await this.empSvc.signUp(body, avatar, {
+						role: UserRole.enterprise,
+					})
+				).user.user,
+				mtdt,
 			);
 		} catch (error) {
 			switch ((error as { message: string }).message) {

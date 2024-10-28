@@ -12,7 +12,6 @@ import { DeviceService } from 'auth/device/device.service';
 import { compareSync } from 'bcrypt';
 import { FileService } from 'file/file.service';
 import { ILoginKeys, ISignUpKeys } from 'models';
-import { UserRecieve } from 'user/user.class';
 import { User } from 'user/user.entity';
 import { ILogin, ISignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
@@ -49,41 +48,40 @@ export class AuthService extends Cryption {
 		options?: IAuthSignUpOption,
 	): Promise<User> {
 		input = InterfaceCasting.quick(input, ISignUpKeys);
+
 		const user = await this.usrSvc.email(input.email),
-			{ role = UserRole.undefined } = options || {};
-		if (!user) {
-			const rawUser = new User({
+			{ role = UserRole.undefined } = options || {},
+			rawUser = new User({
 				...input,
-				// Force email to lower case
 				email: input.email.toLowerCase(),
 			});
-			try {
-				return validation(rawUser, async () => {
-					if (rawUser.hashedPassword) {
-						const newUser = await this.usrSvc.save({ ...rawUser, role }),
-							avatarFile = await this.fileSvc.assign(avatar, newUser);
-						await this.usrSvc.update({
-							...newUser,
-							avatarPath: avatarFile?.path,
-						});
-						return newUser;
-					}
-				});
-			} catch (error) {
-				switch ((error as { name: string }).name) {
-					case 'BadRequestException':
-						throw new BadRequestException(
-							JSON.parse((error as { message: string }).message),
-						);
-						break;
 
-					default:
-						throw error;
-						break;
+		if (user) throw new BadRequestException('ExistedUser');
+
+		try {
+			return validation(rawUser, async () => {
+				if (rawUser.hashedPassword) {
+					const newUser = await this.usrSvc.save({ ...rawUser, role }),
+						avatarFile = await this.fileSvc.assign(avatar, newUser);
+					return await this.usrSvc.update({
+						...newUser,
+						avatarPath: avatarFile?.path,
+					});
 				}
+			});
+		} catch (error) {
+			switch ((error as { name: string }).name) {
+				case 'BadRequestException':
+					throw new BadRequestException(
+						JSON.parse((error as { message: string }).message),
+					);
+					break;
+
+				default:
+					throw error;
+					break;
 			}
 		}
-		throw new BadRequestException('ExistedUser');
 	}
 
 	/**
@@ -93,14 +91,10 @@ export class AuthService extends Cryption {
 	 */
 	async login(input: ILogin): Promise<User> {
 		input = InterfaceCasting.quick(input, ILoginKeys);
+
 		const user = await this.usrSvc.email(input.email);
-		if (user) {
-			const isPasswordMatched = compareSync(
-				input.password,
-				user.hashedPassword,
-			);
-			if (isPasswordMatched) return user;
-		}
+
+		if (user && compareSync(input.password, user.hashedPassword)) return user;
 		throw new BadRequestException('InvalidAccessRequest');
 	}
 
@@ -113,12 +107,8 @@ export class AuthService extends Cryption {
 	changePassword(iUser: User, password: string): Promise<User> {
 		const user = new User(iUser);
 		user.password = password;
-		return validation(user, async () => {
-			if (user.hashedPassword) {
-				const newUser = await this.usrSvc.save(user),
-					status = await this.usrSvc.update({ ...newUser });
-				return status;
-			}
+		return validation(user, () => {
+			if (user.hashedPassword) return this.usrSvc.save(user);
 		});
 	}
 }

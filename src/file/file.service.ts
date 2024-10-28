@@ -180,10 +180,8 @@ export class FileService extends DatabaseRequests<File> {
 		if (filePath.startsWith(resolve(this.rootDir)) && existsSync(filePath)) {
 			if (filename.match(this.serverFilesReg)) return filename;
 
-			const file = await this.path(filename, user?.id, {
-				deep: 2,
-				relations: ['createdBy'],
-			});
+			const file = await this.path(filename, user?.id, { deep: 2 });
+
 			if (user?.id === file.createdBy.id) return filename;
 		}
 		return null;
@@ -194,8 +192,13 @@ export class FileService extends DatabaseRequests<File> {
 	 * @param {string} input - the file's name
 	 * @param {string} userId - the id of request's user
 	 * @param {FindOptionsWithCustom<File>} options - the function's option
+	 * @return {Promise<File>}
 	 */
-	path(input: string, userId: string, options: FindOptionsWithCustom<File>) {
+	path(
+		input: string,
+		userId: string,
+		options: FindOptionsWithCustom<File>,
+	): Promise<File> {
 		return this.findOne({ path: input, ...options, createdBy: { id: userId } });
 	}
 }
