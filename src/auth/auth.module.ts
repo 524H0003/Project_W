@@ -17,10 +17,12 @@ import { RoleGuard } from './auth.guard';
 		// Authencation
 		PassportModule.register({ session: true }),
 		JwtModule.register({ global: true }),
-		// Foreign modules
-		forwardRef(() => DeviceModule),
+		// User module
 		forwardRef(() => UserModule),
-		HookModule,
+		// Client authencation module
+		forwardRef(() => DeviceModule),
+		forwardRef(() => HookModule),
+		// File module
 		FileModule,
 	],
 	providers: [
@@ -33,6 +35,6 @@ import { RoleGuard } from './auth.guard';
 		HookStrategy,
 		RoleGuard,
 	],
-	exports: [AuthService, SignService],
+	exports: [AuthService, SignService, HookModule, DeviceModule, FileModule],
 })
 export class AuthModule {}

@@ -7,8 +7,8 @@ import { DeviceService } from './device.service';
 
 @Module({
 	imports: [
-		forwardRef(() => AuthModule),
 		TypeOrmModule.forFeature([Device]),
+		forwardRef(() => AuthModule),
 		forwardRef(() => SessionModule),
 	],
 	providers: [DeviceService],
