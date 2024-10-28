@@ -27,7 +27,7 @@
 		".prettierrc": true,
 		"LICENSE": true,
 		"coverage": true,
-		"dist": true,
+		"**/dist": true,
 		"documentation": true,
 		"**/node_modules": true,
 		"public": true,
