@@ -2,12 +2,14 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppController } from 'app.controller';
 import { loadEnv } from 'app/module/config.module';
 import { SqlModule } from 'app/module/sql.module';
 import { AuthMiddleware } from 'auth/auth.middleware';
 import { AuthModule } from 'auth/auth.module';
 import { EnterpriseModule } from 'enterprise/enterprise.module';
+import { join } from 'path';
 import { UniversityModule } from 'university/university.module';
 
 @Module({
@@ -36,6 +38,10 @@ import { UniversityModule } from 'university/university.module';
 		// Application modules
 		EnterpriseModule,
 		UniversityModule,
+		// Serving static pages
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', 'page/dist'),
+		}),
 	],
 	controllers: [AppController],
 })

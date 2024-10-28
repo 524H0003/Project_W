@@ -7,7 +7,8 @@
 		"./*.d.ts",
 		"**/build.ts",
 		"./src/types.ts",
-		"./src/models.ts"
+		"./src/models.ts",
+		"page"
 	],
 	"extends": "./tsconfig.json"
 }

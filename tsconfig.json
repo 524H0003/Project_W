@@ -28,6 +28,7 @@
 		"dist",
 		"*.config.*",
 		"./src/types.ts",
-		"./src/models.ts"
+		"./src/models.ts",
+		"page"
 	]
 }
