@@ -12,6 +12,8 @@ import { EmployeeService } from './employee/employee.service';
 import { EventModule } from 'event/event.module';
 import { UserModule } from 'user/user.module';
 import { EnterpriseController } from './enterprise.controller';
+import { EnterpriseService } from './enterprise.service';
+import { FileModule } from 'file/file.module';
 
 @Module({
 	imports: [
@@ -21,10 +23,11 @@ import { EnterpriseController } from './enterprise.controller';
 		HookModule,
 		EventModule,
 		UserModule,
+		FileModule,
 	],
-	providers: [EmployeeService],
+	providers: [EmployeeService, EnterpriseService],
 	controllers: [EmployeeController, EnterpriseController],
-	exports: [EmployeeService],
+	exports: [EmployeeService, EnterpriseService],
 })
 export class EnterpriseModule {
 	constructor() {

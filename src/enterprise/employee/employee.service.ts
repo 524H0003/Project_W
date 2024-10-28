@@ -9,8 +9,6 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys, IEmployeeSignupKeys } from 'models';
 import { AuthService } from 'auth/auth.service';
 import { EventCreatorService } from 'event/creator/creator.service';
-import { UserService } from 'user/user.service';
-import { DeviceService } from 'auth/device/device.service';
 import { UserRole } from 'user/user.model';
 
 /**
@@ -25,8 +23,6 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 		@InjectRepository(Employee) repo: Repository<Employee>,
 		private authSvc: AuthService,
 		private envCreSvc: EventCreatorService,
-		private usrSvc: UserService,
-		private dvcSvc: DeviceService,
 	) {
 		super(repo);
 	}

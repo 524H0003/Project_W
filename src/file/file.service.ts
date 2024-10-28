@@ -150,7 +150,7 @@ export class FileService extends DatabaseRequests<File> {
 		const { fileName = '' } = serverFilesOptions || {};
 
 		const path = fileName
-			? fileName
+			? fileName + `.server.${extname(input.originalname)}`
 			: `${createHash('sha256')
 					.update(input.buffer)
 					.digest('hex')}${extname(input.originalname)}`;

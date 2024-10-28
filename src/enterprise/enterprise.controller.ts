@@ -1,14 +1,17 @@
 import {
 	Body,
 	Controller,
+	HttpStatus,
+	ParseFilePipeBuilder,
 	Post,
 	Req,
 	Res,
+	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { NoFilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthController } from 'auth/auth.controller';
 import { Request, Response } from 'express';
 import { IEnterpriseAssign } from './enterprise.model';
@@ -19,6 +22,9 @@ import { SessionService } from 'auth/session/session.service';
 import { ConfigService } from '@nestjs/config';
 import { HookService } from 'auth/hook/hook.service';
 import { Hook } from 'auth/hook/hook.entity';
+import { EnterpriseService } from './enterprise.service';
+import { memoryStorage } from 'multer';
+import { UserRecieve } from 'user/user.class';
 
 /**
  * Enterprise controller
@@ -33,6 +39,7 @@ export class EnterpriseController extends AuthController {
 		dvcSvc: DeviceService,
 		sesSvc: SessionService,
 		cfgSvc: ConfigService,
+		private entSvc: EnterpriseService,
 		public hookSvc: HookService,
 	) {
 		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
@@ -43,18 +50,29 @@ export class EnterpriseController extends AuthController {
 	 */
 	@Post('assign')
 	@UseGuards(AuthGuard('hook'))
-	@UseInterceptors(NoFilesInterceptor())
+	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
 		@Req() request: Request,
 		@Res() response: Response,
 		@Body() body: IEnterpriseAssign,
 		@MetaData() mtdt: string,
+		@UploadedFile(
+			new ParseFilePipeBuilder()
+				.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+				.addMaxSizeValidator({ maxSize: (0.3).mb })
+				.build({
+					fileIsRequired: false,
+					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+				}),
+		)
+		avatar: Express.Multer.File,
 	): Promise<void> {
-		try {
-			await this.hookSvc.validating(body.signature, mtdt, request.user as Hook);
-			// return this.sendBack(
-			// 	request, response,
-			// )
-		} catch (error) {}
+		await this.hookSvc.validating(body.signature, mtdt, request.user as Hook);
+		await this.entSvc.assign(body, avatar || null);
+		return this.responseWithUserRecieve(
+			request,
+			response,
+			new UserRecieve({ response: 'EnterpriseAssign' }),
+		);
 	}
 }

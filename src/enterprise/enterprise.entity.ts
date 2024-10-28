@@ -46,7 +46,7 @@ export class Enterprise extends SensitiveInfomations implements IEnterprise {
 	 * Enterprise's name
 	 */
 	@Field()
-	@Column({ name: 'description', type: 'text' })
+	@Column({ name: 'description', type: 'text', default: '' })
 	description: string;
 
 	/**
