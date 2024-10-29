@@ -1,14 +1,8 @@
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Cryption, validation } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { DeviceService } from 'auth/device/device.service';
 import { compareSync } from 'bcrypt';
 import { FileService } from 'file/file.service';
 import { ILoginKeys, ISignUpKeys } from 'models';
@@ -29,8 +23,6 @@ export class AuthService extends Cryption {
 		cfgSvc: ConfigService,
 		private usrSvc: UserService,
 		private fileSvc: FileService,
-		@Inject(forwardRef(() => DeviceService))
-		private dvcSvc: DeviceService,
 	) {
 		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
 	}
@@ -64,8 +56,7 @@ export class AuthService extends Cryption {
 					const newUser = await this.usrSvc.save({ ...rawUser, role }),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
 					return await this.usrSvc.update({
-						...newUser,
-						avatarPath: avatarFile?.path,
+						user: { id: newUser.user.id, avatarPath: avatarFile?.path },
 					});
 				}
 			});
@@ -105,7 +96,7 @@ export class AuthService extends Cryption {
 	 * @return {Promise<User>} updated user
 	 */
 	changePassword(iUser: User, password: string): Promise<User> {
-		const user = new User(iUser);
+		const user = new User({ ...iUser, ...iUser.user });
 		user.password = password;
 		return validation(user, () => {
 			if (user.hashedPassword) return this.usrSvc.save(user);

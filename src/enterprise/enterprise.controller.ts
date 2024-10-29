@@ -20,11 +20,12 @@ import { AuthService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { ConfigService } from '@nestjs/config';
-import { HookService } from 'auth/hook/hook.service';
-import { Hook } from 'auth/hook/hook.entity';
+import { HookService } from 'app/hook/hook.service';
+import { Hook } from 'app/hook/hook.entity';
 import { EnterpriseService } from './enterprise.service';
 import { memoryStorage } from 'multer';
 import { UserRecieve } from 'user/user.class';
+import { IBaseUser } from 'app/app.model';
 
 /**
  * Enterprise controller
@@ -54,7 +55,7 @@ export class EnterpriseController extends AuthController {
 	async assign(
 		@Req() request: Request,
 		@Res() response: Response,
-		@Body() body: IEnterpriseAssign,
+		@Body() body: IEnterpriseAssign & IBaseUser,
 		@MetaData() mtdt: string,
 		@UploadedFile(
 			new ParseFilePipeBuilder()

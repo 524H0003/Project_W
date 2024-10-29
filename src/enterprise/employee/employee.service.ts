@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Employee } from './employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IEmployeeSignup } from './employee.model';
+import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { IAuthSignUpOption } from 'auth/auth.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys, IEmployeeSignupKeys } from 'models';
 import { AuthService } from 'auth/auth.service';
 import { EventCreatorService } from 'event/creator/creator.service';
 import { UserRole } from 'user/user.model';
+import { UserService } from 'user/user.service';
+import { EnterpriseService } from 'enterprise/enterprise.service';
+import { HookService } from 'app/hook/hook.service';
 
 /**
  * Employee service
@@ -23,8 +26,25 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 		@InjectRepository(Employee) repo: Repository<Employee>,
 		private authSvc: AuthService,
 		private envCreSvc: EventCreatorService,
+		private usrSvc: UserService,
+		private entSvc: EnterpriseService,
+		private hookSvc: HookService,
 	) {
 		super(repo);
+	}
+
+	/**
+	 * Employee request hook service
+	 */
+	async hook(input: IEmployeeHook, host: string, mtdt: string) {
+		const ent = await this.entSvc.findOne({
+			user: { name: input.enterpriseName },
+		});
+		if (!ent) throw new BadRequestException('EnterpriseNotExist');
+
+		return this.hookSvc.assignViaEmail(ent.user.email, host, mtdt, {
+			enterpriseName: ent.user.name,
+		});
 	}
 
 	/**
@@ -61,6 +81,14 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 					break;
 
 				default:
+					if ((error as { code: string }).code === '23502') {
+						await this.usrSvc.delete({ user: { email: input.email } });
+						if (error['column'] === 'enterprise_id')
+							error['column'] = 'enterpriseName';
+						throw new BadRequestException(
+							`Null value in field ${error['column']}`,
+						);
+					}
 					throw error;
 					break;
 			}

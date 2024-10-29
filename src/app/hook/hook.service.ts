@@ -34,17 +34,18 @@ export class HookService extends DatabaseRequests<Hook> {
 		email: string,
 		host: string,
 		mtdt: string,
+		addInfo?: object,
 	): Promise<UserRecieve> {
 		const signature = (128).string,
 			hook = await this.save({
 				signature,
 				mtdt,
+				note: JSON.stringify(addInfo),
 				from: await this.mailSvc.sendResetPassword(email, host, signature),
 			});
 
 		return new UserRecieve({
 			accessToken: this.signSvc.access(hook.id),
-			refreshToken: this.signSvc.refresh(hook.from.id.length.string),
 			response: 'RequestSignatureFromEmail',
 		});
 	}

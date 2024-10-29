@@ -1,16 +1,13 @@
+import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { AppController } from 'app.controller';
 import { loadEnv } from 'app/module/config.module';
 import { SqlModule } from 'app/module/sql.module';
 import { AuthMiddleware } from 'auth/auth.middleware';
-import { AuthModule } from 'auth/auth.module';
-import { EnterpriseModule } from 'enterprise/enterprise.module';
-import { join } from 'path';
-import { UniversityModule } from 'university/university.module';
+import { AppModule } from 'app/app.module';
 
 @Module({
 	imports: [
@@ -32,20 +29,17 @@ import { UniversityModule } from 'university/university.module';
 			inheritResolversFromInterfaces: false,
 		}),
 		// Core modules
-		AuthModule,
 		loadEnv,
 		SqlModule('deploy'),
 		// Application modules
-		EnterpriseModule,
-		UniversityModule,
+		AppModule,
 		// Serving static pages
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', 'page/dist'),
 		}),
 	],
-	controllers: [AppController],
 })
-export class AppModule {
+export class MainModule {
 	configure(consumer: MiddlewareConsumer) {
 		consumer.apply(AuthMiddleware).forRoutes('/');
 	}

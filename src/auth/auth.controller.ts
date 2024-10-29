@@ -7,8 +7,8 @@ import { CookieOptions, Request, Response } from 'express';
 import { UserRecieve } from 'user/user.class';
 import { ILogin, ISignUp } from 'user/user.model';
 import { AuthService } from './auth.service';
-import { HookService } from './hook/hook.service';
-import { Hook } from './hook/hook.entity';
+import { HookService } from '../app/hook/hook.service';
+import { Hook } from '../app/hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 import { IRefreshResult } from './strategies/refresh.strategy';
 import { User } from 'user/user.entity';
@@ -119,7 +119,7 @@ export class AuthController {
 		user: User,
 		mtdt: string,
 	): Promise<void> {
-		const usrRcv = await this.dvcSvc.getTokens(user, mtdt);
+		const usrRcv = await this.sesSvc.getTokens(user, mtdt);
 
 		return this.responseWithUserRecieve(request, response, usrRcv);
 	}

@@ -1,6 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserService } from 'user/user.service';
+import { AppService } from 'app/app.service';
 
 /**
  * Mail service
@@ -12,7 +12,7 @@ export class MailService {
 	 */
 	constructor(
 		private mailerService: MailerService,
-		private usrSvc: UserService,
+		private appSvc: AppService,
 	) {}
 
 	/**
@@ -23,16 +23,19 @@ export class MailService {
 	 */
 	async sendResetPassword(email: string, host: string, signature: string) {
 		const url = `${host}/hook/${signature}`,
-			usr = await this.usrSvc.email(email);
+			usr = await this.appSvc.userEmail(email);
 
 		if (usr)
 			await this.mailerService.sendMail({
 				to: usr.email,
 				subject: 'Change password request from idk',
 				template: './forgetPassword',
-				context: { name: usr.fullName, url },
+				context: {
+					name: usr.name,
+					url,
+				},
 			});
-		else throw new BadRequestException('InvalidUser');
+		else throw new BadRequestException('InvalidUserOrEnterprise');
 
 		return usr;
 	}

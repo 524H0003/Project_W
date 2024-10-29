@@ -17,7 +17,7 @@ import { AuthService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { ConfigService } from '@nestjs/config';
-import { HookService } from 'auth/hook/hook.service';
+import { HookService } from 'app/hook/hook.service';
 import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
 import { IStudentSignup } from './student.model';
 

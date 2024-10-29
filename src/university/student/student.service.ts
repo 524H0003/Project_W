@@ -53,7 +53,7 @@ export class StudentService extends DatabaseRequests<Student> {
 						...InterfaceCasting.quick(input, IStudentInfoKeys),
 					});
 				} catch (error) {
-					await this.usrSvc.delete({ email: input.email });
+					await this.usrSvc.delete({ user: { email: input.email } });
 					throw new BadRequestException(
 						`Null value in field ${error['column']}`,
 					);

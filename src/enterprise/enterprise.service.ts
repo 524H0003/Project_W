@@ -5,8 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IEnterpriseAssign } from './enterprise.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IEnterpriseAssignKeys } from 'models';
+import { IBaseUserKeys, IEnterpriseAssignKeys } from 'models';
 import { FileService } from 'file/file.service';
+import { IBaseUser } from 'app/app.model';
 
 /**
  * Enterprise service
@@ -24,13 +25,25 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	}
 
 	/**
+	 * Find enterprise with email
+	 * @param {string} input - the user's email
+	 * @return {Promise<Enterprise>} the user's infomations that found
+	 */
+	email(input: string): Promise<Enterprise> {
+		return this.findOne({ user: { email: input.toLowerCase() } });
+	}
+
+	/**
 	 * Assign enterprise
 	 */
 	async assign(
-		input: IEnterpriseAssign,
+		input: IEnterpriseAssign & IBaseUser,
 		avatar: Express.Multer.File,
 	): Promise<Enterprise> {
-		input = InterfaceCasting.quick(input, IEnterpriseAssignKeys);
+		input = InterfaceCasting.quick(input, [
+			...IEnterpriseAssignKeys,
+			...IBaseUserKeys,
+		]);
 
 		const avatarFile = await this.fileSvc.assign(avatar, null, {
 			fileName: `${input.name}.${input.industry}.logo`,

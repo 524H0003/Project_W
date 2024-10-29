@@ -14,7 +14,11 @@ import {
 	S3Client,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -176,15 +180,20 @@ export class FileService extends DatabaseRequests<File> {
 			);
 		}
 
-		const filePath = realpathSync(resolve(this.rootDir, filename));
-		if (filePath.startsWith(resolve(this.rootDir)) && existsSync(filePath)) {
-			if (filename.match(this.serverFilesReg)) return filename;
+		try {
+			const filePath = realpathSync(resolve(this.rootDir, filename));
+			if (filePath.startsWith(resolve(this.rootDir)) && existsSync(filePath)) {
+				if (filename.match(this.serverFilesReg)) return filename;
 
-			const file = await this.path(filename, user?.id, { deep: 2 });
+				const file = await this.path(filename, user?.user.id, { deep: 2 });
 
-			if (user?.id === file.createdBy.id) return filename;
+				if (user?.user.id === file.createdBy.user.id) return filename;
+				throw new NotFoundException('FileNotFound');
+			}
+			return null;
+		} catch {
+			throw new BadRequestException('InvalidFileRequest');
 		}
-		return null;
 	}
 
 	/**
@@ -199,6 +208,10 @@ export class FileService extends DatabaseRequests<File> {
 		userId: string,
 		options: FindOptionsWithCustom<File>,
 	): Promise<File> {
-		return this.findOne({ path: input, ...options, createdBy: { id: userId } });
+		return this.findOne({
+			path: input,
+			...options,
+			createdBy: { user: { id: userId } },
+		});
 	}
 }

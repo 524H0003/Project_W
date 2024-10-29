@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
-import { HookService } from 'auth/hook/hook.service';
+import { HookService } from 'app/hook/hook.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 /**

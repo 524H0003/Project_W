@@ -38,6 +38,16 @@ export interface IEmployeeSignup extends ISignUp, IEmployeeInfo {
 	signature: string;
 }
 
+/**
+ * Employee hooking
+ */
+export interface IEmployeeHook {
+	/**
+	 * Employee's working enterprise
+	 */
+	enterpriseName: string;
+}
+
 // Enums
 export enum EmployeePosition {
 	manager = 'manager',

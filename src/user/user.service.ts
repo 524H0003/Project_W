@@ -23,7 +23,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} the user's infomations that found
 	 */
 	email(input: string): Promise<User> {
-		return this.findOne({ email: input.toLowerCase() });
+		return this.findOne({ user: { email: input.toLowerCase() } });
 	}
 
 	/**
@@ -33,6 +33,6 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} the user's infomations
 	 */
 	async updateRole(userId: string, updateRole: UserRole): Promise<User> {
-		return this.update({ id: userId, role: updateRole });
+		return this.update({ user: { id: userId }, role: updateRole });
 	}
 }
