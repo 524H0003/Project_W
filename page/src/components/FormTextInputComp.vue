@@ -3,7 +3,7 @@
     <label class="label">
       <span class="label-text -mb-1.5">{{ name }}</span>
     </label>
-    <label class="input input-bordered flex items-center gap-4">
+    <label class="input input-bordered flex items-center gap-2">
       <IconComp :name="(icon || name || '').toLowerCase()"></IconComp>
       <input
         :type="type || name"

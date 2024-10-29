@@ -1,5 +1,5 @@
 <template>
-  <span class="material-icons aspect-square h-6 w-6">{{ name }}</span>
+  <span class="material-symbols-outlined aspect-square ">{{ name }}</span>
 </template>
 
 <script lang="ts">
