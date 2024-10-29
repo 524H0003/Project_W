@@ -4,27 +4,30 @@
       <div class="card-body">
         <h1 class="card-title text-4xl font-bold">Login</h1>
         <form>
-          <LoginTextInputComp
-            input="Email"
+          <FormTextInputComp
+            name="Email"
             placeholder="name@email.com"
-          ></LoginTextInputComp>
-          <LoginTextInputComp
-            input="Password"
+          ></FormTextInputComp>
+          <FormTextInputComp
+            name="Password"
             placeholder="Enter password"
-          ></LoginTextInputComp>
+            icon="key_vertical"
+          ></FormTextInputComp>
           <label class="label">
-            <a href="#" class="label-text-alt link link-hover"
-              >Forgot password?</a
-            >
+            <a href="#" class="label-text-alt link link-hover">
+              Forgot password?
+            </a>
           </label>
-          <div class="form-control mt-6">
+          <div class="form-control mt-3">
             <button class="btn btn-primary">Login</button>
           </div>
         </form>
         <div class="divider">OR</div>
         <div class="text-center">
           <p>Don't have an account?</p>
-          <a href="#" class="link link-primary">Sign up now</a>
+          <RouterLink to="/signup" class="link link-primary">
+            Sign up now
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -32,5 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import LoginTextInputComp from '@/components/LoginTextInputComp.vue'
+import FormTextInputComp from '@/components/FormTextInputComp.vue'
+import { RouterLink } from 'vue-router'
 </script>
