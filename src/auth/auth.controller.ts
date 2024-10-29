@@ -73,7 +73,7 @@ export class AuthController {
 	 * @param {UserRecieve} usrRcv - user's recieve infomations
 	 * @return {void}
 	 */
-	responseWithUserRecieve(
+	protected responseWithUserRecieve(
 		request: Request,
 		response: Response,
 		usrRcv: UserRecieve,
@@ -113,7 +113,7 @@ export class AuthController {
 	 * @param {User} user - user's recieve infomations
 	 * @return {Promise<void>}
 	 */
-	async responseWithUser(
+	protected async responseWithUser(
 		request: Request,
 		response: Response,
 		user: User,
@@ -132,7 +132,7 @@ export class AuthController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	async login(
+	protected async login(
 		request: Request,
 		response: Response,
 		body: ILogin,
@@ -155,7 +155,7 @@ export class AuthController {
 	 * @param {Express.Multer.File} avatar - user's avatar
 	 * @return {Promise<void>}
 	 */
-	async signUp(
+	protected async signUp(
 		request: Request,
 		response: Response,
 		body: ISignUp,
@@ -176,7 +176,7 @@ export class AuthController {
 	 * @param {Response} response - server's response
 	 * @return {Promise<void>}
 	 */
-	async logout(request: Request, response: Response): Promise<void> {
+	protected async logout(request: Request, response: Response): Promise<void> {
 		const rfsRsl = request.user as IRefreshResult;
 		await this.dvcSvc.delete({
 			id: (await this.sesSvc.id(rfsRsl.sessionId)).device.id,
@@ -195,7 +195,7 @@ export class AuthController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	async refresh(
+	protected async refresh(
 		request: Request,
 		response: Response,
 		mtdt: string,
@@ -223,7 +223,7 @@ export class AuthController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	async requestViaEmail(
+	protected async requestViaEmail(
 		request: Request,
 		response: Response,
 		body: { email: string },
@@ -245,7 +245,7 @@ export class AuthController {
 	 * @param {Hook} hook - recieved hook from client
 	 * @return {Promise<void>}
 	 */
-	async changePassword(
+	protected async changePassword(
 		signature: string,
 		request: Request,
 		response: Response,

@@ -19,4 +19,9 @@ export interface IHook {
 	 * Client's metadata
 	 */
 	mtdt: string;
+
+	/**
+	 * Addition infomations
+	 */
+	note: string;
 }

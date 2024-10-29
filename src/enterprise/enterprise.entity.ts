@@ -67,6 +67,16 @@ export class Enterprise extends SensitiveInfomations implements IEnterprise {
 	})
 	avatarPath: string;
 
+	/**
+	 * Enterprise's mail
+	 */
+	@Column({
+		name: 'email',
+		type: 'text',
+		nullable: false,
+	})
+	email: string;
+
 	// Embedded Entity
 	/**
 	 * @ignore
@@ -85,6 +95,7 @@ export class Enterprise extends SensitiveInfomations implements IEnterprise {
 			industry: (20).string,
 			employees: [],
 			students: [],
+			email: (20).string + '@lmao.uk',
 		});
 	}
 }

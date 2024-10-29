@@ -25,6 +25,11 @@ export interface IEnterpriseInfo {
 	 * Enterprise's avatar path
 	 */
 	avatarPath: string;
+
+	/**
+	 * Enterprise's email
+	 */
+	email: string;
 }
 
 /**

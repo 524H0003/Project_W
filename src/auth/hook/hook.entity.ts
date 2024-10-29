@@ -36,6 +36,11 @@ export class Hook extends SensitiveInfomations implements IHook {
 	 */
 	@Column() mtdt: string;
 
+	/**
+	 * Addition infomations
+	 */
+	@Column({ nullable: true }) note: string;
+
 	// Embedded Entity
 	/**
 	 * @ignore
