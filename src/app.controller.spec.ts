@@ -11,13 +11,7 @@ import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { Device } from './auth/device/device.entity';
 import { AppController } from 'app/app.controller';
-import { AuthModule } from 'auth/auth.module';
-import { DeviceModule } from 'auth/device/device.module';
-import { SessionModule } from 'auth/session/session.module';
-import { HookModule } from 'app/hook/hook.module';
-import { UniversityModule } from 'university/university.module';
 import { AppModule } from 'app/app.module';
-import { BaseUser } from 'app/app.entity';
 
 const fileName = curFile(__filename);
 
