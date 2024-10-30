@@ -1,10 +1,5 @@
 {
+	"exclude": ["."],
 	"extends": "../tsconfig.json",
-	"include": [
-		"../src/**/*.model.ts",
-		"../**/types.ts"
-	],
-	"exclude": [
-		"."
-	]
+	"include": ["../src/**/*.model.ts", "../**/types.ts"]
 }
