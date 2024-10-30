@@ -4,18 +4,12 @@ import { TestModule } from 'app/module/test.module';
 import { hash } from 'app/utils/auth.utils';
 import { NextFunction, Request, Response } from 'express';
 import { createRequest, createResponse } from 'node-mocks-http';
-import uaParserJs from 'ua-parser-js';
 import { AuthMiddleware } from './auth.middleware';
-import { AuthModule } from './auth.module';
 import { AuthService } from './auth.service';
+import { AppModule } from 'app/app.module';
 
-jest.mock('ua-parser-js');
-
-const ua = { test: 'test' },
-	acsTkn = '..access-token',
+const acsTkn = '..access-token',
 	rfsTkn = '..refresh-token';
-
-(uaParserJs.UAParser as unknown as jest.Mock).mockReturnValue(ua);
 
 let next: NextFunction,
 	req: Request,
@@ -28,7 +22,7 @@ let next: NextFunction,
 
 beforeEach(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AuthModule],
+		imports: [TestModule, AppModule],
 		providers: [AuthMiddleware],
 	}).compile();
 
