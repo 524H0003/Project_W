@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
+import {
+	DeepPartial,
+	DeleteResult,
+	FindOptionsWhere,
+	Repository,
+	SaveOptions,
+} from 'typeorm';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
 import { AppService } from 'app/app.service';
+import { BaseUser } from 'app/app.entity';
 
 /**
  * Services for user
@@ -47,6 +54,19 @@ export class UserService extends DatabaseRequests<User> {
 	): Promise<User> {
 		const baseUsr = await this.appSvc.baseUser.modify(entity.user);
 		return this.update({ ...entity, user: baseUsr }, options);
+	}
+
+	/**
+	 * Remove user
+	 * @param {FindOptionsWhere<User>} criteria - deleting user
+	 * @return {Promise<DeleteResult>}
+	 */
+	async remove(criteria: FindOptionsWhere<User>): Promise<DeleteResult> {
+		const result = await this.remove(criteria);
+		await this.appSvc.baseUser.remove({
+			...new BaseUser(criteria.user as BaseUser),
+		});
+		return result;
 	}
 
 	/**

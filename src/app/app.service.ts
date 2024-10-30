@@ -2,7 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseRequests } from './utils/typeorm.utils';
 import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
+import {
+	DeepPartial,
+	DeleteResult,
+	FindOptionsWhere,
+	Repository,
+	SaveOptions,
+} from 'typeorm';
 
 @Injectable()
 export class AppService {
@@ -50,6 +56,15 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 		options?: SaveOptions,
 	): Promise<BaseUser> {
 		return super.update(entity, options);
+	}
+
+	/**
+	 * Remove base user
+	 * @param {FindOptionsWhere<BaseUser>} criteria - removing user
+	 * @return {Promise<DeleteResult>}
+	 */
+	async remove(criteria: FindOptionsWhere<BaseUser>): Promise<DeleteResult> {
+		return super.delete(criteria);
 	}
 
 	/**

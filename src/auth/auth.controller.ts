@@ -178,7 +178,7 @@ export class AuthController {
 	 */
 	protected async logout(request: Request, response: Response): Promise<void> {
 		const rfsRsl = request.user as IRefreshResult;
-		await this.dvcSvc.delete({
+		await this.dvcSvc.remove({
 			id: (await this.sesSvc.id(rfsRsl.sessionId)).device.id,
 		});
 		return this.responseWithUserRecieve(
@@ -204,7 +204,7 @@ export class AuthController {
 				this.responseWithUserRecieve(request, response, usrRcv),
 			rfsRsl = request.user as IRefreshResult;
 		if (rfsRsl.status === 'lockdown') {
-			await this.dvcSvc.delete({
+			await this.dvcSvc.remove({
 				id: (await this.sesSvc.id(rfsRsl.sessionId)).device.id,
 			});
 			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));

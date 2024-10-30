@@ -129,7 +129,7 @@ export class DatabaseRequests<T> {
 	 * @param {FindOptionsWhere<T>} criteria - the deleting object
 	 * @return {Promise<DeleteResult>} the deletion result
 	 */
-	delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
+	protected delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
 		return this.repo.delete(criteria);
 	}
 

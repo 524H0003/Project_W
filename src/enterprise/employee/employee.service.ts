@@ -89,7 +89,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 
 				default:
 					if ((error as { code: string }).code === '23502') {
-						await this.usrSvc.delete({ user: { email: input.email } });
+						await this.usrSvc.remove({ user: { email: input.email } });
 						if (error['column'] === 'enterprise_id')
 							error['column'] = 'enterpriseName';
 						throw new BadRequestException(
