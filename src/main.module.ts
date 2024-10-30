@@ -34,9 +34,7 @@ import { AppModule } from 'app/app.module';
 		// Application modules
 		AppModule,
 		// Serving static pages
-		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, '..', 'page/dist'),
-		}),
+		ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'page/dist') }),
 	],
 })
 export class MainModule {

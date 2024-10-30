@@ -25,6 +25,10 @@ export class BaseUser extends SensitiveInfomations implements IBaseUser {
 	/**
 	 * Base user's avatar path
 	 */
-	@Column({ nullable: false, default: 'defaultUser.server.jpg' })
+	@Column({
+		default: 'defaultUser.server.jpg',
+		name: 'image_path',
+		type: 'text',
+	})
 	avatarPath?: string;
 }

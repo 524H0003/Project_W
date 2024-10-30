@@ -30,10 +30,7 @@ export class MailService {
 				to: usr.email,
 				subject: 'Change password request from idk',
 				template: './forgetPassword',
-				context: {
-					name: usr.name,
-					url,
-				},
+				context: { name: usr.name, url },
 			});
 		else throw new BadRequestException('InvalidUserOrEnterprise');
 

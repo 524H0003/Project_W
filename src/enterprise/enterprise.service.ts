@@ -50,10 +50,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 		});
 
 		try {
-			return await this.save({
-				...input,
-				avatarPath: avatarFile?.path,
-			});
+			return await this.save({ ...input, avatarPath: avatarFile?.path });
 		} catch (error) {
 			await this.fileSvc.delete({ ...avatarFile });
 			throw new BadRequestException(`Null value in field ${error['column']}`);

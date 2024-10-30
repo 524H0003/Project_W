@@ -100,17 +100,6 @@ export class User implements IUser {
 
 	// Infomations
 	/**
-	 * User avatar path
-	 */
-	@Field()
-	@Column({
-		default: 'defaultUser.server.jpg',
-		name: 'image_path',
-		type: 'text',
-	})
-	avatarPath: string;
-
-	/**
 	 * User's role
 	 */
 	@Field(() => UserRole)

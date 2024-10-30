@@ -14,11 +14,7 @@ import {
 	S3Client,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import {
-	BadRequestException,
-	Injectable,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -28,6 +24,7 @@ import {
 import { Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
+import { BaseUser } from 'app/app.entity';
 
 /**
  * File services
@@ -168,10 +165,10 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Recieve file from server
 	 * @param {string} filename - the name of recieving file
-	 * @param {User} user - the user want to recieve file
+	 * @param {BaseUser} user - the user want to recieve file
 	 * @return {Promise<string>} the file name or rejecting request
 	 */
-	async recieve(filename: string, user: User): Promise<string> {
+	async recieve(filename: string, user: BaseUser): Promise<string> {
 		const fileOnline = await this.s3Recieve(filename);
 		if (fileOnline) {
 			writeFileSync(
@@ -185,13 +182,13 @@ export class FileService extends DatabaseRequests<File> {
 			if (filePath.startsWith(resolve(this.rootDir)) && existsSync(filePath)) {
 				if (filename.match(this.serverFilesReg)) return filename;
 
-				const file = await this.path(filename, user?.user.id, { deep: 2 });
+				const file = await this.path(filename, user?.id, { deep: 2 });
 
-				if (user?.user.id === file.createdBy.user.id) return filename;
-				throw new NotFoundException('FileNotFound');
+				if (user?.id === file.createdBy.user.id) return filename;
+				throw new BadRequestException('ForbidenFile');
 			}
 			return null;
-		} catch {
+		} catch (error) {
 			throw new BadRequestException('InvalidFileRequest');
 		}
 	}

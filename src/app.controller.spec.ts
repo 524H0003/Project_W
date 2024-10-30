@@ -64,9 +64,7 @@ describe('signup', () => {
 
 		await execute(
 			() => usrRepo.findOne({ where: { user: { email: usr.user.email } } }),
-			{
-				exps: [{ type: 'toBeInstanceOf', params: [User] }],
-			},
+			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
 		);
 	});
 

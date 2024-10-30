@@ -51,11 +51,7 @@ export class SessionService extends DatabaseRequests<Session> {
 				hashedUserAgent: hash(mtdt.toString()),
 				child: null,
 			}),
-			session = await this.assign({
-				child: null,
-				parrent: device.id,
-				device,
-			}),
+			session = await this.assign({ child: null, parrent: device.id, device }),
 			refreshToken = this.signSvc.refresh(session.id),
 			accessToken = this.signSvc.access(user.user.id);
 

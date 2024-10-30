@@ -43,10 +43,7 @@ export class AuthService extends Cryption {
 
 		const user = await this.usrSvc.email(input.email),
 			{ role = UserRole.undefined } = options || {},
-			rawUser = new User({
-				...input,
-				email: input.email.toLowerCase(),
-			});
+			rawUser = new User({ ...input, email: input.email.toLowerCase() });
 
 		if (user) throw new BadRequestException('ExistedUser');
 

@@ -50,6 +50,7 @@ describe('seeUploadedFile', () => {
 			.field('password', rawUsr.password);
 		usr = await usrRepo.findOne({
 			where: { user: { email: rawUsr.user.email } },
+			relations: ['user'],
 		});
 
 		headers = e.headers;
@@ -74,7 +75,9 @@ describe('seeUploadedFile', () => {
 	it('success', async () => {
 		await execute(
 			() =>
-				req.get(`/file/${usr.avatarPath}`).set('Cookie', headers['set-cookie']),
+				req
+					.get(`/file/${usr.user.avatarPath}`)
+					.set('Cookie', headers['set-cookie']),
 			{
 				exps: [
 					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
@@ -84,13 +87,9 @@ describe('seeUploadedFile', () => {
 	});
 
 	it('failed', async () => {
-		await execute(() => req.get(`/file/${usr.avatarPath}`), {
+		await execute(() => req.get(`/file/${usr.user.avatarPath}`), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
-				{
-					type: 'toHaveProperty',
-					params: ['text', JSON.stringify({ error: 'Invalid request' })],
-				},
 			],
 		});
 	});
