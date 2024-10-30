@@ -4,11 +4,11 @@ import { forwardRef, Module } from '@nestjs/common';
 import { join } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailService } from './mail.service';
-import { UserModule } from 'user/user.module';
+import { AppModule } from 'app/app.module';
 
 @Module({
 	imports: [
-		forwardRef(() => UserModule),
+		forwardRef(() => AppModule),
 		MailerModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],

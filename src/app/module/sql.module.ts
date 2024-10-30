@@ -48,17 +48,10 @@ export const SqlModule = (type: 'deploy' | 'test') =>
 					ifNotExist: true,
 				});
 			} catch {}
-			if (type === 'deploy')
-				return {
-					...sqlOptions(type, cfgSvc),
-					autoLoadEntities: true,
-					synchronize: true,
-				};
-			else
-				return {
-					...sqlOptions(type, cfgSvc),
-					entities: ['./src/**/*.entity.*'],
-					synchronize: true,
-				};
+			return {
+				...sqlOptions(type, cfgSvc),
+				autoLoadEntities: true,
+				synchronize: true,
+			};
 		},
 	});

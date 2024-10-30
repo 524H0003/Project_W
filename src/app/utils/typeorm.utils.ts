@@ -35,13 +35,11 @@ export class SensitiveInfomations extends BaseEntity {
 /**
  * Generic database requests
  */
-export class DatabaseRequests<
-	T extends SensitiveInfomations | { user: SensitiveInfomations },
-> {
+export class DatabaseRequests<T> {
 	/**
 	 * @ignore
 	 */
-	relations: string[];
+	private relations: string[];
 
 	/**
 	 * @ignore
@@ -122,7 +120,7 @@ export class DatabaseRequests<
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<T>} the object from database
 	 */
-	save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
+	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
 		return this.repo.save(entity, options) as Promise<T>;
 	}
 
@@ -131,7 +129,7 @@ export class DatabaseRequests<
 	 * @param {FindOptionsWhere<T>} criteria - the deleting object
 	 * @return {Promise<DeleteResult>} the deletion result
 	 */
-	delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
+	protected delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
 		return this.repo.delete(criteria);
 	}
 
@@ -141,7 +139,7 @@ export class DatabaseRequests<
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<T>} the updated object
 	 */
-	update(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
+	protected update(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
 		return this.save(entity, options);
 	}
 
@@ -153,14 +151,5 @@ export class DatabaseRequests<
 	 */
 	id(id: string, options?: FindOptionsWithCustom<T>): Promise<T> {
 		return this.findOne({ id, ...options });
-	}
-
-	/**
-	 * Get all object
-	 * @param {FindOptionsWithCustom<T>} options - function's option
-	 * @return {Promise<T[]>} array of found object
-	 */
-	all(options?: FindOptionsWithCustom<T>): Promise<T[]> {
-		return this.find(options);
 	}
 }

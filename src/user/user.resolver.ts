@@ -25,6 +25,6 @@ export class UserResolver {
 	@Query(() => [User])
 	@Roles([UserRole.faculty])
 	async userAll() {
-		return (await this.usrSvc.all()).map((_) => _.info);
+		return (await this.usrSvc.find()).map((_) => _.info);
 	}
 }

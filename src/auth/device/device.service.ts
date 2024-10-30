@@ -1,13 +1,14 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { SessionService } from 'auth/session/session.service';
-import { DeleteResult, Repository } from 'typeorm';
-import { UserRecieve } from 'user/user.class';
-import { User } from 'user/user.entity';
+import {
+	DeepPartial,
+	DeleteResult,
+	FindOptionsWhere,
+	Repository,
+	SaveOptions,
+} from 'typeorm';
 import { Device } from './device.entity';
-import { SignService } from 'auth/auth.service';
-import { hash } from 'app/utils/auth.utils';
 
 /**
  * Device service
@@ -17,50 +18,26 @@ export class DeviceService extends DatabaseRequests<Device> {
 	/**
 	 * @ignore
 	 */
-	constructor(
-		@InjectRepository(Device) repo: Repository<Device>,
-		@Inject(forwardRef(() => SessionService))
-		private sesSvc: SessionService,
-		@Inject(forwardRef(() => SignService))
-		private signSvc: SignService,
-	) {
+	constructor(@InjectRepository(Device) repo: Repository<Device>) {
 		super(repo);
 	}
 
 	/**
-	 * Get device tokens for user's recieve infomations
-	 * @param {User} user - the request from user
-	 * @param {string} mtdt - metadata from client
+	 * Assign new device
+	 * @param {DeepPartial<Device>} entity - assigning device
+	 * @param {SaveOptions} options - function's option
+	 * @return {Promise<Device>}
 	 */
-	async getTokens(user: User, mtdt: string) {
-		const device = await this.save({
-				owner: user,
-				hashedUserAgent: hash(mtdt.toString()),
-				child: null,
-			}),
-			session = await this.sesSvc.assign({
-				child: null,
-				parrent: device.id,
-				device,
-			}),
-			refreshToken = this.signSvc.refresh(session.id),
-			accessToken = this.signSvc.access(user.id);
-
-		await this.save({ ...device, child: session.id });
-
-		return new UserRecieve({ accessToken, refreshToken, info: user.info });
+	assign(entity: DeepPartial<Device>, options?: SaveOptions): Promise<Device> {
+		return this.save(entity, options);
 	}
 
 	/**
-	 * Remove device from user
-	 * @param {string} id - the device id
-	 * @return {Promise<DeleteResult>} delete result
+	 * Remove device
+	 * @param {FindOptionsWhere<Device>} criteria - deleting device
+	 * @return {Promise<DeleteResult>}
 	 */
-	async remove(id: string): Promise<DeleteResult> {
-		const { sessions } = await this.id(id, {});
-		await Promise.all(
-			sessions.map(async (i) => await this.sesSvc.remove(i.id)),
-		);
-		return this.delete({ id });
+	async remove(criteria: FindOptionsWhere<Device>): Promise<DeleteResult> {
+		return this.delete(criteria);
 	}
 }

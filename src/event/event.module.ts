@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { registerEnumType } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventStatus, EventType } from './event.model';
@@ -6,6 +6,8 @@ import { EventParticipator } from './participator/participator.entity';
 import { Event } from './event.entity';
 import { EventTag } from './tag/tag.entity';
 import { EventCreator } from './creator/creator.entity';
+import { EventCreatorService } from './creator/creator.service';
+import { AppModule } from 'app/app.module';
 
 @Module({
 	imports: [
@@ -15,7 +17,10 @@ import { EventCreator } from './creator/creator.entity';
 			EventCreator,
 			EventTag,
 		]),
+		forwardRef(() => AppModule),
 	],
+	providers: [EventCreatorService],
+	exports: [EventCreatorService],
 })
 export class EventModule {
 	constructor() {

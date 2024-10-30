@@ -8,10 +8,8 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { config as awsCfg } from 'aws-sdk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import { Event } from 'event/event.entity';
-import { AppModule } from './app.module';
-import { Notification } from 'notification/notification.entity';
-import { User } from 'user/user.entity';
+import { MainModule } from './main.module';
+import { BaseUser } from 'app/app.entity';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
@@ -20,10 +18,9 @@ async function bootstrap() {
 		{ Database, Resource } = await import('@adminjs/typeorm'),
 		server = express(),
 		app = (
-			await NestFactory.create(AppModule, new ExpressAdapter(server), {
+			await NestFactory.create(MainModule, new ExpressAdapter(server), {
 				cors: {
-					origin:
-						/(https:\/\/){1}(.*)(anhvietnguyen.id.vn|localhost\:(\d*)){1}/,
+					origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
 					methods: '*',
 					credentials: true,
 				},
@@ -34,7 +31,7 @@ async function bootstrap() {
 		cfgSvc = app.get(ConfigService);
 	AdminJS.registerAdapter({ Resource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
-	const admin = new AdminJS({ resources: [User, Event, Notification] }),
+	const admin = new AdminJS({ resources: [BaseUser] }),
 		adminRouter = buildAuthenticatedRouter(
 			admin,
 			{

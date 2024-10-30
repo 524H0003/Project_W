@@ -9,30 +9,30 @@ export class UserRecieve implements IUserRecieve {
 	 * Quick user recieve initiation
 	 * @param {object} payload - User recieve infomations
 	 */
-	constructor(payload: Omit<IUserRecieve, 'payload'>) {
+	constructor(payload: Partial<IUserRecieve>) {
 		Object.assign(this, payload);
 	}
 
 	/**
 	 * User access token
 	 */
-	accessToken: string;
+	accessToken: string = '';
 
 	/**
 	 * User refresh token
 	 */
-	refreshToken: string;
+	refreshToken: string = '';
 
 	/**
-	 * User generic infomations
+	 * Server's response
 	 */
-	info: IUserInfo;
+	response: string | IUserInfo = '';
 
 	/**
 	 * Jwt payload
 	 */
 	get payload(): JwtPayload {
-		return decode(this.accessToken) as JwtPayload;
+		return (decode(this.accessToken) as JwtPayload) || { exp: 0, iat: 0 };
 	}
 
 	/**
@@ -42,7 +42,6 @@ export class UserRecieve implements IUserRecieve {
 		return new UserRecieve({
 			accessToken: (10).string,
 			refreshToken: (10).string,
-			info: {} as IUserInfo,
 		});
 	}
 }

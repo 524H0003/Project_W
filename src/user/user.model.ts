@@ -1,5 +1,6 @@
+import { IBaseUser } from 'app/app.model';
 import { IDevice } from 'auth/device/device.model';
-import { IHook } from 'auth/hook/hook.model';
+import { IHook } from 'app/hook/hook.model';
 import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 import { JwtPayload } from 'jsonwebtoken';
@@ -13,7 +14,7 @@ export interface IUserAuthentication {
 	/**
 	 * User's email address
 	 */
-	email: string;
+	email?: string;
 
 	/**
 	 * User's password
@@ -27,16 +28,7 @@ export interface IUserAuthentication {
 export interface IUserInfo
 	extends IUserTimeRecord,
 		IUserStatus,
-		IUserSensitive {
-	/**
-	 * User's full name
-	 */
-	fullName: string;
-	/**
-	 * User's avatar path
-	 */
-	avatarPath: string;
-}
+		IUserSensitive {}
 
 /**
  * Fields about user's time record
@@ -72,6 +64,11 @@ export interface IUserSensitive {
  * User model
  */
 export interface IUser extends IUserAuthentication, IUserInfo {
+	/**
+	 * Base user
+	 */
+	user: IBaseUser;
+
 	/**
 	 * Recieved notifications
 	 */
@@ -113,9 +110,9 @@ export interface IUserRecieve {
 	refreshToken: string;
 
 	/**
-	 * User generic infomations
+	 * Server's response
 	 */
-	info: IUserInfo;
+	response: string | IUserInfo;
 
 	/**
 	 * Jwt payload
@@ -131,7 +128,9 @@ export interface ILogin extends IUserAuthentication {}
 /**
  * Sign up fields
  */
-export interface ISignUp extends IUserAuthentication, IUserInfo {}
+export interface ISignUp extends IUserAuthentication, IUserInfo, IBaseUser {
+	email: string;
+}
 
 // Enums
 /**

@@ -5,13 +5,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TestModule } from 'app/module/test.module';
 import { UserRole } from 'user/user.model';
 import { RoleGuard } from './auth.guard';
-import { AuthModule } from './auth.module';
+import { AppModule } from 'app/app.module';
 
 let roleGrd: RoleGuard, rflt: Reflector, ctx: ExecutionContext;
 
 beforeEach(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AuthModule],
+		imports: [TestModule, AppModule],
 	}).compile();
 
 	(roleGrd = module.get(RoleGuard)),

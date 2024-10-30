@@ -1,31 +1,38 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { Device } from 'auth/device/device.entity';
-import { IsEmail, IsString } from 'class-validator';
 import { IFile } from 'file/file.model';
-import { IUserInfoKeys } from 'models';
+import { IBaseUserKeys, IUserAuthenticationKeys, IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { IUser, IUserAuthentication, IUserInfo, UserRole } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
-import { Hook } from 'auth/hook/hook.entity';
+import { Hook } from 'app/hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
+import { BaseUser } from 'app/app.entity';
+import { IBaseUser } from 'app/app.model';
 
 /**
  * User entity
  */
 @ObjectType()
 @Entity({ name: 'User' })
-export class User extends SensitiveInfomations implements IUser {
+export class User implements IUser {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
-	constructor(payload: IUserAuthentication & { fullName: string }) {
-		super();
-		Object.assign(this, payload);
+	constructor(payload: Required<IUserAuthentication> & IBaseUser) {
+		if (payload) {
+			const baseUsrInfo = InterfaceCasting.quick(
+					payload!,
+					IBaseUserKeys,
+				) as unknown as BaseUser,
+				usrInfo = InterfaceCasting.quick(payload!, IUserAuthenticationKeys);
+			Object.assign(this, usrInfo);
+			this.user = baseUsrInfo;
+		}
 	}
 
 	/**
@@ -49,23 +56,30 @@ export class User extends SensitiveInfomations implements IUser {
 	 */
 	set hashedPassword(i: any) {}
 
+	// Core Entity
+	/**
+	 * Base user
+	 */
+	@Column(() => BaseUser, { prefix: false })
+	user: BaseUser;
+
 	// Relationships
 	/**
 	 * User's device logged in
 	 */
-	@OneToMany(() => Device, (_: Device) => _.owner)
+	@OneToMany(() => Device, (_: Device) => _.owner, { onDelete: 'CASCADE' })
 	devices: Device[];
 
 	/**
 	 * User uploaded files
 	 */
-	@OneToMany(() => File, (_) => _.createdBy)
+	@OneToMany(() => File, (_) => _.createdBy, { onDelete: 'CASCADE' })
 	uploadFiles: IFile[];
 
 	/**
 	 * User hooks
 	 */
-	@OneToMany(() => Hook, (_: Hook) => _.from)
+	@OneToMany(() => Hook, (_: Hook) => _.from, { onDelete: 'CASCADE' })
 	hooks: Hook[];
 
 	/**
@@ -74,43 +88,17 @@ export class User extends SensitiveInfomations implements IUser {
 	@OneToMany(
 		() => EventParticipator,
 		(_: EventParticipator) => _.participatedBy,
+		{ onDelete: 'CASCADE' },
 	)
 	participatedEvents: EventParticipator[];
 
 	/**
 	 * User notifications
 	 */
-	@OneToMany(() => Reciever, (_: Reciever) => _.to)
+	@OneToMany(() => Reciever, (_: Reciever) => _.to, { onDelete: 'CASCADE' })
 	recievedNotifications: Reciever[];
 
 	// Infomations
-	/**
-	 * User avatar path
-	 */
-	@Field()
-	@Column({
-		default: 'defaultUser.server.jpg',
-		name: 'image_path',
-		type: 'text',
-	})
-	avatarPath: string;
-
-	/**
-	 * User's full name
-	 */
-	@IsString()
-	@Field()
-	@Column({ name: 'full_name', type: 'text' })
-	fullName: string;
-
-	/**
-	 * User's email address
-	 */
-	@IsEmail()
-	@Field()
-	@Column({ name: 'email', type: 'text' })
-	email: string;
-
 	/**
 	 * User's role
 	 */
@@ -127,13 +115,13 @@ export class User extends SensitiveInfomations implements IUser {
 	/**
 	 * User's password
 	 */
+	password: string;
 	// @IsStrongPassword({	// minLength: 16,
 	// minLowercase: 1,
 	// minUppercase: 1,
 	// minNumbers: 1,
 	// minSymbols: 1,
 	// })
-	password: string;
 
 	/**
 	 * User last login
@@ -164,7 +152,10 @@ export class User extends SensitiveInfomations implements IUser {
 	 * @return {IUserInfo} User's public infomations
 	 */
 	get info(): IUserInfo {
-		return InterfaceCasting.quick(this, IUserInfoKeys);
+		return {
+			...InterfaceCasting.quick(this, IUserInfoKeys),
+			...InterfaceCasting.quick(this.user, IBaseUserKeys),
+		};
 	}
 
 	/**
@@ -175,7 +166,7 @@ export class User extends SensitiveInfomations implements IUser {
 				email = ((20).alpha + '@gmail.com').toLowerCase(),
 				password = 'Aa1!000000000000',
 			} = options || {},
-			n = new User({ email, password, fullName: from });
+			n = new User({ email, password, name: from });
 		if (n.hashedPassword) return n;
 	}
 }

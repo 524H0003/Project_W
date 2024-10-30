@@ -1,18 +1,13 @@
+import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AppController } from 'app.controller';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { loadEnv } from 'app/module/config.module';
 import { SqlModule } from 'app/module/sql.module';
 import { AuthMiddleware } from 'auth/auth.middleware';
-import { AuthModule } from 'auth/auth.module';
-import { DeviceModule } from 'auth/device/device.module';
-import { HookModule } from 'auth/hook/hook.module';
-import { EnterpriseModule } from 'enterprise/enterprise.module';
-import { EventModule } from 'event/event.module';
-import { NotificationModule } from 'notification/notification.module';
-import { UniversityModule } from 'university/university.module';
+import { AppModule } from 'app/app.module';
 
 @Module({
 	imports: [
@@ -34,21 +29,15 @@ import { UniversityModule } from 'university/university.module';
 			inheritResolversFromInterfaces: false,
 		}),
 		// Core modules
-		AuthModule,
 		loadEnv,
 		SqlModule('deploy'),
 		// Application modules
-		EventModule,
-		NotificationModule,
-		EnterpriseModule,
-		UniversityModule,
-		// Controller dependencies
-		DeviceModule,
-		HookModule,
+		AppModule,
+		// Serving static pages
+		ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'page/dist') }),
 	],
-	controllers: [AppController],
 })
-export class AppModule {
+export class MainModule {
 	configure(consumer: MiddlewareConsumer) {
 		consumer.apply(AuthMiddleware).forRoutes('/');
 	}

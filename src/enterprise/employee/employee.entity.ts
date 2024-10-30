@@ -27,7 +27,9 @@ export class Employee implements IEmployee {
 	/**
 	 * Employee's working enterprise
 	 */
-	@ManyToOne(() => Enterprise, (_: Enterprise) => _.employees)
+	@ManyToOne(() => Enterprise, (_: Enterprise) => _.employees, {
+		nullable: false,
+	})
 	@JoinColumn({ name: 'enterprise_id' })
 	enterprise: Enterprise;
 

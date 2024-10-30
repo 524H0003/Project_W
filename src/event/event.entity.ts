@@ -24,26 +24,30 @@ export class Event extends SensitiveInfomations implements IEvent {
 	/**
 	 * The event creator
 	 */
-	@ManyToOne(() => EventCreator, (_: EventCreator) => _.createdEvents)
+	@ManyToOne(() => EventCreator, (_: EventCreator) => _.createdEvents, {
+		onDelete: 'CASCADE',
+	})
 	@JoinColumn({ name: 'creator_id' })
 	createdBy: EventCreator;
 
 	/**
 	 * Event's participators
 	 */
-	@OneToMany(() => EventParticipator, (_: EventParticipator) => _.from)
+	@OneToMany(() => EventParticipator, (_: EventParticipator) => _.from, {
+		onDelete: 'CASCADE',
+	})
 	participators: EventParticipator[];
 
 	/**
 	 * Event's attached files
 	 */
-	@OneToMany(() => File, (_: File) => _.atEvent)
+	@OneToMany(() => File, (_: File) => _.atEvent, { onDelete: 'CASCADE' })
 	documents: File[];
 
 	/**
 	 * Event's tags
 	 */
-	@ManyToMany(() => EventTag)
+	@ManyToMany(() => EventTag, { onDelete: 'CASCADE' })
 	@JoinTable({ name: 'EventTag' })
 	tags: EventTag[];
 

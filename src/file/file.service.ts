@@ -14,16 +14,17 @@ import {
 	S3Client,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
 	DatabaseRequests,
 	FindOptionsWithCustom,
 } from 'app/utils/typeorm.utils';
-import { Repository } from 'typeorm';
+import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
+import { BaseUser } from 'app/app.entity';
 
 /**
  * File services
@@ -150,7 +151,7 @@ export class FileService extends DatabaseRequests<File> {
 		const { fileName = '' } = serverFilesOptions || {};
 
 		const path = fileName
-			? fileName
+			? fileName + `.server.${extname(input.originalname)}`
 			: `${createHash('sha256')
 					.update(input.buffer)
 					.digest('hex')}${extname(input.originalname)}`;
@@ -164,10 +165,10 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Recieve file from server
 	 * @param {string} filename - the name of recieving file
-	 * @param {User} user - the user want to recieve file
+	 * @param {BaseUser} user - the user want to recieve file
 	 * @return {Promise<string>} the file name or rejecting request
 	 */
-	async recieve(filename: string, user: User): Promise<string> {
+	async recieve(filename: string, user: BaseUser): Promise<string> {
 		const fileOnline = await this.s3Recieve(filename);
 		if (fileOnline) {
 			writeFileSync(
@@ -176,17 +177,27 @@ export class FileService extends DatabaseRequests<File> {
 			);
 		}
 
-		const filePath = realpathSync(resolve(this.rootDir, filename));
-		if (filePath.startsWith(resolve(this.rootDir)) && existsSync(filePath)) {
-			if (filename.match(this.serverFilesReg)) return filename;
+		try {
+			const filePath = realpathSync(resolve(this.rootDir, filename));
+			if (filePath.startsWith(resolve(this.rootDir)) && existsSync(filePath)) {
+				if (filename.match(this.serverFilesReg)) return filename;
 
-			const file = await this.path(filename, user?.id, {
-				deep: 2,
-				relations: ['createdBy'],
-			});
-			if (user?.id === file.createdBy.id) return filename;
+				const file = await this.path(filename, user?.id, { deep: 2 });
+
+				if (user?.id === file.createdBy.user.id) return filename;
+				throw new BadRequestException('ForbidenFile');
+			}
+			return null;
+		} catch (error) {
+			throw new BadRequestException('InvalidFileRequest');
 		}
-		return null;
+	}
+
+	/**
+	 * Remove file on server
+	 */
+	remove(criteria: FindOptionsWhere<File>): Promise<DeleteResult> {
+		return super.delete(criteria);
 	}
 
 	/**
@@ -194,8 +205,17 @@ export class FileService extends DatabaseRequests<File> {
 	 * @param {string} input - the file's name
 	 * @param {string} userId - the id of request's user
 	 * @param {FindOptionsWithCustom<File>} options - the function's option
+	 * @return {Promise<File>}
 	 */
-	path(input: string, userId: string, options: FindOptionsWithCustom<File>) {
-		return this.findOne({ path: input, ...options, createdBy: { id: userId } });
+	path(
+		input: string,
+		userId: string,
+		options: FindOptionsWithCustom<File>,
+	): Promise<File> {
+		return this.findOne({
+			path: input,
+			...options,
+			createdBy: { user: { id: userId } },
+		});
 	}
 }

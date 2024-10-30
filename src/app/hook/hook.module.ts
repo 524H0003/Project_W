@@ -1,16 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Hook } from './hook.entity';
-import { MailModule } from 'app/mail/mail.module';
 import { HookService } from './hook.service';
-import { AuthModule } from 'auth/auth.module';
+import { AppModule } from 'app/app.module';
 
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([Hook]),
-		MailModule,
-		forwardRef(() => AuthModule),
-	],
+	imports: [TypeOrmModule.forFeature([Hook]), forwardRef(() => AppModule)],
 	providers: [HookService],
 	exports: [HookService],
 })

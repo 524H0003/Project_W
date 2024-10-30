@@ -7,13 +7,17 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
  * Validator for class
  * @param {object} input - the object need to validate
  * @param {Function} then - The procedure aftermath
+ * @return {Promise<T>}
  */
-export async function validation(input: object, then: Function) {
+export async function validation<T>(
+	input: object,
+	then: () => Promise<T>,
+): Promise<T> {
 	const errors = Object.assign(
 		{},
 		...(await validate(input)).map((i) => i.constraints),
 	) as Object;
-	if (!Object.keys(errors).length) return await then();
+	if (!Object.keys(errors).length) return then();
 	else throw new BadRequestException(JSON.stringify(errors));
 }
 

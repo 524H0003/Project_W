@@ -1,11 +1,34 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+	Injectable,
+	NotAcceptableException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
-import { SignService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+
+/**
+ * Refresh request interface
+ */
+export interface IRefreshResult {
+	/**
+	 * Refresh status
+	 */
+	status: 'success' | 'fail' | 'lockdown';
+
+	/**
+	 * The session's id
+	 */
+	sessionId: string;
+
+	/**
+	 * Client's user agent
+	 */
+	userAgent?: string;
+}
 
 /**
  * Check the refresh token from client
@@ -19,7 +42,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 		cfgSvc: ConfigService,
 		private sesSvc: SessionService,
 		private dvcSvc: DeviceService,
-		private signSvc: SignService,
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -31,24 +53,34 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	/**
 	 * Validating the refresh token
 	 * @param {IPayload} payload - the payload from token
+	 * @return {Promise<IRefreshResult>}
 	 */
-	async validate(payload: IPayload) {
-		const session = await this.sesSvc.id(payload.id, { deep: 3 });
-		if (session) {
-			if (session.useTimeLeft > 0) {
-				await this.sesSvc.useToken(session.id);
-				return {
-					success: true,
-					id: session.device.id, // for logout requests
-					ua: session.device.hashedUserAgent,
-					acsTkn: this.signSvc.access(session.device.owner.id),
-					rfsTkn: this.signSvc.refresh(payload.id),
-					usrInfo: session.device.owner.info,
-				};
-			} else {
-				if ((await this.dvcSvc.id(session.device.id)).child === session.id)
-					return { success: false, id: session.id };
-				else return { lockdown: true, id: session.device.id };
+	async validate(payload: IPayload): Promise<IRefreshResult> {
+		try {
+			const session = await this.sesSvc.id(payload.id, { deep: 3 });
+			if (session) {
+				if (session.useTimeLeft > 0) {
+					await this.sesSvc.useToken(session.id);
+					return {
+						status: 'success',
+						userAgent: session.device.hashedUserAgent,
+						sessionId: session.id,
+					};
+				} else {
+					if ((await this.dvcSvc.id(session.device.id)).child === session.id)
+						return { status: 'fail', sessionId: session.id };
+					else return { status: 'lockdown', sessionId: session.id };
+				}
+			}
+		} catch (error) {
+			switch ((error as { name: string }).name) {
+				case 'QueryFailedError':
+					throw new NotAcceptableException('Invalid refresh token');
+					break;
+
+				default:
+					throw error;
+					break;
 			}
 		}
 		throw new UnauthorizedException('Invalid refresh token');

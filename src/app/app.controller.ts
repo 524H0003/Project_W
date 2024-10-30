@@ -19,8 +19,8 @@ import { AuthController } from 'auth/auth.controller';
 import { CurrentUser, MetaData } from 'auth/auth.guard';
 import { AuthService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
-import { Hook } from 'auth/hook/hook.entity';
-import { HookService } from 'auth/hook/hook.service';
+import { Hook } from 'app/hook/hook.entity';
+import { HookService } from 'app/hook/hook.service';
 import { SessionService } from 'auth/session/session.service';
 import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
 import { Request, Response } from 'express';
@@ -29,6 +29,9 @@ import { StudentController } from 'university/student/student.controller';
 import { IStudentSignup } from 'university/student/student.model';
 import { ILogin, ISignUp } from 'user/user.model';
 
+/**
+ * Application Controller
+ */
 @Controller('')
 export class AppController extends AuthController {
 	/**

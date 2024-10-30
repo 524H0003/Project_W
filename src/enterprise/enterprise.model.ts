@@ -1,16 +1,12 @@
+import { IBaseUser } from 'app/app.model';
 import { IEmployee } from 'enterprise/employee/employee.model';
 import { IStudent } from 'university/student/student.model';
 
 // Interfaces
 /**
- * Enterprise model
+ * Enterprise's general infomations
  */
-export interface IEnterprise {
-	/**
-	 * Enterprise's name
-	 */
-	name: string;
-
+export interface IEnterpriseInfo {
 	/**
 	 * Enterprise's description
 	 */
@@ -20,11 +16,26 @@ export interface IEnterprise {
 	 * Enterprise's industry
 	 */
 	industry: string;
+}
 
+/**
+ * Enterprise assign form
+ */
+export interface IEnterpriseAssign extends IEnterpriseInfo {
 	/**
-	 * Enterprise's avatar path
+	 * Signature to assign
 	 */
-	avatarPath: string;
+	signature: string;
+}
+
+/**
+ * Enterprise model
+ */
+export interface IEnterprise extends IEnterpriseInfo {
+	/**
+	 * Base user
+	 */
+	user: IBaseUser;
 
 	/**
 	 * Enterprise's employees

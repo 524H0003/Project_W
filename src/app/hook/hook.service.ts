@@ -2,11 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Hook } from './hook.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { MailService } from 'app/mail/mail.service';
 import { UserRecieve } from 'user/user.class';
 import { SignService } from 'auth/auth.service';
-import { IUserInfo } from 'user/user.model';
 
 /**
  * Hook service
@@ -35,18 +34,21 @@ export class HookService extends DatabaseRequests<Hook> {
 		email: string,
 		host: string,
 		mtdt: string,
+		addInfo?: object,
 	): Promise<UserRecieve> {
 		const signature = (128).string,
 			hook = await this.save({
 				signature,
 				mtdt,
-				from: await this.mailSvc.sendResetPassword(email, host, signature),
+				note: JSON.stringify(addInfo),
+				from: {
+					user: await this.mailSvc.sendResetPassword(email, host, signature),
+				},
 			});
 
 		return new UserRecieve({
 			accessToken: this.signSvc.access(hook.id),
-			refreshToken: this.signSvc.refresh(hook.from.id.length.string),
-			info: {} as IUserInfo,
+			response: 'RequestSignatureFromEmail',
 		});
 	}
 
@@ -60,13 +62,13 @@ export class HookService extends DatabaseRequests<Hook> {
 			hook = await this.save({ signature, mtdt, from: null });
 
 		console.log(
-			`${'-'.repeat(20)}\nOne time signature: ${signature}\n${'-'.repeat(20)}`,
+			`${'-'.repeat(75)}\nOne time signature: ${signature}\n${'-'.repeat(75)}`,
 		);
 
 		return new UserRecieve({
 			accessToken: this.signSvc.access(hook.id),
 			refreshToken: this.signSvc.refresh(hook.id.length.string),
-			info: {} as IUserInfo,
+			response: 'RequestSignatureFromConsole',
 		});
 	}
 
@@ -78,18 +80,9 @@ export class HookService extends DatabaseRequests<Hook> {
 	 */
 	async validating(signature: string, mtdt: string, hook: Hook) {
 		if (hook.mtdt === mtdt && signature == hook.signature) {
-			await this.terminate(hook.id);
+			await this.delete({ id: hook.id });
 			return;
 		}
 		throw new BadRequestException('InvalidHook');
-	}
-
-	/**
-	 * Assigning used status to hook
-	 * @param {string} id - hook's id
-	 * @return {Promise<DeleteResult>} updated hook
-	 */
-	terminate(id: string): Promise<DeleteResult> {
-		return this.delete({ id });
 	}
 }

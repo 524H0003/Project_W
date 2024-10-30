@@ -12,7 +12,7 @@ describe('Number', () => {
 
 	describe('numeric', () => {
 		it('success', () => {
-			const randomLength = (100).random;
+			const randomLength = (100).random + 10;
 			expect(randomLength.numeric.length).toEqual(randomLength);
 		});
 	});

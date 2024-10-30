@@ -5,8 +5,8 @@ import { TestModule } from 'app/module/test.module';
 import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
-import { UniversityModule } from 'university/university.module';
 import { Student } from './student.entity';
+import { AppModule } from 'app/app.module';
 
 const fileName = curFile(__filename);
 
@@ -14,7 +14,7 @@ let req: TestAgent, stu: Student, app: INestApplication;
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, UniversityModule],
+		imports: [TestModule, AppModule],
 	}).compile();
 
 	app = module.createNestApplication();

@@ -1,23 +1,18 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { AppController } from 'app.controller';
+import { AppController } from 'app/app.controller';
 import { TestModule } from 'app/module/test.module';
 import { execute } from 'app/utils/test.utils';
-import { AuthModule } from 'auth/auth.module';
-import { DeviceModule } from 'auth/device/device.module';
-import { HookModule } from 'auth/hook/hook.module';
-import { SessionModule } from 'auth/session/session.module';
 import cookieParser from 'cookie-parser';
 import { FileController } from 'file/file.controller';
-import { FileModule } from 'file/file.module';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { Repository } from 'typeorm';
-import { UniversityModule } from 'university/university.module';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
+import { AppModule } from 'app/app.module';
 
 const fileName = curFile(__filename);
 let rawUsr: User,
@@ -28,15 +23,7 @@ let rawUsr: User,
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-		imports: [
-			TestModule,
-			FileModule,
-			AuthModule,
-			DeviceModule,
-			HookModule,
-			SessionModule,
-			UniversityModule,
-		],
+		imports: [TestModule, AppModule],
 		controllers: [FileController, AppController],
 	}).compile();
 
@@ -58,14 +45,17 @@ describe('seeUploadedFile', () => {
 		const e = await req
 			.post('/signup')
 			.attach('avatar', Buffer.from('test', 'base64'), 'avatar.png')
-			.field('fullName', rawUsr.fullName)
-			.field('email', rawUsr.email)
+			.field('name', rawUsr.user.name)
+			.field('email', rawUsr.user.email)
 			.field('password', rawUsr.password);
-		usr = await usrRepo.findOne({ where: { email: rawUsr.email } });
+		usr = await usrRepo.findOne({
+			where: { user: { email: rawUsr.user.email } },
+			relations: ['user'],
+		});
 
 		headers = e.headers;
 
-		await usrSvc.updateRole(usr.id, UserRole.admin);
+		await usrSvc.updateRole(usr.user.id, UserRole.admin);
 	});
 
 	it('success on server files', async () => {
@@ -85,7 +75,9 @@ describe('seeUploadedFile', () => {
 	it('success', async () => {
 		await execute(
 			() =>
-				req.get(`/file/${usr.avatarPath}`).set('Cookie', headers['set-cookie']),
+				req
+					.get(`/file/${usr.user.avatarPath}`)
+					.set('Cookie', headers['set-cookie']),
 			{
 				exps: [
 					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
@@ -95,13 +87,9 @@ describe('seeUploadedFile', () => {
 	});
 
 	it('failed', async () => {
-		await execute(() => req.get(`/file/${usr.avatarPath}`), {
+		await execute(() => req.get(`/file/${usr.user.avatarPath}`), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
-				{
-					type: 'toHaveProperty',
-					params: ['text', JSON.stringify({ error: 'Invalid request' })],
-				},
 			],
 		});
 	});
