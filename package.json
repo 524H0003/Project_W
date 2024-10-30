@@ -20,7 +20,7 @@
 		"start:debug": "npm run buildfile && nest start --debug --watch",
 		"start:dev": "nest start --watch",
 		"start:prod": "node dist/main",
-		"pretest": "npm run buildfile",
+		"pretest": "npm i && npm run buildfile",
 		"test": "jest",
 		"test:debug": "jest --debug",
 		"types": "tsc --project types/tsconfig.build.json --outDir types  --rootDir . --sourceMap false",
