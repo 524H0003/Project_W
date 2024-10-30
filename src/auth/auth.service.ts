@@ -50,9 +50,9 @@ export class AuthService extends Cryption {
 		try {
 			return validation(rawUser, async () => {
 				if (rawUser.hashedPassword) {
-					const newUser = await this.usrSvc.save({ ...rawUser, role }),
+					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
-					return await this.usrSvc.update({
+					return await this.usrSvc.modify({
 						user: { id: newUser.user.id, avatarPath: avatarFile?.path },
 					});
 				}
@@ -96,7 +96,7 @@ export class AuthService extends Cryption {
 		const user = new User({ ...iUser, ...iUser.user });
 		user.password = password;
 		return validation(user, () => {
-			if (user.hashedPassword) return this.usrSvc.save(user);
+			if (user.hashedPassword) return this.usrSvc.assign(user);
 		});
 	}
 }

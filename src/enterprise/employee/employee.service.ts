@@ -6,7 +6,11 @@ import { Repository } from 'typeorm';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { IAuthSignUpOption } from 'auth/auth.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IEmployeeInfoKeys, IEmployeeSignupKeys } from 'models';
+import {
+	IEmployeeHookKeys,
+	IEmployeeInfoKeys,
+	IEmployeeSignupKeys,
+} from 'models';
 import { AuthService } from 'auth/auth.service';
 import { EventCreatorService } from 'event/creator/creator.service';
 import { UserRole } from 'user/user.model';
@@ -37,10 +41,13 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	 * Employee request hook service
 	 */
 	async hook(input: IEmployeeHook, host: string, mtdt: string) {
+		input = InterfaceCasting.quick(input, IEmployeeHookKeys);
+
 		const ent = await this.entSvc.findOne({
 			user: { name: input.enterpriseName },
 		});
-		if (!ent) throw new BadRequestException('EnterpriseNotExist');
+		if (!ent || !input.enterpriseName)
+			throw new BadRequestException('EnterpriseNotExist');
 
 		return this.hookSvc.assignViaEmail(ent.user.email, host, mtdt, {
 			enterpriseName: ent.user.name,

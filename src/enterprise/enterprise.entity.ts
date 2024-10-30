@@ -63,17 +63,6 @@ export class Enterprise implements IEnterprise {
 	@Column({ name: 'industry', type: 'text' })
 	industry: string;
 
-	/**
-	 * Enterprise's avatar path
-	 */
-	@Field()
-	@Column({
-		name: 'image_path',
-		type: 'text',
-		default: 'defaultUser.server.jpg',
-	})
-	avatarPath: string;
-
 	// Embedded Entity
 	/**
 	 * @ignore

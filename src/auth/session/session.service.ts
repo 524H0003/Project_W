@@ -46,7 +46,7 @@ export class SessionService extends DatabaseRequests<Session> {
 	 * @param {string} mtdt - metadata from client
 	 */
 	async getTokens(user: User, mtdt: string) {
-		const device = await this.dvcSvc.save({
+		const device = await this.dvcSvc.assign({
 				owner: user,
 				hashedUserAgent: hash(mtdt.toString()),
 				child: null,
@@ -55,7 +55,7 @@ export class SessionService extends DatabaseRequests<Session> {
 			refreshToken = this.signSvc.refresh(session.id),
 			accessToken = this.signSvc.access(user.user.id);
 
-		await this.dvcSvc.save({ ...device, child: session.id });
+		await this.dvcSvc.assign({ ...device, child: session.id });
 
 		return new UserRecieve({ accessToken, refreshToken, response: user.info });
 	}
@@ -73,7 +73,7 @@ export class SessionService extends DatabaseRequests<Session> {
 			child: oldNode.id,
 		});
 		await this.save({ id: oldNode.id, parrent: newSession.id });
-		await this.dvcSvc.update({ id: oldNode.device.id, child: newSession.id });
+		await this.dvcSvc.assign({ id: oldNode.device.id, child: newSession.id });
 		return newSession;
 	}
 

@@ -21,7 +21,7 @@ import {
 	DatabaseRequests,
 	FindOptionsWithCustom,
 } from 'app/utils/typeorm.utils';
-import { Repository } from 'typeorm';
+import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
 import { BaseUser } from 'app/app.entity';
@@ -191,6 +191,13 @@ export class FileService extends DatabaseRequests<File> {
 		} catch (error) {
 			throw new BadRequestException('InvalidFileRequest');
 		}
+	}
+
+	/**
+	 * Remove file on server
+	 */
+	remove(criteria: FindOptionsWhere<File>): Promise<DeleteResult> {
+		return super.delete(criteria);
 	}
 
 	/**

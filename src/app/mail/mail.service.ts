@@ -23,7 +23,7 @@ export class MailService {
 	 */
 	async sendResetPassword(email: string, host: string, signature: string) {
 		const url = `${host}/hook/${signature}`,
-			usr = await this.appSvc.userEmail(email);
+			usr = await this.appSvc.baseUser.email(email);
 
 		if (usr)
 			await this.mailerService.sendMail({

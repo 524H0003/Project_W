@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
+import { AppService } from 'app/app.service';
 
 /**
  * Services for user
@@ -13,8 +14,39 @@ export class UserService extends DatabaseRequests<User> {
 	/**
 	 * @ignore
 	 */
-	constructor(@InjectRepository(User) repo: Repository<User>) {
+	constructor(
+		@InjectRepository(User) repo: Repository<User>,
+		private appSvc: AppService,
+	) {
 		super(repo);
+	}
+
+	/**
+	 * Assign new user
+	 * @param {DeepPartial<User>} entity - the assigning user
+	 * @param {SaveOptions} options - function's option
+	 * @return {Promise<User>}
+	 */
+	async assign(
+		entity: DeepPartial<User>,
+		options?: SaveOptions,
+	): Promise<User> {
+		const baseUsr = await this.appSvc.baseUser.assign(entity.user);
+		return this.save({ ...entity, user: baseUsr }, options);
+	}
+
+	/**
+	 * Update user
+	 * @param {DeepPartial<User>} entity - the updating user
+	 * @param {SaveOptions} options - function's option
+	 * @return {Promise<User>}
+	 */
+	async modify(
+		entity: DeepPartial<User>,
+		options?: SaveOptions,
+	): Promise<User> {
+		const baseUsr = await this.appSvc.baseUser.modify(entity.user);
+		return this.update({ ...entity, user: baseUsr }, options);
 	}
 
 	/**

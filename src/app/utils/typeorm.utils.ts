@@ -39,7 +39,7 @@ export class DatabaseRequests<T> {
 	/**
 	 * @ignore
 	 */
-	relations: string[];
+	private relations: string[];
 
 	/**
 	 * @ignore
@@ -120,7 +120,7 @@ export class DatabaseRequests<T> {
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<T>} the object from database
 	 */
-	save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
+	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
 		return this.repo.save(entity, options) as Promise<T>;
 	}
 
@@ -139,7 +139,7 @@ export class DatabaseRequests<T> {
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<T>} the updated object
 	 */
-	update(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
+	protected update(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
 		return this.save(entity, options);
 	}
 
