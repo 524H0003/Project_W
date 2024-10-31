@@ -1,15 +1,17 @@
 <template>
   <FormContainerComp>
     <h1 class="card-title text-4xl font-bold">Login</h1>
-    <form>
+    <form @submit.prevent="handleLogin">
       <FormTextInputComp
         name="Email"
         placeholder="name@email.com"
+        v-model="input.email"
       ></FormTextInputComp>
       <FormTextInputComp
         name="Password"
         placeholder="Enter password"
         icon="key_vertical"
+        v-model="input.password"
       ></FormTextInputComp>
       <label class="label">
         <a href="#" class="label-text-alt link link-hover">
@@ -31,7 +33,23 @@
 </template>
 
 <script setup lang="ts">
+import { useAuth } from '@/auth.service'
 import FormContainerComp from '@/components/FormContainerComp.vue'
 import FormTextInputComp from '@/components/FormTextInputComp.vue'
+import type { IUserAuthentication } from 'project-w-backend'
+import { reactive } from 'vue'
 import { RouterLink } from 'vue-router'
+
+const input = reactive<Required<IUserAuthentication>>({
+  email: '',
+  password: '',
+})
+
+const handleLogin = async () => {
+  try {
+    await useAuth().login(input)
+  } catch (error) {
+    console.error('Login failed:', error)
+  }
+}
 </script>

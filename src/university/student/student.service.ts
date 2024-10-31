@@ -41,7 +41,7 @@ export class StudentService extends DatabaseRequests<Student> {
 				await this.authSvc.signUp(
 					{
 						...InterfaceCasting.quick(input, ISignUpKeys),
-						fullName: input.email,
+						name: input.email,
 						password: (32).string + '!1Aa',
 					} as ISignUp,
 					null,

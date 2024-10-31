@@ -9,22 +9,20 @@
         :type="type || name"
         class="grow"
         :placeholder="placeholder || name"
+        v-model="model"
       />
     </label>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import IconComp from '@/components/IconComp.vue'
 
-export default defineComponent({
-  props: {
-    name: { type: String, required: true },
-    icon: { type: String, required: false },
-    placeholder: { type: String, required: false },
-    type: { type: String, required: false },
-  },
-  components: { IconComp },
-})
+const model = defineModel()
+defineProps<{
+  name: string
+  icon?: string
+  placeholder?: string
+  type?: string
+}>()
 </script>

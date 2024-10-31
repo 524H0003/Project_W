@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+	UnprocessableEntityException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Cryption, validation } from 'app/utils/auth.utils';
@@ -45,7 +50,7 @@ export class AuthService extends Cryption {
 			{ role = UserRole.undefined } = options || {},
 			rawUser = new User({ ...input, email: input.email.toLowerCase() });
 
-		if (user) throw new BadRequestException('ExistedUser');
+		if (user) throw new UnprocessableEntityException('Exist_User');
 
 		try {
 			return validation(rawUser, async () => {
@@ -83,7 +88,8 @@ export class AuthService extends Cryption {
 		const user = await this.usrSvc.email(input.email);
 
 		if (user && compareSync(input.password, user.hashedPassword)) return user;
-		throw new BadRequestException('InvalidAccessRequest');
+		if (!user) throw new NotFoundException('NotFound_User');
+		throw new BadRequestException('Invalid_Password');
 	}
 
 	/**

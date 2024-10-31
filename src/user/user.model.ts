@@ -128,7 +128,7 @@ export interface ILogin extends IUserAuthentication {}
 /**
  * Sign up fields
  */
-export interface ISignUp extends IUserAuthentication, IUserInfo, IBaseUser {
+export interface ISignUp extends IUserAuthentication, IBaseUser {
 	email: string;
 }
 
