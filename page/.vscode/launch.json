@@ -7,10 +7,9 @@
     {
       "type": "msedge",
       "request": "launch",
-      "name": "Launch Edge against localhost",
-      "url": "http://localhost:5173",
+      "name": "Edge debug",
+      "url": "https://localhost:5173/",
       "runtimeArgs": [
-        "--disable-features=MemoryOptimizedCache",
         "--auto-open-devtools-for-tabs"
       ]
     }

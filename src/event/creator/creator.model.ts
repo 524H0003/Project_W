@@ -1,5 +1,5 @@
 import { IEvent } from 'event/event.model';
-import { IUser } from 'user/user.model';
+import { IUserClass } from 'user/user.model';
 
 // Interfaces
 /**
@@ -9,7 +9,7 @@ export interface IEventCreator {
 	/**
 	 * User core
 	 */
-	user: IUser;
+	user: IUserClass;
 
 	/**
 	 * Created events

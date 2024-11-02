@@ -68,6 +68,10 @@ const input = reactive<Required<IUserAuthentication>>({
           appError.account = 'Email not found, please re-enter your email'
           break
 
+        case 'Request_New_User':
+          appError.account = 'Newly sign email, please check your email'
+          break
+
         default:
           break
       }

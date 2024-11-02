@@ -15,12 +15,12 @@ export class BaseUser extends SensitiveInfomations implements IBaseUser {
 	/**
 	 * Base user email address
 	 */
-	@Column() email: string;
+	@Column({ type: 'text' }) email: string;
 
 	/**
 	 * Base user name
 	 */
-	@Column({ type: 'text', name: 'name' }) name: string;
+	@Column({ type: 'text' }) name: string;
 
 	/**
 	 * Base user's avatar path

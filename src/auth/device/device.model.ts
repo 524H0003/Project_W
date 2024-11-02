@@ -1,5 +1,5 @@
 import { ISession } from 'auth/session/session.model';
-import { IUser } from 'user/user.model';
+import { IUserClass } from 'user/user.model';
 
 // Interfaces
 /**
@@ -9,7 +9,7 @@ export interface IDevice {
 	/**
 	 * Device's owner
 	 */
-	owner: IUser;
+	owner: IUserClass;
 
 	/**
 	 * Device's child

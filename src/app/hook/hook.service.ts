@@ -48,7 +48,7 @@ export class HookService extends DatabaseRequests<Hook> {
 
 		return new UserRecieve({
 			accessToken: this.signSvc.access(hook.id),
-			response: 'RequestSignatureFromEmail',
+			response: 'Request_Signature_From_Email',
 		});
 	}
 
@@ -68,7 +68,7 @@ export class HookService extends DatabaseRequests<Hook> {
 		return new UserRecieve({
 			accessToken: this.signSvc.access(hook.id),
 			refreshToken: this.signSvc.refresh(hook.id.length.string),
-			response: 'RequestSignatureFromConsole',
+			response: 'Request_Signature_From_Console',
 		});
 	}
 

@@ -1,18 +1,30 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
-import { IStudent } from './student.model';
+import { IStudent, IStudentClass } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IBaseUserKeys, IStudentKeys, IUserAuthenticationKeys } from 'models';
+import { IBaseUser } from 'app/app.model';
+import { IUserAuthentication } from 'user/user.model';
 
 /**
  * Student entity
  */
 @Entity({ name: 'Student' })
-export class Student implements IStudent {
+export class Student implements IStudentClass {
 	/**
 	 * Create student entity with infomations
 	 */
-	constructor(payload: IStudent) {
-		Object.assign(this, payload);
+	constructor(payload: IStudent & IUserAuthentication & IBaseUser) {
+		if (payload) {
+			this.user = new User(
+				InterfaceCasting.quick(payload, [
+					...IUserAuthenticationKeys,
+					...IBaseUserKeys,
+				]),
+			);
+			Object.assign(this, InterfaceCasting.quick(payload, IStudentKeys));
+		}
 	}
 
 	// Core Entity
@@ -34,19 +46,19 @@ export class Student implements IStudent {
 	/**
 	 * Student's major
 	 */
-	@Column({ name: 'major' })
+	@Column({ name: 'major', default: '' })
 	major: string;
 
 	/**
 	 * Student's skills
 	 */
-	@Column({ name: 'skills', type: 'text' })
+	@Column({ name: 'skills', type: 'text', default: '' })
 	skills: string;
 
 	/**
 	 * Student graduation year
 	 */
-	@Column({ name: 'graduation_year' })
+	@Column({ name: 'graduation_year', nullable: true })
 	graduationYear: number;
 
 	/**
@@ -66,12 +78,13 @@ export class Student implements IStudent {
 			user = User.test(from, { email, password });
 		if (user.hashedPassword)
 			return new Student({
-				user,
 				major: (3).string,
 				graduationYear: (20).random,
 				enrollmentYear: (20).random,
 				skills: (3).string,
-				currentEnterprise: null,
+				...user.user,
+				...user,
+				password,
 			});
 	}
 }
