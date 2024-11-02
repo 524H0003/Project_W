@@ -60,7 +60,7 @@ export class AuthService extends Cryption {
 					await this.usrSvc.modify({
 						user: { id: newUser.user.id, avatarPath: avatarFile?.path },
 					});
-					return this.usrSvc.findOne({ user: rawUser.user });
+					return this.usrSvc.findOne({ user: { id: rawUser.user.id } });
 				}
 			});
 		} catch (error) {

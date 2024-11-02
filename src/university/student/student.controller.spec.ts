@@ -55,7 +55,7 @@ describe('login', () => {
 				exps: [
 					{
 						type: 'toContain',
-						params: [HttpStatus.ACCEPTED],
+						params: [HttpStatus.ACCEPTED.toString()],
 					},
 					{
 						type: 'toContain',
