@@ -65,11 +65,16 @@ export class AppController extends AuthController {
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
-			return this.StuCon.login(request, response, body as IStudentSignup, mtdt);
+			return await this.StuCon.login(
+				request,
+				response,
+				body as IStudentSignup,
+				mtdt,
+			);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
-				case 'InvalidStudentEmail':
-					throw new BadRequestException('InvalidUserRequest');
+				case 'Invalid_Student_Email':
+					throw new BadRequestException('Invalid_Email');
 					break;
 
 				default:

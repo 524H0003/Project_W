@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { ISignUp, IUserAuthentication } from 'project-w-backend'
 import { reactive } from 'vue'
 
-const API_URL = './api/v1',
+const API_URL = 'https://testback.anhvietnguyen.id.vn/api/v1',
   state = reactive<AuthState>({
     user: null,
     token: null,

@@ -60,7 +60,7 @@ export class StudentService extends DatabaseRequests<Student> {
 				}
 				throw new Error('ERRNewUser');
 			}
-			throw new BadRequestException('InvalidStudentEmail');
+			throw new BadRequestException('Invalid_Student_Email');
 		} else return this.authSvc.login(input);
 	}
 }
