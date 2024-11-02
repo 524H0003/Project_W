@@ -30,10 +30,39 @@ describe('login', () => {
 	it('fail due to wrong email format', async () => {
 		stu = Student.test(fileName, { email: 'aa' });
 
-		await execute(() => req.post('/student/login').send(stu.user), {
-			exps: [
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
-			],
-		});
+		await execute(
+			() => req.post('/student/login').send({ ...stu.user, ...stu.user.user }),
+			{
+				exps: [
+					{
+						type: 'toHaveProperty',
+						params: ['status', HttpStatus.BAD_REQUEST],
+					},
+				],
+			},
+		);
+	});
+
+	it('success and request signature from email', async () => {
+		await execute(
+			async () =>
+				JSON.stringify(
+					await req
+						.post('/student/login')
+						.send({ ...stu.user, ...stu.user.user }),
+				),
+			{
+				exps: [
+					{
+						type: 'toContain',
+						params: [HttpStatus.ACCEPTED],
+					},
+					{
+						type: 'toContain',
+						params: ['Request_Signature_From_Email'],
+					},
+				],
+			},
+		);
 	});
 });

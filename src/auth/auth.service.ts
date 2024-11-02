@@ -57,9 +57,10 @@ export class AuthService extends Cryption {
 				if (rawUser.hashedPassword) {
 					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
-					return await this.usrSvc.modify({
+					await this.usrSvc.modify({
 						user: { id: newUser.user.id, avatarPath: avatarFile?.path },
 					});
+					return this.usrSvc.findOne({ user: rawUser.user });
 				}
 			});
 		} catch (error) {
