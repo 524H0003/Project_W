@@ -83,6 +83,6 @@ export class HookService extends DatabaseRequests<Hook> {
 			await this.delete({ id: hook.id });
 			return;
 		}
-		throw new BadRequestException('InvalidHook');
+		throw new BadRequestException('Invalid_Hook_Signature');
 	}
 }

@@ -1,51 +1,99 @@
 import axios from 'axios'
-import type { ISignUp, IUserAuthentication } from 'project-w-backend'
+import type {
+  IUserAuthentication,
+  IUserInfo,
+  IUserRecieve,
+} from 'project-w-backend'
 import { reactive } from 'vue'
 
-const API_URL = 'https://testback.anhvietnguyen.id.vn/api/v1',
+const API_URL = 'https://testback.anhvietnguyen.id.vn/api/v1'
+
+export const alert = reactive<IAlert>({
+    error: {
+      password: '',
+      account: '',
+    },
+    success: {
+      password: '',
+      account: '',
+    },
+  }),
   state = reactive<AuthState>({
     user: null,
     token: null,
   })
 
 interface AuthState {
-  user: null | { email: string }
-  token: null | string
+  user: null | IUserInfo | string
+  token: null | IUserRecieve
 }
 
-function authLogin(user: Required<IUserAuthentication>) {
-  return axios.post(`${API_URL}/login`, user)
+export async function authRequest(
+  type: 'login' | 'signup' | 'logout' | 'change',
+  user?: Required<IUserAuthentication>,
+) {
+  const response = await axios.post(`${API_URL}/${type}`, user)
+  state.user = response.data.user
+  saveTokens(response.data.session)
+  return response.data.user
 }
 
-function authSignUp(user: ISignUp) {
-  return axios.post(`${API_URL}/signup`, user)
+export async function hookRequest(signature: string, password: string) {
+  const response = await axios.post(`${API_URL}/change/${signature}`, {
+    password,
+  })
+  return response.data.user
 }
 
-export const useAuth = () => {
-  const login = async (user: Required<IUserAuthentication>) => {
-    const response = await authLogin(user)
-    state.user = response.data.user
-    state.token = response.data.token
-    localStorage.setItem('token', state.token!) // Store token in local storage
-  }
+function saveTokens(input: IUserRecieve) {
+  state.token = input
+  localStorage.setItem('acsTkn', state.token!.accessToken)
+  localStorage.setItem('rfsTkn', state.token!.refreshToken)
+}
 
-  const logout = async () => {
-    await axios.post(`${API_URL}/logout`)
-    state.user = state.token = null
-    localStorage.removeItem('token') // Remove token from local storage
-  }
+export interface IAlertObject {
+  password: string
+  account: string
+}
 
-  const signUp = async (user: ISignUp) => {
-    const response = await authSignUp(user)
-    state.user = response.data.user
-    state.token = response.data.token
-    localStorage.setItem('token', state.token!)
-  }
+export interface IAlert {
+  error: IAlertObject
+  success: IAlertObject
+}
 
-  return {
-    state,
-    login,
-    logout,
-    signUp,
+export async function apiErrorHandler<T>(func: Promise<T>) {
+  alert.error = alert.success = { password: '', account: '' }
+  try {
+    const response = await func
+    if (typeof response == 'string') {
+      switch (response) {
+        case 'Request_Signature_From_Email':
+          alert.error.account =
+            'An email has sent to your email address, please check inbox and spam'
+          break
+
+        case 'Success_Change_Password':
+          alert.success.password = 'Password changed successfully'
+          break
+
+        default:
+          break
+      }
+    }
+  } catch (e) {
+    switch (
+      (e as { response: { data: { message: string } } }).response.data.message
+    ) {
+      case 'Invalid_Password':
+        alert.error.password = 'Wrong password, please re-enter your password'
+        break
+
+      case 'Invalid_Email':
+        alert.error.account = 'Email not found, please re-enter your email'
+        break
+
+      default:
+        break
+    }
   }
 }

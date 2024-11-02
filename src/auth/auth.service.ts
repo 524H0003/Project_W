@@ -99,11 +99,11 @@ export class AuthService extends Cryption {
 	 * @param {string} password - new password
 	 * @return {Promise<User>} updated user
 	 */
-	changePassword(iUser: User, password: string): Promise<User> {
-		const user = new User({ ...iUser, ...iUser.user });
+	async changePassword(iUser: User, password: string): Promise<User> {
+		const user = await this.usrSvc.findOne({ user: { id: iUser.user.id } });
 		user.password = password;
 		return validation(user, () => {
-			if (user.hashedPassword) return this.usrSvc.assign(user);
+			if (user.hashedPassword) return this.usrSvc.modify(user);
 		});
 	}
 }

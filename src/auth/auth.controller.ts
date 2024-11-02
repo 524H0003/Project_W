@@ -259,7 +259,7 @@ export class AuthController {
 				return this.responseWithUserRecieve(
 					request,
 					response,
-					new UserRecieve({ response: 'ChangePasswordSuccess' }),
+					new UserRecieve({ response: 'Success_Change_Password' }),
 				);
 			}
 		} catch (error) {

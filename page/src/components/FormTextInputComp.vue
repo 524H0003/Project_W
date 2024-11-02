@@ -13,6 +13,7 @@
         class="grow"
         :placeholder="placeholder || name"
         v-model="model"
+        :disabled="disable"
       />
     </label>
     <label class="label -mt-1.5">
@@ -27,9 +28,10 @@ import IconComp from '@/components/IconComp.vue'
 const model = defineModel()
 defineProps<{
   name: string
-  error: string
+  error?: string
   icon?: string
   placeholder?: string
   type?: string
+  disable?: boolean
 }>()
 </script>
