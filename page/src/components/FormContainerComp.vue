@@ -19,6 +19,17 @@
                 ></span>
                 {{ btnLabel }}
               </button>
+              <div class="label -my-1.5">
+                <span
+                  class="label-text-alt"
+                  :class="{
+                    'text-green-700': alert?.type === 'success',
+                    'text-red-700': alert?.type === 'error',
+                  }"
+                >
+                  {{ alert.message }}
+                </span>
+              </div>
             </div>
           </form>
         </div>

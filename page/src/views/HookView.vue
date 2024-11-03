@@ -10,6 +10,7 @@
       :disable="true"
       object="signature"
       :alert="alert"
+      type="text"
     ></FormTextInputComp>
     <FormTextInputComp
       name="New Password"
@@ -18,6 +19,7 @@
       v-model="input.password"
       :alert="alert"
       object="password"
+      type="password"
     ></FormTextInputComp>
   </FormContainerComp>
 </template>

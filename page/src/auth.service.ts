@@ -1,5 +1,7 @@
 import axios from 'axios'
 import type {
+  IBaseUser,
+  IEnterpriseAssign,
   IUserAuthentication,
   IUserInfo,
   IUserRecieve,
@@ -36,13 +38,23 @@ export async function hookRequest(signature: string, password: string) {
   return response.data.user
 }
 
+export async function assignEnterprise(input: IEnterpriseAssign & IBaseUser) {
+  const response = await axios.post(`${API_URL}/enterprise/assign`, input)
+  return response.data.user
+}
+
+export async function requestConsole() {
+  const response = await axios.post(`${API_URL}/console`)
+  return response.data.user
+}
+
 function saveTokens(input: IUserRecieve) {
   state.token = input
   localStorage.setItem('acsTkn', state.token!.accessToken)
   localStorage.setItem('rfsTkn', state.token!.refreshToken)
 }
 
-export type IObject = 'account' | 'password' | 'signature'
+export type IObject = 'account' | 'password' | 'signature' | 'api'
 
 export interface IAlert {
   message: string
@@ -71,6 +83,18 @@ export async function apiErrorHandler<T>(func: Promise<T>) {
           alert.object = 'password'
           break
 
+        case 'Request_Signature_From_Console':
+          alert.message = 'Please copy signature from console'
+          alert.type = 'success'
+          alert.object = 'signature'
+          break
+
+        case 'Success_Assign_Enterprise':
+          alert.message = 'Enterprise assigned successfully'
+          alert.type = 'success'
+          alert.object = 'account'
+          break
+
         default:
           break
       }
@@ -97,6 +121,12 @@ export async function apiErrorHandler<T>(func: Promise<T>) {
           'Signature has been out of dated, please request new signature'
         alert.type = 'error'
         alert.object = 'signature'
+        break
+
+      case 'Unauthorized':
+        alert.message = 'Something went wrong after sent your request'
+        alert.type = 'error'
+        alert.object = 'api'
         break
 
       default:

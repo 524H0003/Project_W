@@ -4,6 +4,7 @@
       name="Email"
       placeholder="name@email.com"
       v-model="input.email"
+      type="text"
       :alert="alert"
       object="account"
     ></FormTextInputComp>
@@ -13,17 +14,12 @@
       icon="key_vertical"
       v-model="input.password"
       :alert="alert"
+      type="password"
       object="password"
-    ></FormTextInputComp>
-    <label class="label -mt-3">
-      <a
-        href="#"
-        class="label-text-alt link link-hover"
-        @click="forgetPasswordClick"
-      >
-        Forgot password?
-      </a>
-    </label>
+      :sub-btn-click="forgetPasswordClick"
+    >
+      Forgot password?
+    </FormTextInputComp>
   </FormContainerComp>
 </template>
 

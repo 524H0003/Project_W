@@ -12,7 +12,7 @@
     >
       <IconComp :name="(icon || name || '').toLowerCase()"></IconComp>
       <input
-        :type="type || name"
+        :type="type"
         class="grow"
         :placeholder="placeholder || name"
         v-model="model"
@@ -31,6 +31,11 @@
       </span>
     </label>
   </div>
+  <label v-if="subBtnClick" class="label -mt-3">
+    <a href="#" class="label-text-alt link link-hover" @click="subBtnClick">
+      <slot />
+    </a>
+  </label>
 </template>
 
 <script setup lang="ts">
@@ -40,11 +45,12 @@ import IconComp from '@/components/IconComp.vue'
 const model = defineModel()
 defineProps<{
   name: string
+  type: 'password' | 'text'
+  subBtnClick?: () => void
   object?: IObject
   alert?: IAlert
   icon?: string
   placeholder?: string
-  type?: string
   disable?: boolean
 }>()
 </script>

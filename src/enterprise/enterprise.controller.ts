@@ -73,7 +73,7 @@ export class EnterpriseController extends AuthController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			new UserRecieve({ response: 'EnterpriseAssign' }),
+			new UserRecieve({ response: 'Success_Assign_Enterprise' }),
 		);
 	}
 }
