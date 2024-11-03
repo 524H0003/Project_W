@@ -1,32 +1,30 @@
 {
-	"explorer.fileNesting.enabled": true,
-	"explorer.fileNesting.patterns": {
-		"tsconfig.json": "tsconfig.*.json, env.d.ts",
-		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest.config.ts, README.MD, nest-cli.json, procfile, .gitignore",
-		"*.ts": "$(capture).spec.ts",
-		"*.entity.ts": "$(capture).model.ts",
-	},
-	"editor.codeActionsOnSave": {
-		"source.fixAll": "explicit"
-	},
-	"editor.formatOnSave": true,
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"debug.javascript.autoAttachFilter": "disabled",
+	"editor.codeActionsOnSave": { "source.fixAll": "explicit" },
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
+	"editor.formatOnSave": true,
 	"editor.insertSpaces": false,
 	"editor.tabSize": 2,
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.patterns": {
+		"*.entity.ts": "$(capture).model.ts",
+		"*.ts": "$(capture).spec.ts",
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest.config.ts, README.MD, nest-cli.json, procfile, .gitignore",
+		"tsconfig.json": "tsconfig.*.json, env.d.ts"
+	},
 	"explorerExclude.backup": {},
 	"files.eol": "\n",
 	"files.exclude": {
-		"**/.git": true,
-		"**/.svn": true,
-		"**/.hg": true,
-		"**/CVS": true,
-		"**/.DS_Store": true,
-		"**/Thumbs.db": true,
 		"**/*.js": true,
 		"**/*.tsbuildinfo": true,
+		"**/.DS_Store": true,
+		"**/.git": true,
+		"**/.hg": true,
+		"**/.svn": true,
+		"**/CVS": true,
+		"**/Thumbs.db": true,
 		"**/dist": true,
 		"**/node_modules": true,
 		"**/schema.gql": true,
@@ -37,17 +35,15 @@
 		"LICENSE": true,
 		"coverage": true,
 		"documentation": true,
+		"page": true,
 		"public": true,
 		"reports": true,
 		"secrets": true,
 		"src/models.ts": true,
 		"src/types.ts": true,
-		"types": true,
-		"page": true
+		"types": true
 	},
-	"jest.outputConfig": {
-		"clearOnRun": "terminal"
-	},
+	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,
