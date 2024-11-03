@@ -9,9 +9,7 @@
       "request": "launch",
       "name": "Edge debug",
       "url": "https://localhost:5173/",
-      "runtimeArgs": [
-        "--auto-open-devtools-for-tabs"
-      ]
+      "runtimeArgs": ["--auto-open-devtools-for-tabs"]
     }
   ]
 }

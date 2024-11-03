@@ -53,14 +53,8 @@ describe('login', () => {
 				),
 			{
 				exps: [
-					{
-						type: 'toContain',
-						params: [HttpStatus.ACCEPTED.toString()],
-					},
-					{
-						type: 'toContain',
-						params: ['Request_Signature_From_Email'],
-					},
+					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
+					{ type: 'toContain', params: ['Request_Signature_From_Email'] },
 				],
 			},
 		);

@@ -9,19 +9,10 @@ import { reactive } from 'vue'
 const API_URL = 'https://testback.anhvietnguyen.id.vn/api/v1'
 
 export const alert = reactive<IAlert>({
-    error: {
-      password: '',
-      account: '',
-    },
-    success: {
-      password: '',
-      account: '',
-    },
+    error: { password: '', account: '' },
+    success: { password: '', account: '' },
   }),
-  state = reactive<AuthState>({
-    user: null,
-    token: null,
-  })
+  state = reactive<AuthState>({ user: null, token: null })
 
 interface AuthState {
   user: null | IUserInfo | string
