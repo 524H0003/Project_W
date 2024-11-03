@@ -24,8 +24,8 @@ import { HookService } from 'app/hook/hook.service';
 import { Hook } from 'app/hook/hook.entity';
 import { EnterpriseService } from './enterprise.service';
 import { memoryStorage } from 'multer';
-import { UserRecieve } from 'user/user.class';
 import { IBaseUser } from 'app/app.model';
+import { UserRecieve } from 'user/user.entity';
 
 /**
  * Enterprise controller

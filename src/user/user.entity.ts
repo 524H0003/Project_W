@@ -8,8 +8,9 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
 	IUserClass,
-	IUserInfo,
 	UserRole,
+	IUserInfo,
+	IUserRecieve,
 } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
@@ -18,6 +19,7 @@ import { Hook } from 'app/hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 import { BaseUser } from 'app/app.entity';
 import { IBaseUser } from 'app/app.model';
+import { decode, JwtPayload } from 'jsonwebtoken';
 
 /**
  * User entity
@@ -171,5 +173,50 @@ export class User implements IUserClass {
 			} = options || {},
 			n = new User({ email, password, name: from });
 		if (n.hashedPassword) return n;
+	}
+}
+
+/**
+ * User recieve infomations
+ */
+export class UserRecieve implements IUserRecieve {
+	/**
+	 * Quick user recieve initiation
+	 * @param {object} payload - User recieve infomations
+	 */
+	constructor(payload: Partial<IUserRecieve>) {
+		Object.assign(this, payload);
+	}
+
+	/**
+	 * User access token
+	 */
+	accessToken: string = '';
+
+	/**
+	 * User refresh token
+	 */
+	refreshToken: string = '';
+
+	/**
+	 * Server's response
+	 */
+	response: string | IUserInfo = '';
+
+	/**
+	 * Jwt payload
+	 */
+	get payload(): JwtPayload {
+		return (decode(this.accessToken) as JwtPayload) || { exp: 0, iat: 0 };
+	}
+
+	/**
+	 * @ignore
+	 */
+	static get test() {
+		return new UserRecieve({
+			accessToken: (10).string,
+			refreshToken: (10).string,
+		});
 	}
 }

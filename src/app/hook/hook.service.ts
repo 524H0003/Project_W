@@ -4,8 +4,8 @@ import { Hook } from './hook.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MailService } from 'app/mail/mail.service';
-import { UserRecieve } from 'user/user.class';
 import { SignService } from 'auth/auth.service';
+import { UserRecieve } from 'user/user.entity';
 
 /**
  * Hook service

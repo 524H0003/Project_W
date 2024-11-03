@@ -29,6 +29,7 @@
 		"*.config.*",
 		"./src/types.ts",
 		"./src/models.ts",
-		"./page/*.*"
+		"./page/*.*",
+		"./types"
 	]
 }
