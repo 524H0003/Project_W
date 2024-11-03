@@ -52,8 +52,8 @@ function saveTokens(input: IUserRecieve) {
 }
 
 export interface IAlertObject {
-  password: string
-  account: string
+  password: string | null
+  account: string | null
 }
 
 export interface IAlert {
@@ -62,7 +62,7 @@ export interface IAlert {
 }
 
 export async function apiErrorHandler<T>(func: Promise<T>) {
-  alert.error = alert.success = { password: '', account: '' }
+  alert.error = alert.success = { password: null, account: null }
   try {
     const response = await func
     if (typeof response == 'string') {

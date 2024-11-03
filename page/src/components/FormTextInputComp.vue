@@ -5,7 +5,7 @@
     </label>
     <label
       class="input input-bordered flex items-center gap-2"
-      :class="{ 'input-error': error }"
+      :class="{ 'input-error': error, 'input-success': success }"
     >
       <IconComp :name="(icon || name || '').toLowerCase()"></IconComp>
       <input
@@ -17,7 +17,14 @@
       />
     </label>
     <label class="label -mt-1.5">
-      <span class="label-text-alt text-red-700">{{ error }}</span>
+      <span
+        class="label-text-alt"
+        :class="{
+          'text-green-700': success,
+          'text-red-700': error,
+        }"
+        >{{ error || success }}</span
+      >
     </label>
   </div>
 </template>
@@ -28,7 +35,8 @@ import IconComp from '@/components/IconComp.vue'
 const model = defineModel()
 defineProps<{
   name: string
-  error?: string
+  error?: string | null
+  success?: string | null
   icon?: string
   placeholder?: string
   type?: string
