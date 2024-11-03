@@ -5,7 +5,10 @@
     </label>
     <label
       class="input input-bordered flex items-center gap-2"
-      :class="{ 'input-error': error, 'input-success': success }"
+      :class="{
+        'input-error': object === alert?.object && alert?.type === 'error',
+        'input-success': object === alert?.object && alert?.type === 'success',
+      }"
     >
       <IconComp :name="(icon || name || '').toLowerCase()"></IconComp>
       <input
@@ -16,27 +19,29 @@
         :disabled="disable"
       />
     </label>
-    <label class="label -mt-1.5">
+    <label v-if="object === alert?.object" class="label -my-1.5">
       <span
         class="label-text-alt"
         :class="{
-          'text-green-700': success,
-          'text-red-700': error,
+          'text-green-700': alert?.type === 'success',
+          'text-red-700': alert?.type === 'error',
         }"
-        >{{ error || success }}</span
       >
+        {{ alert?.message }}
+      </span>
     </label>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { IAlert, IObject } from '@/auth.service'
 import IconComp from '@/components/IconComp.vue'
 
 const model = defineModel()
 defineProps<{
   name: string
-  error?: string | null
-  success?: string | null
+  object?: IObject
+  alert?: IAlert
   icon?: string
   placeholder?: string
   type?: string

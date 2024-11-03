@@ -1,24 +1,24 @@
 <template>
-  <FormContainerComp>
-    <h1 class="card-title text-4xl font-bold">Change password</h1>
-    <form @submit.prevent="handleLogin">
-      <FormTextInputComp
-        name="Signature"
-        v-model="$route.params.signature"
-        :disable="true"
-      ></FormTextInputComp>
-      <FormTextInputComp
-        name="New Password"
-        placeholder="Enter password"
-        icon="key_vertical"
-        v-model="input.password"
-        :error="alert.error.password"
-        :success="alert.success.password"
-      ></FormTextInputComp>
-      <div class="form-control mt-3">
-        <button class="btn btn-primary">Confirm</button>
-      </div>
-    </form>
+  <FormContainerComp
+    btn-label="Confirm"
+    :btn-handle="handleHook"
+    :alert="alert"
+  >
+    <FormTextInputComp
+      name="Signature"
+      v-model="$route.params.signature"
+      :disable="true"
+      object="signature"
+      :alert="alert"
+    ></FormTextInputComp>
+    <FormTextInputComp
+      name="New Password"
+      placeholder="Enter password"
+      icon="key_vertical"
+      v-model="input.password"
+      :alert="alert"
+      object="password"
+    ></FormTextInputComp>
   </FormContainerComp>
 </template>
 
@@ -34,7 +34,7 @@ const route = useRoute(),
   input = reactive<Required<IUserAuthentication>>({
     password: '',
   }),
-  handleLogin = () =>
+  handleHook = () =>
     apiErrorHandler(
       hookRequest(route.params.signature as string, input.password),
     )
