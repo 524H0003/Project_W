@@ -39,6 +39,7 @@
 		"public": true,
 		"reports": true,
 		"secrets": true,
+		"src/build.ts": true,
 		"src/models.ts": true,
 		"src/types.ts": true,
 		"types": true
