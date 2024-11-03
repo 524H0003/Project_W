@@ -32,7 +32,7 @@ export class MailService {
 				template: './forgetPassword',
 				context: { name: usr.name, url },
 			});
-		else throw new BadRequestException('InvalidUserOrEnterprise');
+		else throw new BadRequestException('Invalid_Email');
 
 		return usr;
 	}

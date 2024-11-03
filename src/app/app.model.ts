@@ -1,10 +1,5 @@
 // Interfaces
-export interface IBaseUser {
-	/**
-	 * Base user email address
-	 */
-	email: string;
-
+export interface IBaseUserInfo {
 	/**
 	 * Base user name
 	 */
@@ -15,3 +10,12 @@ export interface IBaseUser {
 	 */
 	avatarPath?: string;
 }
+
+export interface IBaseUserEmail {
+	/**
+	 * Base user email address
+	 */
+	email: string;
+}
+
+export interface IBaseUser extends IBaseUserInfo, IBaseUserEmail {}

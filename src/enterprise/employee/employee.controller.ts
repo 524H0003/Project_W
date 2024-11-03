@@ -96,10 +96,6 @@ export class EmployeeController extends AuthController {
 			);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
-				case 'InvalidHook':
-					return this.changePasswordViaConsole(request, response, mtdt);
-					break;
-
 				default:
 					throw error;
 					break;

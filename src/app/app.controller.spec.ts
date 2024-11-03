@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
-import { Device } from './auth/device/device.entity';
+import { Device } from '../auth/device/device.entity';
 import { AppController } from 'app/app.controller';
 import { AppModule } from 'app/app.module';
 
@@ -67,7 +67,10 @@ describe('signup', () => {
 
 		await execute(() => req.post('/signup').send({ ...usr, ...usr.user }), {
 			exps: [
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
+				{
+					type: 'toHaveProperty',
+					params: ['status', HttpStatus.UNPROCESSABLE_ENTITY],
+				},
 			],
 		});
 	});

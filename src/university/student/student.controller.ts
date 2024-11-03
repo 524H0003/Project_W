@@ -67,7 +67,7 @@ export class StudentController extends AuthController {
 			);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
-				case 'ERRNewUser':
+				case 'Request_New_User':
 					return this.requestViaEmail(request, response, body, mtdt);
 					break;
 

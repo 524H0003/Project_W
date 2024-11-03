@@ -72,6 +72,6 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 * @param {string} input - the email address
 	 */
 	email(input: string) {
-		return this.findOne({ email: input });
+		return this.findOne({ email: input.toLowerCase() });
 	}
 }

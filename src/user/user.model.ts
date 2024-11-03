@@ -1,4 +1,4 @@
-import { IBaseUser } from 'app/app.model';
+import { IBaseUser, IBaseUserEmail } from 'app/app.model';
 import { IDevice } from 'auth/device/device.model';
 import { IHook } from 'app/hook/hook.model';
 import { IEventParticipator } from 'event/participator/participator.model';
@@ -11,11 +11,6 @@ import { IReciever } from 'notification/reciever/reciever.model';
  * Fileds for user authencation
  */
 export interface IUserAuthentication {
-	/**
-	 * User's email address
-	 */
-	email?: string;
-
 	/**
 	 * User's password
 	 */
@@ -61,9 +56,9 @@ export interface IUserSensitive {
 }
 
 /**
- * User model
+ * User relationships
  */
-export interface IUser extends IUserAuthentication, IUserInfo {
+export interface IUserRelationship {
 	/**
 	 * Base user
 	 */
@@ -96,6 +91,14 @@ export interface IUser extends IUserAuthentication, IUserInfo {
 }
 
 /**
+ * User class
+ */
+export interface IUserClass
+	extends IUserAuthentication,
+		IUserInfo,
+		IUserRelationship {}
+
+/**
  * Fields about user's recieved properties
  */
 export interface IUserRecieve {
@@ -123,14 +126,12 @@ export interface IUserRecieve {
 /**
  * Login fields
  */
-export interface ILogin extends IUserAuthentication {}
+export interface ILogin extends IUserAuthentication, IBaseUserEmail {}
 
 /**
  * Sign up fields
  */
-export interface ISignUp extends IUserAuthentication, IUserInfo, IBaseUser {
-	email: string;
-}
+export interface ISignUp extends IUserAuthentication, IBaseUser {}
 
 // Enums
 /**

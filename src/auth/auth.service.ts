@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+	UnprocessableEntityException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Cryption, validation } from 'app/utils/auth.utils';
@@ -45,16 +50,17 @@ export class AuthService extends Cryption {
 			{ role = UserRole.undefined } = options || {},
 			rawUser = new User({ ...input, email: input.email.toLowerCase() });
 
-		if (user) throw new BadRequestException('ExistedUser');
+		if (user) throw new UnprocessableEntityException('Exist_User');
 
 		try {
 			return validation(rawUser, async () => {
 				if (rawUser.hashedPassword) {
 					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
-					return await this.usrSvc.modify({
+					await this.usrSvc.modify({
 						user: { id: newUser.user.id, avatarPath: avatarFile?.path },
 					});
+					return this.usrSvc.findOne({ user: { id: rawUser.user.id } });
 				}
 			});
 		} catch (error) {
@@ -83,7 +89,8 @@ export class AuthService extends Cryption {
 		const user = await this.usrSvc.email(input.email);
 
 		if (user && compareSync(input.password, user.hashedPassword)) return user;
-		throw new BadRequestException('InvalidAccessRequest');
+		if (!user) throw new NotFoundException('NotFound_User');
+		throw new BadRequestException('Invalid_Password');
 	}
 
 	/**
@@ -92,11 +99,11 @@ export class AuthService extends Cryption {
 	 * @param {string} password - new password
 	 * @return {Promise<User>} updated user
 	 */
-	changePassword(iUser: User, password: string): Promise<User> {
-		const user = new User({ ...iUser, ...iUser.user });
+	async changePassword(iUser: User, password: string): Promise<User> {
+		const user = await this.usrSvc.findOne({ user: { id: iUser.user.id } });
 		user.password = password;
 		return validation(user, () => {
-			if (user.hashedPassword) return this.usrSvc.assign(user);
+			if (user.hashedPassword) return this.usrSvc.modify(user);
 		});
 	}
 }

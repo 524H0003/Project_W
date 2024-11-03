@@ -1,5 +1,5 @@
 import { IEvent } from 'event/event.model';
-import { IUser } from 'user/user.model';
+import { IUserClass } from 'user/user.model';
 
 // Interfaces
 /**
@@ -14,7 +14,7 @@ export interface IEventParticipator {
 	/**
 	 * The user participate event
 	 */
-	participatedBy: IUser;
+	participatedBy: IUserClass;
 
 	/**
 	 * The role in event

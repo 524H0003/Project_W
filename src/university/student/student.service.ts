@@ -8,7 +8,9 @@ import { Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { IStudentSignup } from './student.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { ISignUpKeys, IStudentInfoKeys } from 'models';
+import { ISignUpKeys, IStudentKeys } from 'models';
+import { validation } from 'app/utils/auth.utils';
+import { User } from 'user/user.entity';
 
 /**
  * Student service
@@ -33,34 +35,35 @@ export class StudentService extends DatabaseRequests<Student> {
 	/**
 	 * Login for student
 	 * @param {IStudentSignup} input - the login input
+	 * @return {Promise<User>}
 	 */
-	async login(input: IStudentSignup) {
-		const user = await this.usrSvc.email(input.email);
-		if (!user) {
-			if (input.email.match(this.studentMailRex)) {
-				await this.authSvc.signUp(
+	async login(input: IStudentSignup): Promise<User> {
+		const user = await this.usrSvc.email(input.email),
+			rawStu = new Student(input);
+
+		if (user) return this.authSvc.login(input);
+
+		if (rawStu.user.user.email.match(this.studentMailRex))
+			return await validation<User>(rawStu, async () => {
+				const user = await this.authSvc.signUp(
 					{
 						...InterfaceCasting.quick(input, ISignUpKeys),
-						fullName: input.email,
+						name: input.email,
 						password: (32).string + '!1Aa',
 					} as ISignUp,
 					null,
 					{ role: UserRole.student },
 				);
-				try {
+				if (user.hashedPassword) {
 					await this.save({
-						user: await this.usrSvc.email(input.email),
-						...InterfaceCasting.quick(input, IStudentInfoKeys),
+						user,
+						...InterfaceCasting.quick(input, IStudentKeys),
+						enrollmentYear: Number('20' + input.email.toString().slice(1, 3)),
 					});
-				} catch (error) {
-					await this.usrSvc.remove({ user: { email: input.email } });
-					throw new BadRequestException(
-						`Null value in field ${error['column']}`,
-					);
+					throw new Error('Request_New_User');
 				}
-				throw new Error('ERRNewUser');
-			}
-			throw new BadRequestException('InvalidStudentEmail');
-		} else return this.authSvc.login(input);
+				return user;
+			});
+		else throw new BadRequestException('Invalid_Student_Email');
 	}
 }
