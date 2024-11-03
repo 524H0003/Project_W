@@ -41,7 +41,8 @@
 		"secrets": true,
 		"src/models.ts": true,
 		"src/types.ts": true,
-		"types": true
+		"types": true,
+		"src/build.ts": true
 	},
 	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {
