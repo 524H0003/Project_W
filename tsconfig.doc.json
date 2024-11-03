@@ -9,7 +9,8 @@
 		"**/types.ts",
 		"**/models.ts",
 		"**/main.ts",
-		"page"
+		"page",
+		"types"
 	],
 	"extends": "./tsconfig.json"
 }

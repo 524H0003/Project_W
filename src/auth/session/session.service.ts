@@ -5,10 +5,9 @@ import { hash } from 'app/utils/auth.utils';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { DeviceService } from 'auth/device/device.service';
 import { DeepPartial, Repository } from 'typeorm';
-import { UserRecieve } from 'user/user.class';
 import { Session } from './session.entity';
 import { SignService } from 'auth/auth.service';
-import { User } from 'user/user.entity';
+import { User, UserRecieve } from 'user/user.entity';
 
 /**
  * Session service

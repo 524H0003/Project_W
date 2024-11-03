@@ -4,14 +4,13 @@ import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { compareSync } from 'bcrypt';
 import { CookieOptions, Request, Response } from 'express';
-import { UserRecieve } from 'user/user.class';
 import { ILogin, ISignUp } from 'user/user.model';
 import { AuthService } from './auth.service';
 import { HookService } from '../app/hook/hook.service';
 import { Hook } from '../app/hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 import { IRefreshResult } from './strategies/refresh.strategy';
-import { User } from 'user/user.entity';
+import { User, UserRecieve } from 'user/user.entity';
 
 /**
  * Auth controller
