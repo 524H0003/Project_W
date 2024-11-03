@@ -3,6 +3,7 @@
     btn-label="Assign"
     :btn-handle="handleAssign"
     :alert="alert"
+    name="Assign enterprise"
   >
     <FormTextInputComp
       name="Email"
@@ -28,7 +29,7 @@
       :alert="alert"
     ></FormTextInputComp>
     <FormTextInputComp
-      name="description"
+      name="Description"
       placeholder="General company bio"
       icon="description"
       v-model="input.description"
@@ -37,7 +38,7 @@
     </FormTextInputComp>
     <FormTextInputComp
       name="Signature"
-      placeholder="Please request to console"
+      placeholder="Please send request to console"
       icon="signature"
       type="text"
       v-model="input.signature"

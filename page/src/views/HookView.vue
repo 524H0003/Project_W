@@ -3,6 +3,7 @@
     btn-label="Confirm"
     :btn-handle="handleHook"
     :alert="alert"
+    name="Change password"
   >
     <FormTextInputComp
       name="Signature"

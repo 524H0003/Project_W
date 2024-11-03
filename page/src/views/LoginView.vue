@@ -1,5 +1,10 @@
 <template>
-  <FormContainerComp btn-label="Login" :btn-handle="handleLogin" :alert="alert">
+  <FormContainerComp
+    btn-label="Login"
+    :btn-handle="handleLogin"
+    :alert="alert"
+    name="Login"
+  >
     <FormTextInputComp
       name="Email"
       placeholder="name@email.com"

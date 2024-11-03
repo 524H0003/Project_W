@@ -5,7 +5,7 @@
     >
       <div class="card-body flex items-center justify-center">
         <div class="w-full">
-          <h1 class="card-title text-4xl font-bold">Change password</h1>
+          <h1 class="card-title text-4xl font-bold">{{ name }}</h1>
           <form @submit.prevent="btnHandle">
             <slot />
             <div class="form-control mt-6">
@@ -42,6 +42,7 @@
 import type { IAlert } from '@/auth.service'
 
 defineProps<{
+  name: string
   btnLabel: string
   alert: IAlert
   btnHandle: () => void
