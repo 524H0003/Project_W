@@ -5,7 +5,12 @@ import { Device } from 'auth/device/device.entity';
 import { IFile } from 'file/file.model';
 import { IBaseUserKeys, IUserAuthenticationKeys, IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { IUserClass, IUserInfo, UserRole } from './user.model';
+import {
+	IUserAuthentication,
+	IUserClass,
+	IUserInfo,
+	UserRole,
+} from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
@@ -13,7 +18,6 @@ import { Hook } from 'app/hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 import { BaseUser } from 'app/app.entity';
 import { IBaseUser } from 'app/app.model';
-import { IUserAuthentication } from '../../types/src/types';
 
 /**
  * User entity
