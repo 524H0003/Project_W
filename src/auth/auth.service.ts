@@ -10,9 +10,9 @@ import { Cryption, validation } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { compareSync } from 'bcrypt';
 import { FileService } from 'file/file.service';
-import { ILoginKeys, ISignUpKeys } from 'models';
+import { IUserLoginKeys, IUserSignUpKeys } from 'models';
 import { User } from 'user/user.entity';
-import { ILogin, ISignUp, UserRole } from 'user/user.model';
+import { IUserLogin, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
 import { IAuthSignUpOption } from './auth.model';
 
@@ -34,17 +34,17 @@ export class AuthService extends Cryption {
 
 	/**
 	 * Sign up user
-	 * @param {ISignUp} input - the sign up input
+	 * @param {IUserSignUp} input - the sign up input
 	 * @param {Express.Multer.File} avatar - user's avatar
 	 * @param {Object} options - function's options
 	 * @return {Promise<User>} user's recieve infomations
 	 */
 	async signUp(
-		input: ISignUp,
+		input: IUserSignUp,
 		avatar: Express.Multer.File,
 		options?: IAuthSignUpOption,
 	): Promise<User> {
-		input = InterfaceCasting.quick(input, ISignUpKeys);
+		input = InterfaceCasting.quick(input, IUserSignUpKeys);
 
 		const user = await this.usrSvc.email(input.email),
 			{ role = UserRole.undefined } = options || {},
@@ -80,11 +80,11 @@ export class AuthService extends Cryption {
 
 	/**
 	 * Login user
-	 * @param {ILogin} input - the login input
+	 * @param {IUserLogin} input - the login input
 	 * @return {Promise<User>} user's recieve infomations
 	 */
-	async login(input: ILogin): Promise<User> {
-		input = InterfaceCasting.quick(input, ILoginKeys);
+	async login(input: IUserLogin): Promise<User> {
+		input = InterfaceCasting.quick(input, IUserLoginKeys);
 
 		const user = await this.usrSvc.email(input.email);
 

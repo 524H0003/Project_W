@@ -126,12 +126,12 @@ export interface IUserRecieve {
 /**
  * Login fields
  */
-export interface ILogin extends IUserAuthentication, IBaseUserEmail {}
+export interface IUserLogin extends IUserAuthentication, IBaseUserEmail {}
 
 /**
  * Sign up fields
  */
-export interface ISignUp extends IUserAuthentication, IBaseUser {}
+export interface IUserSignUp extends IUserAuthentication, IBaseUser {}
 
 // Enums
 /**

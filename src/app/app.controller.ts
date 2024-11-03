@@ -27,7 +27,7 @@ import { Request, Response } from 'express';
 import { memoryStorage } from 'multer';
 import { StudentController } from 'university/student/student.controller';
 import { IStudentSignup } from 'university/student/student.model';
-import { ILogin, ISignUp } from 'user/user.model';
+import { IUserLogin, IUserSignUp } from 'user/user.model';
 
 /**
  * Application Controller
@@ -52,7 +52,7 @@ export class AppController extends AuthController {
 	 * Login request
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
-	 * @param {IStudentSignup | ILogin} body - login input
+	 * @param {IStudentSignup | IUserLogin} body - login input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
@@ -61,7 +61,7 @@ export class AppController extends AuthController {
 	async login(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
-		@Body() body: IStudentSignup | ILogin,
+		@Body() body: IStudentSignup | IUserLogin,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
@@ -75,11 +75,9 @@ export class AppController extends AuthController {
 			switch ((error as { message: string }).message) {
 				case 'Invalid_Student_Email':
 					throw new BadRequestException('Invalid_Email');
-					break;
 
 				default:
 					throw error;
-					break;
 			}
 		}
 	}
@@ -88,7 +86,7 @@ export class AppController extends AuthController {
 	 * Sign up request
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
-	 * @param {ISignUp} body - sign up input
+	 * @param {IUserSignUp} body - sign up input
 	 * @param {string} mtdt - client's metadata
 	 * @param {Express.Multer.File} avatar - user's avatar
 	 * @return {Promise<void>}
@@ -99,7 +97,7 @@ export class AppController extends AuthController {
 	async signUp(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
-		@Body() body: ISignUp,
+		@Body() body: IUserSignUp,
 		@MetaData() mtdt: string,
 		@UploadedFile(
 			new ParseFilePipeBuilder()

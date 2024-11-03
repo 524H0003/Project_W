@@ -5,7 +5,7 @@ import { IUserClass } from 'user/user.model';
 /**
  * Event creator model
  */
-export interface IEventCreator {
+export interface IEventCreatorRelationship {
 	/**
 	 * User core
 	 */
@@ -16,3 +16,8 @@ export interface IEventCreator {
 	 */
 	createdEvents: IEvent[];
 }
+
+/**
+ * Event creator class
+ */
+export interface IEventCreatorClass extends IEventCreatorRelationship {}
