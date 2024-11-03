@@ -1,4 +1,16 @@
 {
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.patterns": {
+		"tsconfig.json": "tsconfig.*.json, env.d.ts",
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest.config.ts, README.MD, nest-cli.json, procfile, .gitignore",
+		"*.ts": "$(capture).spec.ts",
+		"*.entity.ts": "$(capture).model.ts",
+	},
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	},
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"debug.javascript.autoAttachFilter": "disabled",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
@@ -7,26 +19,21 @@
 	"explorerExclude.backup": {},
 	"files.eol": "\n",
 	"files.exclude": {
-		"**/*.example*": true,
-		"**/*.js": true,
-		"**/*.json": true,
-		"**/*.tsbuildinfo": true,
-		"**/*spec*": true,
-		"**/.DS_Store": true,
 		"**/.git": true,
-		"**/.hg": true,
 		"**/.svn": true,
+		"**/.hg": true,
 		"**/CVS": true,
+		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
+		"**/*.js": true,
+		"**/*.tsbuildinfo": true,
 		"**/dist": true,
 		"**/node_modules": true,
 		"**/schema.gql": true,
 		".adminjs": true,
 		".devcontainer": true,
 		".git": true,
-		".github": true,
 		".gitignore": true,
-		".prettierrc": true,
 		"LICENSE": true,
 		"coverage": true,
 		"documentation": true,
@@ -34,9 +41,13 @@
 		"reports": true,
 		"secrets": true,
 		"src/models.ts": true,
-		"src/types.ts": true
+		"src/types.ts": true,
+		"types": true,
+		"page": true
 	},
-	"jest.outputConfig": { "clearOnRun": "terminal" },
+	"jest.outputConfig": {
+		"clearOnRun": "terminal"
+	},
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,
