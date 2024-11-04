@@ -1,11 +1,11 @@
 import axios from 'axios'
-import type {
-  IBaseUser,
-  IEnterpriseAssign,
+import { IEmployeeSignup } from 'project-w-backend/enterprise/employee/employee.model.js'
+import { IEnterpriseAssign } from 'project-w-backend/enterprise/enterprise.model.js'
+import {
   IUserAuthentication,
   IUserInfo,
   IUserRecieve,
-} from 'project-w-backend'
+} from 'user/user.model.js'
 import { reactive } from 'vue'
 
 const API_URL = '/api/v1'
@@ -38,8 +38,13 @@ export async function hookRequest(signature: string, password: string) {
   return response.data.user
 }
 
-export async function assignEnterprise(input: IEnterpriseAssign & IBaseUser) {
+export async function assignEnterprise(input: IEnterpriseAssign) {
   const response = await axios.post(`${API_URL}/enterprise/assign`, input)
+  return response.data.user
+}
+
+export async function assignEnterpriseUser(input: IEmployeeSignup) {
+  const response = await axios.post(`${API_URL}/employee/signup`, input)
   return response.data.user
 }
 
