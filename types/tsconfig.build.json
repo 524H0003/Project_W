@@ -1,12 +1,11 @@
 {
-	"exclude": [
-		"."
-	],
 	"compilerOptions": {
 		"moduleResolution": "Bundler",
 		"module": "Preserve",
 		"target": "ESNext",
-		"sourceMap": false
+		"removeComments": false,
+		"sourceMap": false,
+		"outDir": "."
 	},
 	"include": [
 		"../src/**/*.model.ts",

@@ -1,5 +1,5 @@
 import { IEnterprise } from 'enterprise/enterprise.model';
-import { IEventCreatorClass } from 'event/creator/creator.model';
+import { IEventCreatorEntity } from 'event/creator/creator.model';
 import { IUserSignUp } from 'user/user.model';
 
 // Interfaces
@@ -20,7 +20,7 @@ export interface IEmployeeRelationship {
 	/**
 	 * @ignore
 	 */
-	user: IEventCreatorClass;
+	user: IEventCreatorEntity;
 
 	/**
 	 * Employee's working enterprise

@@ -16,6 +16,8 @@
         "./src/*"
       ]
     },
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
+    "skipLibCheck": false,
+    "skipDefaultLibCheck": false
   }
 }

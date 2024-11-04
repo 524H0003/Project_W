@@ -1,4 +1,4 @@
-import { IEventCreatorClass } from './creator/creator.model';
+import { IEventCreatorEntity } from './creator/creator.model';
 import { IEventParticipator } from './participator/participator.model';
 import { ITag } from './tag/tag.model';
 
@@ -10,7 +10,7 @@ export interface IEvent {
 	/**
 	 * The event creator
 	 */
-	createdBy: IEventCreatorClass;
+	createdBy: IEventCreatorEntity;
 
 	/**
 	 * Event's participators
