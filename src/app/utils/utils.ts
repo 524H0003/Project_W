@@ -200,18 +200,20 @@ declare global {
 }
 
 // Global functions
-global.curFile = (file: string, cut = 2) =>
-	file
-		.split(/\/|\\/)
-		.lastElement.split('.')
-		.map((w) => w[0].toUpperCase() + w.slice(1))
-		.slice(0, cut)
-		.join('');
-global.array = (length: number, initValue: any = '') =>
-	Array(length)
-		.join()
-		.split(',')
-		.map(() => initValue);
+try {
+	global.curFile = (file: string, cut = 2) =>
+		file
+			.split(/\/|\\/)
+			.lastElement.split('.')
+			.map((w) => w[0].toUpperCase() + w.slice(1))
+			.slice(0, cut)
+			.join('');
+	global.array = (length: number, initValue: any = '') =>
+		Array(length)
+			.join()
+			.split(',')
+			.map(() => initValue);
+} catch {}
 // String.prototype
 Object.defineProperty(String.prototype, 'randomChar', {
 	get: function () {

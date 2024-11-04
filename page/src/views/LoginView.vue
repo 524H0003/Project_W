@@ -32,8 +32,7 @@
 import { apiErrorHandler, authRequest, alert } from '@/auth.service'
 import FormContainerComp from '@/components/FormContainerComp.vue'
 import FormTextInputComp from '@/components/FormTextInputComp.vue'
-import type { IBaseUserEmail } from 'project-w-backend/app/app.model'
-import type { IUserAuthentication } from 'project-w-backend/user/user.model'
+import { IBaseUserEmail, IUserAuthentication } from 'project-w-backend'
 import { reactive } from 'vue'
 
 const input = reactive<IUserAuthentication & IBaseUserEmail>({

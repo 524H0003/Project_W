@@ -19,7 +19,7 @@
                 ></span>
                 {{ btnLabel }}
               </button>
-              <div class="label -my-1.5">
+              <div class="label -my-1.5" v-if="alert.object == 'api'">
                 <span
                   class="label-text-alt"
                   :class="{

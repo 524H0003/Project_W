@@ -28,7 +28,7 @@ export class MailService {
 		if (usr)
 			await this.mailerService.sendMail({
 				to: usr.email,
-				subject: 'Change password request from idk',
+				subject: 'Change password',
 				template: './forgetPassword',
 				context: { name: usr.name, url },
 			});

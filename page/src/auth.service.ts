@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {
+  IEmployeeHook,
   IEmployeeSignup,
   IEnterpriseAssign,
   IUserAuthentication,
@@ -53,13 +54,24 @@ export async function requestConsole() {
   return response.data.user
 }
 
+export async function requestFromEmployee(input: IEmployeeHook) {
+  const response = await axios.post(`${API_URL}/employee/hook`, input)
+  return response.data.user
+}
+
 function saveTokens(input: IUserRecieve) {
   state.token = input
   localStorage.setItem('acsTkn', state.token!.accessToken)
   localStorage.setItem('rfsTkn', state.token!.refreshToken)
 }
 
-export type IObject = 'account' | 'password' | 'signature' | 'api'
+export type IObject =
+  | 'account'
+  | 'password'
+  | 'signature'
+  | 'api'
+  | 'role'
+  | 'enterprise'
 
 export interface IAlert {
   message: string
@@ -132,6 +144,18 @@ export async function apiErrorHandler<T>(func: Promise<T>) {
         alert.message = 'Something went wrong after sent your request'
         alert.type = 'error'
         alert.object = 'api'
+        break
+
+      case 'Exist_User':
+        alert.message = 'This email address has been assigned to an account'
+        alert.type = 'error'
+        alert.object = 'account'
+        break
+
+      case 'Invalid_Enterprise_Name':
+        alert.message = 'Invalid enterprise name'
+        alert.type = 'error'
+        alert.object = 'enterprise'
         break
 
       default:

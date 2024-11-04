@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"moduleResolution": "Bundler",
+		"module": "Preserve",
+		"target": "ESNext",
+		"removeComments": false,
+		"sourceMap": false,
+		"outDir": ".",
+		"declaration": false
+	},
+	"include": [
+		"../src/**/*.model.ts",
+		"../src/types.ts"
+	],
+	"exclude": [
+		"."
+	],
+	"extends": "../tsconfig.json",
+}

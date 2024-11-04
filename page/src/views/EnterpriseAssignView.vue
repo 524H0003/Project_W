@@ -12,30 +12,27 @@
       type="text"
       :alert="alert"
       object="account"
-    ></FormTextInputComp>
+    />
     <FormTextInputComp
       name="Industry"
       icon="dictionary"
       type="text"
       v-model="input.industry"
-    ></FormTextInputComp>
+    />
     <FormTextInputComp
       name="Name"
       placeholder="Company name"
       icon="work"
       type="text"
       v-model="input.name"
-      object="account"
-      :alert="alert"
-    ></FormTextInputComp>
+    />
     <FormTextInputComp
       name="Description"
       placeholder="General company bio"
       icon="description"
       v-model="input.description"
       type="text"
-    >
-    </FormTextInputComp>
+    />
     <FormTextInputComp
       name="Signature"
       placeholder="Please send request to console"

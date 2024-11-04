@@ -47,7 +47,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			user: { name: input.enterpriseName },
 		});
 		if (!ent || !input.enterpriseName)
-			throw new BadRequestException('EnterpriseNotExist');
+			throw new BadRequestException('Invalid_Enterprise_Name');
 
 		return this.hookSvc.assignViaEmail(ent.user.email, host, mtdt, {
 			enterpriseName: ent.user.name,
@@ -64,6 +64,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	async signUp(
 		input: IEmployeeSignup,
 		avatar: Express.Multer.File,
+		enterpriseName: string,
 		option?: IAuthSignUpOption,
 	): Promise<Employee> {
 		input = InterfaceCasting.quick(input, IEmployeeSignupKeys);
@@ -77,25 +78,14 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 
 			return await this.save({
 				user: evtCre,
+				enterprise: await this.entSvc.findOne({
+					user: { name: enterpriseName },
+				}),
 				...InterfaceCasting.quick(input, IEmployeeInfoKeys),
 			});
 		} catch (error) {
 			switch ((error as { message: string }).message) {
-				case 'ExistedUser':
-					return this.findOne({
-						user: { user: await this.authSvc.login(input) },
-					});
-					break;
-
 				default:
-					if ((error as { code: string }).code === '23502') {
-						await this.usrSvc.remove({ user: { email: input.email } });
-						if (error['column'] === 'enterprise_id')
-							error['column'] = 'enterpriseName';
-						throw new BadRequestException(
-							`Null value in field ${error['column']}`,
-						);
-					}
 					throw error;
 					break;
 			}

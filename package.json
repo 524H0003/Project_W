@@ -20,7 +20,7 @@
 		"pretest": "npm run buildfile",
 		"test": "jest",
 		"test:debug": "jest --debug",
-		"types": "dts-bundle-generator -o types/index.d.ts src/types.ts",
+		"types": "tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/types.ts",
 		"pretypes": "npm run prebuild",
 		"triathlon": "npm run test && npm run format && npm run lint"
 	},
