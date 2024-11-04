@@ -1,6 +1,8 @@
 {
 	"debug.javascript.autoAttachFilter": "disabled",
-	"editor.codeActionsOnSave": { "source.fixAll": "explicit" },
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
@@ -17,7 +19,6 @@
 	"explorerExclude.backup": {},
 	"files.eol": "\n",
 	"files.exclude": {
-		"**/*.js": true,
 		"**/*.tsbuildinfo": true,
 		"**/.DS_Store": true,
 		"**/.git": true,
