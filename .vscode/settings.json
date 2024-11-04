@@ -16,17 +16,15 @@
 		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest.config.ts, README.MD, nest-cli.json, procfile, .gitignore",
 		"tsconfig.json": "tsconfig.*.json, env.d.ts"
 	},
-	"explorerExclude.backup": {},
-	"files.eol": "\n",
-	"files.exclude": {
-		"**/*.tsbuildinfo": true,
-		"**/.DS_Store": true,
+	"explorerExclude.backup": {
 		"**/.git": true,
-		"**/.hg": true,
 		"**/.svn": true,
+		"**/.hg": true,
 		"**/CVS": true,
+		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
-		"**/dist": true,
+		"**/*.tsbuildinfo": true,
+		"**/dist": false,
 		"**/node_modules": true,
 		"**/schema.gql": true,
 		".adminjs": true,
@@ -41,9 +39,37 @@
 		"secrets": true,
 		"src/build.ts": true,
 		"src/models.ts": true,
-		"types": true
+		"types": false
 	},
-	"jest.outputConfig": { "clearOnRun": "terminal" },
+	"files.eol": "\n",
+	"files.exclude": {
+		"**/.git": false,
+		"**/.svn": false,
+		"**/.hg": false,
+		"**/CVS": false,
+		"**/.DS_Store": false,
+		"**/Thumbs.db": false,
+		"**/*.tsbuildinfo": false,
+		"**/dist": false,
+		"**/node_modules": false,
+		"**/schema.gql": false,
+		".adminjs": false,
+		".devcontainer": false,
+		".git": false,
+		"LICENSE": false,
+		"coverage": false,
+		"documentation": false,
+		"page": false,
+		"public": false,
+		"reports": false,
+		"secrets": false,
+		"src/build.ts": false,
+		"src/models.ts": false,
+		"types": false
+	},
+	"jest.outputConfig": {
+		"clearOnRun": "terminal"
+	},
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,

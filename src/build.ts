@@ -57,3 +57,18 @@ for (const file of IKeysFiles) {
 	for (const intfce of file.getInterfaces()) createKeys(intfce);
 }
 IKeysOut.saveSync();
+
+const modelsProject = new Project(),
+	modelsFiles = modelsProject.addSourceFilesAtPaths([
+		'src/**/*model*.ts',
+		'src/app/utils/utils.ts',
+	]),
+	modelsOut = modelsProject.createSourceFile('./src/types.ts', '', {
+		overwrite: true,
+	});
+for (const file of modelsFiles) {
+	modelsOut.addExportDeclaration({
+		moduleSpecifier: `./${file.getFilePath().split('src')[1].slice(1, -3)}`,
+	});
+}
+modelsOut.saveSync();

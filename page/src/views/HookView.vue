@@ -29,12 +29,12 @@
 import { apiErrorHandler, hookRequest, alert } from '@/auth.service'
 import FormContainerComp from '@/components/FormContainerComp.vue'
 import FormTextInputComp from '@/components/FormTextInputComp.vue'
-import type { IUserAuthentication } from 'project-w-backend'
+import { IUserAuthentication } from 'project-w-backend'
 import { reactive } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute(),
-  input = reactive<Required<IUserAuthentication>>({
+  input = reactive<IUserAuthentication>({
     password: '',
   }),
   handleHook = () =>
