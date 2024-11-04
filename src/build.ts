@@ -1,5 +1,4 @@
 import {
-	ExportedDeclarations,
 	InterfaceDeclaration,
 	Project,
 	ts,
@@ -58,28 +57,3 @@ for (const file of IKeysFiles) {
 	for (const intfce of file.getInterfaces()) createKeys(intfce);
 }
 IKeysOut.saveSync();
-
-const modelsProject = new Project(),
-	modelsFiles = modelsProject.addSourceFilesAtPaths([
-		'src/**/*model*.ts',
-		'src/app/utils/utils.ts',
-	]),
-	modelsOut = modelsProject.createSourceFile('./src/types.ts', '', {
-		overwrite: true,
-	});
-for (const file of modelsFiles) {
-	const exportNames: string[] = [];
-	const exportDeclarations: ExportedDeclarations[] = [];
-	for (const [exportName, declarations] of file.getExportedDeclarations()) {
-		exportNames.push(exportName);
-		exportDeclarations.push(...declarations);
-	}
-
-	if (exportNames.length) {
-		modelsOut.addExportDeclaration({
-			namedExports: exportNames,
-			moduleSpecifier: `./${file.getFilePath().split('src')[1].slice(1, -3)}`,
-		});
-	}
-}
-modelsOut.saveSync();

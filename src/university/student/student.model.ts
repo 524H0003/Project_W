@@ -1,5 +1,5 @@
 import { IEnterprise } from 'enterprise/enterprise.model';
-import { ISignUp, IUserClass } from 'user/user.model';
+import { IUserSignUp, IUserClass } from 'user/user.model';
 
 // Interfaces
 /**
@@ -50,4 +50,4 @@ export interface IStudent {
 /**
  * Student signup
  */
-export interface IStudentSignup extends IStudent, ISignUp {}
+export interface IStudentSignup extends IStudent, IUserSignUp {}

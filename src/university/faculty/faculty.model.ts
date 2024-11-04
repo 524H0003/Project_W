@@ -1,4 +1,4 @@
-import { IEventCreator } from 'event/creator/creator.model';
+import { IEventCreatorClass } from 'event/creator/creator.model';
 
 // Interfaces
 /**
@@ -8,7 +8,7 @@ export interface IFaculty {
 	/**
 	 * @ignore
 	 */
-	user: IEventCreator;
+	user: IEventCreatorClass;
 
 	/**
 	 * Department name

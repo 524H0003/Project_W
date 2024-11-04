@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'auth/auth.service';
-import { ISignUp, UserRole } from 'user/user.model';
+import { IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
 import { Student } from './student.entity';
 import { Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { IStudentSignup } from './student.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { ISignUpKeys, IStudentKeys } from 'models';
+import { IUserSignUpKeys, IStudentKeys } from 'models';
 import { validation } from 'app/utils/auth.utils';
 import { User } from 'user/user.entity';
 
@@ -47,10 +47,10 @@ export class StudentService extends DatabaseRequests<Student> {
 			return await validation<User>(rawStu, async () => {
 				const user = await this.authSvc.signUp(
 					{
-						...InterfaceCasting.quick(input, ISignUpKeys),
+						...InterfaceCasting.quick(input, IUserSignUpKeys),
 						name: input.email,
 						password: (32).string + '!1Aa',
-					} as ISignUp,
+					} as IUserSignUp,
 					null,
 					{ role: UserRole.student },
 				);

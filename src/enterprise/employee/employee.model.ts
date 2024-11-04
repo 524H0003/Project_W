@@ -1,6 +1,6 @@
 import { IEnterprise } from 'enterprise/enterprise.model';
-import { IEventCreator } from 'event/creator/creator.model';
-import { ISignUp } from 'user/user.model';
+import { IEventCreatorClass } from 'event/creator/creator.model';
+import { IUserSignUp } from 'user/user.model';
 
 // Interfaces
 /**
@@ -16,27 +16,38 @@ export interface IEmployeeInfo {
 /**
  * Employee model
  */
-export interface IEmployee extends IEmployeeInfo {
+export interface IEmployeeRelationship {
 	/**
 	 * @ignore
 	 */
-	user: IEventCreator;
+	user: IEventCreatorClass;
 
 	/**
 	 * Employee's working enterprise
 	 */
 	enterprise: IEnterprise;
 }
-
 /**
- * Employee signup model
+ * Employee class model
  */
-export interface IEmployeeSignup extends ISignUp, IEmployeeInfo {
+export interface IEmployeeClass extends IEmployeeRelationship, IEmployeeInfo {}
+/**
+ * Enterprise signature for employee
+ */
+export interface IEmployeeSignature {
 	/**
 	 * Signature to sign up
 	 */
 	signature: string;
 }
+
+/**
+ * Employee signup model
+ */
+export interface IEmployeeSignup
+	extends IEmployeeSignature,
+		IEmployeeInfo,
+		IUserSignUp {}
 
 /**
  * Employee hooking
