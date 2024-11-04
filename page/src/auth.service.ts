@@ -1,11 +1,11 @@
 import axios from 'axios'
-import { IEmployeeSignup } from 'project-w-backend/enterprise/employee/employee.model.js'
-import { IEnterpriseAssign } from 'project-w-backend/enterprise/enterprise.model.js'
-import {
+import type { IEmployeeSignup } from 'project-w-backend/src/enterprise/employee/employee.model.js'
+import type { IEnterpriseAssign } from 'project-w-backend/src/enterprise/enterprise.model.js'
+import type {
   IUserAuthentication,
   IUserInfo,
   IUserRecieve,
-} from 'user/user.model.js'
+} from 'project-w-backend/src/user/user.model'
 import { reactive } from 'vue'
 
 const API_URL = '/api/v1'

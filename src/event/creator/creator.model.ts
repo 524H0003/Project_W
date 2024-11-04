@@ -20,4 +20,4 @@ export interface IEventCreatorRelationship {
 /**
  * Event creator class
  */
-export interface IEventCreatorClass extends IEventCreatorRelationship {}
+export interface IEventCreatorEntity extends IEventCreatorRelationship {}

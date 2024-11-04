@@ -1,1 +1,15 @@
-{ "compilerOptions": { "baseUrl": "./src" } }
+{
+	"exclude": [
+		"."
+	],
+	"compilerOptions": {
+		"moduleResolution": "Bundler",
+		"module": "Preserve",
+		"target": "ESNext",
+		"sourceMap": false
+	},
+	"include": [
+		"../src/**/*.model.ts",
+	],
+	"extends": "../tsconfig.json",
+}

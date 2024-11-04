@@ -1,17 +1,17 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
-import { IEventCreatorClass } from './creator.model';
 import { IUserAuthentication } from 'user/user.model';
 import { IBaseUser } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IBaseUserKeys, IUserAuthenticationKeys } from 'models';
+import { IEventCreatorEntity } from './creator.model';
 
 /**
  * Event creator model
  */
 @Entity({ name: 'EventCreator' })
-export class EventCreator implements IEventCreatorClass {
+export class EventCreator implements IEventCreatorEntity {
 	/**
 	 * Create event creator entity with infomations
 	 */

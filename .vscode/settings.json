@@ -32,7 +32,6 @@
 		".adminjs": true,
 		".devcontainer": true,
 		".git": true,
-		".gitignore": true,
 		"LICENSE": true,
 		"coverage": true,
 		"documentation": true,
@@ -42,7 +41,6 @@
 		"secrets": true,
 		"src/build.ts": true,
 		"src/models.ts": true,
-		"src/types.ts": true,
 		"types": true
 	},
 	"jest.outputConfig": { "clearOnRun": "terminal" },

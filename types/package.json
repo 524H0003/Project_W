@@ -1,10 +1,9 @@
 {
-	"name": "@types/project-w-backend",
+	"name": "project-w-backend",
 	"version": "0.0.1",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"author": "Nguyễn Việt Anh <vietuk.nguyen.git@icloud.com>",
-	"type": "commonjs",
 	"files": [
 		"./**/*"
 	]
