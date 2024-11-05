@@ -1,21 +1,24 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
-import { IStudent, IStudentClass } from './student.model';
+import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserKeys, IStudentKeys, IUserAuthenticationKeys } from 'models';
-import { IBaseUser } from 'app/app.model';
-import { IUserAuthentication } from 'user/user.model';
+import {
+	IBaseUserKeys,
+	IStudentInfoKeys,
+	IUserAuthenticationKeys,
+} from 'models';
+import { IUserSignUp } from 'user/user.model';
 
 /**
  * Student entity
  */
 @Entity({ name: 'Student' })
-export class Student implements IStudentClass {
+export class Student implements IStudentEntity {
 	/**
 	 * Create student entity with infomations
 	 */
-	constructor(payload: IStudent & IUserAuthentication & IBaseUser) {
+	constructor(payload: IStudentInfo & IUserSignUp) {
 		if (payload) {
 			this.user = new User(
 				InterfaceCasting.quick(payload, [
@@ -23,7 +26,7 @@ export class Student implements IStudentClass {
 					...IBaseUserKeys,
 				]),
 			);
-			Object.assign(this, InterfaceCasting.quick(payload, IStudentKeys));
+			Object.assign(this, InterfaceCasting.quick(payload, IStudentInfoKeys));
 		}
 	}
 
@@ -82,7 +85,7 @@ export class Student implements IStudentClass {
 				graduationYear: (20).random,
 				enrollmentYear: (20).random,
 				skills: (3).string,
-				...user.user,
+				...user.base,
 				...user,
 				password,
 			});

@@ -42,7 +42,7 @@ export class HookService extends DatabaseRequests<Hook> {
 				mtdt,
 				note: JSON.stringify(addInfo),
 				from: {
-					user: await this.mailSvc.sendResetPassword(email, host, signature),
+					base: await this.mailSvc.sendResetPassword(email, host, signature),
 				},
 			});
 

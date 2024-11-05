@@ -97,7 +97,7 @@ export class EmployeeController extends AuthController {
 						JSON.parse((request.user as Hook).note).enterpriseName,
 						{ role: UserRole.enterprise },
 					)
-				).user.user,
+				).eventCreator.user,
 				mtdt,
 			);
 		} catch (error) {

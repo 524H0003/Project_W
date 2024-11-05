@@ -27,15 +27,6 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	}
 
 	/**
-	 * Find enterprise with email
-	 * @param {string} input - the user's email
-	 * @return {Promise<Enterprise>} the user's infomations that found
-	 */
-	email(input: string): Promise<Enterprise> {
-		return this.findOne({ user: { email: input.toLowerCase() } });
-	}
-
-	/**
 	 * Create enterprise
 	 */
 	protected async save(

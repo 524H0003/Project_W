@@ -1,5 +1,5 @@
 import { IEvent } from 'event/event.model';
-import { IUserClass } from 'user/user.model';
+import { IUserEntity } from 'user/user.model';
 
 // Interfaces
 /**
@@ -9,7 +9,7 @@ export interface IFile {
 	/**
 	 * File creator
 	 */
-	createdBy: IUserClass;
+	createdBy: IUserEntity;
 
 	/**
 	 * File create for event

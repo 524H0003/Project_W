@@ -10,10 +10,10 @@
 
 > /api/v1/login, /api/v1/student/login
 
-| Miền     | Kiểu dữ liệu | Bắt buộc |
-| -------- | ------------ | -------- |
-| email    | string       | :green_circle:   |
-| password | string       | :green_circle:   |
+| Miền     | Kiểu dữ liệu | Bắt buộc       |
+| -------- | ------------ | -------------- |
+| email    | string       | :green_circle: |
+| password | string       | :green_circle: |
 
 - [x] Yêu cầu signature thông qua console
 
@@ -23,49 +23,49 @@
 
 > /api/v1/change
 
-| Miền  | Kiểu dữ liệu | Bắt buộc |
-| ----- | ------------ | -------- |
-| email | string       | :green_circle:   |
+| Miền  | Kiểu dữ liệu | Bắt buộc       |
+| ----- | ------------ | -------------- |
+| email | string       | :green_circle: |
 
 - [x] Gửi mật khẩu mới
 
 > /api/v1/change/:signature
 
-| Miền     | Kiểu dữ liệu | Bắt buộc |
-| -------- | ------------ | -------- |
-| password | string       | :green_circle:   |
+| Miền     | Kiểu dữ liệu | Bắt buộc       |
+| -------- | ------------ | -------------- |
+| password | string       | :green_circle: |
 
 - [x] Đăng ký doanh nghiệp
 
 > /api/v1/enterprise/assign
 
-| Miền        | Kiểu dữ liệu | Bắt buộc |
-| ----------- | ------------ | -------- |
-| email       | string       | :green_circle:   |
-| industry    | string       | :green_circle:   |
-| name        | string       | :green_circle:   |
-| description | string       | :green_circle:   |
-| signature   | string       | :green_circle:   |
+| Miền        | Kiểu dữ liệu | Bắt buộc       |
+| ----------- | ------------ | -------------- |
+| email       | string       | :green_circle: |
+| industry    | string       | :green_circle: |
+| name        | string       | :green_circle: |
+| description | string       | :green_circle: |
+| signature   | string       | :green_circle: |
 
 - [x] Yêu cầu signature dành cho nhân viên doanh nghiệp
 
 > /api/v1/employee/hook
 
-| Miền           | Kiểu dữ liệu | Bắt buộc |
-| -------------- | ------------ | -------- |
-| enterpriseName | string       | :green_circle:   |
+| Miền           | Kiểu dữ liệu | Bắt buộc       |
+| -------------- | ------------ | -------------- |
+| enterpriseName | string       | :green_circle: |
 
 - [x] Đăng ký nhân viên của doanh nghiệp
 
 > /api/v1/enterprise/assign
 
-| Miền      | Kiểu dữ liệu         | Bắt buộc |
-| --------- | -------------------- | -------- |
-| email     | string               | :green_circle:   |
-| password  | string               | :green_circle:   |
-| name      | string               | :green_circle:   |
-| position  | EmployeePosition[^1] | :green_circle:   |
-| signature | string               | :green_circle:   |
+| Miền      | Kiểu dữ liệu         | Bắt buộc       |
+| --------- | -------------------- | -------------- |
+| email     | string               | :green_circle: |
+| password  | string               | :green_circle: |
+| name      | string               | :green_circle: |
+| position  | EmployeePosition[^1] | :green_circle: |
+| signature | string               | :green_circle: |
 
 - [ ] Đăng ký tài khoản khoa của Đại học
 

@@ -7,7 +7,7 @@ import { IBaseUserKeys, IUserAuthenticationKeys, IUserInfoKeys } from 'models';
 import { Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
-	IUserClass,
+	IUserEntity,
 	UserRole,
 	IUserInfo,
 	IUserRecieve,
@@ -26,13 +26,13 @@ import { decode, JwtPayload } from 'jsonwebtoken';
  */
 @ObjectType()
 @Entity({ name: 'User' })
-export class User implements IUserClass {
+export class User implements IUserEntity {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
 	constructor(payload: IUserAuthentication & IBaseUser) {
 		if (payload) {
-			this.user = new BaseUser(InterfaceCasting.quick(payload!, IBaseUserKeys));
+			this.base = new BaseUser(InterfaceCasting.quick(payload!, IBaseUserKeys));
 			Object.assign(
 				this,
 				InterfaceCasting.quick(payload!, IUserAuthenticationKeys),
@@ -66,7 +66,7 @@ export class User implements IUserClass {
 	 * Base user
 	 */
 	@Column(() => BaseUser, { prefix: false })
-	user: BaseUser;
+	base: BaseUser;
 
 	// Relationships
 	/**
@@ -159,7 +159,7 @@ export class User implements IUserClass {
 	get info(): IUserInfo {
 		return {
 			...InterfaceCasting.quick(this, IUserInfoKeys),
-			...InterfaceCasting.quick(this.user, IBaseUserKeys),
+			...InterfaceCasting.quick(this.base, IBaseUserKeys),
 		};
 	}
 

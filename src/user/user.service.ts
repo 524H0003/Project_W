@@ -38,8 +38,8 @@ export class UserService extends DatabaseRequests<User> {
 		entity: DeepPartial<User>,
 		options?: SaveOptions,
 	): Promise<User> {
-		const baseUsr = await this.appSvc.baseUser.assign(entity.user);
-		return this.save({ ...entity, user: baseUsr }, options);
+		const baseUsr = await this.appSvc.baseUser.assign(entity.base);
+		return this.save({ ...entity, base: baseUsr }, options);
 	}
 
 	/**
@@ -52,8 +52,8 @@ export class UserService extends DatabaseRequests<User> {
 		entity: DeepPartial<User>,
 		options?: SaveOptions,
 	): Promise<User> {
-		const baseUsr = await this.appSvc.baseUser.modify(entity.user);
-		return this.update({ ...entity, user: baseUsr }, options);
+		const baseUsr = await this.appSvc.baseUser.modify(entity.base);
+		return this.update({ ...entity, base: baseUsr }, options);
 	}
 
 	/**
@@ -62,20 +62,29 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<DeleteResult>}
 	 */
 	async remove(criteria: FindOptionsWhere<User>): Promise<DeleteResult> {
-		const result = await this.remove(criteria);
+		const result = await this.delete(criteria);
 		await this.appSvc.baseUser.remove({
-			...new BaseUser(criteria.user as BaseUser),
+			...new BaseUser(criteria.base as BaseUser),
 		});
 		return result;
 	}
 
 	/**
 	 * Find user with email
-	 * @param {string} input - the user's email
-	 * @return {Promise<User>} the user's infomations that found
+	 * @param {string} input - user's email
+	 * @return {Promise<User>} founded user
 	 */
 	email(input: string): Promise<User> {
-		return this.findOne({ user: { email: input.toLowerCase() } });
+		return this.findOne({ base: { email: input.toLowerCase() } });
+	}
+
+	/**
+	 * Find user with id
+	 * @param {string} id - user's id
+	 * @return {Promise<User>} founded user
+	 */
+	id(id: string): Promise<User> {
+		return this.findOne({ base: { id } });
 	}
 
 	/**
@@ -85,6 +94,6 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} the user's infomations
 	 */
 	async updateRole(userId: string, updateRole: UserRole): Promise<User> {
-		return this.update({ user: { id: userId }, role: updateRole });
+		return this.update({ base: { id: userId }, role: updateRole });
 	}
 }

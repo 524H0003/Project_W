@@ -74,10 +74,10 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 					...option,
 					role: UserRole.enterprise,
 				}),
-				evtCre = await this.envCreSvc.assign(usr);
+				eventCreator = await this.envCreSvc.assign(usr);
 
 			return await this.save({
-				user: evtCre,
+				eventCreator,
 				enterprise: await this.entSvc.findOne({
 					user: { name: enterpriseName },
 				}),

@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import {
 	EmployeePosition,
-	IEmployeeClass,
+	IEmployeeEntity,
 	IEmployeeInfo,
 } from './employee.model';
 import { EventCreator } from 'event/creator/creator.entity';
@@ -16,13 +16,13 @@ import { IEmployeeInfoKeys } from 'models';
  * Employee entity
  */
 @Entity({ name: 'EnterpriseUser' })
-export class Employee implements IEmployeeClass {
+export class Employee implements IEmployeeEntity {
 	/**
 	 * Create employee entity with infomations
 	 */
 	constructor(payload: IEmployeeInfo & IUserAuthentication & IBaseUser) {
 		if (payload) {
-			this.user = new EventCreator(payload);
+			this.eventCreator = new EventCreator(payload);
 			Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));
 		}
 	}
@@ -32,7 +32,7 @@ export class Employee implements IEmployeeClass {
 	 * @ignore
 	 */
 	@Column(() => EventCreator, { prefix: false })
-	user: EventCreator;
+	eventCreator: EventCreator;
 
 	// Relationships
 	/**
@@ -63,11 +63,11 @@ export class Employee implements IEmployeeClass {
 		const { email = `${(7).string}@gmaill.vn`, password = (16).string + '!!' } =
 				{},
 			baseUser = User.test(from, { email, password }),
-			user = EventCreator.test(from, { user: baseUser });
+			eventCreator = EventCreator.test(from, { user: baseUser });
 		return new Employee({
-			...user,
-			...user.user,
-			...user.user.user,
+			...eventCreator,
+			...eventCreator.user,
+			...eventCreator.user.base,
 			position: EmployeePosition.other,
 		});
 	}

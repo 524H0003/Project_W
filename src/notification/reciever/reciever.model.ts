@@ -1,5 +1,5 @@
 import { INotification } from 'notification/notification.model';
-import { IUserClass } from 'user/user.model';
+import { IUserEntity } from 'user/user.model';
 
 // Interfaces
 /**
@@ -9,7 +9,7 @@ export interface IReciever {
 	/**
 	 * Recieve user
 	 */
-	to: IUserClass;
+	to: IUserEntity;
 
 	/**
 	 * Notification origin

@@ -1,6 +1,6 @@
 import { IBaseUser } from 'app/app.model';
-import { IStudent } from 'university/student/student.model';
-import { IEmployeeClass } from './employee/employee.model';
+import { IStudentInfo } from 'university/student/student.model';
+import { IEmployeeEntity } from './employee/employee.model';
 
 // Interfaces
 /**
@@ -40,10 +40,10 @@ export interface IEnterprise extends IEnterpriseInfo {
 	/**
 	 * Enterprise's employees
 	 */
-	employees: IEmployeeClass[];
+	employees: IEmployeeEntity[];
 
 	/**
 	 * Enterprise's students
 	 */
-	students: IStudent[];
+	students: IStudentInfo[];
 }

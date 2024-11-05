@@ -56,44 +56,21 @@ export interface IUserSensitive {
 }
 
 /**
- * User relationships
+ * @ignore
  */
 export interface IUserRelationship {
-	/**
-	 * Base user
-	 */
-	user: IBaseUser;
-
-	/**
-	 * Recieved notifications
-	 */
+	base: IBaseUser;
 	recievedNotifications: IReciever[];
-
-	/**
-	 * Signed in devices
-	 */
 	devices: IDevice[];
-
-	/**
-	 * Uploaded files
-	 */
 	uploadFiles: IFile[];
-
-	/**
-	 * Participated events
-	 */
 	participatedEvents: IEventParticipator[];
-
-	/**
-	 * Hooks
-	 */
 	hooks: IHook[];
 }
 
 /**
  * User class
  */
-export interface IUserClass
+export interface IUserEntity
 	extends IUserAuthentication,
 		IUserInfo,
 		IUserRelationship {}

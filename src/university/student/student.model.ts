@@ -1,11 +1,11 @@
 import { IEnterprise } from 'enterprise/enterprise.model';
-import { IUserSignUp, IUserClass } from 'user/user.model';
+import { IUserSignUp, IUserEntity } from 'user/user.model';
 
 // Interfaces
 /**
  * Student class
  */
-export interface IStudentClass extends ISutdentRelationship, IStudent {}
+export interface IStudentEntity extends ISutdentRelationship, IStudentInfo {}
 
 /**
  * Student relationships
@@ -14,7 +14,7 @@ export interface ISutdentRelationship {
 	/**
 	 * @ignore
 	 */
-	user: IUserClass;
+	user: IUserEntity;
 
 	/**
 	 * Student current working enterprise
@@ -25,7 +25,7 @@ export interface ISutdentRelationship {
 /**
  * Student general infomations
  */
-export interface IStudent {
+export interface IStudentInfo {
 	/**
 	 * Student's major
 	 */
@@ -50,4 +50,4 @@ export interface IStudent {
 /**
  * Student signup
  */
-export interface IStudentSignup extends IStudent, IUserSignUp {}
+export interface IStudentSignup extends IStudentInfo, IUserSignUp {}

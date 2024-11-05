@@ -1,8 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
-import { IUserAuthentication } from 'user/user.model';
-import { IBaseUser } from 'app/app.model';
+import { IUserSignUp } from 'user/user.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IBaseUserKeys, IUserAuthenticationKeys } from 'models';
 import { IEventCreatorEntity } from './creator.model';
@@ -15,7 +14,7 @@ export class EventCreator implements IEventCreatorEntity {
 	/**
 	 * Create event creator entity with infomations
 	 */
-	constructor(payload: IUserAuthentication & IBaseUser) {
+	constructor(payload: IUserSignUp) {
 		if (payload) {
 			this.user = new User(
 				InterfaceCasting.quick(payload, [
@@ -46,6 +45,6 @@ export class EventCreator implements IEventCreatorEntity {
 	 */
 	static test(from: string, options?: { user?: User }) {
 		const { user = User.test(from) } = options || {};
-		return new EventCreator({ ...user, ...user.user });
+		return new EventCreator({ ...user, ...user.base });
 	}
 }

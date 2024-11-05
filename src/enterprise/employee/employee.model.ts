@@ -14,40 +14,25 @@ export interface IEmployeeInfo {
 }
 
 /**
- * Employee model
+ * @ignore
  */
 export interface IEmployeeRelationship {
-	/**
-	 * @ignore
-	 */
-	user: IEventCreatorEntity;
-
-	/**
-	 * Employee's working enterprise
-	 */
+	eventCreator: IEventCreatorEntity;
 	enterprise: IEnterprise;
 }
 /**
- * Employee class model
+ * @ignore
  */
-export interface IEmployeeClass extends IEmployeeRelationship, IEmployeeInfo {}
+export interface IEmployeeEntity extends IEmployeeRelationship, IEmployeeInfo {}
 /**
- * Enterprise signature for employee
+ * Employee signup model
  */
-export interface IEmployeeSignature {
+export interface IEmployeeSignup extends IEmployeeInfo, IUserSignUp {
 	/**
 	 * Signature to sign up
 	 */
 	signature: string;
 }
-
-/**
- * Employee signup model
- */
-export interface IEmployeeSignup
-	extends IEmployeeSignature,
-		IEmployeeInfo,
-		IUserSignUp {}
 
 /**
  * Employee hooking
