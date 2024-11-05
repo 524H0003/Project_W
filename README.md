@@ -89,4 +89,4 @@
 
 ---
 
-[^1]: Tài liệu của kiểu dữ liệu đó [tại đây](https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EmployeePosition)
+[^1]: [Kiểu enum EmployeePosition](https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EmployeePosition)
