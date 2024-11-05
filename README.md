@@ -12,8 +12,8 @@
 
 | Miền     | Kiểu dữ liệu | Bắt buộc |
 | -------- | ------------ | -------- |
-| email    | string       | :tick:   |
-| password | string       | :tick:   |
+| email    | string       | :green_circle:   |
+| password | string       | :green_circle:   |
 
 - [x] Yêu cầu signature thông qua console
 
@@ -25,7 +25,7 @@
 
 | Miền  | Kiểu dữ liệu | Bắt buộc |
 | ----- | ------------ | -------- |
-| email | string       | :tick:   |
+| email | string       | :green_circle:   |
 
 - [x] Gửi mật khẩu mới
 
@@ -33,7 +33,7 @@
 
 | Miền     | Kiểu dữ liệu | Bắt buộc |
 | -------- | ------------ | -------- |
-| password | string       | :tick:   |
+| password | string       | :green_circle:   |
 
 - [x] Đăng ký doanh nghiệp
 
@@ -41,11 +41,11 @@
 
 | Miền        | Kiểu dữ liệu | Bắt buộc |
 | ----------- | ------------ | -------- |
-| email       | string       | :tick:   |
-| industry    | string       | :tick:   |
-| name        | string       | :tick:   |
-| description | string       | :tick:   |
-| signature   | string       | :tick:   |
+| email       | string       | :green_circle:   |
+| industry    | string       | :green_circle:   |
+| name        | string       | :green_circle:   |
+| description | string       | :green_circle:   |
+| signature   | string       | :green_circle:   |
 
 - [x] Yêu cầu signature dành cho nhân viên doanh nghiệp
 
@@ -53,7 +53,7 @@
 
 | Miền           | Kiểu dữ liệu | Bắt buộc |
 | -------------- | ------------ | -------- |
-| enterpriseName | string       | :tick:   |
+| enterpriseName | string       | :green_circle:   |
 
 - [x] Đăng ký nhân viên của doanh nghiệp
 
@@ -61,11 +61,11 @@
 
 | Miền      | Kiểu dữ liệu         | Bắt buộc |
 | --------- | -------------------- | -------- |
-| email     | string               | :tick:   |
-| password  | string               | :tick:   |
-| name      | string               | :tick:   |
-| position  | EmployeePosition[^1] | :tick:   |
-| signature | string               | :tick:   |
+| email     | string               | :green_circle:   |
+| password  | string               | :green_circle:   |
+| name      | string               | :green_circle:   |
+| position  | EmployeePosition[^1] | :green_circle:   |
+| signature | string               | :green_circle:   |
 
 - [ ] Đăng ký tài khoản khoa của Đại học
 
