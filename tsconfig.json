@@ -12,6 +12,7 @@
 		"noFallthroughCasesInSwitch": false,
 		"noImplicitAny": false,
 		"outDir": "dist",
+		"paths": { "*": ["./src/*"] },
 		"removeComments": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
@@ -19,12 +20,7 @@
 		"strictFunctionTypes": true,
 		"strictNullChecks": false,
 		"target": "ESNext",
-		"useDefineForClassFields": false,
-		"paths": {
-			"*": [
-				"./src/*"
-			],
-		}
+		"useDefineForClassFields": false
 	},
 	"exclude": [
 		"./**/*.d.ts",

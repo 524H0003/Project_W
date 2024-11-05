@@ -1,8 +1,6 @@
 {
 	"debug.javascript.autoAttachFilter": "disabled",
-	"editor.codeActionsOnSave": {
-		"source.fixAll": "explicit"
-	},
+	"editor.codeActionsOnSave": { "source.fixAll": "explicit" },
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
@@ -19,13 +17,13 @@
 	"explorerExclude.backup": {},
 	"files.eol": "\n",
 	"files.exclude": {
-		"**/.git": true,
-		"**/.svn": true,
-		"**/.hg": true,
-		"**/CVS": true,
-		"**/.DS_Store": true,
-		"**/Thumbs.db": true,
 		"**/*.tsbuildinfo": true,
+		"**/.DS_Store": true,
+		"**/.git": true,
+		"**/.hg": true,
+		"**/.svn": true,
+		"**/CVS": true,
+		"**/Thumbs.db": true,
 		"**/dist": true,
 		"**/node_modules": true,
 		"**/schema.gql": true,
@@ -43,9 +41,7 @@
 		"src/models.ts": true,
 		"types": true
 	},
-	"jest.outputConfig": {
-		"clearOnRun": "terminal"
-	},
+	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,

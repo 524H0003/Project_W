@@ -12,10 +12,7 @@ import { reactive } from 'vue'
 
 const API_URL = '/api/v1'
 
-export const alert = reactive<IAlert>({
-    message: '',
-    type: 'none',
-  }),
+export const alert = reactive<IAlert>({ message: '', type: 'none' }),
   state = reactive<AuthState>({ user: null, token: null })
 
 interface AuthState {
