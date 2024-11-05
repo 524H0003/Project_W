@@ -3,6 +3,7 @@ import {
   IEmployeeHook,
   IEmployeeSignup,
   IEnterpriseAssign,
+  IFacultyAssign,
   IUserAuthentication,
   IUserInfo,
   IUserRecieve,
@@ -41,6 +42,11 @@ export async function hookRequest(signature: string, password: string) {
 
 export async function assignEnterprise(input: IEnterpriseAssign) {
   const response = await axios.post(`${API_URL}/enterprise/assign`, input)
+  return response.data.user
+}
+
+export async function assignFaculty(input: IFacultyAssign) {
+  const response = await axios.post(`${API_URL}/faculty/assign`, input)
   return response.data.user
 }
 
@@ -140,6 +146,7 @@ export async function apiErrorHandler<T>(func: Promise<T>) {
         alert.object = 'signature'
         break
 
+      case 'Internal server error':
       case 'Unauthorized':
         alert.message = 'Something went wrong after sent your request'
         alert.type = 'error'

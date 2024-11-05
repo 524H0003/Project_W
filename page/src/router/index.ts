@@ -4,6 +4,7 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import HookView from '@/views/HookView.vue'
 import EnterpriseAssignView from '@/views/EnterpriseAssignView.vue'
 import EmployeeSignUpView from '@/views/EmployeeSignUpView.vue'
+import FacultyAssignView from '@/views/FacultyAssignView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,6 +13,7 @@ const router = createRouter({
     { path: '/enterprise/assign', component: EnterpriseAssignView },
     { path: '/employee/signup', component: EmployeeSignUpView },
     { path: '/hook/:signature', component: HookView },
+    { path: '/faculty/assign', component: FacultyAssignView },
     { path: '/:pathMatch(.*)*', component: NotFoundView },
   ],
 })

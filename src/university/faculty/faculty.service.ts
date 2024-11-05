@@ -4,7 +4,7 @@ import { Faculty } from './faculty.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IUserSignUpKeys } from 'models';
+import { IFacultyInfoKeys, IUserSignUpKeys } from 'models';
 import { IFacultyAssign } from './faculty.model';
 import { User } from 'user/user.entity';
 import { UserService } from 'user/user.service';
@@ -37,21 +37,32 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		input: IFacultyAssign,
 		avatar: Express.Multer.File,
 	): Promise<User> {
-		const user = await this.usrSvc.email(input.email),
+		const existedUser = await this.usrSvc.email(input.email),
 			rawFaculty = new Faculty(input);
 
-		if (user) return this.authSvc.login(input);
+		if (existedUser) return this.authSvc.login(input);
 
 		return validation<User>(rawFaculty, async () => {
-			const user = await this.authSvc.signUp(
+			const eventCreator = await this.evntCreSvc.assign(
+				await this.authSvc.signUp(
 					InterfaceCasting.quick(input, IUserSignUpKeys),
 					avatar,
 					{ role: UserRole.faculty },
 				),
-				eventCreator = await this.evntCreSvc.assign(user);
+			);
 
-			if (user.hashedPassword) {
-				return (await this.save({ eventCreator })).eventCreator.user;
+			try {
+				if (eventCreator.user.hashedPassword) {
+					return (
+						await this.save({
+							eventCreator,
+							...InterfaceCasting.quick(input, IFacultyInfoKeys),
+						})
+					).eventCreator.user;
+				}
+			} catch (error) {
+				await this.evntCreSvc.remove({ user: eventCreator.user });
+				throw error;
 			}
 		});
 	}

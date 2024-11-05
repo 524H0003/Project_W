@@ -46,6 +46,7 @@
 | name        | string       | :green_circle: |
 | description | string       | :green_circle: |
 | signature   | string       | :green_circle: |
+| avatar      | File         | :red_circle:   |
 
 - [x] Yêu cầu signature dành cho nhân viên doanh nghiệp
 
@@ -66,8 +67,20 @@
 | name      | string               | :green_circle: |
 | position  | EmployeePosition[^1] | :green_circle: |
 | signature | string               | :green_circle: |
+| avatar    | File                 | :red_circle:   |
 
-- [ ] Đăng ký tài khoản khoa của Đại học
+- [x] Đăng ký tài khoản khoa của Đại học
+
+> /api/v1/faculty/assign
+
+| Miền       | Kiểu dữ liệu | Bắt buộc       |
+| ---------- | ------------ | -------------- |
+| email      | string       | :green_circle: |
+| department | string       | :green_circle: |
+| name       | string       | :green_circle: |
+| password   | string       | :green_circle: |
+| signature  | string       | :green_circle: |
+| avatar     | File         | :red_circle:   |
 
 ### Thông báo
 

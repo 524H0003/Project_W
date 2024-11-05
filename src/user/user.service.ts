@@ -62,10 +62,12 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<DeleteResult>}
 	 */
 	async remove(criteria: FindOptionsWhere<User>): Promise<DeleteResult> {
-		const result = await this.delete(criteria);
-		await this.appSvc.baseUser.remove({
-			...new BaseUser(criteria.base as BaseUser),
-		});
+		const id =
+				(criteria.base as BaseUser).id ||
+				(await this.findOne(criteria)).base.id,
+			result = await this.delete({ base: { id } });
+		await this.appSvc.baseUser.remove({ id });
+
 		return result;
 	}
 
