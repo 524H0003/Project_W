@@ -1,5 +1,8 @@
 # compiled output
 **/dist
+types/*
+!types/package.json
+!types/tsconfig.*
 **/node_modules
 .adminjs
 src/models.ts

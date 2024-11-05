@@ -1,17 +1,35 @@
-import { IEventCreator } from 'event/creator/creator.model';
+import { IEventCreatorEntity } from 'event/creator/creator.model';
+import { IUserSignUp } from 'user/user.model';
 
 // Interfaces
 /**
- * Faculty model
+ * @ignore
  */
-export interface IFaculty {
-	/**
-	 * @ignore
-	 */
-	user: IEventCreator;
+export interface IFacultyRelationship {
+	eventCreator: IEventCreatorEntity;
+}
 
+/**
+ * Faculty general infomations
+ */
+export interface IFacultyInfo {
 	/**
 	 * Department name
 	 */
 	department: string;
+}
+
+/**
+ * @ignore
+ */
+export interface IFacultyEntity extends IFacultyRelationship, IFacultyInfo {}
+
+/**
+ * Faculty assign
+ */
+export interface IFacultyAssign extends IFacultyInfo, IUserSignUp {
+	/**
+	 * Signature to assign
+	 */
+	signature: string;
 }

@@ -64,7 +64,10 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 * @return {Promise<DeleteResult>}
 	 */
 	async remove(criteria: FindOptionsWhere<BaseUser>): Promise<DeleteResult> {
-		return super.delete(criteria);
+		const id = criteria.id || (await this.findOne(criteria)).id,
+			result = await this.delete({ id });
+
+		return result;
 	}
 
 	/**

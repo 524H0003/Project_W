@@ -31,7 +31,7 @@ describe('login', () => {
 		stu = Student.test(fileName, { email: 'aa' });
 
 		await execute(
-			() => req.post('/student/login').send({ ...stu.user, ...stu.user.user }),
+			() => req.post('/student/login').send({ ...stu.user, ...stu.user.base }),
 			{
 				exps: [
 					{
@@ -49,7 +49,7 @@ describe('login', () => {
 				JSON.stringify(
 					await req
 						.post('/student/login')
-						.send({ ...stu.user, ...stu.user.user }),
+						.send({ ...stu.user, ...stu.user.base }),
 				),
 			{
 				exps: [

@@ -90,8 +90,14 @@ export class EmployeeController extends AuthController {
 			return this.responseWithUser(
 				request,
 				response,
-				(await this.empSvc.signUp(body, avatar, { role: UserRole.enterprise }))
-					.user.user,
+				(
+					await this.empSvc.signUp(
+						body,
+						avatar,
+						JSON.parse((request.user as Hook).note).enterpriseName,
+						{ role: UserRole.enterprise },
+					)
+				).eventCreator.user,
 				mtdt,
 			);
 		} catch (error) {

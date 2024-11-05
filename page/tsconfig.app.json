@@ -6,6 +6,9 @@
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "baseUrl": ".",
-    "paths": { "@/*": ["./src/*"] }
+    "paths": { "@/*": ["./src/*"] },
+    "verbatimModuleSyntax": false,
+    "skipLibCheck": false,
+    "skipDefaultLibCheck": false
   }
 }

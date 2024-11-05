@@ -4,7 +4,6 @@
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"author": "Nguyễn Việt Anh <vietuk.nguyen.git@icloud.com>",
-	"type": "commonjs",
-	"main": "src/types.js",
-	"types": "src/types.d.ts"
+	"types": "index.d.ts",
+	"main": "types.js"
 }

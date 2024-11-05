@@ -1,19 +1,30 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { EmployeePosition, IEmployee } from './employee.model';
+import {
+	EmployeePosition,
+	IEmployeeEntity,
+	IEmployeeInfo,
+} from './employee.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { User } from 'user/user.entity';
+import { IUserAuthentication } from 'user/user.model';
+import { IBaseUser } from 'app/app.model';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IEmployeeInfoKeys } from 'models';
 
 /**
  * Employee entity
  */
 @Entity({ name: 'EnterpriseUser' })
-export class Employee implements IEmployee {
+export class Employee implements IEmployeeEntity {
 	/**
 	 * Create employee entity with infomations
 	 */
-	constructor(payload: IEmployee) {
-		Object.assign(this, payload);
+	constructor(payload: IEmployeeInfo & IUserAuthentication & IBaseUser) {
+		if (payload) {
+			this.eventCreator = new EventCreator(payload);
+			Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));
+		}
 	}
 
 	// Core Entity
@@ -21,7 +32,7 @@ export class Employee implements IEmployee {
 	 * @ignore
 	 */
 	@Column(() => EventCreator, { prefix: false })
-	user: EventCreator;
+	eventCreator: EventCreator;
 
 	// Relationships
 	/**
@@ -52,10 +63,11 @@ export class Employee implements IEmployee {
 		const { email = `${(7).string}@gmaill.vn`, password = (16).string + '!!' } =
 				{},
 			baseUser = User.test(from, { email, password }),
-			user = EventCreator.test(from, { user: baseUser });
+			eventCreator = EventCreator.test(from, { user: baseUser });
 		return new Employee({
-			user,
-			enterprise: null,
+			...eventCreator,
+			...eventCreator.user,
+			...eventCreator.user.base,
 			position: EmployeePosition.other,
 		});
 	}

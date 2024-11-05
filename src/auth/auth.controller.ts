@@ -4,13 +4,14 @@ import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
 import { compareSync } from 'bcrypt';
 import { CookieOptions, Request, Response } from 'express';
-import { ILogin, ISignUp } from 'user/user.model';
+import { IUserLogin, IUserSignUp } from 'user/user.model';
 import { AuthService } from './auth.service';
 import { HookService } from '../app/hook/hook.service';
 import { Hook } from '../app/hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 import { IRefreshResult } from './strategies/refresh.strategy';
 import { User, UserRecieve } from 'user/user.entity';
+import { IBaseUserEmail } from 'app/app.model';
 
 /**
  * Auth controller
@@ -127,14 +128,14 @@ export class AuthController {
 	 * User login
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
-	 * @param {ILogin} body - login input
+	 * @param {IUserLogin} body - login input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
 	protected async login(
 		request: Request,
 		response: Response,
-		body: ILogin,
+		body: IUserLogin,
 		mtdt: string,
 	): Promise<void> {
 		return this.responseWithUser(
@@ -149,7 +150,7 @@ export class AuthController {
 	 * User sign up
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
-	 * @param {ISignUp} body - sign up input
+	 * @param {IUserSignUp} body - sign up input
 	 * @param {string} mtdt - client's metadata
 	 * @param {Express.Multer.File} avatar - user's avatar
 	 * @return {Promise<void>}
@@ -157,7 +158,7 @@ export class AuthController {
 	protected async signUp(
 		request: Request,
 		response: Response,
-		body: ISignUp,
+		body: IUserSignUp,
 		mtdt: string,
 		avatar: Express.Multer.File,
 	): Promise<void> {
@@ -225,7 +226,7 @@ export class AuthController {
 	protected async requestViaEmail(
 		request: Request,
 		response: Response,
-		body: { email: string },
+		body: IBaseUserEmail,
 		mtdt: string,
 	): Promise<void> {
 		return this.responseWithUserRecieve(

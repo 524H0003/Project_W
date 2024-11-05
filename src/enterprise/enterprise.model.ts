@@ -1,6 +1,6 @@
 import { IBaseUser } from 'app/app.model';
-import { IEmployee } from 'enterprise/employee/employee.model';
-import { IStudent } from 'university/student/student.model';
+import { IStudentInfo } from 'university/student/student.model';
+import { IEmployeeEntity } from './employee/employee.model';
 
 // Interfaces
 /**
@@ -21,7 +21,7 @@ export interface IEnterpriseInfo {
 /**
  * Enterprise assign form
  */
-export interface IEnterpriseAssign extends IEnterpriseInfo {
+export interface IEnterpriseAssign extends IEnterpriseInfo, IBaseUser {
 	/**
 	 * Signature to assign
 	 */
@@ -40,10 +40,10 @@ export interface IEnterprise extends IEnterpriseInfo {
 	/**
 	 * Enterprise's employees
 	 */
-	employees: IEmployee[];
+	employees: IEmployeeEntity[];
 
 	/**
 	 * Enterprise's students
 	 */
-	students: IStudent[];
+	students: IStudentInfo[];
 }

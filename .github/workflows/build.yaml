@@ -31,11 +31,11 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('./package.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('./package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: 'npm run types && npm run doc'
+      - run: 'npm ci && npm run types && npm run doc'
 
       - run: 'cp README.md LICENSE ./types'
 

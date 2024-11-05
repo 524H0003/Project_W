@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
-		"baseUrl": "src",
 		"declaration": true,
 		"emitDecoratorMetadata": true,
 		"esModuleInterop": true,
@@ -13,8 +12,8 @@
 		"noFallthroughCasesInSwitch": false,
 		"noImplicitAny": false,
 		"outDir": "dist",
-		"removeComments": false,
-		"rootDir": "src",
+		"paths": { "*": ["./src/*"] },
+		"removeComments": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,

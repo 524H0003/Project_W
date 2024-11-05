@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'auth/auth.service';
-import { ISignUp, UserRole } from 'user/user.model';
+import { IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
 import { Student } from './student.entity';
 import { Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { IStudentSignup } from './student.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { ISignUpKeys, IStudentKeys } from 'models';
+import { IStudentInfoKeys, IUserSignUpKeys } from 'models';
 import { validation } from 'app/utils/auth.utils';
 import { User } from 'user/user.entity';
 
@@ -43,27 +43,29 @@ export class StudentService extends DatabaseRequests<Student> {
 
 		if (user) return this.authSvc.login(input);
 
-		if (rawStu.user.user.email.match(this.studentMailRex))
-			return await validation<User>(rawStu, async () => {
-				const user = await this.authSvc.signUp(
-					{
-						...InterfaceCasting.quick(input, ISignUpKeys),
-						name: input.email,
-						password: (32).string + '!1Aa',
-					} as ISignUp,
-					null,
-					{ role: UserRole.student },
-				);
-				if (user.hashedPassword) {
-					await this.save({
-						user,
-						...InterfaceCasting.quick(input, IStudentKeys),
-						enrollmentYear: Number('20' + input.email.toString().slice(1, 3)),
-					});
-					throw new Error('Request_New_User');
-				}
-				return user;
-			});
-		else throw new BadRequestException('Invalid_Student_Email');
+		if (!rawStu.user.base.email.match(this.studentMailRex))
+			throw new BadRequestException('Invalid_Student_Email');
+
+		return await validation<User>(rawStu, async () => {
+			const user = await this.authSvc.signUp(
+				{
+					...InterfaceCasting.quick(input, IUserSignUpKeys),
+					name: input.email,
+					password: (32).string + '!1Aa',
+				} as IUserSignUp,
+				null,
+				{ role: UserRole.student },
+			);
+
+			if (user.hashedPassword) {
+				await this.save({
+					user,
+					...InterfaceCasting.quick(input, IStudentInfoKeys),
+					enrollmentYear: Number('20' + input.email.toString().slice(1, 3)),
+				});
+				throw new Error('Request_New_User');
+			}
+			return user;
+		});
 	}
 }
