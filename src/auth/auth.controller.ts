@@ -11,6 +11,7 @@ import { Hook } from '../app/hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 import { IRefreshResult } from './strategies/refresh.strategy';
 import { User, UserRecieve } from 'user/user.entity';
+import { IBaseUserEmail } from 'app/app.model';
 
 /**
  * Auth controller
@@ -225,7 +226,7 @@ export class AuthController {
 	protected async requestViaEmail(
 		request: Request,
 		response: Response,
-		body: { email: string },
+		body: IBaseUserEmail,
 		mtdt: string,
 	): Promise<void> {
 		return this.responseWithUserRecieve(

@@ -28,6 +28,7 @@ import { memoryStorage } from 'multer';
 import { StudentController } from 'university/student/student.controller';
 import { IStudentSignup } from 'university/student/student.model';
 import { IUserLogin, IUserSignUp } from 'user/user.model';
+import { IBaseUserEmail } from './app.model';
 
 /**
  * Application Controller
@@ -157,7 +158,7 @@ export class AppController extends AuthController {
 	async requestViaEmail(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
-		@Body() body: { email: string },
+		@Body() body: IBaseUserEmail,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		return super.requestViaEmail(request, response, body, mtdt);
