@@ -43,7 +43,7 @@ beforeEach(() => {
 
 describe('signup', () => {
 	it('success', async () => {
-		await execute(() => req.post('/signup').send({ ...usr, ...usr.user }), {
+		await execute(() => req.post('/signup').send({ ...usr, ...usr.base }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -57,15 +57,15 @@ describe('signup', () => {
 		});
 
 		await execute(
-			() => usrRepo.findOne({ where: { user: { email: usr.user.email } } }),
+			() => usrRepo.findOne({ where: { base: { email: usr.base.email } } }),
 			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
 		);
 	});
 
 	it('fail due to email already exist', async () => {
-		await req.post('/signup').send({ ...usr, ...usr.user });
+		await req.post('/signup').send({ ...usr, ...usr.base });
 
-		await execute(() => req.post('/signup').send({ ...usr, ...usr.user }), {
+		await execute(() => req.post('/signup').send({ ...usr, ...usr.base }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -78,11 +78,11 @@ describe('signup', () => {
 
 describe('login', () => {
 	beforeEach(
-		async () => await req.post('/signup').send({ ...usr, ...usr.user }),
+		async () => await req.post('/signup').send({ ...usr, ...usr.base }),
 	);
 
 	it('success', async () => {
-		await execute(() => req.post('/login').send({ ...usr, ...usr.user }), {
+		await execute(() => req.post('/login').send({ ...usr, ...usr.base }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -97,15 +97,15 @@ describe('login', () => {
 
 		await execute(
 			() =>
-				dvcRepo.find({ where: { owner: { user: { email: usr.user.email } } } }),
+				dvcRepo.find({ where: { owner: { base: { email: usr.base.email } } } }),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
 		);
 	});
 
 	it('fail due to wrong password', async () => {
-		usr = new User({ ...usr, ...usr.user, password: (12).string });
+		usr = new User({ ...usr, ...usr.base, password: (12).string });
 
-		await execute(() => req.post('/login').send({ ...usr, ...usr.user }), {
+		await execute(() => req.post('/login').send({ ...usr, ...usr.base }), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],
@@ -118,7 +118,7 @@ describe('logout', () => {
 
 	beforeEach(
 		async () =>
-			({ headers } = await req.post('/signup').send({ ...usr, ...usr.user })),
+			({ headers } = await req.post('/signup').send({ ...usr, ...usr.base })),
 	);
 
 	it('success', async () => {
@@ -136,7 +136,7 @@ describe('logout', () => {
 					execute(
 						() =>
 							dvcRepo.find({
-								where: { owner: { user: { email: usr.user.email } } },
+								where: { owner: { base: { email: usr.base.email } } },
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
 					),
@@ -159,7 +159,7 @@ describe('refresh', () => {
 
 	beforeEach(
 		async () =>
-			({ headers } = await req.post('/signup').send({ ...usr, ...usr.user })),
+			({ headers } = await req.post('/signup').send({ ...usr, ...usr.base })),
 	);
 
 	it('success', async () => {
