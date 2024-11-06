@@ -10,7 +10,7 @@ export interface IEvent {
 	/**
 	 * The event creator
 	 */
-	createdBy: IEventCreatorEntity;
+	eventCreatedBy: IEventCreatorEntity;
 
 	/**
 	 * Event's participators

@@ -1,6 +1,8 @@
 {
 	"debug.javascript.autoAttachFilter": "disabled",
-	"editor.codeActionsOnSave": { "source.fixAll": "explicit" },
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
@@ -41,7 +43,9 @@
 		"src/models.ts": true,
 		"types": true
 	},
-	"jest.outputConfig": { "clearOnRun": "terminal" },
+	"jest.outputConfig": {
+		"clearOnRun": "terminal"
+	},
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,
@@ -145,5 +149,9 @@
 			"isWholeLine": true,
 			"text": " Core Entity"
 		}
-	]
+	],
+	"editor.tokenColorCustomizations": {
+		"comments": "",
+		"textMateRules": []
+	}
 }

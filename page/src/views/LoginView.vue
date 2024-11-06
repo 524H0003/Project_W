@@ -40,5 +40,6 @@ const input = reactive<IUserAuthentication & IBaseUserEmail>({
     password: '',
   }),
   handleLogin = () => apiErrorHandler(authRequest('login', input)),
-  forgetPasswordClick = () => apiErrorHandler(authRequest('change', input))
+  forgetPasswordClick = () =>
+    apiErrorHandler(authRequest('change-password', input))
 </script>

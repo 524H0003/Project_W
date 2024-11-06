@@ -1,13 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'app/utils/auth.utils';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { DeviceService } from 'auth/device/device.service';
 import { DeepPartial, Repository } from 'typeorm';
 import { Session } from './session.entity';
-import { SignService } from 'auth/auth.service';
 import { User, UserRecieve } from 'user/user.entity';
+import { AppService } from 'app/app.service';
 
 /**
  * Session service
@@ -19,16 +17,22 @@ export class SessionService extends DatabaseRequests<Session> {
 	 */
 	constructor(
 		@InjectRepository(Session) repo: Repository<Session>,
-		private cfgSvc: ConfigService,
-		private dvcSvc: DeviceService,
-		private signSvc: SignService,
+		@Inject(forwardRef(() => AppService))
+		private svc: AppService,
 	) {
 		super(repo);
 	}
 	/**
 	 * @ignore
 	 */
-	private readonly use = this.cfgSvc.get('REFRESH_USE');
+	private _use: number;
+	/**
+	 * @ignore
+	 */
+	get use(): number {
+		if (this._use) return this._use;
+		return (this._use = this.svc.cfg.get('REFRESH_USE'));
+	}
 
 	/**
 	 * Session assign
@@ -45,16 +49,16 @@ export class SessionService extends DatabaseRequests<Session> {
 	 * @param {string} mtdt - metadata from client
 	 */
 	async getTokens(user: User, mtdt: string) {
-		const device = await this.dvcSvc.assign({
+		const device = await this.svc.dvc.assign({
 				owner: user,
 				hashedUserAgent: hash(mtdt.toString()),
 				child: null,
 			}),
 			session = await this.assign({ child: null, parrent: device.id, device }),
-			refreshToken = this.signSvc.refresh(session.id),
-			accessToken = this.signSvc.access(user.base.id);
+			refreshToken = this.svc.sign.refresh(session.id),
+			accessToken = this.svc.sign.access(user.base.id);
 
-		await this.dvcSvc.assign({ ...device, child: session.id });
+		await this.svc.dvc.assign({ ...device, child: session.id });
 
 		return new UserRecieve({ accessToken, refreshToken, response: user.info });
 	}
@@ -72,7 +76,7 @@ export class SessionService extends DatabaseRequests<Session> {
 			child: oldNode.id,
 		});
 		await this.save({ id: oldNode.id, parrent: newSession.id });
-		await this.dvcSvc.assign({ id: oldNode.device.id, child: newSession.id });
+		await this.svc.dvc.assign({ id: oldNode.device.id, child: newSession.id });
 		return newSession;
 	}
 
@@ -85,8 +89,8 @@ export class SessionService extends DatabaseRequests<Session> {
 		const newSession = await this.addNode(
 				await this.id(oldSessionId, { deep: 4, relations: ['device'] }),
 			),
-			refreshToken = this.signSvc.refresh(newSession.id),
-			accessToken = this.signSvc.access(newSession.device.owner.base.id);
+			refreshToken = this.svc.sign.refresh(newSession.id),
+			accessToken = this.svc.sign.access(newSession.device.owner.base.id);
 
 		return new UserRecieve({
 			accessToken,
@@ -111,8 +115,8 @@ export class SessionService extends DatabaseRequests<Session> {
 	 */
 	async rotateToken(sessionId: string) {
 		const session = await this.id(sessionId, { deep: 4 }),
-			refreshToken = this.signSvc.refresh(session.id),
-			accessToken = this.signSvc.access(session.device.owner.base.id);
+			refreshToken = this.svc.sign.refresh(session.id),
+			accessToken = this.svc.sign.access(session.device.owner.base.id);
 		return new UserRecieve({
 			refreshToken,
 			accessToken,

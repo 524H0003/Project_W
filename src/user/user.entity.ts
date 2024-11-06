@@ -78,13 +78,13 @@ export class User implements IUserEntity {
 	/**
 	 * User uploaded files
 	 */
-	@OneToMany(() => File, (_) => _.createdBy, { onDelete: 'CASCADE' })
+	@OneToMany(() => File, (_) => _.fileCreatedBy, { onDelete: 'CASCADE' })
 	uploadFiles: IFile[];
 
 	/**
 	 * User hooks
 	 */
-	@OneToMany(() => Hook, (_: Hook) => _.from, { onDelete: 'CASCADE' })
+	@OneToMany(() => Hook, (_: Hook) => _.fromUser, { onDelete: 'CASCADE' })
 	hooks: Hook[];
 
 	/**
@@ -100,7 +100,7 @@ export class User implements IUserEntity {
 	/**
 	 * User notifications
 	 */
-	@OneToMany(() => Reciever, (_: Reciever) => _.to, { onDelete: 'CASCADE' })
+	@OneToMany(() => Reciever, (_: Reciever) => _.toUser, { onDelete: 'CASCADE' })
 	recievedNotifications: Reciever[];
 
 	// Infomations

@@ -15,14 +15,14 @@ export class Reciever extends SensitiveInfomations implements IReciever {
 	 */
 	@ManyToOne(() => User, (_: User) => _.recievedNotifications)
 	@JoinColumn({ name: 'user_id' })
-	to: User;
+	toUser: User;
 
 	/**
 	 * Notification origin
 	 */
 	@ManyToOne(() => Notification, (_: Notification) => _.sent)
 	@JoinColumn({ name: 'notification_id' })
-	from: Notification;
+	fromNotification: Notification;
 
 	// Infomations
 	/**

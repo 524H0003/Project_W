@@ -36,7 +36,7 @@ export class EventCreator implements IEventCreatorEntity {
 	/**
 	 * Created events
 	 */
-	@OneToMany(() => Event, (_: Event) => _.createdBy, { nullable: true })
+	@OneToMany(() => Event, (_: Event) => _.eventCreatedBy, { nullable: true })
 	createdEvents: Event[];
 
 	// Methods

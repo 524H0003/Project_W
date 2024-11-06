@@ -23,7 +23,7 @@ export class Hook extends SensitiveInfomations implements IHook {
 	 * Hook from user
 	 */
 	@ManyToOne(() => User, (_: User) => _.hooks, { nullable: true })
-	from: User;
+	fromUser: User;
 
 	// Infomations
 	/**

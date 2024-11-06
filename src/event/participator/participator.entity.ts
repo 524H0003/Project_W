@@ -22,7 +22,7 @@ export class EventParticipator
 	 */
 	@ManyToOne(() => Event, (_: Event) => _.participators)
 	@JoinColumn({ name: 'event_id' })
-	from: Event;
+	fromEvent: Event;
 
 	/**
 	 * The user participate event

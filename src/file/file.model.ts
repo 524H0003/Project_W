@@ -9,7 +9,7 @@ export interface IFile {
 	/**
 	 * File creator
 	 */
-	createdBy: IUserEntity;
+	fileCreatedBy: IUserEntity;
 
 	/**
 	 * File create for event

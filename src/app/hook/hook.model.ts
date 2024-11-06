@@ -13,7 +13,7 @@ export interface IHook {
 	/**
 	 * Hook from user
 	 */
-	from: IUserEntity;
+	fromUser: IUserEntity;
 
 	/**
 	 * Client's metadata

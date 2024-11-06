@@ -11,38 +11,26 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
-import { AuthController } from 'auth/auth.controller';
 import { MetaData } from 'auth/auth.guard';
 import { UserRole } from 'user/user.model';
 import { Request, Response } from 'express';
-import { AuthService } from 'auth/auth.service';
-import { DeviceService } from 'auth/device/device.service';
-import { SessionService } from 'auth/session/session.service';
-import { ConfigService } from '@nestjs/config';
-import { HookService } from 'app/hook/hook.service';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { AuthGuard } from '@nestjs/passport';
 import { Hook } from 'app/hook/hook.entity';
 import { memoryStorage } from 'multer';
-import { EmployeeService } from './employee.service';
+import { AppService } from 'app/app.service';
+import { AppController } from 'app/app.controller';
 
 /**
  * Employee controller
  */
 @Controller('employee')
-export class EmployeeController extends AuthController {
+export class EmployeeController extends AppController {
 	/**
 	 * @ignore
 	 */
-	constructor(
-		public authSvc: AuthService,
-		dvcSvc: DeviceService,
-		sesSvc: SessionService,
-		cfgSvc: ConfigService,
-		public hookSvc: HookService,
-		private empSvc: EmployeeService,
-	) {
-		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
+	constructor(public svc: AppService) {
+		super(svc);
 	}
 
 	/**
@@ -50,7 +38,7 @@ export class EmployeeController extends AuthController {
 	 */
 	@Post('hook')
 	@UseInterceptors(NoFilesInterceptor())
-	async hook(
+	async employeeHook(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IEmployeeHook,
@@ -59,7 +47,7 @@ export class EmployeeController extends AuthController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			await this.empSvc.hook(body, request.hostname, mtdt),
+			await this.svc.emp.hook(body, request.hostname, mtdt),
 		);
 	}
 
@@ -86,12 +74,16 @@ export class EmployeeController extends AuthController {
 		avatar: Express.Multer.File,
 	): Promise<void> {
 		try {
-			await this.hookSvc.validating(body.signature, mtdt, request.user as Hook);
+			await this.svc.hook.validating(
+				body.signature,
+				mtdt,
+				request.user as Hook,
+			);
 			return this.responseWithUser(
 				request,
 				response,
 				(
-					await this.empSvc.signUp(
+					await this.svc.emp.signUp(
 						body,
 						avatar,
 						JSON.parse((request.user as Hook).note).enterpriseName,
