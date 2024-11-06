@@ -118,10 +118,7 @@ describe('login', () => {
 
 		await execute(() => req.post('/login').send({ ...usr.base, ...usr }), {
 			exps: [
-				{
-					type: 'toHaveProperty',
-					params: ['status', HttpStatus.BAD_REQUEST],
-				},
+				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],
 		});
 	});

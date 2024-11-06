@@ -46,9 +46,7 @@ export class HookService extends DatabaseRequests<Hook> {
 				signature,
 				mtdt,
 				note: JSON.stringify(addInfo),
-				fromUser: {
-					base: (await func(signature)) || null,
-				},
+				fromUser: { base: (await func(signature)) || null },
 			});
 
 		return new UserRecieve({
