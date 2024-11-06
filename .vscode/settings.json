@@ -13,19 +13,19 @@
 	"explorer.fileNesting.patterns": {
 		"*.entity.ts": "$(capture).model.ts",
 		"*.ts": "$(capture).spec.ts",
-		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest.config.ts, README.MD, nest-cli.json, procfile, .gitignore",
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest.e2e.config.ts, jest.config.ts, README.MD, nest-cli.json, procfile, .gitignore",
 		"tsconfig.json": "tsconfig.*.json, env.d.ts"
 	},
 	"explorerExclude.backup": {},
 	"files.eol": "\n",
 	"files.exclude": {
-		"**/*.tsbuildinfo": true,
-		"**/.DS_Store": true,
 		"**/.git": true,
-		"**/.hg": true,
 		"**/.svn": true,
+		"**/.hg": true,
 		"**/CVS": true,
+		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
+		"**/*.tsbuildinfo": true,
 		"**/dist": true,
 		"**/node_modules": true,
 		"**/schema.gql": true,

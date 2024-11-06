@@ -47,10 +47,6 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          skip_dirty_check: false
-
       - name: Jest Coverage Comment
         uses: MishaKav/jest-coverage-comment@main
         id: coverageComment
@@ -60,3 +56,17 @@ jobs:
           coverage-path: ./coverage/coverage.txt
           create-new-comment: true
           junitxml-path: ./reports/junit.xml
+
+      - name: Jest Coverage Comment (e2e)
+        uses: MishaKav/jest-coverage-comment@main
+        id: coverageCommentE2E
+        with:
+          title: Test report (end 2 end)
+          coverage-title: Coverage result
+          coverage-path: ./coverage/coverage_e2e.txt
+          create-new-comment: true
+          junitxml-path: ./reports_e2e/junit.xml
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          skip_dirty_check: false
