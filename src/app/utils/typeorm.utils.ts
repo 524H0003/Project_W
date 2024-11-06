@@ -7,7 +7,6 @@ import {
 	Repository,
 	SaveOptions,
 } from 'typeorm';
-import { EmbeddedMetadata } from 'typeorm/metadata/EmbeddedMetadata.js';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 
 export type FindOptionsWithCustom<T> = FindOptionsWhere<T> & {
