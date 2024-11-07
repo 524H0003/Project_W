@@ -24,7 +24,7 @@ export class File extends SensitiveInfomations implements IFile {
 	 */
 	@ManyToOne(() => User, (_: User) => _.uploadFiles)
 	@JoinColumn({ name: 'user_id' })
-	createdBy: User;
+	fileCreatedBy: User;
 
 	/**
 	 * File create for event

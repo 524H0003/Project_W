@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	forwardRef,
+	Inject,
+	Injectable,
+} from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Employee } from './employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,12 +16,8 @@ import {
 	IEmployeeInfoKeys,
 	IEmployeeSignupKeys,
 } from 'models';
-import { AuthService } from 'auth/auth.service';
-import { EventCreatorService } from 'event/creator/creator.service';
 import { UserRole } from 'user/user.model';
-import { UserService } from 'user/user.service';
-import { EnterpriseService } from 'enterprise/enterprise.service';
-import { HookService } from 'app/hook/hook.service';
+import { AppService } from 'app/app.service';
 
 /**
  * Employee service
@@ -28,11 +29,8 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	 */
 	constructor(
 		@InjectRepository(Employee) repo: Repository<Employee>,
-		private authSvc: AuthService,
-		private envCreSvc: EventCreatorService,
-		private usrSvc: UserService,
-		private entSvc: EnterpriseService,
-		private hookSvc: HookService,
+		@Inject(forwardRef(() => AppService))
+		public svc: AppService,
 	) {
 		super(repo);
 	}
@@ -43,15 +41,24 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	async hook(input: IEmployeeHook, host: string, mtdt: string) {
 		input = InterfaceCasting.quick(input, IEmployeeHookKeys);
 
-		const ent = await this.entSvc.findOne({
+		const ent = await this.svc.ent.findOne({
 			user: { name: input.enterpriseName },
 		});
 		if (!ent || !input.enterpriseName)
 			throw new BadRequestException('Invalid_Enterprise_Name');
 
-		return this.hookSvc.assignViaEmail(ent.user.email, host, mtdt, {
-			enterpriseName: ent.user.name,
-		});
+		return this.svc.hook.assign(
+			mtdt,
+			(signature: string) =>
+				this.svc.mail.send(
+					ent.user.email,
+					`An account assignment request from ${input.email}`,
+					'sendSignature',
+					{ signature },
+				),
+			'_Email',
+			{ enterpriseName: ent.user.name },
+		);
 	}
 
 	/**
@@ -70,15 +77,15 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 		input = InterfaceCasting.quick(input, IEmployeeSignupKeys);
 
 		try {
-			const usr = await this.authSvc.signUp(input, avatar, {
+			const usr = await this.svc.auth.signUp(input, avatar, {
 					...option,
 					role: UserRole.enterprise,
 				}),
-				eventCreator = await this.envCreSvc.assign(usr);
+				eventCreator = await this.svc.envCre.assign(usr);
 
 			return await this.save({
 				eventCreator,
-				enterprise: await this.entSvc.findOne({
+				enterprise: await this.svc.ent.findOne({
 					user: { name: enterpriseName },
 				}),
 				...InterfaceCasting.quick(input, IEmployeeInfoKeys),

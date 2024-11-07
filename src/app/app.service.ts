@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from './utils/typeorm.utils';
 import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,21 +9,65 @@ import {
 	Repository,
 	SaveOptions,
 } from 'typeorm';
+import { AuthService, SignService } from 'auth/auth.service';
+import { DeviceService } from 'auth/device/device.service';
+import { SessionService } from 'auth/session/session.service';
+import { ConfigService } from '@nestjs/config';
+import { HookService } from './hook/hook.service';
+import { MailService } from './mail/mail.service';
+import { StudentService } from 'university/student/student.service';
+import { EnterpriseService } from 'enterprise/enterprise.service';
+import { EmployeeService } from 'enterprise/employee/employee.service';
+import { FacultyService } from 'university/faculty/faculty.service';
+import { FileService } from 'file/file.service';
+import { EventCreatorService } from 'event/creator/creator.service';
+import { UserService } from 'user/user.service';
 
+/**
+ * @ignore
+ */
 @Injectable()
 export class AppService {
-	/**
-	 * Base user service
-	 */
 	public baseUser: BaseUserService;
-	/**
-	 * @ignore
-	 */
-	constructor(@InjectRepository(BaseUser) repo: Repository<BaseUser>) {
-		this.baseUser = new BaseUserService(repo);
+
+	constructor(
+		@InjectRepository(BaseUser) baseUserRepo: Repository<BaseUser>,
+		@Inject(forwardRef(() => AuthService))
+		public auth: AuthService,
+		@Inject(forwardRef(() => DeviceService))
+		public dvc: DeviceService,
+		@Inject(forwardRef(() => SessionService))
+		public sess: SessionService,
+		@Inject(forwardRef(() => ConfigService))
+		public cfg: ConfigService,
+		@Inject(forwardRef(() => HookService))
+		public hook: HookService,
+		@Inject(forwardRef(() => MailService))
+		public mail: MailService,
+		@Inject(forwardRef(() => StudentService))
+		public stu: StudentService,
+		@Inject(forwardRef(() => EnterpriseService))
+		public ent: EnterpriseService,
+		@Inject(forwardRef(() => EmployeeService))
+		public emp: EmployeeService,
+		@Inject(forwardRef(() => FacultyService))
+		public fac: FacultyService,
+		@Inject(forwardRef(() => FileService))
+		public file: FileService,
+		@Inject(forwardRef(() => EventCreatorService))
+		public envCre: EventCreatorService,
+		@Inject(forwardRef(() => UserService))
+		public usr: UserService,
+		@Inject(forwardRef(() => SignService))
+		public sign: SignService,
+	) {
+		this.baseUser = new BaseUserService(baseUserRepo);
 	}
 }
 
+/**
+ * Base user service
+ */
 class BaseUserService extends DatabaseRequests<BaseUser> {
 	/**
 	 * @ignore
@@ -73,8 +117,9 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	/**
 	 * Find by email
 	 * @param {string} input - the email address
+	 * @return {Promise<BaseUser>}
 	 */
-	email(input: string) {
+	email(input: string): Promise<BaseUser> {
 		return this.findOne({ email: input.toLowerCase() });
 	}
 }

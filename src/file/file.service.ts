@@ -138,13 +138,13 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Assign file to server
 	 * @param {Express.Multer.File} input - the file to assign
-	 * @param {User} createdBy - the file's assigner
+	 * @param {User} fileCreatedBy - the file's assigner
 	 * @param {object} serverFilesOptions - optional options
 	 * @return {Promise<File>} the assigned file's infomations on database
 	 */
 	async assign(
 		input: Express.Multer.File,
-		createdBy: User,
+		fileCreatedBy: User,
 		serverFilesOptions?: { fileName: string },
 	): Promise<File> {
 		if (!input?.buffer) return null;
@@ -159,7 +159,7 @@ export class FileService extends DatabaseRequests<File> {
 		await this.s3Send(path, input.buffer);
 		writeFileSync(`${this.cfgSvc.get('SERVER_PUBLIC')}${path}`, input.buffer);
 
-		if (!fileName) return this.save({ path, createdBy });
+		if (!fileName) return this.save({ path, fileCreatedBy });
 	}
 
 	/**
@@ -184,7 +184,7 @@ export class FileService extends DatabaseRequests<File> {
 
 				const file = await this.path(filename, user?.id, { deep: 2 });
 
-				if (user?.id === file.createdBy.base.id) return filename;
+				if (user?.id === file.fileCreatedBy.base.id) return filename;
 				throw new BadRequestException('ForbidenFile');
 			}
 			return null;
@@ -215,7 +215,7 @@ export class FileService extends DatabaseRequests<File> {
 		return this.findOne({
 			path: input,
 			...options,
-			createdBy: { base: { id: userId } },
+			fileCreatedBy: { base: { id: userId } },
 		});
 	}
 }

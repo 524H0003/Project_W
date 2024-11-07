@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import {
@@ -23,6 +23,7 @@ export class UserService extends DatabaseRequests<User> {
 	 */
 	constructor(
 		@InjectRepository(User) repo: Repository<User>,
+		@Inject(forwardRef(() => AppService))
 		private appSvc: AppService,
 	) {
 		super(repo);

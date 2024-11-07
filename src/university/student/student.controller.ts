@@ -9,36 +9,24 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
-import { AuthController } from 'auth/auth.controller';
 import { MetaData } from 'auth/auth.guard';
-import { StudentService } from './student.service';
 import { Request, Response } from 'express';
-import { AuthService } from 'auth/auth.service';
-import { DeviceService } from 'auth/device/device.service';
-import { SessionService } from 'auth/session/session.service';
-import { ConfigService } from '@nestjs/config';
-import { HookService } from 'app/hook/hook.service';
 import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
 import { IStudentSignup } from './student.model';
+import { AppService } from 'app/app.service';
+import { AppController } from 'app/app.controller';
 
 /**
  * Student controller
  */
 @Injectable()
 @Controller('student')
-export class StudentController extends AuthController {
+export class StudentController extends AppController {
 	/**
 	 * @ignore
 	 */
-	constructor(
-		private StuSvc: StudentService,
-		authSvc: AuthService,
-		dvcSvc: DeviceService,
-		sesSvc: SessionService,
-		cfgSvc: ConfigService,
-		hookSvc: HookService,
-	) {
-		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
+	constructor(public svc: AppService) {
+		super(svc);
 	}
 
 	/**
@@ -62,13 +50,13 @@ export class StudentController extends AuthController {
 			return this.responseWithUser(
 				request,
 				response,
-				await this.StuSvc.login(body),
+				await this.svc.stu.login(body),
 				mtdt,
 			);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'Request_New_User':
-					return this.requestViaEmail(request, response, body, mtdt);
+					return this.resetPasswordViaEmail(request, response, body, mtdt);
 					break;
 
 				default:

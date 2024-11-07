@@ -9,12 +9,12 @@ export interface IReciever {
 	/**
 	 * Recieve user
 	 */
-	to: IUserEntity;
+	toUser: IUserEntity;
 
 	/**
 	 * Notification origin
 	 */
-	from: INotification;
+	fromNotification: INotification;
 
 	/**
 	 * Notification status

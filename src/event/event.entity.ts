@@ -28,12 +28,12 @@ export class Event extends SensitiveInfomations implements IEvent {
 		onDelete: 'CASCADE',
 	})
 	@JoinColumn({ name: 'creator_id' })
-	createdBy: EventCreator;
+	eventCreatedBy: EventCreator;
 
 	/**
 	 * Event's participators
 	 */
-	@OneToMany(() => EventParticipator, (_: EventParticipator) => _.from, {
+	@OneToMany(() => EventParticipator, (_: EventParticipator) => _.fromEvent, {
 		onDelete: 'CASCADE',
 	})
 	participators: EventParticipator[];

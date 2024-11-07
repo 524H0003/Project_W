@@ -27,6 +27,6 @@ import { AppModule } from 'app/app.module';
 		HookStrategy,
 		RoleGuard,
 	],
-	exports: [AuthService, SignService],
+	exports: [SignService, AuthService],
 })
 export class AuthModule {}

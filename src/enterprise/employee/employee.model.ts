@@ -42,6 +42,11 @@ export interface IEmployeeHook {
 	 * Employee's working enterprise
 	 */
 	enterpriseName: string;
+
+	/**
+	 * Employee's email
+	 */
+	email: string;
 }
 
 // Enums

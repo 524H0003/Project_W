@@ -9,7 +9,7 @@
 		"buildfile": "ts-node src/build.ts",
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
 		"prebuild": "npm i && npm run buildfile",
-		"build": "nest build && cd ./page && npm run build-only",
+		"build": "nest build && cd ./page && npm run build",
 		"format": "replace '{\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace \"\\[\n\" \"[\" . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && prettier --write \"./**/*.ts\" \"./**/*.js*\" \"./**/*.*rc\" --log-level silent",
 		"lint": "eslint --fix  --ext .ts .",
 		"safe": "generate-env-example",
@@ -18,11 +18,12 @@
 		"start:dev": "nest start --watch",
 		"start:prod": "node dist/main",
 		"pretest": "npm run buildfile",
-		"test": "jest",
+		"test": "jest --config=jest.config.ts",
+		"test:e2e": "jest --config=jest.e2e.config.ts",
 		"test:debug": "jest --debug",
 		"types": "tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/types.ts",
 		"pretypes": "npm run prebuild",
-		"triathlon": "npm run test && npm run format && npm run lint"
+		"triathlon": "npm run test && npm run test:e2e && npm run format && npm run lint"
 	},
 	"dependencies": {
 		"@adminjs/express": "^6.1.0",

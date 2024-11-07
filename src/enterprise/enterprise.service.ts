@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	forwardRef,
+	Inject,
+	Injectable,
+} from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Enterprise } from './enterprise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,7 +11,6 @@ import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { IEnterpriseAssign } from './enterprise.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IBaseUserKeys, IEnterpriseAssignKeys, IEnterpriseKeys } from 'models';
-import { FileService } from 'file/file.service';
 import { IBaseUser } from 'app/app.model';
 import { AppService } from 'app/app.service';
 
@@ -20,8 +24,8 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	 */
 	constructor(
 		@InjectRepository(Enterprise) repo: Repository<Enterprise>,
-		private fileSvc: FileService,
-		private appSvc: AppService,
+		@Inject(forwardRef(() => AppService))
+		public svc: AppService,
 	) {
 		super(repo);
 	}
@@ -34,7 +38,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 		options?: SaveOptions,
 	): Promise<Enterprise> {
 		entity = InterfaceCasting.quick(entity, IEnterpriseKeys);
-		const baseUsr = await this.appSvc.baseUser.assign(entity.user);
+		const baseUsr = await this.svc.baseUser.assign(entity.user);
 		return super.save({ ...entity, user: baseUsr }, options);
 	}
 
@@ -50,7 +54,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 			...IBaseUserKeys,
 		]);
 
-		const avatarFile = await this.fileSvc.assign(avatar, null, {
+		const avatarFile = await this.svc.file.assign(avatar, null, {
 			fileName: `${input.name}.${input.industry}.logo`,
 		});
 
@@ -60,7 +64,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 				user: InterfaceCasting.quick(input, IBaseUserKeys),
 			});
 		} catch (error) {
-			await this.fileSvc.remove({ ...avatarFile });
+			await this.svc.file.remove({ ...avatarFile });
 			throw new BadRequestException(`Null value in field ${error['column']}`);
 		}
 	}

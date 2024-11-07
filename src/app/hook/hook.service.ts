@@ -1,11 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	forwardRef,
+	Inject,
+	Injectable,
+} from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Hook } from './hook.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MailService } from 'app/mail/mail.service';
-import { SignService } from 'auth/auth.service';
 import { UserRecieve } from 'user/user.entity';
+import { BaseUser } from 'app/app.entity';
+import { AppService } from 'app/app.service';
 
 /**
  * Hook service
@@ -17,23 +22,23 @@ export class HookService extends DatabaseRequests<Hook> {
 	 */
 	constructor(
 		@InjectRepository(Hook) repo: Repository<Hook>,
-		private mailSvc: MailService,
-		private signSvc: SignService,
+		@Inject(forwardRef(() => AppService))
+		private svc: AppService,
 	) {
 		super(repo);
 	}
 
 	/**
 	 * Assigning hook via email
-	 * @param {string} email - user's email
-	 * @param {string} host - request's hostname
 	 * @param {string} mtdt - client's metadata
+	 * @param {Function} func - the method to recieve signature and return base user
+	 * @param {object} addInfo - additional infomation to store
 	 * @return {Promise<UserRecieve>} user's recieve infomations
 	 */
-	async assignViaEmail(
-		email: string,
-		host: string,
+	async assign(
 		mtdt: string,
+		func: (signature: string) => Promise<BaseUser> | void,
+		to: '_Email' | '_Console',
 		addInfo?: object,
 	): Promise<UserRecieve> {
 		const signature = (128).string,
@@ -41,34 +46,12 @@ export class HookService extends DatabaseRequests<Hook> {
 				signature,
 				mtdt,
 				note: JSON.stringify(addInfo),
-				from: {
-					base: await this.mailSvc.sendResetPassword(email, host, signature),
-				},
+				fromUser: { base: (await func(signature)) || null },
 			});
 
 		return new UserRecieve({
-			accessToken: this.signSvc.access(hook.id),
-			response: 'Request_Signature_From_Email',
-		});
-	}
-
-	/**
-	 * Assigning hook via console
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<UserRecieve>} user's recieve infomations
-	 */
-	async assignViaConsole(mtdt: string): Promise<UserRecieve> {
-		const signature = (128).string,
-			hook = await this.save({ signature, mtdt, from: null });
-
-		console.log(
-			`${'-'.repeat(75)}\nOne time signature: ${signature}\n${'-'.repeat(75)}`,
-		);
-
-		return new UserRecieve({
-			accessToken: this.signSvc.access(hook.id),
-			refreshToken: this.signSvc.refresh(hook.id.length.string),
-			response: 'Request_Signature_From_Console',
+			accessToken: this.svc.sign.access(hook.id),
+			response: 'Sent_Signature' + to,
 		});
 	}
 
