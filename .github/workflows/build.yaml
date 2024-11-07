@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: 'npm ci && npm run types && npm run doc'
+      - run: 'npm i && npm run types && npm run doc'
 
       - run: 'cp README.md LICENSE ./types'
 
