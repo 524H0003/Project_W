@@ -20,6 +20,7 @@ const config: Config = {
 		'!src/**/*.spec.ts',
 		'!src/**/*.model.ts',
 		'!src/*.ts',
+		'!src/**/*.entity.ts',
 	],
 };
 
