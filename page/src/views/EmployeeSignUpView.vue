@@ -84,7 +84,10 @@ const input = reactive<IEmployeeSignup>({
     name: '',
     email: '',
   }),
-  inputRequest = reactive<IEmployeeHook>({ enterpriseName: '' }),
+  inputRequest = reactive<IEmployeeHook>({ enterpriseName: '', email: '' }),
   handleSignUp = () => apiErrorHandler(assignEnterpriseUser(input)),
-  request = () => apiErrorHandler(requestFromEmployee(inputRequest))
+  request = () =>
+    apiErrorHandler(
+      requestFromEmployee({ ...inputRequest, email: input.email }),
+    )
 </script>
