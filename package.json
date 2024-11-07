@@ -9,7 +9,7 @@
 		"buildfile": "ts-node src/build.ts",
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
 		"prebuild": "npm i && npm run buildfile",
-		"build": "nest build && cd ./page && npm run build-only",
+		"build": "nest build && cd ./page && npm run build",
 		"format": "replace '{\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace \"\\[\n\" \"[\" . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && prettier --write \"./**/*.ts\" \"./**/*.js*\" \"./**/*.*rc\" --log-level silent",
 		"lint": "eslint --fix  --ext .ts .",
 		"safe": "generate-env-example",
@@ -101,7 +101,6 @@
 		"ts-jest": "^29.1.0",
 		"ts-loader": "^9.4.3",
 		"tsconfig-paths": "^4.2.0",
-		"typescript": "^5.1.3",
-		"vite": "^5.4.10"
+		"typescript": "^5.1.3"
 	}
 }

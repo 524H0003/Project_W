@@ -41,7 +41,7 @@ export class MailService {
 		await this.mailerService.sendMail({
 			to: baseUser.email,
 			subject,
-			template: `./${template}.hbs`,
+			template: `./${template}.html`,
 			context,
 		});
 
