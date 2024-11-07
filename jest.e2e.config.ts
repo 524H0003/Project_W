@@ -13,10 +13,7 @@ const config: Config = {
 	],
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'coverage_e2e.txt' }]],
-	coveragePathIgnorePatterns: [
-		'<rootDir>/src/**/*.module.ts',
-		'<rootDir>/src/models.ts',
-	],
+	collectCoverageFrom: ['src/**/*.ts', '!src/**/*.module.ts', '!src/models.ts'],
 };
 
 export default config;

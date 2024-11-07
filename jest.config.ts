@@ -13,10 +13,11 @@ const config: Config = {
 	],
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'coverage.txt' }]],
-	coveragePathIgnorePatterns: [
-		'<rootDir>/src/**/*.controller.ts',
-		'<rootDir>/src/**/*.module.ts',
-		'<rootDir>/src/models.ts',
+	collectCoverageFrom: [
+		'src/**/*.ts',
+		'!src/**/*.controller.ts',
+		'!src/**/*.module.ts',
+		'!src/models.ts',
 	],
 };
 
