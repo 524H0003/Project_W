@@ -1,1 +1,1 @@
-web: npm ci && npm run start:prod 
+web: rm ./package-lock.json node_modules -fr && npm i && npm run start:prod
