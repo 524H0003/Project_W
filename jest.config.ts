@@ -22,6 +22,7 @@ const config: Config = {
 		'!src/**/*.model.ts',
 		'!src/*.ts',
 		'!src/**/*.entity.ts',
+		'!src/**/*.strategy.ts',
 	],
 };
 
