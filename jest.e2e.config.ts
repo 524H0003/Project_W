@@ -13,7 +13,12 @@ const config: Config = {
 	],
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'coverage_e2e.txt' }]],
-	collectCoverageFrom: ['src/**/*.ts', '!src/**/*.module.ts', '!src/models.ts'],
+	collectCoverageFrom: [
+		'src/**/*.ts',
+		'!src/**/*.module.ts',
+		'!src/models.ts',
+		'!src/**/*.spec.ts',
+	],
 };
 
 export default config;
