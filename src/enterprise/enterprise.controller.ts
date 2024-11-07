@@ -12,37 +12,25 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthController } from 'auth/auth.controller';
 import { Request, Response } from 'express';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MetaData } from 'auth/auth.guard';
-import { AuthService } from 'auth/auth.service';
-import { DeviceService } from 'auth/device/device.service';
-import { SessionService } from 'auth/session/session.service';
-import { ConfigService } from '@nestjs/config';
-import { HookService } from 'app/hook/hook.service';
 import { Hook } from 'app/hook/hook.entity';
-import { EnterpriseService } from './enterprise.service';
 import { memoryStorage } from 'multer';
 import { UserRecieve } from 'user/user.entity';
+import { AppService } from 'app/app.service';
+import { AppController } from 'app/app.controller';
 
 /**
  * Enterprise controller
  */
 @Controller('enterprise')
-export class EnterpriseController extends AuthController {
+export class EnterpriseController extends AppController {
 	/**
 	 * @ignore
 	 */
-	constructor(
-		public authSvc: AuthService,
-		dvcSvc: DeviceService,
-		sesSvc: SessionService,
-		cfgSvc: ConfigService,
-		private entSvc: EnterpriseService,
-		public hookSvc: HookService,
-	) {
-		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
+	constructor(public svc: AppService) {
+		super(svc);
 	}
 
 	/**
@@ -67,8 +55,8 @@ export class EnterpriseController extends AuthController {
 		)
 		avatar: Express.Multer.File,
 	): Promise<void> {
-		await this.hookSvc.validating(body.signature, mtdt, request.user as Hook);
-		await this.entSvc.assign(body, avatar || null);
+		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
+		await this.svc.ent.assign(body, avatar || null);
 		return this.responseWithUserRecieve(
 			request,
 			response,

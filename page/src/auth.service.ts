@@ -21,7 +21,7 @@ interface AuthState {
 }
 
 export async function authRequest(
-  type: 'login' | 'signup' | 'logout' | 'change',
+  type: 'login' | 'signup' | 'logout' | 'change-password',
   user?: Required<IUserAuthentication>,
 ) {
   const response = await axios.post(`${API_URL}/${type}`, user)
@@ -31,7 +31,7 @@ export async function authRequest(
 }
 
 export async function hookRequest(signature: string, password: string) {
-  const response = await axios.post(`${API_URL}/change/${signature}`, {
+  const response = await axios.post(`${API_URL}/change-password/${signature}`, {
     password,
   })
   return response.data.user
@@ -90,7 +90,7 @@ export async function apiErrorHandler<T>(func: Promise<T>) {
     const response = await func
     if (typeof response == 'string') {
       switch (response) {
-        case 'Request_Signature_From_Email':
+        case 'Sent_Signature_Email':
           alert.message =
             'An email has sent to your email address, please check inbox and spam'
           alert.type = 'error'
@@ -103,7 +103,7 @@ export async function apiErrorHandler<T>(func: Promise<T>) {
           alert.object = 'password'
           break
 
-        case 'Request_Signature_From_Console':
+        case 'Sent_Signature_Console':
           alert.message = 'Please copy signature from console'
           alert.type = 'success'
           alert.object = 'signature'

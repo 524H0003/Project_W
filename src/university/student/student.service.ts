@@ -1,8 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	forwardRef,
+	Inject,
+	Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from 'auth/auth.service';
 import { IUserSignUp, UserRole } from 'user/user.model';
-import { UserService } from 'user/user.service';
 import { Student } from './student.entity';
 import { Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
@@ -11,6 +14,7 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { IStudentInfoKeys, IUserSignUpKeys } from 'models';
 import { validation } from 'app/utils/auth.utils';
 import { User } from 'user/user.entity';
+import { AppService } from 'app/app.service';
 
 /**
  * Student service
@@ -21,9 +25,9 @@ export class StudentService extends DatabaseRequests<Student> {
 	 * @ignore
 	 */
 	constructor(
-		private usrSvc: UserService,
-		private authSvc: AuthService,
 		@InjectRepository(Student) repo: Repository<Student>,
+		@Inject(forwardRef(() => AppService))
+		public svc: AppService,
 	) {
 		super(repo);
 	}
@@ -33,21 +37,28 @@ export class StudentService extends DatabaseRequests<Student> {
 	private studentMailRex = /(5{1})(.{7})(@student.tdtu.edu.vn){1}/g;
 
 	/**
+	 * Find student by email
+	 */
+	email(input: string): Promise<Student> {
+		return this.findOne({ user: { base: { email: input.toLowerCase() } } });
+	}
+
+	/**
 	 * Login for student
 	 * @param {IStudentSignup} input - the login input
 	 * @return {Promise<User>}
 	 */
 	async login(input: IStudentSignup): Promise<User> {
-		const user = await this.usrSvc.email(input.email),
+		const user = await this.email(input.email),
 			rawStu = new Student(input);
 
-		if (user) return this.authSvc.login(input);
+		if (user) return this.svc.auth.login(input);
 
 		if (!rawStu.user.base.email.match(this.studentMailRex))
 			throw new BadRequestException('Invalid_Student_Email');
 
 		return await validation<User>(rawStu, async () => {
-			const user = await this.authSvc.signUp(
+			const user = await this.svc.auth.signUp(
 				{
 					...InterfaceCasting.quick(input, IUserSignUpKeys),
 					name: input.email,

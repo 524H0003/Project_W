@@ -67,7 +67,8 @@ export class DatabaseRequests<T> {
 				(i) =>
 					parentName.split('.').includes(i) ||
 					avoidNames.split('.').includes(i),
-			)
+			) ||
+			(input.propertyName !== input.propertyPath && !parentName)
 		)
 			return [];
 		const currentRelationName = parentName + input.propertyName;

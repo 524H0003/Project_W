@@ -11,39 +11,27 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { HookService } from 'app/hook/hook.service';
-import { AuthController } from 'auth/auth.controller';
 import { MetaData } from 'auth/auth.guard';
-import { AuthService } from 'auth/auth.service';
-import { DeviceService } from 'auth/device/device.service';
-import { SessionService } from 'auth/session/session.service';
 import { memoryStorage } from 'multer';
 import { IFacultyAssign } from './faculty.model';
 import { Hook } from 'app/hook/hook.entity';
 import { Request, Response } from 'express';
-import { FacultyService } from './faculty.service';
+import { AppService } from 'app/app.service';
+import { AppController } from 'app/app.controller';
 
 /**
  * Faculty controller
  */
 @Injectable()
 @Controller('faculty')
-export class FacultyController extends AuthController {
+export class FacultyController extends AppController {
 	/**
 	 * @ignore
 	 */
-	constructor(
-		authSvc: AuthService,
-		dvcSvc: DeviceService,
-		sesSvc: SessionService,
-		cfgSvc: ConfigService,
-		hookSvc: HookService,
-		private facSvc: FacultyService,
-	) {
-		super(authSvc, dvcSvc, sesSvc, cfgSvc, hookSvc);
+	constructor(public svc: AppService) {
+		super(svc);
 	}
 
 	/**
@@ -68,11 +56,11 @@ export class FacultyController extends AuthController {
 		)
 		avatar: Express.Multer.File,
 	) {
-		await this.hookSvc.validating(body.signature, mtdt, request.user as Hook);
+		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
 		return this.responseWithUser(
 			request,
 			response,
-			await this.facSvc.assign(body, avatar),
+			await this.svc.fac.assign(body, avatar),
 			mtdt,
 		);
 	}

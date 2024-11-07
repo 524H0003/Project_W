@@ -9,7 +9,7 @@ export interface IEventParticipator {
 	/**
 	 * Participator from event
 	 */
-	from: IEvent;
+	fromEvent: IEvent;
 
 	/**
 	 * The user participate event

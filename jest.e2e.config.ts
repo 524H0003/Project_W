@@ -2,27 +2,25 @@ import type { Config } from 'jest';
 
 const config: Config = {
 	testEnvironment: 'node',
+	testMatch: ['**/?(*.)+(controller.spec).ts'],
 	detectOpenHandles: true,
 	moduleDirectories: ['node_modules', 'src'],
 	transform: { '^.+.tsx?$': ['ts-jest', {}] },
-	testMatch: ['**/?(*.)+(spec).ts', '!**/?(*.)+(controller.spec).ts'],
 	reporters: [
 		'default',
 		['github-actions', { silent: false }],
-		['jest-junit', { outputDirectory: 'reports', outputName: 'junit.xml' }],
+		['jest-junit', { outputDirectory: 'reports_e2e', outputName: 'junit.xml' }],
 	],
 	collectCoverage: true,
-	coverageReporters: [['text', { file: 'coverage.txt' }]],
+	coverageReporters: [['text', { file: 'coverage_e2e.txt' }]],
 	collectCoverageFrom: [
 		'src/**/*.ts',
-		'!src/**/*.controller.ts',
 		'!src/**/*.module.ts',
-		'!src/**/*.spec.ts',
 		'!src/models.ts',
+		'!src/**/*.spec.ts',
 		'!src/**/*.model.ts',
 		'!src/*.ts',
 		'!src/**/*.entity.ts',
-		'!src/**/*.strategy.ts',
 	],
 };
 

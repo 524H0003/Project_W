@@ -12,6 +12,7 @@ import { User } from 'user/user.entity';
 import { Device } from '../auth/device/device.entity';
 import { AppController } from 'app/app.controller';
 import { AppModule } from 'app/app.module';
+import { Student } from 'university/student/student.entity';
 
 const fileName = curFile(__filename);
 
@@ -106,6 +107,16 @@ describe('login', () => {
 		usr = new User({ ...usr, ...usr.base, password: (12).string });
 
 		await execute(() => req.post('/login').send({ ...usr, ...usr.base }), {
+			exps: [
+				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
+			],
+		});
+	});
+
+	it('fail due to not follow student email format', async () => {
+		usr = Student.test(fileName, { email: 'aa' }).user;
+
+		await execute(() => req.post('/login').send({ ...usr.base, ...usr }), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],

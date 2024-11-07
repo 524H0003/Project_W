@@ -1,7 +1,6 @@
 import {
 	BadRequestException,
 	Injectable,
-	NotFoundException,
 	UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -89,7 +88,7 @@ export class AuthService extends Cryption {
 		const user = await this.usrSvc.email(input.email);
 
 		if (user && compareSync(input.password, user.hashedPassword)) return user;
-		if (!user) throw new NotFoundException('NotFound_User');
+		if (!user) throw new BadRequestException('Invalid_Email');
 		throw new BadRequestException('Invalid_Password');
 	}
 

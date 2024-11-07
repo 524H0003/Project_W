@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
-import { UserService } from 'user/user.service';
+import { AppService } from 'app/app.service';
 
 /**
  * Event creator service
@@ -16,7 +16,9 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 	 */
 	constructor(
 		@InjectRepository(EventCreator) repo: Repository<EventCreator>,
-		private usrSvc: UserService,
+
+		@Inject(forwardRef(() => AppService))
+		private svc: AppService,
 	) {
 		super(repo);
 	}
@@ -42,7 +44,7 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 				(criteria.user as User).base.id ||
 				(await this.findOne(criteria)).user.base.id,
 			result = await this.delete({ user: { base: { id } } });
-		await this.usrSvc.remove({ base: { id } });
+		await this.svc.usr.remove({ base: { id } });
 
 		return result;
 	}
