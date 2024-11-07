@@ -19,6 +19,7 @@ const config: Config = {
 		'!src/models.ts',
 		'!src/**/*.spec.ts',
 		'!src/**/*.model.ts',
+		'!src/*.ts',
 	],
 };
 
