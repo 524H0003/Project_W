@@ -18,6 +18,7 @@ const config: Config = {
 		'!src/**/*.module.ts',
 		'!src/models.ts',
 		'!src/**/*.spec.ts',
+		'!src/**/*.model.ts',
 	],
 };
 
