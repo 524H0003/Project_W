@@ -52,9 +52,7 @@ export class StudentService extends DatabaseRequests<Student> {
 		const user = await this.email(input.email),
 			rawStu = new Student(input);
 
-		if (user) return this.svc.auth.login(input);
-
-		if (!rawStu.user.baseUser.email.match(this.studentMailRex))
+		if (user || !rawStu.user.baseUser.email.match(this.studentMailRex))
 			throw new BadRequestException('Invalid_Student_Email');
 
 		return await validation<User>(rawStu, async () => {

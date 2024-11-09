@@ -4,7 +4,7 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { Device } from 'auth/device/device.entity';
 import { IFile } from 'file/file.model';
 import { IBaseUserKeys, IUserAuthenticationKeys, IUserInfoKeys } from 'models';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
 	IUserEntity,
@@ -26,11 +26,13 @@ import { decode, JwtPayload } from 'jsonwebtoken';
  */
 @ObjectType()
 @Entity({ name: 'User' })
-export class User implements IUserEntity {
+export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
 	constructor(payload: IUserAuthentication & IBaseUser) {
+		super();
+
 		if (payload) {
 			this.baseUser = new BaseUser(
 				InterfaceCasting.quick(payload!, IBaseUserKeys),
@@ -53,7 +55,9 @@ export class User implements IUserEntity {
 	 */
 	get hashedPassword() {
 		if (this.password) {
-			return (this._hashedPassword = hash(this.password));
+			this._hashedPassword = hash(this.password);
+			delete this.password;
+			return this._hashedPassword;
 		}
 		return this._hashedPassword;
 	}
@@ -170,9 +174,8 @@ export class User implements IUserEntity {
 	 */
 	static test(from: string, options?: { email?: string; password?: string }) {
 		const { email = (20).alpha + '@gmail.com', password = 'Aa1!000000000000' } =
-				options || {},
-			n = new User({ email, password, name: from });
-		if (n.hashedPassword) return n;
+			options || {};
+		return new User({ email, password, name: from });
 	}
 }
 

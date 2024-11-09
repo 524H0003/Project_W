@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
 import { IEnterprise, IEnterpriseAssign } from './enterprise.model';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
@@ -14,12 +14,14 @@ import { IBaseUserKeys, IEnterpriseAssignKeys } from 'models';
  */
 @ObjectType()
 @Entity({ name: 'Enterprise' })
-export class Enterprise implements IEnterprise {
+export class Enterprise extends BaseEntity implements IEnterprise {
 	/**
 	 * Create enterprise with infomations
 	 * @param {IEnterprise} payload - the infomations
 	 */
 	constructor(payload: IEnterpriseAssign & IBaseUser) {
+		super();
+
 		if (payload) {
 			const baseUsrInfo = InterfaceCasting.quick(
 					payload!,

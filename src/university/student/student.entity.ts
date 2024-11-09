@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
@@ -14,11 +14,13 @@ import { IUserSignUp } from 'user/user.model';
  * Student entity
  */
 @Entity({ name: 'Student' })
-export class Student implements IStudentEntity {
+export class Student extends BaseEntity implements IStudentEntity {
 	/**
 	 * Create student entity with infomations
 	 */
 	constructor(payload: IStudentInfo & IUserSignUp) {
+		super();
+
 		if (payload) {
 			this.user = new User(
 				InterfaceCasting.quick(payload, [

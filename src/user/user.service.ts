@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { DeepPartial, DeleteResult, Repository, SaveOptions } from 'typeorm';
+import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
 import { AppService } from 'app/app.service';
@@ -58,16 +58,14 @@ export class UserService extends DatabaseRequests<User> {
 	/**
 	 * Remove user
 	 * @param {DeepPartial<User>} criteria - deleting user
-	 * @return {Promise<DeleteResult>}
 	 */
-	async remove(criteria: DeepPartial<User>): Promise<DeleteResult> {
+	async remove(criteria: DeepPartial<User>) {
 		const id =
-				(criteria.baseUser as BaseUser).id ||
-				(await this.findOne(criteria)).baseUser.id,
-			result = await this.delete({ baseUser: { id } });
-		await this.appSvc.baseUser.remove({ id });
+			(criteria.baseUser as BaseUser).id ||
+			(await this.findOne(criteria)).baseUser.id;
 
-		return result;
+		await this.delete({ baseUser: { id } });
+		await this.appSvc.baseUser.remove({ id });
 	}
 
 	/**

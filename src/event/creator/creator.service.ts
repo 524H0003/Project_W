@@ -35,15 +35,13 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 	/**
 	 * Remove event creator
 	 * @param {DeepPartial<EventCreator>} criteria - deleting event creator
-	 * @return {Promise<DeleteResult>}
 	 */
-	async remove(criteria: DeepPartial<EventCreator>): Promise<DeleteResult> {
+	async remove(criteria: DeepPartial<EventCreator>) {
 		const id =
-				(criteria.user as User).baseUser.id ||
-				(await this.findOne(criteria)).user.baseUser.id,
-			result = await this.delete({ user: { baseUser: { id } } });
-		await this.svc.usr.remove({ baseUser: { id } });
+			(criteria.user as User).baseUser.id ||
+			(await this.findOne(criteria)).user.baseUser.id;
 
-		return result;
+		await this.delete({ user: { baseUser: { id } } });
+		await this.svc.usr.remove({ baseUser: { id } });
 	}
 }

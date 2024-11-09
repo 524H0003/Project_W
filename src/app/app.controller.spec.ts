@@ -1,39 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { execute } from 'app/utils/test.utils';
-import { Repository } from 'typeorm';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { TestModule } from 'app/module/test.module';
 import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
-import { Device } from '../auth/device/device.entity';
 import { AppController } from 'app/app.controller';
 import { AppModule } from 'app/app.module';
 import { Student } from 'university/student/student.entity';
+import { AppService } from './app.service';
 
 const fileName = curFile(__filename);
 
-let dvcRepo: Repository<Device>,
-	usrRepo: Repository<User>,
-	req: TestAgent,
+let req: TestAgent,
 	usr: User,
 	app: INestApplication,
-	rfsTms: number;
+	rfsTms: number,
+	appSvc: AppService;
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-			imports: [AppModule, TestModule],
-			controllers: [AppController],
-		}).compile(),
-		cfgSvc = module.get(ConfigService);
-
-	(dvcRepo = module.get(getRepositoryToken(Device))),
-		(usrRepo = module.get(getRepositoryToken(User))),
-		(app = module.createNestApplication()),
-		(rfsTms = cfgSvc.get('REFRESH_USE'));
+		imports: [AppModule, TestModule],
+		controllers: [AppController],
+	}).compile();
+	(appSvc = module.get(AppService)), (app = module.createNestApplication());
 
 	await app.use(cookieParser()).init();
 });
@@ -57,13 +48,9 @@ describe('signup', () => {
 			],
 		});
 
-		await execute(
-			() =>
-				usrRepo.findOne({
-					where: { baseUser: { email: usr.baseUser.email } },
-				}),
-			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
-		);
+		await execute(() => appSvc.usr.email(usr.baseUser.email), {
+			exps: [{ type: 'toBeInstanceOf', params: [User] }],
+		});
 	});
 
 	it('fail due to email already exist', async () => {
@@ -101,8 +88,8 @@ describe('login', () => {
 
 		await execute(
 			() =>
-				dvcRepo.find({
-					where: { owner: { baseUser: { email: usr.baseUser.email } } },
+				appSvc.dvc.find({
+					owner: { baseUser: { email: usr.baseUser.email.lower } },
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
 		);
@@ -153,10 +140,8 @@ describe('logout', () => {
 				onFinish: () =>
 					execute(
 						() =>
-							dvcRepo.find({
-								where: {
-									owner: { baseUser: { email: usr.baseUser.email } },
-								},
+							appSvc.dvc.find({
+								owner: { baseUser: { email: usr.baseUser.email.lower } },
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
 					),

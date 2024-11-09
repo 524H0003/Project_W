@@ -21,7 +21,7 @@ import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
 import { CookieOptions, Request, Response } from 'express';
 import { memoryStorage } from 'multer';
 import { IStudentSignup } from 'university/student/student.model';
-import { IUserLogin, IUserSignUp } from 'user/user.model';
+import { IUserSignUp } from 'user/user.model';
 import { IBaseUserEmail } from './app.model';
 import { AppService } from './app.service';
 import { User, UserRecieve } from 'user/user.entity';
@@ -180,7 +180,12 @@ export class AppController {
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'Invalid_Student_Email':
-					return this.userLogin(request, response, body, mtdt);
+					return this.responseWithUser(
+						request,
+						response,
+						await this.svc.auth.login(body),
+						mtdt,
+					);
 					break;
 
 				case 'Request_New_User':
@@ -191,28 +196,6 @@ export class AppController {
 					throw error;
 			}
 		}
-	}
-
-	/**
-	 * User login
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
-	 * @param {IUserLogin} body - login input
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
-	 */
-	protected async userLogin(
-		request: Request,
-		response: Response,
-		body: IUserLogin,
-		mtdt: string,
-	): Promise<void> {
-		return this.responseWithUser(
-			request,
-			response,
-			await this.svc.auth.login(body),
-			mtdt,
-		);
 	}
 
 	/**
@@ -325,7 +308,7 @@ export class AppController {
 				mtdt,
 				async (s: string) =>
 					this.svc.mail.send(body.email, 'Change password?', 'forgetPassword', {
-						name: (await this.svc.baseUser.findOne({ email: body.email })).name,
+						name: (await this.svc.baseUser.email(body.email)).name,
 						url: `${request.hostname}/hook/${s}`,
 					}),
 				'_Email',

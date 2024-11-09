@@ -1,12 +1,10 @@
 import {
 	BaseEntity,
 	DeepPartial,
-	DeleteResult,
 	FindOptionsWhere,
 	PrimaryGeneratedColumn,
 	Repository,
 	SaveOptions,
-	UpdateResult,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
@@ -37,7 +35,7 @@ export class SensitiveInfomations extends BaseEntity {
 /**
  * Generic database requests
  */
-export class DatabaseRequests<T> {
+export class DatabaseRequests<T extends BaseEntity> {
 	/**
 	 * @ignore
 	 */
@@ -104,7 +102,7 @@ export class DatabaseRequests<T> {
 	/**
 	 * Finding a object
 	 * @param {FindOptionsWithCustom<T>} options - function's option
-	 * @return {Promise<T>} found object
+	 * @return {Promise<T>}
 	 */
 	findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
 		const { deep = 1, relations = [''], ...newOptions } = options || {};
@@ -130,23 +128,21 @@ export class DatabaseRequests<T> {
 	/**
 	 * Deleting a object
 	 * @param {FindOptionsWhere<T>} criteria - the deleting object
-	 * @return {Promise<DeleteResult>} the deletion result
 	 */
-	protected delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
-		return this.repo.delete(criteria);
+	protected async delete(criteria: FindOptionsWhere<T>) {
+		await this.repo.delete(criteria);
 	}
 
 	/**
 	 * Updating a object
 	 * @param {DeepPartial<T>} entity - the updating object
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
-	 * @return {Promise<UpdateResult>}
 	 */
 	protected async update(
 		entity: DeepPartial<T>,
 		updatedEntity?: QueryDeepPartialEntity<T>,
-	): Promise<UpdateResult> {
-		return this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
+	) {
+		await this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
 	}
 
 	/**

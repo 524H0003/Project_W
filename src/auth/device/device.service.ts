@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import {
 	DeepPartial,
-	DeleteResult,
 	FindOptionsWhere,
 	Repository,
 	SaveOptions,
@@ -35,9 +34,8 @@ export class DeviceService extends DatabaseRequests<Device> {
 	/**
 	 * Remove device
 	 * @param {FindOptionsWhere<Device>} criteria - deleting device
-	 * @return {Promise<DeleteResult>}
 	 */
-	async remove(criteria: FindOptionsWhere<Device>): Promise<DeleteResult> {
-		return this.delete(criteria);
+	async remove(criteria: FindOptionsWhere<Device>) {
+		await this.delete(criteria);
 	}
 }

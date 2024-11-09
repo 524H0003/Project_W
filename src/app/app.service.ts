@@ -1,8 +1,8 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests, FindOptionsWithCustom } from './utils/typeorm.utils';
+import { DatabaseRequests } from './utils/typeorm.utils';
 import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, DeleteResult, Repository, SaveOptions } from 'typeorm';
+import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { AuthService, SignService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
@@ -97,21 +97,25 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	): Promise<BaseUser> {
 		await super.update(
 			{ ...entity, email: entity.email.lower },
-			{ ...updatedEntity, email: updatedEntity.email.lower },
+			{ ...updatedEntity, email: updatedEntity.email?.lower },
 		);
-		return new BaseUser(await this.findOne(updatedEntity));
+		return new BaseUser(
+			await this.findOne({
+				...updatedEntity,
+				email: updatedEntity.email?.lower,
+			}),
+		);
 	}
 
 	/**
 	 * Remove base user
 	 * @param {DeepPartial<BaseUser>} criteria - removing user
-	 * @return {Promise<DeleteResult>}
 	 */
-	async remove(criteria: DeepPartial<BaseUser>): Promise<DeleteResult> {
-		const id = criteria.id || (await this.findOne(criteria)).id,
-			result = await this.delete({ id });
-
-		return result;
+	async remove(criteria: DeepPartial<BaseUser>) {
+		const id =
+			criteria.id ||
+			(await this.findOne({ ...criteria, email: criteria.email.lower })).id;
+		await this.delete({ id });
 	}
 
 	/**
@@ -121,13 +125,5 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 */
 	email(input: string): Promise<BaseUser> {
 		return this.findOne({ email: input.lower });
-	}
-
-	/**
-	 * Find one user
-	 * @param {FindOptionsWithCustom<BaseUser>} options - function's options
-	 */
-	findOne(options?: FindOptionsWithCustom<BaseUser>): Promise<BaseUser> {
-		return super.findOne({ ...options, email: options.email.lower });
 	}
 }

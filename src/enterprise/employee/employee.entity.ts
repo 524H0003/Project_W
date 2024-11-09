@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import {
 	EmployeePosition,
 	IEmployeeEntity,
@@ -16,11 +16,13 @@ import { IEmployeeInfoKeys } from 'models';
  * Employee entity
  */
 @Entity({ name: 'EnterpriseUser' })
-export class Employee implements IEmployeeEntity {
+export class Employee extends BaseEntity implements IEmployeeEntity {
 	/**
 	 * Create employee entity with infomations
 	 */
 	constructor(payload: IEmployeeInfo & IUserAuthentication & IBaseUser) {
+		super();
+
 		if (payload) {
 			this.eventCreator = new EventCreator(payload);
 			Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));
