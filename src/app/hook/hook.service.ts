@@ -63,10 +63,9 @@ export class HookService extends DatabaseRequests<Hook> {
 	 * @param {Hook} hook - recieved hook from client
 	 */
 	async validating(signature: string, mtdt: string, hook: Hook) {
-		if (hook.mtdt === mtdt && signature == hook.signature) {
-			await this.delete({ id: hook.id });
-			return;
-		}
-		throw new BadRequestException('Invalid_Hook_Signature');
+		if (hook.mtdt !== mtdt || signature !== hook.signature)
+			throw new BadRequestException('Invalid_Hook_Signature');
+
+		await this.delete({ id: hook.id });
 	}
 }

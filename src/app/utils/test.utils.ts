@@ -35,33 +35,30 @@ export async function execute<
 >(
 	func: T,
 	options: {
-		params?: Parameters<T>;
 		throwError?: boolean;
 		numOfRun?: number;
 		exps: Expectation<T, K>[];
-		onFinish?: Function;
+		onFinish?: (result: any) => void;
 	},
 ) {
 	let funcResult: any;
 	const {
-			params,
-			throwError = false,
-			numOfRun = 1,
-			exps,
-			onFinish = () => {},
-		} = options || {},
-		chamber = () => (params ? func(...params) : func());
+		throwError = false,
+		numOfRun = 1,
+		exps,
+		onFinish = () => {},
+	} = options;
 
-	if (!throwError && numOfRun - 1) await numOfRun.ra(chamber);
+	if (!throwError && numOfRun - 1) await numOfRun.ra(func);
 
 	const result = throwError
-		? expect(func).rejects
-		: expect((funcResult = await chamber()));
+		? expect(await func()).rejects
+		: expect((funcResult = await func()));
 	if (exps.some((i) => i.debug)) console.log(funcResult);
 	for (const exp of exps) {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		//@ts-expect-error
 		await (exp.not ? result.not : result)[exp.type].apply(null, exp.params);
 	}
-	await onFinish();
+	await onFinish(await func());
 }
