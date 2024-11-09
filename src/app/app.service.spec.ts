@@ -19,8 +19,7 @@ beforeEach(async () => {
 
 describe('BaseUserService', () => {
 	it('assign', async () => {
-		const email = (20).string + '@lmao.com',
-			name = fileName + '_' + (5).string;
+		const { name, email } = BaseUser.test(fileName);
 
 		await execute(() => appSvc.baseUser.assign({ name, email }), {
 			exps: [
@@ -34,8 +33,7 @@ describe('BaseUserService', () => {
 	});
 
 	it('modify', async () => {
-		const email = (20).string + '@lmao.com',
-			name = fileName + '_' + (5).string,
+		const { name, email } = BaseUser.test(fileName),
 			newName = (5).string + '_' + name;
 
 		await appSvc.baseUser.assign({ name, email });
@@ -58,8 +56,7 @@ describe('BaseUserService', () => {
 	});
 
 	it('remove', async () => {
-		const email = (20).string + '@lmao.com',
-			name = fileName + '_' + (5).string;
+		const { name, email } = BaseUser.test(fileName);
 
 		await appSvc.baseUser.assign({ name, email });
 
@@ -72,8 +69,7 @@ describe('BaseUserService', () => {
 	});
 
 	it('email', async () => {
-		const email = (20).string + '@lmao.com',
-			name = fileName + '_' + (5).string;
+		const { name, email } = BaseUser.test(fileName);
 
 		await appSvc.baseUser.assign({ name, email });
 
