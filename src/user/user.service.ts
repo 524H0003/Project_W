@@ -52,7 +52,7 @@ export class UserService extends DatabaseRequests<User> {
 			updatedEntity.baseUser,
 		);
 		await this.update(entity, { ...updatedEntity, baseUser });
-		return this.findOne({ ...updatedEntity, baseUser });
+		return this.id(baseUser.id);
 	}
 
 	/**
@@ -93,10 +93,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} the user's infomations
 	 */
 	async updateRole(id: string, updateRole: UserRole): Promise<User> {
-		await this.update(
-			{ baseUser: { id } },
-			{ baseUser: { id }, role: updateRole },
-		);
-		return this.findOne({ baseUser: { id } });
+		await this.update({ baseUser: { id } }, { role: updateRole });
+		return this.id(id);
 	}
 }

@@ -39,7 +39,7 @@ describe('HookService', () => {
 						type: 'access',
 					}) as { id: string };
 
-					await execute(() => appSvc.hook.findOne({ mtdt, id: token.id }), {
+					await execute(() => appSvc.hook.id(token.id), {
 						exps: [
 							{ type: 'toBeDefined', params: [] },
 							{
@@ -69,7 +69,7 @@ describe('HookService', () => {
 			token: { id: string } = appSvc.sign.verify(userRecieve.accessToken, {
 				type: 'access',
 			}) as { id: string },
-			hook = await appSvc.hook.findOne({ mtdt, id: token.id });
+			hook = await appSvc.hook.id(token.id);
 
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
