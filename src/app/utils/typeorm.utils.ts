@@ -6,10 +6,12 @@ import {
 	PrimaryGeneratedColumn,
 	Repository,
 	SaveOptions,
+	UpdateResult,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
-export type FindOptionsWithCustom<T> = FindOptionsWhere<T> & {
+export type FindOptionsWithCustom<T> = DeepPartial<T> & {
 	deep?: number;
 	relations?: string[];
 };
@@ -122,7 +124,7 @@ export class DatabaseRequests<T> {
 	 * @return {Promise<T>} the object from database
 	 */
 	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
-		return this.repo.save(entity, options) as Promise<T>;
+		return this.repo.save(entity, options);
 	}
 
 	/**
@@ -137,11 +139,14 @@ export class DatabaseRequests<T> {
 	/**
 	 * Updating a object
 	 * @param {DeepPartial<T>} entity - the updating object
-	 * @param {SaveOptions} options - function's option
-	 * @return {Promise<T>} the updated object
+	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
+	 * @return {Promise<UpdateResult>}
 	 */
-	protected update(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
-		return this.save(entity, options);
+	protected async update(
+		entity: DeepPartial<T>,
+		updatedEntity?: QueryDeepPartialEntity<T>,
+	): Promise<UpdateResult> {
+		return this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
 	}
 
 	/**

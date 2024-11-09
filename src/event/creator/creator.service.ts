@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
+import { DeepPartial, DeleteResult, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 
@@ -34,12 +34,10 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 
 	/**
 	 * Remove event creator
-	 * @param {FindOptionsWhere<EventCreator>} criteria - deleting event creator
+	 * @param {DeepPartial<EventCreator>} criteria - deleting event creator
 	 * @return {Promise<DeleteResult>}
 	 */
-	async remove(
-		criteria: FindOptionsWhere<EventCreator>,
-	): Promise<DeleteResult> {
+	async remove(criteria: DeepPartial<EventCreator>): Promise<DeleteResult> {
 		const id =
 				(criteria.user as User).base.id ||
 				(await this.findOne(criteria)).user.base.id,

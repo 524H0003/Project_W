@@ -181,6 +181,10 @@ declare global {
 		 * Get random character
 		 */
 		readonly randomChar: string;
+		/**
+		 * To lower case
+		 */
+		readonly lower: string;
 	}
 
 	/**
@@ -218,6 +222,13 @@ try {
 Object.defineProperty(String.prototype, 'randomChar', {
 	get: function () {
 		return (this as string).charAt((this as string).length.random);
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'lower', {
+	get: function () {
+		return (this as string).toLowerCase();
 	},
 	enumerable: true,
 	configurable: true,

@@ -47,7 +47,7 @@ export class AuthService extends Cryption {
 
 		const user = await this.usrSvc.email(input.email),
 			{ role = UserRole.undefined } = options || {},
-			rawUser = new User({ ...input, email: input.email.toLowerCase() });
+			rawUser = new User({ ...input, email: input.email.lower });
 
 		if (user) throw new UnprocessableEntityException('Exist_User');
 
@@ -56,7 +56,7 @@ export class AuthService extends Cryption {
 				if (rawUser.hashedPassword) {
 					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
-					await this.usrSvc.modify({
+					await this.usrSvc.modify(newUser, {
 						base: { id: newUser.base.id, avatarPath: avatarFile?.path },
 					});
 					return this.usrSvc.findOne({ base: { id: rawUser.base.id } });
@@ -94,7 +94,7 @@ export class AuthService extends Cryption {
 
 	/**
 	 * Change user's password
-	 * @param {User} iUser - input user
+	 * @param {User} user - input user
 	 * @param {string} password - new password
 	 * @return {Promise<User>} updated user
 	 */
@@ -102,7 +102,7 @@ export class AuthService extends Cryption {
 		const newUser = await this.usrSvc.id(user.base.id);
 		newUser.password = password;
 		return validation(newUser, () => {
-			if (newUser.hashedPassword) return this.usrSvc.modify(newUser);
+			if (newUser.hashedPassword) return this.usrSvc.modify(user, newUser);
 		});
 	}
 }

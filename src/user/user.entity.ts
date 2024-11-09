@@ -167,10 +167,8 @@ export class User implements IUserEntity {
 	 * @ignore
 	 */
 	static test(from: string, options?: { email?: string; password?: string }) {
-		const {
-				email = ((20).alpha + '@gmail.com').toLowerCase(),
-				password = 'Aa1!000000000000',
-			} = options || {},
+		const { email = (20).alpha + '@gmail.com', password = 'Aa1!000000000000' } =
+				options || {},
 			n = new User({ email, password, name: from });
 		if (n.hashedPassword) return n;
 	}

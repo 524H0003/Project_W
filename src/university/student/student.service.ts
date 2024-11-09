@@ -40,7 +40,7 @@ export class StudentService extends DatabaseRequests<Student> {
 	 * Find student by email
 	 */
 	email(input: string): Promise<Student> {
-		return this.findOne({ user: { base: { email: input.toLowerCase() } } });
+		return this.findOne({ user: { base: { email: input.lower } } });
 	}
 
 	/**

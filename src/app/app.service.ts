@@ -1,14 +1,8 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests } from './utils/typeorm.utils';
+import { DatabaseRequests, FindOptionsWithCustom } from './utils/typeorm.utils';
 import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-	DeepPartial,
-	DeleteResult,
-	FindOptionsWhere,
-	Repository,
-	SaveOptions,
-} from 'typeorm';
+import { DeepPartial, DeleteResult, Repository, SaveOptions } from 'typeorm';
 import { AuthService, SignService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
@@ -82,32 +76,38 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<BaseUser>}
 	 */
-	assign(
+	async assign(
 		entity: DeepPartial<BaseUser>,
 		options?: SaveOptions,
 	): Promise<BaseUser> {
-		return super.save(entity, options);
+		return new BaseUser(
+			await super.save({ ...entity, email: entity.email.lower }, options),
+		);
 	}
 
 	/**
 	 * Modify new base user
-	 * @param {DeepPartial<BaseUser>} entity - modifying user
-	 * @param {SaveOptions} options - function's option
+	 * @param {DeepPartial<BaseUser>} entity - user
+	 * @param {DeepPartial<BaseUser>} updatedEntity - modified user
 	 * @return {Promise<BaseUser>}
 	 */
-	modify(
+	async modify(
 		entity: DeepPartial<BaseUser>,
-		options?: SaveOptions,
+		updatedEntity: DeepPartial<BaseUser>,
 	): Promise<BaseUser> {
-		return super.update(entity, options);
+		await super.update(
+			{ ...entity, email: entity.email.lower },
+			{ ...updatedEntity, email: updatedEntity.email.lower },
+		);
+		return new BaseUser(await this.findOne(updatedEntity));
 	}
 
 	/**
 	 * Remove base user
-	 * @param {FindOptionsWhere<BaseUser>} criteria - removing user
+	 * @param {DeepPartial<BaseUser>} criteria - removing user
 	 * @return {Promise<DeleteResult>}
 	 */
-	async remove(criteria: FindOptionsWhere<BaseUser>): Promise<DeleteResult> {
+	async remove(criteria: DeepPartial<BaseUser>): Promise<DeleteResult> {
 		const id = criteria.id || (await this.findOne(criteria)).id,
 			result = await this.delete({ id });
 
@@ -120,6 +120,14 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 * @return {Promise<BaseUser>}
 	 */
 	email(input: string): Promise<BaseUser> {
-		return this.findOne({ email: input.toLowerCase() });
+		return this.findOne({ email: input.lower });
+	}
+
+	/**
+	 * Find one user
+	 * @param {FindOptionsWithCustom<BaseUser>} options - function's options
+	 */
+	findOne(options?: FindOptionsWithCustom<BaseUser>): Promise<BaseUser> {
+		return super.findOne({ ...options, email: options.email.lower });
 	}
 }
