@@ -74,9 +74,7 @@ describe('HookService', () => {
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () => appSvc.hook.validating(signature, mtdt, hook),
-			{
-				exps: [{ type: 'toThrow', not: true, params: [] }],
-			},
+			{ exps: [{ type: 'toThrow', not: true, params: [] }] },
 		);
 	});
 
