@@ -63,7 +63,7 @@ export class AuthService extends Cryption {
 						},
 					});
 					return this.usrSvc.findOne({
-						baseUser: { id: rawUser.baseUser.id },
+						baseUser: { id: newUser.baseUser.id },
 					});
 				}
 			});

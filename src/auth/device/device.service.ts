@@ -38,4 +38,18 @@ export class DeviceService extends DatabaseRequests<Device> {
 	async remove(criteria: FindOptionsWhere<Device>) {
 		await this.delete(criteria);
 	}
+
+	/**
+	 * Modify device
+	 * @param {DeepPartial<BaseUser>} entity - user
+	 * @param {DeepPartial<BaseUser>} updatedEntity - modified user
+	 * @return {Promise<BaseUser>}
+	 */
+	async modify(
+		entity: DeepPartial<Device>,
+		updatedEntity: DeepPartial<Device>,
+	): Promise<Device> {
+		await super.update(entity, updatedEntity);
+		return new Device(await this.findOne(updatedEntity));
+	}
 }
