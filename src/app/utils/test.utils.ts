@@ -42,12 +42,7 @@ export async function execute<
 	},
 ) {
 	let funcResult: any;
-	const {
-		throwError = false,
-		numOfRun = 1,
-		exps,
-		onFinish = () => {},
-	} = options;
+	const { throwError = false, numOfRun = 1, exps, onFinish = null } = options;
 
 	if (!throwError && numOfRun - 1) await numOfRun.ra(func);
 
@@ -60,5 +55,5 @@ export async function execute<
 		//@ts-expect-error
 		await (exp.not ? result.not : result)[exp.type].apply(null, exp.params);
 	}
-	await onFinish(await func());
+	if (onFinish) await onFinish(await func());
 }

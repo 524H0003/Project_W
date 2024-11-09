@@ -165,8 +165,7 @@ describe('logout', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(req.post, {
-			params: ['/logout'],
+		await execute(() => req.post('/logout'), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
 			],
@@ -211,8 +210,7 @@ describe('refresh', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(req.post, {
-			params: ['/refresh'],
+		await execute(() => req.post('/refresh'), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
 			],
@@ -221,13 +219,12 @@ describe('refresh', () => {
 
 	it('success in generate new key', async () => {
 		await execute(
-			async (headers: object) =>
+			async () =>
 				({ headers } = await req
 					.post('/refresh')
 					.set('Cookie', headers['set-cookie'])),
 			{
 				numOfRun: rfsTms * 1.2,
-				params: [headers],
 				exps: [
 					{
 						type: 'toHaveProperty',

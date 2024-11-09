@@ -276,6 +276,7 @@ Object.defineProperty(Number.prototype, 'alpha', {
 });
 Object.defineProperty(Number.prototype, 'string', {
 	get: function () {
+		if (!this) return '';
 		return array(this)
 			.map(() => (alphaChars + numChars).randomChar)
 			.join('');
