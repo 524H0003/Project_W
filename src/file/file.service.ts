@@ -184,7 +184,7 @@ export class FileService extends DatabaseRequests<File> {
 
 				const file = await this.path(filename, user?.id, { deep: 2 });
 
-				if (user?.id === file.fileCreatedBy.base.id) return filename;
+				if (user?.id === file.fileCreatedBy.baseUser.id) return filename;
 				throw new BadRequestException('ForbidenFile');
 			}
 			return null;
@@ -215,7 +215,7 @@ export class FileService extends DatabaseRequests<File> {
 		return this.findOne({
 			path: input,
 			...options,
-			fileCreatedBy: { base: { id: userId } },
+			fileCreatedBy: { baseUser: { id: userId } },
 		});
 	}
 }

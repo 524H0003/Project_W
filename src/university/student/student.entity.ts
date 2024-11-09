@@ -85,7 +85,7 @@ export class Student implements IStudentEntity {
 				graduationYear: (20).random,
 				enrollmentYear: (20).random,
 				skills: (3).string,
-				...user.base,
+				...user.baseUser,
 				...user,
 				password,
 			});

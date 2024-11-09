@@ -57,9 +57,14 @@ export class AuthService extends Cryption {
 					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
 					await this.usrSvc.modify(newUser, {
-						base: { id: newUser.base.id, avatarPath: avatarFile?.path },
+						baseUser: {
+							id: newUser.baseUser.id,
+							avatarPath: avatarFile?.path,
+						},
 					});
-					return this.usrSvc.findOne({ base: { id: rawUser.base.id } });
+					return this.usrSvc.findOne({
+						baseUser: { id: rawUser.baseUser.id },
+					});
 				}
 			});
 		} catch (error) {
@@ -99,7 +104,7 @@ export class AuthService extends Cryption {
 	 * @return {Promise<User>} updated user
 	 */
 	async changePassword(user: User, password: string): Promise<User> {
-		const newUser = await this.usrSvc.id(user.base.id);
+		const newUser = await this.usrSvc.id(user.baseUser.id);
 		newUser.password = password;
 		return validation(newUser, () => {
 			if (newUser.hashedPassword) return this.usrSvc.modify(user, newUser);

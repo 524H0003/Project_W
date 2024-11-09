@@ -32,7 +32,9 @@ export class User implements IUserEntity {
 	 */
 	constructor(payload: IUserAuthentication & IBaseUser) {
 		if (payload) {
-			this.base = new BaseUser(InterfaceCasting.quick(payload!, IBaseUserKeys));
+			this.baseUser = new BaseUser(
+				InterfaceCasting.quick(payload!, IBaseUserKeys),
+			);
 			Object.assign(
 				this,
 				InterfaceCasting.quick(payload!, IUserAuthenticationKeys),
@@ -66,7 +68,7 @@ export class User implements IUserEntity {
 	 * Base user
 	 */
 	@Column(() => BaseUser, { prefix: false })
-	base: BaseUser;
+	baseUser: BaseUser;
 
 	// Relationships
 	/**
@@ -159,7 +161,7 @@ export class User implements IUserEntity {
 	get info(): IUserInfo {
 		return {
 			...InterfaceCasting.quick(this, IUserInfoKeys),
-			...InterfaceCasting.quick(this.base, IBaseUserKeys),
+			...InterfaceCasting.quick(this.baseUser, IBaseUserKeys),
 		};
 	}
 

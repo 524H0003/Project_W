@@ -40,7 +40,7 @@ export class StudentService extends DatabaseRequests<Student> {
 	 * Find student by email
 	 */
 	email(input: string): Promise<Student> {
-		return this.findOne({ user: { base: { email: input.lower } } });
+		return this.findOne({ user: { baseUser: { email: input.lower } } });
 	}
 
 	/**
@@ -54,7 +54,7 @@ export class StudentService extends DatabaseRequests<Student> {
 
 		if (user) return this.svc.auth.login(input);
 
-		if (!rawStu.user.base.email.match(this.studentMailRex))
+		if (!rawStu.user.baseUser.email.match(this.studentMailRex))
 			throw new BadRequestException('Invalid_Student_Email');
 
 		return await validation<User>(rawStu, async () => {

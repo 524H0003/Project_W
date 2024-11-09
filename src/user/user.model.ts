@@ -59,7 +59,7 @@ export interface IUserSensitive {
  * @ignore
  */
 export interface IUserRelationship {
-	base: IBaseUser;
+	baseUser: IBaseUser;
 	recievedNotifications: IReciever[];
 	devices: IDevice[];
 	uploadFiles: IFile[];

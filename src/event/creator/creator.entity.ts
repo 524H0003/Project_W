@@ -45,6 +45,6 @@ export class EventCreator implements IEventCreatorEntity {
 	 */
 	static test(from: string, options?: { user?: User }) {
 		const { user = User.test(from) } = options || {};
-		return new EventCreator({ ...user, ...user.base });
+		return new EventCreator({ ...user, ...user.baseUser });
 	}
 }

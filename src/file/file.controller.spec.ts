@@ -45,17 +45,17 @@ describe('seeUploadedFile', () => {
 		const e = await req
 			.post('/signup')
 			.attach('avatar', Buffer.from('test', 'base64'), 'avatar.png')
-			.field('name', rawUsr.base.name)
-			.field('email', rawUsr.base.email)
+			.field('name', rawUsr.baseUser.name)
+			.field('email', rawUsr.baseUser.email)
 			.field('password', rawUsr.password);
 		usr = await usrRepo.findOne({
-			where: { base: { email: rawUsr.base.email } },
+			where: { baseUser: { email: rawUsr.baseUser.email } },
 			relations: ['base'],
 		});
 
 		headers = e.headers;
 
-		await usrSvc.updateRole(usr.base.id, UserRole.admin);
+		await usrSvc.updateRole(usr.baseUser.id, UserRole.admin);
 	});
 
 	it('success on server files', async () => {
@@ -76,7 +76,7 @@ describe('seeUploadedFile', () => {
 		await execute(
 			() =>
 				req
-					.get(`/file/${usr.base.avatarPath}`)
+					.get(`/file/${usr.baseUser.avatarPath}`)
 					.set('Cookie', headers['set-cookie']),
 			{
 				exps: [
@@ -87,7 +87,7 @@ describe('seeUploadedFile', () => {
 	});
 
 	it('failed', async () => {
-		await execute(() => req.get(`/file/${usr.base.avatarPath}`), {
+		await execute(() => req.get(`/file/${usr.baseUser.avatarPath}`), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],

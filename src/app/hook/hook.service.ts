@@ -42,11 +42,12 @@ export class HookService extends DatabaseRequests<Hook> {
 		addInfo?: object,
 	): Promise<UserRecieve> {
 		const signature = (128).string,
+			baseUser = await func(signature),
 			hook = await this.save({
 				signature,
 				mtdt,
 				note: JSON.stringify(addInfo),
-				fromUser: { base: (await func(signature)) || null },
+				fromUser: baseUser ? { baseUser } : null,
 			});
 
 		return new UserRecieve({

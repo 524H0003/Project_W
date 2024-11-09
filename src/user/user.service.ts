@@ -33,8 +33,8 @@ export class UserService extends DatabaseRequests<User> {
 		entity: DeepPartial<User>,
 		options?: SaveOptions,
 	): Promise<User> {
-		const baseUsr = await this.appSvc.baseUser.assign(entity.base);
-		return this.save({ ...entity, base: baseUsr }, options);
+		const baseUser = await this.appSvc.baseUser.assign(entity.baseUser);
+		return this.save({ ...entity, baseUser }, options);
 	}
 
 	/**
@@ -47,12 +47,12 @@ export class UserService extends DatabaseRequests<User> {
 		entity: DeepPartial<User>,
 		updatedEntity: DeepPartial<User>,
 	): Promise<User> {
-		const baseUsr = await this.appSvc.baseUser.modify(
-			entity.base,
-			updatedEntity.base,
+		const baseUser = await this.appSvc.baseUser.modify(
+			entity.baseUser,
+			updatedEntity.baseUser,
 		);
-		await this.update(entity, { ...updatedEntity, base: baseUsr });
-		return this.findOne({ ...updatedEntity, base: baseUsr });
+		await this.update(entity, { ...updatedEntity, baseUser });
+		return this.findOne({ ...updatedEntity, baseUser });
 	}
 
 	/**
@@ -62,9 +62,9 @@ export class UserService extends DatabaseRequests<User> {
 	 */
 	async remove(criteria: DeepPartial<User>): Promise<DeleteResult> {
 		const id =
-				(criteria.base as BaseUser).id ||
-				(await this.findOne(criteria)).base.id,
-			result = await this.delete({ base: { id } });
+				(criteria.baseUser as BaseUser).id ||
+				(await this.findOne(criteria)).baseUser.id,
+			result = await this.delete({ baseUser: { id } });
 		await this.appSvc.baseUser.remove({ id });
 
 		return result;
@@ -76,7 +76,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} founded user
 	 */
 	email(input: string): Promise<User> {
-		return this.findOne({ base: { email: input.lower } });
+		return this.findOne({ baseUser: { email: input.lower } });
 	}
 
 	/**
@@ -85,7 +85,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} founded user
 	 */
 	id(id: string): Promise<User> {
-		return this.findOne({ base: { id } });
+		return this.findOne({ baseUser: { id } });
 	}
 
 	/**
@@ -95,7 +95,10 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} the user's infomations
 	 */
 	async updateRole(id: string, updateRole: UserRole): Promise<User> {
-		await this.update({ base: { id } }, { base: { id }, role: updateRole });
-		return this.findOne({ base: { id } });
+		await this.update(
+			{ baseUser: { id } },
+			{ baseUser: { id }, role: updateRole },
+		);
+		return this.findOne({ baseUser: { id } });
 	}
 }

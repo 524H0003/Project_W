@@ -67,7 +67,7 @@ export class Employee implements IEmployeeEntity {
 		return new Employee({
 			...eventCreator,
 			...eventCreator.user,
-			...eventCreator.user.base,
+			...eventCreator.user.baseUser,
 			position: EmployeePosition.other,
 		});
 	}

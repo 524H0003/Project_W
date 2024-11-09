@@ -44,46 +44,7 @@ beforeEach(() => {
 
 describe('signup', () => {
 	it('success', async () => {
-		await execute(() => req.post('/signup').send({ ...usr, ...usr.base }), {
-			exps: [
-				{
-					type: 'toHaveProperty',
-					params: [
-						'headers.set-cookie',
-						expect.arrayContaining([expect.anything(), expect.anything()]),
-					],
-				},
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
-			],
-		});
-
-		await execute(
-			() => usrRepo.findOne({ where: { base: { email: usr.base.email } } }),
-			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
-		);
-	});
-
-	it('fail due to email already exist', async () => {
-		await req.post('/signup').send({ ...usr, ...usr.base });
-
-		await execute(() => req.post('/signup').send({ ...usr, ...usr.base }), {
-			exps: [
-				{
-					type: 'toHaveProperty',
-					params: ['status', HttpStatus.UNPROCESSABLE_ENTITY],
-				},
-			],
-		});
-	});
-});
-
-describe('login', () => {
-	beforeEach(
-		async () => await req.post('/signup').send({ ...usr, ...usr.base }),
-	);
-
-	it('success', async () => {
-		await execute(() => req.post('/login').send({ ...usr, ...usr.base }), {
+		await execute(() => req.post('/signup').send({ ...usr, ...usr.baseUser }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -98,15 +59,59 @@ describe('login', () => {
 
 		await execute(
 			() =>
-				dvcRepo.find({ where: { owner: { base: { email: usr.base.email } } } }),
+				usrRepo.findOne({
+					where: { baseUser: { email: usr.baseUser.email } },
+				}),
+			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
+		);
+	});
+
+	it('fail due to email already exist', async () => {
+		await req.post('/signup').send({ ...usr, ...usr.baseUser });
+
+		await execute(() => req.post('/signup').send({ ...usr, ...usr.baseUser }), {
+			exps: [
+				{
+					type: 'toHaveProperty',
+					params: ['status', HttpStatus.UNPROCESSABLE_ENTITY],
+				},
+			],
+		});
+	});
+});
+
+describe('login', () => {
+	beforeEach(
+		async () => await req.post('/signup').send({ ...usr, ...usr.baseUser }),
+	);
+
+	it('success', async () => {
+		await execute(() => req.post('/login').send({ ...usr, ...usr.baseUser }), {
+			exps: [
+				{
+					type: 'toHaveProperty',
+					params: [
+						'headers.set-cookie',
+						expect.arrayContaining([expect.anything(), expect.anything()]),
+					],
+				},
+				{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
+			],
+		});
+
+		await execute(
+			() =>
+				dvcRepo.find({
+					where: { owner: { baseUser: { email: usr.baseUser.email } } },
+				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
 		);
 	});
 
 	it('fail due to wrong password', async () => {
-		usr = new User({ ...usr, ...usr.base, password: (12).string });
+		usr = new User({ ...usr, ...usr.baseUser, password: (12).string });
 
-		await execute(() => req.post('/login').send({ ...usr, ...usr.base }), {
+		await execute(() => req.post('/login').send({ ...usr, ...usr.baseUser }), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],
@@ -116,7 +121,7 @@ describe('login', () => {
 	it('fail due to not follow student email format', async () => {
 		usr = Student.test(fileName, { email: 'aa' }).user;
 
-		await execute(() => req.post('/login').send({ ...usr.base, ...usr }), {
+		await execute(() => req.post('/login').send({ ...usr.baseUser, ...usr }), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],
@@ -129,7 +134,9 @@ describe('logout', () => {
 
 	beforeEach(
 		async () =>
-			({ headers } = await req.post('/signup').send({ ...usr, ...usr.base })),
+			({ headers } = await req
+				.post('/signup')
+				.send({ ...usr, ...usr.baseUser })),
 	);
 
 	it('success', async () => {
@@ -147,7 +154,9 @@ describe('logout', () => {
 					execute(
 						() =>
 							dvcRepo.find({
-								where: { owner: { base: { email: usr.base.email } } },
+								where: {
+									owner: { baseUser: { email: usr.baseUser.email } },
+								},
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
 					),
@@ -170,7 +179,9 @@ describe('refresh', () => {
 
 	beforeEach(
 		async () =>
-			({ headers } = await req.post('/signup').send({ ...usr, ...usr.base })),
+			({ headers } = await req
+				.post('/signup')
+				.send({ ...usr, ...usr.baseUser })),
 	);
 
 	it('success', async () => {
