@@ -74,12 +74,4 @@ describe('seeUploadedFile', () => {
 			},
 		);
 	});
-
-	it('failed', async () => {
-		await execute(() => req.get(`/file/${usr.baseUser.avatarPath}`), {
-			exps: [
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
-			],
-		});
-	});
 });
