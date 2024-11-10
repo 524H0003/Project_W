@@ -24,10 +24,7 @@ describe('BaseUserService', () => {
 		await execute(() => appSvc.baseUser.assign({ name, email }), {
 			exps: [
 				{ type: 'toBeInstanceOf', params: [BaseUser] },
-				{
-					type: 'toMatchObject',
-					params: [{ name, email: email.lower }],
-				},
+				{ type: 'toMatchObject', params: [{ name, email: email.lower }] },
 			],
 		});
 	});
@@ -76,10 +73,7 @@ describe('BaseUserService', () => {
 		await execute(() => appSvc.baseUser.email(email), {
 			exps: [
 				{ type: 'toBeInstanceOf', params: [BaseUser] },
-				{
-					type: 'toMatchObject',
-					params: [{ email: email.lower, name }],
-				},
+				{ type: 'toMatchObject', params: [{ email: email.lower, name }] },
 			],
 		});
 	});
