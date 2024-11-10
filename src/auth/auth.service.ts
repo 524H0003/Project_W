@@ -9,7 +9,7 @@ import { Cryption, validation } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { compareSync } from 'bcrypt';
 import { FileService } from 'file/file.service';
-import { IUserLoginKeys, IUserSignUpKeys } from 'models';
+import { IUserLoginKeys, IUserRelationshipKeys, IUserSignUpKeys } from 'models';
 import { User } from 'user/user.entity';
 import { IUserLogin, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
@@ -68,11 +68,9 @@ export class AuthService extends Cryption {
 					throw new BadRequestException(
 						JSON.parse((error as { message: string }).message),
 					);
-					break;
 
 				default:
 					throw error;
-					break;
 			}
 		}
 	}
@@ -99,11 +97,13 @@ export class AuthService extends Cryption {
 	 * @return {Promise<User>} updated user
 	 */
 	async changePassword(user: User, password: string): Promise<User> {
-		const newUser = await this.usrSvc.id(user.baseUser.id);
+		let newUser = await this.usrSvc.id(user.baseUser.id);
 		newUser.password = password;
 		return validation(newUser, () => {
-			if (newUser.hashedPassword)
+			if (newUser.hashedPassword) {
+				newUser = InterfaceCasting.delete(newUser, IUserRelationshipKeys);
 				return this.usrSvc.modify(user.baseUser.id, newUser);
+			}
 		});
 	}
 }

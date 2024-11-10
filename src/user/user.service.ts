@@ -48,11 +48,10 @@ export class UserService extends DatabaseRequests<User> {
 		entityId: string,
 		updatedEntity: DeepPartial<User>,
 	): Promise<User> {
-		const baseUser = await this.appSvc.baseUser.modify(
-			entityId,
-			updatedEntity.baseUser,
-		);
-		await this.update({ baseUser }, { ...updatedEntity, baseUser });
+		const id = (
+			await this.appSvc.baseUser.modify(entityId, updatedEntity.baseUser)
+		).id;
+		await this.update({ baseUser: { id } }, { ...updatedEntity });
 		return this.id(entityId);
 	}
 

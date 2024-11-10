@@ -22,6 +22,17 @@ export class InterfaceCasting<T, K extends keyof T> {
 	static quick<T, K extends keyof T>(input: T, get: readonly K[]): T {
 		return new InterfaceCasting(input, get) as T;
 	}
+
+	/**
+	 * Quick method to convert object to interface
+	 * @param {T} input - the input object
+	 * @param {K[]} get - the interface's properties
+	 * @return {InterfaceCasting} the result of casting
+	 */
+	static delete<T, K extends keyof T>(input: T, get: readonly K[]): T {
+		get.forEach((_) => delete input[_]);
+		return input;
+	}
 }
 /**
  * @ignore
