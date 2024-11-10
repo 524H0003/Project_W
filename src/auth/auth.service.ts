@@ -56,9 +56,10 @@ export class AuthService extends Cryption {
 				if (rawUser.hashedPassword) {
 					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
-					return await this.usrSvc.modify(newUser, {
-						baseUser: { id: newUser.baseUser.id, avatarPath: avatarFile?.path },
-					});
+					return await this.usrSvc.modify(
+						newUser.baseUser.id,
+						avatarFile ? { baseUser: { avatarPath: avatarFile.path } } : {},
+					);
 				}
 			});
 		} catch (error) {
@@ -101,7 +102,8 @@ export class AuthService extends Cryption {
 		const newUser = await this.usrSvc.id(user.baseUser.id);
 		newUser.password = password;
 		return validation(newUser, () => {
-			if (newUser.hashedPassword) return this.usrSvc.modify(user, newUser);
+			if (newUser.hashedPassword)
+				return this.usrSvc.modify(user.baseUser.id, newUser);
 		});
 	}
 }

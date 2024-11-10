@@ -18,4 +18,11 @@ export interface IBaseUserEmail {
 	email: string;
 }
 
-export interface IBaseUser extends IBaseUserInfo, IBaseUserEmail {}
+export interface IEntityId {
+	/**
+	 * Entity's unique Identify digits
+	 */
+	id?: string;
+}
+
+export interface IBaseUser extends IBaseUserInfo, IBaseUserEmail, IEntityId {}

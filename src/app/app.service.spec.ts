@@ -26,7 +26,7 @@ describe('BaseUserService', () => {
 				{ type: 'toBeInstanceOf', params: [BaseUser] },
 				{
 					type: 'toMatchObject',
-					params: [new BaseUser({ name, email: email.lower })],
+					params: [{ name, email: email.lower }],
 				},
 			],
 		});
@@ -34,18 +34,17 @@ describe('BaseUserService', () => {
 
 	it('modify', async () => {
 		const { name, email } = BaseUser.test(fileName),
-			newName = (5).string + '_' + name;
-
-		await appSvc.baseUser.assign({ name, email });
+			newName = (5).string + '_' + name,
+			baseUser = await appSvc.baseUser.assign({ name, email });
 
 		await execute(
-			() => appSvc.baseUser.modify({ email, name }, { email, name: newName }),
+			() => appSvc.baseUser.modify(baseUser.id, { email, name: newName }),
 			{
 				exps: [
 					{ type: 'toBeInstanceOf', params: [BaseUser] },
 					{
 						type: 'toMatchObject',
-						params: [new BaseUser({ email: email.lower, name: newName })],
+						params: [{ email: email.lower, name: newName }],
 					},
 				],
 			},
@@ -79,7 +78,7 @@ describe('BaseUserService', () => {
 				{ type: 'toBeInstanceOf', params: [BaseUser] },
 				{
 					type: 'toMatchObject',
-					params: [new BaseUser({ email: email.lower, name })],
+					params: [{ email: email.lower, name }],
 				},
 			],
 		});

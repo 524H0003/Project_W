@@ -35,25 +35,25 @@ export class UserService extends DatabaseRequests<User> {
 	): Promise<User> {
 		const baseUser = await this.appSvc.baseUser.assign(entity.baseUser),
 			result = await this.save({ ...entity, baseUser }, options);
-		return new User({ ...result, ...result.baseUser, password: '' });
+		return new User({ ...result, ...result.baseUser });
 	}
 
 	/**
 	 * Modify user
-	 * @param {DeepPartial<User>} entity - user
+	 * @param {string} entityId - user's id
 	 * @param {DeepPartial<User>} updatedEntity - modified user
 	 * @return {Promise<User>}
 	 */
 	async modify(
-		entity: DeepPartial<User>,
+		entityId: string,
 		updatedEntity: DeepPartial<User>,
 	): Promise<User> {
 		const baseUser = await this.appSvc.baseUser.modify(
-			entity.baseUser,
+			entityId,
 			updatedEntity.baseUser,
 		);
-		await this.update(entity, { ...updatedEntity, baseUser });
-		return this.id(baseUser.id);
+		await this.update({ baseUser }, { ...updatedEntity, baseUser });
+		return this.id(entityId);
 	}
 
 	/**
@@ -76,6 +76,10 @@ export class UserService extends DatabaseRequests<User> {
 	 */
 	email(input: string): Promise<User> {
 		return this.findOne({ baseUser: { email: input.lower }, deep: 2 });
+	}
+
+	id(id: string): Promise<User> {
+		return this.findOne({ baseUser: { id }, deep: 2 });
 	}
 
 	/**

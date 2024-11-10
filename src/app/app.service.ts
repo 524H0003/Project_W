@@ -87,24 +87,19 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 
 	/**
 	 * Modify new base user
-	 * @param {DeepPartial<BaseUser>} entity - user
-	 * @param {DeepPartial<BaseUser>} updatedEntity - modified user
+	 * @param {string} entityId - base user's id
+	 * @param {DeepPartial<BaseUser>} updatedEntity - modified base user
 	 * @return {Promise<BaseUser>}
 	 */
 	async modify(
-		entity: DeepPartial<BaseUser>,
+		entityId: string,
 		updatedEntity: DeepPartial<BaseUser>,
 	): Promise<BaseUser> {
-		await super.update(
-			{ ...entity, email: entity.email.lower },
-			{ ...updatedEntity, email: updatedEntity.email?.lower },
-		);
-		return new BaseUser(
-			await this.findOne({
-				...updatedEntity,
-				email: updatedEntity.email?.lower,
-			}),
-		);
+		if (updatedEntity) {
+			if (updatedEntity.email) updatedEntity.email = updatedEntity.email.lower;
+			await super.update({ id: entityId }, updatedEntity);
+		}
+		return new BaseUser(await this.id(entityId));
 	}
 
 	/**
