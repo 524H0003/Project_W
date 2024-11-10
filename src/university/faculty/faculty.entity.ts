@@ -46,4 +46,16 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 	@Column()
 	@IsString()
 	department: string;
+
+	// Methods
+	static test(from: string, options?: { department?: string }) {
+		const { department = (10).string } = options || {},
+			eventCreator = EventCreator.test(from);
+		return new Faculty({
+			department,
+			...eventCreator,
+			...eventCreator.user,
+			...eventCreator.user.baseUser,
+		});
+	}
 }

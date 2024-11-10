@@ -37,19 +37,12 @@ export class StudentService extends DatabaseRequests<Student> {
 	private studentMailRex = /(5{1})(.{7})(@student.tdtu.edu.vn){1}/g;
 
 	/**
-	 * Find student by email
-	 */
-	email(input: string): Promise<Student> {
-		return this.findOne({ user: { baseUser: { email: input.lower } } });
-	}
-
-	/**
 	 * Login for student
 	 * @param {IStudentSignup} input - the login input
 	 * @return {Promise<User>}
 	 */
 	async login(input: IStudentSignup): Promise<User> {
-		const user = await this.email(input.email),
+		const user = await this.svc.baseUser.email(input.email),
 			rawStu = new Student(input);
 
 		if (user || !rawStu.user.baseUser.email.match(this.studentMailRex))

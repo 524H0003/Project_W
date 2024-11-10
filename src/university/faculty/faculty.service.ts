@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	forwardRef,
+	Inject,
+	Injectable,
+} from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Faculty } from './faculty.entity';
 import { Repository } from 'typeorm';
@@ -34,10 +39,10 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		input: IFacultyAssign,
 		avatar: Express.Multer.File,
 	): Promise<User> {
-		const existedUser = await this.svc.usr.email(input.email),
+		const existedUser = await this.svc.baseUser.email(input.email),
 			rawFaculty = new Faculty(input);
 
-		if (existedUser) return this.svc.auth.login(input);
+		if (existedUser) throw new BadRequestException('Invalid_Email');
 
 		return validation<User>(rawFaculty, async () => {
 			const eventCreator = await this.svc.envCre.assign(
