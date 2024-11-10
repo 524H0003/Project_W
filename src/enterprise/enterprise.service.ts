@@ -59,9 +59,6 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 				},
 			});
 
-		return new Enterprise({
-			...result,
-			...result.baseUser,
-		});
+		return new Enterprise({ ...result, ...result.baseUser });
 	}
 }
