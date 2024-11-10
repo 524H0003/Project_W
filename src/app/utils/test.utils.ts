@@ -55,5 +55,5 @@ export async function execute<
 		//@ts-expect-error
 		await (exp.not ? result.not : result)[exp.type].apply(null, exp.params);
 	}
-	if (onFinish) await onFinish(await func());
+	if (onFinish) await onFinish(funcResult);
 }

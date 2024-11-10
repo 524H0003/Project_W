@@ -13,7 +13,6 @@ import { IStudentSignup } from './student.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IStudentInfoKeys, IUserSignUpKeys } from 'models';
 import { validation } from 'app/utils/auth.utils';
-import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 
 /**

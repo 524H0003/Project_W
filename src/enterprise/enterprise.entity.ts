@@ -5,9 +5,8 @@ import { IEnterprise, IEnterpriseAssign } from './enterprise.model';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { BaseUser } from 'app/app.entity';
-import { IBaseUser } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserKeys, IEnterpriseAssignKeys } from 'models';
+import { IBaseUserKeys, IEnterpriseInfoKeys } from 'models';
 
 /**
  * Enterprise entity
@@ -19,7 +18,7 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 	 * Create enterprise with infomations
 	 * @param {IEnterprise} payload - the infomations
 	 */
-	constructor(payload: IEnterpriseAssign & IBaseUser) {
+	constructor(payload: Omit<IEnterpriseAssign, 'signature'>) {
 		super();
 
 		if (payload) {
@@ -27,15 +26,15 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 					payload!,
 					IBaseUserKeys,
 				) as unknown as BaseUser,
-				usrInfo = InterfaceCasting.quick(payload!, IEnterpriseAssignKeys);
+				usrInfo = InterfaceCasting.quick(payload!, IEnterpriseInfoKeys);
 			Object.assign(this, usrInfo);
-			this.user = baseUsrInfo;
+			this.baseUser = baseUsrInfo;
 		}
 	}
 
 	// Core Entity
 	@Column(() => BaseUser, { prefix: false })
-	user: BaseUser;
+	baseUser: BaseUser;
 
 	// Relationships
 	/**
@@ -82,7 +81,6 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 			description: (20).string,
 			industry: (20).string,
 			email: (30).string + '@lmao.uk',
-			signature: (10).string,
 		});
 	}
 }
