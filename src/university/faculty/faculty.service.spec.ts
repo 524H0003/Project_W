@@ -49,7 +49,7 @@ describe('FacultyService', () => {
 		);
 	});
 
-	it('assign', async () => {
+	it('assign failed due to email already taken', async () => {
 		let signature: string;
 
 		faculty = Faculty.test(fileName);
