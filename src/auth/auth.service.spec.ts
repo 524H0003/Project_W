@@ -4,8 +4,6 @@ import { AppService } from 'app/app.service';
 import { TestModule } from 'app/module/test.module';
 import { execute } from 'app/utils/test.utils';
 import { User } from 'user/user.entity';
-import { InterfaceCasting } from '../../types';
-import { IBaseUserInfoKeys, IUserInfoKeys, IUserSignUpKeys } from 'models';
 
 const fileName = curFile(__filename);
 
