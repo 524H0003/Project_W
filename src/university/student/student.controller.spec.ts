@@ -39,14 +39,8 @@ describe('signup', () => {
 				),
 			{
 				exps: [
-					{
-						type: 'toContain',
-						params: [HttpStatus.BAD_REQUEST.toString()],
-					},
-					{
-						type: 'toContain',
-						params: ['Invalid_Student_Email'],
-					},
+					{ type: 'toContain', params: [HttpStatus.BAD_REQUEST.toString()] },
+					{ type: 'toContain', params: ['Invalid_Student_Email'] },
 				],
 			},
 		);
