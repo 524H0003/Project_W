@@ -103,10 +103,7 @@ describe('AuthService', () => {
 		await execute(() => appSvc.auth.changePassword(dbUser, newPassword), {
 			exps: [
 				{ type: 'toBeInstanceOf', params: [User] },
-				{
-					type: 'toMatchObject',
-					params: [{ baseUser: dbUser.baseUser }],
-				},
+				{ type: 'toMatchObject', params: [{ baseUser: dbUser.baseUser }] },
 			],
 		});
 		await execute(
@@ -131,9 +128,7 @@ describe('SignService', () => {
 				await execute(
 					// eslint-disable-next-line @typescript-eslint/require-await
 					async () => appSvc.sign.verify(result, { type: 'refresh' }),
-					{
-						exps: [{ type: 'toMatchObject', params: [{ id }] }],
-					},
+					{ exps: [{ type: 'toMatchObject', params: [{ id }] }] },
 				);
 			},
 		});
@@ -147,9 +142,7 @@ describe('SignService', () => {
 				await execute(
 					// eslint-disable-next-line @typescript-eslint/require-await
 					async () => appSvc.sign.verify(result, { type: 'access' }),
-					{
-						exps: [{ type: 'toMatchObject', params: [{ id }] }],
-					},
+					{ exps: [{ type: 'toMatchObject', params: [{ id }] }] },
 				);
 			},
 		});
