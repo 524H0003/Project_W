@@ -21,7 +21,7 @@ import {
 	DatabaseRequests,
 	FindOptionsWithCustom,
 } from 'app/utils/typeorm.utils';
-import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
 import { BaseUser } from 'app/app.entity';
@@ -144,7 +144,7 @@ export class FileService extends DatabaseRequests<File> {
 	 */
 	async assign(
 		input: Express.Multer.File,
-		fileCreatedBy: User,
+		user: User,
 		serverFilesOptions?: { fileName: string },
 	): Promise<File> {
 		if (!input?.buffer) return null;
@@ -159,7 +159,11 @@ export class FileService extends DatabaseRequests<File> {
 		await this.s3Send(path, input.buffer);
 		writeFileSync(`${this.cfgSvc.get('SERVER_PUBLIC')}${path}`, input.buffer);
 
-		if (!fileName) return this.save({ path, fileCreatedBy });
+		if (!fileName)
+			return this.save({
+				path,
+				fileCreatedBy: { baseUser: { id: user.baseUser.id } },
+			});
 	}
 
 	/**
@@ -184,7 +188,7 @@ export class FileService extends DatabaseRequests<File> {
 
 				const file = await this.path(filename, user?.id, { deep: 2 });
 
-				if (user?.id === file.fileCreatedBy.base.id) return filename;
+				if (user?.id === file.fileCreatedBy.baseUser.id) return filename;
 				throw new BadRequestException('ForbidenFile');
 			}
 			return null;
@@ -196,8 +200,8 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Remove file on server
 	 */
-	remove(criteria: FindOptionsWhere<File>): Promise<DeleteResult> {
-		return super.delete(criteria);
+	async remove(criteria: FindOptionsWhere<File>) {
+		await super.delete(criteria);
 	}
 
 	/**
@@ -215,7 +219,7 @@ export class FileService extends DatabaseRequests<File> {
 		return this.findOne({
 			path: input,
 			...options,
-			fileCreatedBy: { base: { id: userId } },
+			fileCreatedBy: { baseUser: { id: userId } },
 		});
 	}
 }

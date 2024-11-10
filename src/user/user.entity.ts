@@ -4,7 +4,7 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { Device } from 'auth/device/device.entity';
 import { IFile } from 'file/file.model';
 import { IBaseUserKeys, IUserAuthenticationKeys, IUserInfoKeys } from 'models';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
 	IUserEntity,
@@ -26,13 +26,17 @@ import { decode, JwtPayload } from 'jsonwebtoken';
  */
 @ObjectType()
 @Entity({ name: 'User' })
-export class User implements IUserEntity {
+export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
 	constructor(payload: IUserAuthentication & IBaseUser) {
+		super();
+
 		if (payload) {
-			this.base = new BaseUser(InterfaceCasting.quick(payload!, IBaseUserKeys));
+			this.baseUser = new BaseUser(
+				InterfaceCasting.quick(payload!, IBaseUserKeys),
+			);
 			Object.assign(
 				this,
 				InterfaceCasting.quick(payload!, IUserAuthenticationKeys),
@@ -51,7 +55,9 @@ export class User implements IUserEntity {
 	 */
 	get hashedPassword() {
 		if (this.password) {
-			return (this._hashedPassword = hash(this.password));
+			this._hashedPassword = hash(this.password);
+			delete this.password;
+			return this._hashedPassword;
 		}
 		return this._hashedPassword;
 	}
@@ -66,7 +72,7 @@ export class User implements IUserEntity {
 	 * Base user
 	 */
 	@Column(() => BaseUser, { prefix: false })
-	base: BaseUser;
+	baseUser: BaseUser;
 
 	// Relationships
 	/**
@@ -159,20 +165,19 @@ export class User implements IUserEntity {
 	get info(): IUserInfo {
 		return {
 			...InterfaceCasting.quick(this, IUserInfoKeys),
-			...InterfaceCasting.quick(this.base, IBaseUserKeys),
+			...InterfaceCasting.quick(this.baseUser, IBaseUserKeys),
 		};
 	}
 
 	/**
 	 * @ignore
 	 */
-	static test(from: string, options?: { email?: string; password?: string }) {
-		const {
-				email = ((20).alpha + '@gmail.com').toLowerCase(),
-				password = 'Aa1!000000000000',
-			} = options || {},
-			n = new User({ email, password, name: from });
-		if (n.hashedPassword) return n;
+	static test(from: string, options?: { email?: string }) {
+		const baseUser = BaseUser.test(
+			from,
+			options?.email || (20).string + '@lmao.com',
+		);
+		return new User({ ...baseUser, password: from + (20).string + 'aA1!' });
 	}
 }
 

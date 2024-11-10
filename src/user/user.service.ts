@@ -1,13 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import {
-	DeepPartial,
-	DeleteResult,
-	FindOptionsWhere,
-	Repository,
-	SaveOptions,
-} from 'typeorm';
+import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
 import { AppService } from 'app/app.service';
@@ -39,37 +33,39 @@ export class UserService extends DatabaseRequests<User> {
 		entity: DeepPartial<User>,
 		options?: SaveOptions,
 	): Promise<User> {
-		const baseUsr = await this.appSvc.baseUser.assign(entity.base);
-		return this.save({ ...entity, base: baseUsr }, options);
+		const baseUser = await this.appSvc.baseUser.assign(entity.baseUser),
+			result = await this.save({ ...entity, baseUser }, options);
+		return new User({ ...result, ...result.baseUser });
 	}
 
 	/**
-	 * Update user
-	 * @param {DeepPartial<User>} entity - the updating user
-	 * @param {SaveOptions} options - function's option
+	 * Modify user
+	 * @param {string} entityId - user's id
+	 * @param {DeepPartial<User>} updatedEntity - modified user
 	 * @return {Promise<User>}
 	 */
 	async modify(
-		entity: DeepPartial<User>,
-		options?: SaveOptions,
+		entityId: string,
+		updatedEntity: DeepPartial<User>,
 	): Promise<User> {
-		const baseUsr = await this.appSvc.baseUser.modify(entity.base);
-		return this.update({ ...entity, base: baseUsr }, options);
+		const id = (
+			await this.appSvc.baseUser.modify(entityId, updatedEntity.baseUser)
+		).id;
+		await this.update({ baseUser: { id } }, { ...updatedEntity });
+		return this.id(entityId);
 	}
 
 	/**
 	 * Remove user
-	 * @param {FindOptionsWhere<User>} criteria - deleting user
-	 * @return {Promise<DeleteResult>}
+	 * @param {DeepPartial<User>} criteria - deleting user
 	 */
-	async remove(criteria: FindOptionsWhere<User>): Promise<DeleteResult> {
+	async remove(criteria: DeepPartial<User>) {
 		const id =
-				(criteria.base as BaseUser).id ||
-				(await this.findOne(criteria)).base.id,
-			result = await this.delete({ base: { id } });
-		await this.appSvc.baseUser.remove({ id });
+			(criteria.baseUser as BaseUser).id ||
+			(await this.findOne(criteria)).baseUser.id;
 
-		return result;
+		await this.delete({ baseUser: { id } });
+		await this.appSvc.baseUser.remove({ id });
 	}
 
 	/**
@@ -78,25 +74,20 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} founded user
 	 */
 	email(input: string): Promise<User> {
-		return this.findOne({ base: { email: input.toLowerCase() } });
+		return this.findOne({ baseUser: { email: input.lower }, deep: 2 });
 	}
 
-	/**
-	 * Find user with id
-	 * @param {string} id - user's id
-	 * @return {Promise<User>} founded user
-	 */
 	id(id: string): Promise<User> {
-		return this.findOne({ base: { id } });
+		return this.findOne({ baseUser: { id }, deep: 2 });
 	}
 
 	/**
 	 * Updating user's role
-	 * @param {string} userId - the user's id
+	 * @param {string} id - the user's id
 	 * @param {UserRole} updateRole - the role update to the user
 	 * @return {Promise<User>} the user's infomations
 	 */
-	async updateRole(userId: string, updateRole: UserRole): Promise<User> {
-		return this.update({ base: { id: userId }, role: updateRole });
+	async updateRole(id: string, updateRole: UserRole): Promise<User> {
+		return this.modify(id, { role: updateRole });
 	}
 }

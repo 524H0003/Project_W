@@ -1,6 +1,8 @@
 import { Column, Entity } from 'typeorm';
 import { SensitiveInfomations } from './utils/typeorm.utils';
 import { IBaseUser } from './app.model';
+import { IBaseUserKeys } from 'models';
+import { InterfaceCasting } from './utils/utils';
 
 /**
  * Base user
@@ -9,7 +11,10 @@ import { IBaseUser } from './app.model';
 export class BaseUser extends SensitiveInfomations implements IBaseUser {
 	constructor(payload: IBaseUser) {
 		super();
-		Object.assign(this, payload);
+		if (payload) {
+			payload = InterfaceCasting.quick(payload, IBaseUserKeys) as BaseUser;
+			Object.assign(this, payload);
+		}
 	}
 
 	/**
@@ -31,4 +36,12 @@ export class BaseUser extends SensitiveInfomations implements IBaseUser {
 		type: 'text',
 	})
 	avatarPath?: string;
+
+	// Methods
+	static test(from: string, email?: string) {
+		return new BaseUser({
+			email: email || (20).string + '@lmao.com',
+			name: from + '_' + (5).string,
+		});
+	}
 }

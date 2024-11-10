@@ -13,7 +13,6 @@ import { IStudentSignup } from './student.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IStudentInfoKeys, IUserSignUpKeys } from 'models';
 import { validation } from 'app/utils/auth.utils';
-import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 
 /**
@@ -37,27 +36,18 @@ export class StudentService extends DatabaseRequests<Student> {
 	private studentMailRex = /(5{1})(.{7})(@student.tdtu.edu.vn){1}/g;
 
 	/**
-	 * Find student by email
+	 * Sign up for student
+	 * @param {IStudentSignup} input - the sign up form
+	 * @return {Promise<void>}
 	 */
-	email(input: string): Promise<Student> {
-		return this.findOne({ user: { base: { email: input.toLowerCase() } } });
-	}
-
-	/**
-	 * Login for student
-	 * @param {IStudentSignup} input - the login input
-	 * @return {Promise<User>}
-	 */
-	async login(input: IStudentSignup): Promise<User> {
-		const user = await this.email(input.email),
+	async signUp(input: IStudentSignup): Promise<void> {
+		const user = await this.svc.baseUser.email(input.email),
 			rawStu = new Student(input);
 
-		if (user) return this.svc.auth.login(input);
-
-		if (!rawStu.user.base.email.match(this.studentMailRex))
+		if (user || !rawStu.user.baseUser.email.match(this.studentMailRex))
 			throw new BadRequestException('Invalid_Student_Email');
 
-		return await validation<User>(rawStu, async () => {
+		return await validation<void>(rawStu, async () => {
 			const user = await this.svc.auth.signUp(
 				{
 					...InterfaceCasting.quick(input, IUserSignUpKeys),
@@ -76,7 +66,6 @@ export class StudentService extends DatabaseRequests<Student> {
 				});
 				throw new Error('Request_New_User');
 			}
-			return user;
 		});
 	}
 }

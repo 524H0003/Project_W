@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Enterprise } from './enterprise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,7 +6,6 @@ import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { IEnterpriseAssign } from './enterprise.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IBaseUserKeys, IEnterpriseAssignKeys, IEnterpriseKeys } from 'models';
-import { IBaseUser } from 'app/app.model';
 import { AppService } from 'app/app.service';
 
 /**
@@ -31,41 +25,40 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	}
 
 	/**
-	 * Create enterprise
-	 */
-	protected async save(
-		entity: DeepPartial<Enterprise>,
-		options?: SaveOptions,
-	): Promise<Enterprise> {
-		entity = InterfaceCasting.quick(entity, IEnterpriseKeys);
-		const baseUsr = await this.svc.baseUser.assign(entity.user);
-		return super.save({ ...entity, user: baseUsr }, options);
-	}
-
-	/**
 	 * Assign enterprise
+	 * @param {IEnterpriseAssign} input - enterprise assign form
+	 * @param {Express.Multer.File} avatar - user's avatar
+	 * @return {Promise<Enterprise>}
 	 */
 	async assign(
-		input: IEnterpriseAssign & IBaseUser,
+		input: IEnterpriseAssign,
 		avatar: Express.Multer.File,
 	): Promise<Enterprise> {
+		const save = async (
+			entity: DeepPartial<Enterprise>,
+			options?: SaveOptions,
+		): Promise<Enterprise> => {
+			entity = InterfaceCasting.quick(entity, IEnterpriseKeys);
+			const baseUser = await this.svc.baseUser.assign(entity.baseUser);
+			return this.save({ ...entity, baseUser }, options);
+		};
+
 		input = InterfaceCasting.quick(input, [
 			...IEnterpriseAssignKeys,
 			...IBaseUserKeys,
 		]);
 
 		const avatarFile = await this.svc.file.assign(avatar, null, {
-			fileName: `${input.name}.${input.industry}.logo`,
-		});
-
-		try {
-			return await this.save({
+				fileName: `${input.name}.${input.industry}.logo`,
+			}),
+			result = await save({
 				...input,
-				user: InterfaceCasting.quick(input, IBaseUserKeys),
+				baseUser: {
+					...InterfaceCasting.quick(input, IBaseUserKeys),
+					avatarPath: avatarFile?.path,
+				},
 			});
-		} catch (error) {
-			await this.svc.file.remove({ ...avatarFile });
-			throw new BadRequestException(`Null value in field ${error['column']}`);
-		}
+
+		return new Enterprise({ ...result, ...result.baseUser });
 	}
 }

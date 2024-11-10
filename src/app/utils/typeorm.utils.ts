@@ -1,15 +1,15 @@
 import {
 	BaseEntity,
 	DeepPartial,
-	DeleteResult,
 	FindOptionsWhere,
 	PrimaryGeneratedColumn,
 	Repository,
 	SaveOptions,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
-export type FindOptionsWithCustom<T> = FindOptionsWhere<T> & {
+export type FindOptionsWithCustom<T> = DeepPartial<T> & {
 	deep?: number;
 	relations?: string[];
 };
@@ -35,7 +35,7 @@ export class SensitiveInfomations extends BaseEntity {
 /**
  * Generic database requests
  */
-export class DatabaseRequests<T> {
+export class DatabaseRequests<T extends BaseEntity> {
 	/**
 	 * @ignore
 	 */
@@ -102,7 +102,7 @@ export class DatabaseRequests<T> {
 	/**
 	 * Finding a object
 	 * @param {FindOptionsWithCustom<T>} options - function's option
-	 * @return {Promise<T>} found object
+	 * @return {Promise<T>}
 	 */
 	findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
 		const { deep = 1, relations = [''], ...newOptions } = options || {};
@@ -122,26 +122,27 @@ export class DatabaseRequests<T> {
 	 * @return {Promise<T>} the object from database
 	 */
 	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
-		return this.repo.save(entity, options) as Promise<T>;
+		return this.repo.save(entity, options);
 	}
 
 	/**
 	 * Deleting a object
 	 * @param {FindOptionsWhere<T>} criteria - the deleting object
-	 * @return {Promise<DeleteResult>} the deletion result
 	 */
-	protected delete(criteria: FindOptionsWhere<T>): Promise<DeleteResult> {
-		return this.repo.delete(criteria);
+	protected async delete(criteria: FindOptionsWhere<T>) {
+		await this.repo.delete(criteria);
 	}
 
 	/**
 	 * Updating a object
 	 * @param {DeepPartial<T>} entity - the updating object
-	 * @param {SaveOptions} options - function's option
-	 * @return {Promise<T>} the updated object
+	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
-	protected update(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
-		return this.save(entity, options);
+	protected async update(
+		entity: DeepPartial<T>,
+		updatedEntity?: QueryDeepPartialEntity<T>,
+	) {
+		await this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
 	}
 
 	/**

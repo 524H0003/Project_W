@@ -22,6 +22,17 @@ export class InterfaceCasting<T, K extends keyof T> {
 	static quick<T, K extends keyof T>(input: T, get: readonly K[]): T {
 		return new InterfaceCasting(input, get) as T;
 	}
+
+	/**
+	 * Quick method to convert object to interface
+	 * @param {T} input - the input object
+	 * @param {K[]} get - the interface's properties
+	 * @return {InterfaceCasting} the result of casting
+	 */
+	static delete<T, K extends keyof T>(input: T, get: readonly K[]): T {
+		get.forEach((_) => delete input[_]);
+		return input;
+	}
 }
 /**
  * @ignore
@@ -181,6 +192,10 @@ declare global {
 		 * Get random character
 		 */
 		readonly randomChar: string;
+		/**
+		 * To lower case
+		 */
+		readonly lower: string;
 	}
 
 	/**
@@ -218,6 +233,13 @@ try {
 Object.defineProperty(String.prototype, 'randomChar', {
 	get: function () {
 		return (this as string).charAt((this as string).length.random);
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'lower', {
+	get: function () {
+		return (this as string).toLowerCase();
 	},
 	enumerable: true,
 	configurable: true,
@@ -265,6 +287,7 @@ Object.defineProperty(Number.prototype, 'alpha', {
 });
 Object.defineProperty(Number.prototype, 'string', {
 	get: function () {
+		if (!this) return '';
 		return array(this)
 			.map(() => (alphaChars + numChars).randomChar)
 			.join('');

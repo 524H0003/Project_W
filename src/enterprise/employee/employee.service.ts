@@ -42,7 +42,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 		input = InterfaceCasting.quick(input, IEmployeeHookKeys);
 
 		const ent = await this.svc.ent.findOne({
-			user: { name: input.enterpriseName },
+			baseUser: { name: input.enterpriseName },
 		});
 		if (!ent || !input.enterpriseName)
 			throw new BadRequestException('Invalid_Enterprise_Name');
@@ -51,13 +51,13 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			mtdt,
 			(signature: string) =>
 				this.svc.mail.send(
-					ent.user.email,
+					ent.baseUser.email,
 					`An account assignment request from ${input.email}`,
 					'sendSignature',
 					{ signature },
 				),
 			'_Email',
-			{ enterpriseName: ent.user.name },
+			{ enterpriseName: ent.baseUser.name },
 		);
 	}
 
@@ -86,7 +86,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			return await this.save({
 				eventCreator,
 				enterprise: await this.svc.ent.findOne({
-					user: { name: enterpriseName },
+					baseUser: { name: enterpriseName },
 				}),
 				...InterfaceCasting.quick(input, IEmployeeInfoKeys),
 			});

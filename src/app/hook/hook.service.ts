@@ -42,11 +42,12 @@ export class HookService extends DatabaseRequests<Hook> {
 		addInfo?: object,
 	): Promise<UserRecieve> {
 		const signature = (128).string,
+			baseUser = await func(signature),
 			hook = await this.save({
 				signature,
 				mtdt,
 				note: JSON.stringify(addInfo),
-				fromUser: { base: (await func(signature)) || null },
+				fromUser: baseUser ? { baseUser } : null,
 			});
 
 		return new UserRecieve({
@@ -62,10 +63,9 @@ export class HookService extends DatabaseRequests<Hook> {
 	 * @param {Hook} hook - recieved hook from client
 	 */
 	async validating(signature: string, mtdt: string, hook: Hook) {
-		if (hook.mtdt === mtdt && signature == hook.signature) {
-			await this.delete({ id: hook.id });
-			return;
-		}
-		throw new BadRequestException('Invalid_Hook_Signature');
+		if (hook.mtdt !== mtdt || signature !== hook.signature)
+			throw new BadRequestException('Invalid_Hook_Signature');
+
+		await this.delete({ id: hook.id });
 	}
 }

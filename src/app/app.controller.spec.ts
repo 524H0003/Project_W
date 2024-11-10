@@ -1,39 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { execute } from 'app/utils/test.utils';
-import { Repository } from 'typeorm';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { TestModule } from 'app/module/test.module';
 import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
-import { Device } from '../auth/device/device.entity';
 import { AppController } from 'app/app.controller';
 import { AppModule } from 'app/app.module';
 import { Student } from 'university/student/student.entity';
+import { AppService } from './app.service';
 
 const fileName = curFile(__filename);
 
-let dvcRepo: Repository<Device>,
-	usrRepo: Repository<User>,
-	req: TestAgent,
+let req: TestAgent,
 	usr: User,
 	app: INestApplication,
-	rfsTms: number;
+	rfsTms: number,
+	appSvc: AppService;
 
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
-			imports: [AppModule, TestModule],
-			controllers: [AppController],
-		}).compile(),
-		cfgSvc = module.get(ConfigService);
-
-	(dvcRepo = module.get(getRepositoryToken(Device))),
-		(usrRepo = module.get(getRepositoryToken(User))),
-		(app = module.createNestApplication()),
-		(rfsTms = cfgSvc.get('REFRESH_USE'));
+		imports: [AppModule, TestModule],
+		controllers: [AppController],
+	}).compile();
+	(appSvc = module.get(AppService)), (app = module.createNestApplication());
 
 	await app.use(cookieParser()).init();
 });
@@ -44,7 +35,7 @@ beforeEach(() => {
 
 describe('signup', () => {
 	it('success', async () => {
-		await execute(() => req.post('/signup').send({ ...usr, ...usr.base }), {
+		await execute(() => req.post('/signup').send({ ...usr, ...usr.baseUser }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -57,16 +48,15 @@ describe('signup', () => {
 			],
 		});
 
-		await execute(
-			() => usrRepo.findOne({ where: { base: { email: usr.base.email } } }),
-			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
-		);
+		await execute(() => appSvc.usr.email(usr.baseUser.email), {
+			exps: [{ type: 'toBeInstanceOf', params: [User] }],
+		});
 	});
 
 	it('fail due to email already exist', async () => {
-		await req.post('/signup').send({ ...usr, ...usr.base });
+		await req.post('/signup').send({ ...usr, ...usr.baseUser });
 
-		await execute(() => req.post('/signup').send({ ...usr, ...usr.base }), {
+		await execute(() => req.post('/signup').send({ ...usr, ...usr.baseUser }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -79,11 +69,11 @@ describe('signup', () => {
 
 describe('login', () => {
 	beforeEach(
-		async () => await req.post('/signup').send({ ...usr, ...usr.base }),
+		async () => await req.post('/signup').send({ ...usr, ...usr.baseUser }),
 	);
 
 	it('success', async () => {
-		await execute(() => req.post('/login').send({ ...usr, ...usr.base }), {
+		await execute(() => req.post('/login').send({ ...usr, ...usr.baseUser }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -98,15 +88,17 @@ describe('login', () => {
 
 		await execute(
 			() =>
-				dvcRepo.find({ where: { owner: { base: { email: usr.base.email } } } }),
+				appSvc.dvc.find({
+					owner: { baseUser: { email: usr.baseUser.email.lower } },
+				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
 		);
 	});
 
 	it('fail due to wrong password', async () => {
-		usr = new User({ ...usr, ...usr.base, password: (12).string });
+		usr = new User({ ...usr, ...usr.baseUser, password: (12).string });
 
-		await execute(() => req.post('/login').send({ ...usr, ...usr.base }), {
+		await execute(() => req.post('/login').send({ ...usr, ...usr.baseUser }), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],
@@ -116,7 +108,7 @@ describe('login', () => {
 	it('fail due to not follow student email format', async () => {
 		usr = Student.test(fileName, { email: 'aa' }).user;
 
-		await execute(() => req.post('/login').send({ ...usr.base, ...usr }), {
+		await execute(() => req.post('/login').send({ ...usr.baseUser, ...usr }), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
 			],
@@ -129,7 +121,9 @@ describe('logout', () => {
 
 	beforeEach(
 		async () =>
-			({ headers } = await req.post('/signup').send({ ...usr, ...usr.base })),
+			({ headers } = await req
+				.post('/signup')
+				.send({ ...usr, ...usr.baseUser })),
 	);
 
 	it('success', async () => {
@@ -146,8 +140,8 @@ describe('logout', () => {
 				onFinish: () =>
 					execute(
 						() =>
-							dvcRepo.find({
-								where: { owner: { base: { email: usr.base.email } } },
+							appSvc.dvc.find({
+								owner: { baseUser: { email: usr.baseUser.email.lower } },
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
 					),
@@ -156,8 +150,7 @@ describe('logout', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(req.post, {
-			params: ['/logout'],
+		await execute(() => req.post('/logout'), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
 			],
@@ -170,7 +163,9 @@ describe('refresh', () => {
 
 	beforeEach(
 		async () =>
-			({ headers } = await req.post('/signup').send({ ...usr, ...usr.base })),
+			({ headers } = await req
+				.post('/signup')
+				.send({ ...usr, ...usr.baseUser })),
 	);
 
 	it('success', async () => {
@@ -200,8 +195,7 @@ describe('refresh', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(req.post, {
-			params: ['/refresh'],
+		await execute(() => req.post('/refresh'), {
 			exps: [
 				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
 			],
@@ -210,13 +204,12 @@ describe('refresh', () => {
 
 	it('success in generate new key', async () => {
 		await execute(
-			async (headers: object) =>
+			async () =>
 				({ headers } = await req
 					.post('/refresh')
 					.set('Cookie', headers['set-cookie'])),
 			{
 				numOfRun: rfsTms * 1.2,
-				params: [headers],
 				exps: [
 					{
 						type: 'toHaveProperty',

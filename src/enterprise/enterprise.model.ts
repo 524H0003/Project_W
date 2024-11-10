@@ -35,7 +35,7 @@ export interface IEnterprise extends IEnterpriseInfo {
 	/**
 	 * Base user
 	 */
-	user: IBaseUser;
+	baseUser: IBaseUser;
 
 	/**
 	 * Enterprise's employees

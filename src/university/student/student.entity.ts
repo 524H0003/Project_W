@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
@@ -14,11 +14,13 @@ import { IUserSignUp } from 'user/user.model';
  * Student entity
  */
 @Entity({ name: 'Student' })
-export class Student implements IStudentEntity {
+export class Student extends BaseEntity implements IStudentEntity {
 	/**
 	 * Create student entity with infomations
 	 */
 	constructor(payload: IStudentInfo & IUserSignUp) {
+		super();
+
 		if (payload) {
 			this.user = new User(
 				InterfaceCasting.quick(payload, [
@@ -74,20 +76,16 @@ export class Student implements IStudentEntity {
 	 * @ignore
 	 */
 	static test(from: string, options?: { email?: string; password?: string }) {
-		const {
-				email = `5${(7).numeric}@student.tdtu.edu.vn`,
-				password = (16).string + '!!',
-			} = options || {},
-			user = User.test(from, { email, password });
+		const { email = `5${(7).numeric}@student.tdtu.edu.vn` } = options || {},
+			user = User.test(from, { email });
 		if (user.hashedPassword)
 			return new Student({
 				major: (3).string,
 				graduationYear: (20).random,
 				enrollmentYear: (20).random,
 				skills: (3).string,
-				...user.base,
+				...user.baseUser,
 				...user,
-				password,
 			});
 	}
 }
