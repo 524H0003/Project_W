@@ -81,10 +81,7 @@ describe('HookService', () => {
 					await execute(() => appSvc.hook.id(token.id), {
 						exps: [
 							{ type: 'toBeDefined', params: [] },
-							{
-								type: 'toBeInstanceOf',
-								params: [Hook],
-							},
+							{ type: 'toBeInstanceOf', params: [Hook] },
 						],
 					});
 				},
