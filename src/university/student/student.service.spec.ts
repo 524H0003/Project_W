@@ -20,13 +20,13 @@ beforeAll(async () => {
 beforeEach(() => {});
 
 describe('StudentService', () => {
-	it('login for student', async () => {
+	it('signUp for student', async () => {
 		student = Student.test(fileName);
 
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.stu.login({
+				appSvc.stu.signUp({
 					...student.user.baseUser,
 					...student.user,
 					...student,
@@ -38,13 +38,13 @@ describe('StudentService', () => {
 		);
 	});
 
-	it('login for stranger', async () => {
+	it('signUp for stranger', async () => {
 		student = Student.test(fileName, { email: 'lmao' });
 
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.stu.login({
+				appSvc.stu.signUp({
 					...student.user.baseUser,
 					...student.user,
 					...student,

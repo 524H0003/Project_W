@@ -149,9 +149,11 @@ export class AppController {
 		user: User,
 		mtdt: string,
 	): Promise<void> {
-		const usrRcv = await this.svc.sess.getTokens(user, mtdt);
-
-		return this.responseWithUserRecieve(request, response, usrRcv);
+		return this.responseWithUserRecieve(
+			request,
+			response,
+			await this.svc.sess.getTokens(user, mtdt),
+		);
 	}
 
 	/**
@@ -171,12 +173,7 @@ export class AppController {
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
-			return this.responseWithUser(
-				request,
-				response,
-				await this.svc.stu.login(body),
-				mtdt,
-			);
+			await this.svc.stu.signUp(body);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'Invalid_Student_Email':

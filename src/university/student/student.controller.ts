@@ -37,22 +37,17 @@ export class StudentController extends AppController {
 	 * @param {string} mtdt - the client meta data
 	 * @return {Promise<void>}
 	 */
-	@Post('login')
+	@Post('signup')
 	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(NoFilesInterceptor())
-	async login(
+	async signUp(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IStudentSignup,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
-			return this.responseWithUser(
-				request,
-				response,
-				await this.svc.stu.login(body),
-				mtdt,
-			);
+			await this.svc.stu.signUp(body);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'Request_New_User':

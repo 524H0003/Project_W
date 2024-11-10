@@ -37,18 +37,18 @@ export class StudentService extends DatabaseRequests<Student> {
 	private studentMailRex = /(5{1})(.{7})(@student.tdtu.edu.vn){1}/g;
 
 	/**
-	 * Login for student
-	 * @param {IStudentSignup} input - the login input
-	 * @return {Promise<User>}
+	 * Sign up for student
+	 * @param {IStudentSignup} input - the sign up form
+	 * @return {Promise<void>}
 	 */
-	async login(input: IStudentSignup): Promise<User> {
+	async signUp(input: IStudentSignup): Promise<void> {
 		const user = await this.svc.baseUser.email(input.email),
 			rawStu = new Student(input);
 
 		if (user || !rawStu.user.baseUser.email.match(this.studentMailRex))
 			throw new BadRequestException('Invalid_Student_Email');
 
-		return await validation<User>(rawStu, async () => {
+		return await validation<void>(rawStu, async () => {
 			const user = await this.svc.auth.signUp(
 				{
 					...InterfaceCasting.quick(input, IUserSignUpKeys),
@@ -67,7 +67,6 @@ export class StudentService extends DatabaseRequests<Student> {
 				});
 				throw new Error('Request_New_User');
 			}
-			return user;
 		});
 	}
 }
