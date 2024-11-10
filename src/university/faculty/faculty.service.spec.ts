@@ -45,9 +45,7 @@ describe('FacultyService', () => {
 					},
 					null,
 				),
-			{
-				exps: [{ type: 'toBeInstanceOf', params: [User] }],
-			},
+			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
 		);
 	});
 
@@ -56,9 +54,7 @@ describe('FacultyService', () => {
 
 		faculty = Faculty.test(fileName);
 
-		await appSvc.baseUser.assign({
-			...faculty.eventCreator.user.baseUser,
-		});
+		await appSvc.baseUser.assign({ ...faculty.eventCreator.user.baseUser });
 		await appSvc.hook.assign(
 			(20).string,
 			(s: string) => {
