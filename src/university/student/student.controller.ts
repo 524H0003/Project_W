@@ -52,11 +52,9 @@ export class StudentController extends AppController {
 			switch ((error as { message: string }).message) {
 				case 'Request_New_User':
 					return this.resetPasswordViaEmail(request, response, body, mtdt);
-					break;
 
 				default:
 					throw error;
-					break;
 			}
 		}
 	}

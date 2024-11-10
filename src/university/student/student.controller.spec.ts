@@ -26,18 +26,26 @@ beforeEach(() => {
 	(req = request(app.getHttpServer())), (stu = Student.test(fileName));
 });
 
-describe('login', () => {
+describe('signup', () => {
 	it('fail due to wrong email format', async () => {
 		stu = Student.test(fileName, { email: 'aa' });
 
 		await execute(
-			() =>
-				req.post('/student/login').send({ ...stu.user, ...stu.user.baseUser }),
+			async () =>
+				JSON.stringify(
+					await req
+						.post('/student/signup')
+						.send({ ...stu.user, ...stu.user.baseUser }),
+				),
 			{
 				exps: [
 					{
-						type: 'toHaveProperty',
-						params: ['status', HttpStatus.BAD_REQUEST],
+						type: 'toContain',
+						params: [HttpStatus.BAD_REQUEST.toString()],
+					},
+					{
+						type: 'toContain',
+						params: ['Invalid_Student_Email'],
 					},
 				],
 			},
@@ -49,7 +57,7 @@ describe('login', () => {
 			async () =>
 				JSON.stringify(
 					await req
-						.post('/student/login')
+						.post('/student/signup')
 						.send({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{
