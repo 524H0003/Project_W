@@ -53,18 +53,13 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 				),
 			);
 
-			try {
-				if (eventCreator.user.hashedPassword) {
-					return (
-						await this.save({
-							eventCreator,
-							...InterfaceCasting.quick(input, IFacultyInfoKeys),
-						})
-					).eventCreator.user;
-				}
-			} catch (error) {
-				await this.svc.envCre.remove({ user: eventCreator.user });
-				throw error;
+			if (eventCreator.user.hashedPassword) {
+				return (
+					await this.save({
+						eventCreator,
+						...InterfaceCasting.quick(input, IFacultyInfoKeys),
+					})
+				).eventCreator.user;
 			}
 		});
 	}
