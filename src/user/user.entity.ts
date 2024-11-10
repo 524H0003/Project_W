@@ -172,10 +172,12 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * @ignore
 	 */
-	static test(from: string, options?: { email?: string; password?: string }) {
-		const { email = (20).alpha + '@gmail.com', password = 'Aa1!000000000000' } =
-			options || {};
-		return new User({ email, password, name: from });
+	static test(from: string, options?: { email?: string }) {
+		const baseUser = BaseUser.test(
+			from,
+			options?.email || (20).string + '@lmao.com',
+		);
+		return new User({ ...baseUser, password: from + (20).string + 'aA1!' });
 	}
 }
 

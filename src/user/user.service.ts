@@ -33,8 +33,9 @@ export class UserService extends DatabaseRequests<User> {
 		entity: DeepPartial<User>,
 		options?: SaveOptions,
 	): Promise<User> {
-		const baseUser = await this.appSvc.baseUser.assign(entity.baseUser);
-		return this.save({ ...entity, baseUser }, options);
+		const baseUser = await this.appSvc.baseUser.assign(entity.baseUser),
+			result = await this.save({ ...entity, baseUser }, options);
+		return new User({ ...result, ...result.baseUser, password: '' });
 	}
 
 	/**
@@ -74,16 +75,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @return {Promise<User>} founded user
 	 */
 	email(input: string): Promise<User> {
-		return this.findOne({ baseUser: { email: input.lower } });
-	}
-
-	/**
-	 * Find user with id
-	 * @param {string} id - user's id
-	 * @return {Promise<User>} founded user
-	 */
-	id(id: string): Promise<User> {
-		return this.findOne({ baseUser: { id } });
+		return this.findOne({ baseUser: { email: input.lower }, deep: 2 });
 	}
 
 	/**

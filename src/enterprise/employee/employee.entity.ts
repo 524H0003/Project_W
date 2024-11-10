@@ -62,9 +62,7 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	 * @ignore
 	 */
 	static test(from: string) {
-		const { email = `${(7).string}@gmaill.vn`, password = (16).string + '!!' } =
-				{},
-			baseUser = User.test(from, { email, password }),
+		const baseUser = User.test(from, { email: `${(7).string}@gmaill.vn` }),
 			eventCreator = EventCreator.test(from, { user: baseUser });
 		return new Employee({
 			...eventCreator,

@@ -76,11 +76,8 @@ export class Student extends BaseEntity implements IStudentEntity {
 	 * @ignore
 	 */
 	static test(from: string, options?: { email?: string; password?: string }) {
-		const {
-				email = `5${(7).numeric}@student.tdtu.edu.vn`,
-				password = (16).string + '!!',
-			} = options || {},
-			user = User.test(from, { email, password });
+		const { email = `5${(7).numeric}@student.tdtu.edu.vn` } = options || {},
+			user = User.test(from, { email });
 		if (user.hashedPassword)
 			return new Student({
 				major: (3).string,
@@ -89,7 +86,6 @@ export class Student extends BaseEntity implements IStudentEntity {
 				skills: (3).string,
 				...user.baseUser,
 				...user,
-				password,
 			});
 	}
 }

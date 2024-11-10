@@ -33,10 +33,10 @@ export class BaseUser extends SensitiveInfomations implements IBaseUser {
 	avatarPath?: string;
 
 	// Methods
-	static test(fileName: string) {
+	static test(from: string, email?: string) {
 		return new BaseUser({
-			email: (20).string + '@lmao.com',
-			name: fileName + '_' + (5).string,
+			email: email || (20).string + '@lmao.com',
+			name: from + '_' + (5).string,
 		});
 	}
 }
