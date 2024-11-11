@@ -9,7 +9,7 @@
 		"buildfile": "ts-node src/build.ts",
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
 		"prebuild": "npm i && npm run buildfile",
-		"build": "nest build && cd ./page && npm run build && cd ../mailBuilder && npm run build",
+		"build": "cd ./page && npm run build && cd ../mailBuilder && npm run build && cd .. && nest build",
 		"format": "replace '{\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace \"\\[\n\" \"[\" . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && prettier --write \"./**/*.ts\" \"./**/*.js*\" \"./**/*.*rc\" --log-level silent",
 		"lint": "eslint --fix  --ext .ts .",
 		"safe": "generate-env-example",
