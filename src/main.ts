@@ -20,7 +20,8 @@ async function bootstrap() {
 		app = (
 			await NestFactory.create(MainModule, new ExpressAdapter(server), {
 				cors: {
-					origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
+					// origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
+					origin: '*',
 					// /^(https:\/\/){1}(((.*)(anhvietnguyen.id.vn){1}){1}|(localhost){1}:([0-9]){1,4})/,
 					methods: '*',
 					credentials: true,

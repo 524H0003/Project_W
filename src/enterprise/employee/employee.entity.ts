@@ -68,7 +68,7 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 			...eventCreator,
 			...eventCreator.user,
 			...eventCreator.user.baseUser,
-			position: EmployeePosition.other,
+			position: EmployeePosition['Other'],
 		});
 	}
 }
