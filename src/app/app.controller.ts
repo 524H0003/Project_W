@@ -29,6 +29,7 @@ import { User, UserRecieve } from 'user/user.entity';
 import { compareSync } from 'bcrypt';
 import { hash } from './utils/auth.utils';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
+import { Throttle } from '@nestjs/throttler';
 
 /**
  * Application Controller
@@ -292,6 +293,7 @@ export class AppController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
+	@Throttle({ default: { limit: 1, ttl: 300000 } })
 	@Post('change-password')
 	async resetPasswordViaEmail(
 		@Req() request: Request,
@@ -332,6 +334,7 @@ export class AppController {
 	 * @param {Hook} hook - recieved hook from client
 	 * @return {Promise<void>}
 	 */
+	@Throttle({ default: { limit: 3, ttl: 240000 } })
 	@Post('change-password/:token')
 	@UseGuards(AuthGuard('hook'))
 	async changePassword(
@@ -363,6 +366,7 @@ export class AppController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
+	@Throttle({ default: { limit: 1, ttl: 600000 } })
 	@Post('console')
 	protected async requestSignatureViaConsole(
 		@Req() request: Request,
