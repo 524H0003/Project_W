@@ -38,7 +38,10 @@ export interface IEmployeeSignup extends IEmployeeInfo, IUserSignUp {
 /**
  * Employee hooking
  */
-export interface IEmployeeHook extends IBaseUserInfo, IBaseUserEmail {
+export interface IEmployeeHook
+	extends IBaseUserInfo,
+		IBaseUserEmail,
+		IEmployeeInfo {
 	/**
 	 * Employee's working enterprise
 	 */

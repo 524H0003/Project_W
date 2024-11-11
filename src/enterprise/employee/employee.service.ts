@@ -54,7 +54,12 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 					ent.baseUser.email,
 					`An account assignment request from ${input.name}`,
 					'sendSignatureEmployee',
-					{ signature, name: input.name, email: input.email },
+					{
+						signature,
+						name: input.name,
+						email: input.email,
+						position: input.position,
+					},
 				),
 			'_Email',
 			{ enterpriseName: ent.baseUser.name },
