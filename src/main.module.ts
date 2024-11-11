@@ -8,9 +8,13 @@ import { loadEnv } from 'app/module/config.module';
 import { SqlModule } from 'app/module/sql.module';
 import { AuthMiddleware } from 'auth/auth.middleware';
 import { AppModule } from 'app/app.module';
+import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
 	imports: [
+		// Api rate limit
+		ThrottlerModule.forRootAsync({ imports: [ConfigModule] }),
 		// GraphQL and Apollo SandBox
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,

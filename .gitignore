@@ -15,6 +15,7 @@ public/*
 !public/*.server.*
 **/*.js.map
 documentation/
+src/app/mail/templates
 
 # Logs
 logs

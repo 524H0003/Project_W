@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	forwardRef,
@@ -28,6 +29,7 @@ import { User, UserRecieve } from 'user/user.entity';
 import { compareSync } from 'bcrypt';
 import { hash } from './utils/auth.utils';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
+import { Throttle } from '@nestjs/throttler';
 
 /**
  * Application Controller
@@ -291,6 +293,7 @@ export class AppController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
+	@Throttle({ default: { limit: 1, ttl: 300000 } })
 	@Post('change-password')
 	async resetPasswordViaEmail(
 		@Req() request: Request,
@@ -303,11 +306,17 @@ export class AppController {
 			response,
 			await this.svc.hook.assign(
 				mtdt,
-				async (s: string) =>
-					this.svc.mail.send(body.email, 'Change password?', 'forgetPassword', {
-						name: (await this.svc.baseUser.email(body.email)).name,
-						url: `${request.hostname}/hook/${s}`,
-					}),
+				async (s: string) => {
+					const user = await this.svc.baseUser.email(body.email);
+
+					if (!user) throw new BadRequestException('Invalid_Email');
+					return this.svc.mail.send(
+						body.email,
+						'Change password?',
+						'forgetPassword',
+						{ name: user.name, url: `${request.hostname}/hook/${s}` },
+					);
+				},
 				'_Email',
 			),
 		);
@@ -322,6 +331,7 @@ export class AppController {
 	 * @param {Hook} hook - recieved hook from client
 	 * @return {Promise<void>}
 	 */
+	@Throttle({ default: { limit: 3, ttl: 240000 } })
 	@Post('change-password/:token')
 	@UseGuards(AuthGuard('hook'))
 	async changePassword(
@@ -353,6 +363,7 @@ export class AppController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
+	@Throttle({ default: { limit: 1, ttl: 600000 } })
 	@Post('console')
 	protected async requestSignatureViaConsole(
 		@Req() request: Request,

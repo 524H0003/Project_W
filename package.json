@@ -9,7 +9,7 @@
 		"buildfile": "ts-node src/build.ts",
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
 		"prebuild": "npm i && npm run buildfile",
-		"build": "nest build && cd ./page && npm run build",
+		"build": "nest build && cd ./page && npm run build && cd ../mailBuilder && npm run build",
 		"format": "replace '{\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace \"\\[\n\" \"[\" . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && prettier --write \"./**/*.ts\" \"./**/*.js*\" \"./**/*.*rc\" --log-level silent",
 		"lint": "eslint --fix  --ext .ts .",
 		"safe": "generate-env-example",
@@ -24,7 +24,7 @@
 		"test:debug": "jest --debug",
 		"types": "tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/types.ts",
 		"pretypes": "npm run prebuild",
-		"triathlon": "npm run buildfile && npm run test:unit && npm run test:e2e && npm run format && npm run lint"
+		"triathlon": "npm run build && npm run test:unit && npm run test:e2e && npm run format && npm run lint"
 	},
 	"dependencies": {
 		"@adminjs/express": "^6.1.0",
@@ -40,6 +40,7 @@
 		"@nestjs/passport": "^10.0.3",
 		"@nestjs/platform-express": "^10.0.0",
 		"@nestjs/serve-static": "^4.0.2",
+		"@nestjs/throttler": "^6.2.1",
 		"@nestjs/typeorm": "^10.0.2",
 		"@types/aws-sdk": "^0.0.42",
 		"adminjs": "^7.8.11",
@@ -106,6 +107,7 @@
 		"typescript": "^5.1.3"
 	},
 	"optionalDependencies": {
+		"@css-inline/css-inline-win32-x64-msvc": "^0.14.1",
 		"@rollup/rollup-linux-x64-gnu": "^4.25.0"
 	}
 }

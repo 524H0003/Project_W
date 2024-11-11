@@ -1,0 +1,24 @@
+---
+title: 'An employee request to assign thier account'
+preheader: 'If your employee request an account assignment, please give them the signature in this email'
+---
+
+<x-main>
+	<p class="text-2xl sm:leading-32 text-black font-semibold">
+		A signature request from {{"\{\{name\}\}"}}
+	</p>
+	<p>
+		Would you like to let this employee assign their account with position
+		<a class="text-blue-500">{{"\{\{position\}\}"}}</a>? If you do, please send
+		this signature below to {{"\{\{email\}\}"}}.
+	</p>
+	<p
+		class="rounded-md border border-slate-200 bg-slate-200 text-sm text-slate-700 shadow-sm placeholder:text-slate-400 hover:border-slate-300 focus:border-slate-400 focus:shadow focus:outline-none break-words p-3"
+	>
+		{{"\{\{signature\}\}"}}
+	</p>
+	<hr class="border-gray-100 border-b-0" />
+	<p class="text-gray-500">
+		For further assistance, please don't mind to contact our delightful support.
+	</p>
+</x-main>

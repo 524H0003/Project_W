@@ -1,3 +1,4 @@
+import { IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
 import { IEnterprise } from 'enterprise/enterprise.model';
 import { IEventCreatorEntity } from 'event/creator/creator.model';
 import { IUserSignUp } from 'user/user.model';
@@ -37,16 +38,14 @@ export interface IEmployeeSignup extends IEmployeeInfo, IUserSignUp {
 /**
  * Employee hooking
  */
-export interface IEmployeeHook {
+export interface IEmployeeHook
+	extends IBaseUserInfo,
+		IBaseUserEmail,
+		IEmployeeInfo {
 	/**
 	 * Employee's working enterprise
 	 */
 	enterpriseName: string;
-
-	/**
-	 * Employee's email
-	 */
-	email: string;
 }
 
 // Enums
