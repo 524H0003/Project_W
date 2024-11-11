@@ -33,7 +33,6 @@
 		".git": true,
 		"LICENSE": true,
 		"documentation": true,
-		"page": true,
 		"public": true,
 		"reports": true,
 		"secrets": true,

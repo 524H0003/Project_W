@@ -25,6 +25,8 @@ export class MailService {
 	/**
 	 * Sending email with context
 	 * @param {string} email - destination email
+	 * @param {string} subject - email subject
+	 * @param {string} template - the template name
 	 * @param {object} context - hook's signature
 	 * @return {Promise<BaseUser>}
 	 */

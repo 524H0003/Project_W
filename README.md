@@ -58,7 +58,7 @@
 
 - [x] Đăng ký nhân viên của doanh nghiệp
 
-> /api/v1/enterprise/assign
+> /api/v1/employee/signup
 
 | Miền      | Kiểu dữ liệu         | Bắt buộc       |
 | --------- | -------------------- | -------------- |
@@ -81,6 +81,8 @@
 | password   | string       | :green_circle: |
 | signature  | string       | :green_circle: |
 | avatar     | File         | :red_circle:   |
+
+- [ ] Giới hạn thời gian tái gửi mail xác thực mật khẩu
 
 ### Thông báo
 

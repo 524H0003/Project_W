@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	forwardRef,
@@ -303,11 +304,20 @@ export class AppController {
 			response,
 			await this.svc.hook.assign(
 				mtdt,
-				async (s: string) =>
-					this.svc.mail.send(body.email, 'Change password?', 'forgetPassword', {
-						name: (await this.svc.baseUser.email(body.email)).name,
-						url: `${request.hostname}/hook/${s}`,
-					}),
+				async (s: string) => {
+					const user = await this.svc.baseUser.email(body.email);
+
+					if (!user) throw new BadRequestException('Invalid_Email');
+					return this.svc.mail.send(
+						body.email,
+						'Change password?',
+						'forgetPassword',
+						{
+							name: user.name,
+							url: `${request.hostname}/hook/${s}`,
+						},
+					);
+				},
 				'_Email',
 			),
 		);
