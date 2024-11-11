@@ -314,10 +314,7 @@ export class AppController {
 						body.email,
 						'Change password?',
 						'forgetPassword',
-						{
-							name: user.name,
-							url: `${request.hostname}/hook/${s}`,
-						},
+						{ name: user.name, url: `${request.hostname}/hook/${s}` },
 					);
 				},
 				'_Email',
