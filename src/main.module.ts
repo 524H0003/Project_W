@@ -8,15 +8,20 @@ import { loadEnv } from 'app/module/config.module';
 import { SqlModule } from 'app/module/sql.module';
 import { AuthMiddleware } from 'auth/auth.middleware';
 import { AppModule } from 'app/app.module';
-import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
 	imports: [
 		// Api rate limit
-		ThrottlerModule.forRootAsync({
-			imports: [ConfigModule],
-			useFactory: () => [],
+		ThrottlerModule.forRoot({
+			throttlers: [
+				{
+					limit: 2,
+					ttl: 1000,
+				},
+			],
+			errorMessage: 'Invalid_Request',
 		}),
 		// GraphQL and Apollo SandBox
 		GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -42,6 +47,12 @@ import { ThrottlerModule } from '@nestjs/throttler';
 		AppModule,
 		// Serving static pages
 		ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'page/dist') }),
+	],
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: ThrottlerGuard,
+		},
 	],
 })
 export class MainModule {
