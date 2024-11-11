@@ -15,12 +15,7 @@ import { APP_GUARD } from '@nestjs/core';
 	imports: [
 		// Api rate limit
 		ThrottlerModule.forRoot({
-			throttlers: [
-				{
-					limit: 2,
-					ttl: 1000,
-				},
-			],
+			throttlers: [{ limit: 2, ttl: 1000 }],
 			errorMessage: 'Invalid_Request',
 		}),
 		// GraphQL and Apollo SandBox
@@ -48,12 +43,7 @@ import { APP_GUARD } from '@nestjs/core';
 		// Serving static pages
 		ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'page/dist') }),
 	],
-	providers: [
-		{
-			provide: APP_GUARD,
-			useClass: ThrottlerGuard,
-		},
-	],
+	providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class MainModule {
 	configure(consumer: MiddlewareConsumer) {
