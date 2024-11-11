@@ -52,9 +52,9 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			(signature: string) =>
 				this.svc.mail.send(
 					ent.baseUser.email,
-					`An account assignment request from ${input.email}`,
-					'sendSignature',
-					{ signature },
+					`An account assignment request from ${input.name}`,
+					'sendSignatureEmployee',
+					{ signature, name: input.name, email: input.email },
 				),
 			'_Email',
 			{ enterpriseName: ent.baseUser.name },
