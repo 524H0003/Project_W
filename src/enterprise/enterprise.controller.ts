@@ -56,7 +56,7 @@ export class EnterpriseController extends AppController {
 		avatar: Express.Multer.File,
 	): Promise<void> {
 		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
-		await this.svc.ent.assign(body, avatar || null);
+		await this.svc.enterprise.assign(body, avatar || null);
 		return this.responseWithUserRecieve(
 			request,
 			response,

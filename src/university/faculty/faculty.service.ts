@@ -45,7 +45,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		if (existedUser) throw new BadRequestException('Invalid_Email');
 
 		return validation<User>(rawFaculty, async () => {
-			const eventCreator = await this.svc.envCre.assign(
+			const eventCreator = await this.svc.eventCreator.assign(
 				await this.svc.auth.signUp(
 					InterfaceCasting.quick(input, IUserSignUpKeys),
 					avatar,

@@ -31,7 +31,7 @@ export class SessionService extends DatabaseRequests<Session> {
 	 */
 	get use(): number {
 		if (this._use) return this._use;
-		return (this._use = this.svc.cfg.get('REFRESH_USE'));
+		return (this._use = this.svc.config.get('REFRESH_USE'));
 	}
 
 	/**
@@ -49,7 +49,7 @@ export class SessionService extends DatabaseRequests<Session> {
 	 * @param {string} mtdt - metadata from client
 	 */
 	async getTokens(user: User, mtdt: string) {
-		const device = await this.svc.dvc.assign({
+		const device = await this.svc.device.assign({
 				owner: user,
 				hashedUserAgent: hash(mtdt.toString()),
 				child: null,
@@ -58,7 +58,7 @@ export class SessionService extends DatabaseRequests<Session> {
 			refreshToken = this.svc.sign.refresh(session.id),
 			accessToken = this.svc.sign.access(user.baseUser.id);
 
-		await this.svc.dvc.modify(device, { child: session.id });
+		await this.svc.device.modify(device, { child: session.id });
 
 		return new UserRecieve({ accessToken, refreshToken, response: user.info });
 	}
@@ -76,7 +76,10 @@ export class SessionService extends DatabaseRequests<Session> {
 			child: oldNode.id,
 		});
 		await this.save({ id: oldNode.id, parrent: newSession.id });
-		await this.svc.dvc.assign({ id: oldNode.device.id, child: newSession.id });
+		await this.svc.device.assign({
+			id: oldNode.device.id,
+			child: newSession.id,
+		});
 		return newSession;
 	}
 

@@ -41,7 +41,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	async hook(input: IEmployeeHook, host: string, mtdt: string) {
 		input = InterfaceCasting.quick(input, IEmployeeHookKeys);
 
-		const ent = await this.svc.ent.findOne({
+		const ent = await this.svc.enterprise.findOne({
 			baseUser: { name: input.enterpriseName },
 		});
 		if (!ent || !input.enterpriseName)
@@ -86,11 +86,11 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 					...option,
 					role: UserRole.enterprise,
 				}),
-				eventCreator = await this.svc.envCre.assign(usr);
+				eventCreator = await this.svc.eventCreator.assign(usr);
 
 			return await this.save({
 				eventCreator,
-				enterprise: await this.svc.ent.findOne({
+				enterprise: await this.svc.enterprise.findOne({
 					baseUser: { name: enterpriseName },
 				}),
 				...InterfaceCasting.quick(input, IEmployeeInfoKeys),

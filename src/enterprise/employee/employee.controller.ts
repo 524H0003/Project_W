@@ -47,7 +47,7 @@ export class EmployeeController extends AppController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			await this.svc.emp.hook(body, request.hostname, mtdt),
+			await this.svc.employee.hook(body, request.hostname, mtdt),
 		);
 	}
 
@@ -83,7 +83,7 @@ export class EmployeeController extends AppController {
 				request,
 				response,
 				(
-					await this.svc.emp.signUp(
+					await this.svc.employee.signUp(
 						body,
 						avatar,
 						JSON.parse((request.user as Hook).note).enterpriseName,

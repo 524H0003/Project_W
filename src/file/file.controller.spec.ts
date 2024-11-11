@@ -40,11 +40,11 @@ describe('seeUploadedFile', () => {
 			.field('name', rawUsr.baseUser.name)
 			.field('email', rawUsr.baseUser.email)
 			.field('password', rawUsr.password);
-		usr = await appSvc.usr.email(rawUsr.baseUser.email);
+		usr = await appSvc.user.email(rawUsr.baseUser.email);
 
 		headers = e.headers;
 
-		await appSvc.usr.updateRole(usr.baseUser.id, UserRole.admin);
+		await appSvc.user.updateRole(usr.baseUser.id, UserRole.admin);
 	});
 
 	it('success on server files', async () => {

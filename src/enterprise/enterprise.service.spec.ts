@@ -33,14 +33,14 @@ describe('EnterpriseService', () => {
 
 		await execute(
 			() =>
-				appSvc.ent.assign(
+				appSvc.enterprise.assign(
 					{ ...enterprise, ...enterprise.baseUser, signature },
 					null,
 				),
 			{
 				exps: [{ type: 'toBeInstanceOf', params: [Enterprise] }],
 				onFinish: async (result: Enterprise) => {
-					await execute(() => appSvc.ent.find(result), {
+					await execute(() => appSvc.enterprise.find(result), {
 						exps: [{ type: 'toHaveLength', params: [1] }],
 					});
 				},

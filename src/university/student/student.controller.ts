@@ -47,7 +47,7 @@ export class StudentController extends AppController {
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
-			await this.svc.stu.signUp(body);
+			await this.svc.student.signUp(body);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'Request_New_User':
