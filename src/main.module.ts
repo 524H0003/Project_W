@@ -14,7 +14,10 @@ import { ThrottlerModule } from '@nestjs/throttler';
 @Module({
 	imports: [
 		// Api rate limit
-		ThrottlerModule.forRootAsync({ imports: [ConfigModule] }),
+		ThrottlerModule.forRootAsync({
+			imports: [ConfigModule],
+			useFactory: () => [],
+		}),
 		// GraphQL and Apollo SandBox
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
