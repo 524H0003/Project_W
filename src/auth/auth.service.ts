@@ -5,9 +5,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Cryption, validation } from 'app/utils/auth.utils';
+import { compare, Cryption, validation } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { compareSync } from 'bcrypt';
 import { FileService } from 'file/file.service';
 import { IUserLoginKeys, IUserRelationshipKeys, IUserSignUpKeys } from 'models';
 import { User } from 'user/user.entity';
@@ -85,7 +84,7 @@ export class AuthService extends Cryption {
 
 		const user = await this.usrSvc.email(input.email);
 
-		if (user && compareSync(input.password, user.hashedPassword)) return user;
+		if (user && compare(input.password, user.hashedPassword)) return user;
 		if (!user) throw new BadRequestException('Invalid_Email');
 		throw new BadRequestException('Invalid_Password');
 	}
