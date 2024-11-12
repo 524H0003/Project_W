@@ -128,6 +128,7 @@ export class AppController {
 				this.ckiOpt,
 			)
 			.json({
+				statusCode: HttpStatus.ACCEPTED,
 				session: {
 					access_token: usrRcv.accessToken,
 					refresh_token: usrRcv.refreshToken,

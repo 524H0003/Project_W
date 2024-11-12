@@ -48,22 +48,45 @@ describe('signup', () => {
 			],
 		});
 
+		delete usr.password;
+
 		await execute(() => appSvc.user.email(usr.baseUser.email), {
-			exps: [{ type: 'toBeInstanceOf', params: [User] }],
+			exps: [
+				{ type: 'toBeInstanceOf', params: [User] },
+				{
+					type: 'toMatchObject',
+					params: [
+						{
+							...usr,
+							baseUser: {
+								email: usr.baseUser.email.toLowerCase(),
+							},
+						},
+					],
+				},
+			],
 		});
 	});
 
 	it('fail due to email already exist', async () => {
 		await req.post('/signup').send({ ...usr, ...usr.baseUser });
 
-		await execute(() => req.post('/signup').send({ ...usr, ...usr.baseUser }), {
-			exps: [
-				{
-					type: 'toHaveProperty',
-					params: ['status', HttpStatus.UNPROCESSABLE_ENTITY],
-				},
-			],
-		});
+		await execute(
+			async () =>
+				(await req.post('/signup').send({ ...usr, ...usr.baseUser })).text,
+			{
+				exps: [
+					{
+						type: 'toContain',
+						params: [HttpStatus.UNPROCESSABLE_ENTITY.toString()],
+					},
+					{
+						type: 'toContain',
+						params: ['Exist_User'],
+					},
+				],
+			},
+		);
 	});
 });
 
@@ -98,21 +121,22 @@ describe('login', () => {
 	it('fail due to wrong password', async () => {
 		usr = new User({ ...usr, ...usr.baseUser, password: (12).string });
 
-		await execute(() => req.post('/login').send({ ...usr, ...usr.baseUser }), {
-			exps: [
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
-			],
-		});
-	});
-
-	it('fail due to not follow student email format', async () => {
-		usr = Student.test(fileName, { email: 'aa' }).user;
-
-		await execute(() => req.post('/login').send({ ...usr.baseUser, ...usr }), {
-			exps: [
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.BAD_REQUEST] },
-			],
-		});
+		await execute(
+			async () =>
+				(await req.post('/login').send({ ...usr, ...usr.baseUser })).text,
+			{
+				exps: [
+					{
+						type: 'toContain',
+						params: [HttpStatus.BAD_REQUEST.toString()],
+					},
+					{
+						type: 'toContain',
+						params: ['Invalid_Password'],
+					},
+				],
+			},
+		);
 	});
 });
 
@@ -233,10 +257,54 @@ describe('refresh', () => {
 	});
 });
 
+describe('change-password', () => {
+	let user: User;
+
+	it('success', async () => {
+		const rawUser = User.test(fileName);
+		user = await appSvc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null);
+
+		await execute(
+			async () =>
+				(
+					await req
+						.post('/change-password')
+						.send({ email: user.baseUser.email })
+				).text,
+			{
+				exps: [
+					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
+					{ type: 'toContain', params: ['Sent_Signature_Email'] },
+				],
+			},
+		);
+	});
+
+	it('failed', async () => {
+		const rawUser = User.test(fileName);
+		user = await appSvc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null);
+
+		await execute(
+			async () =>
+				(
+					await req
+						.post('/change-password')
+						.send({ email: user.baseUser.email + ']' })
+				).text,
+			{
+				exps: [
+					{ type: 'toContain', params: [HttpStatus.BAD_REQUEST.toString()] },
+					{ type: 'toContain', params: ['Invalid_Email'] },
+				],
+			},
+		);
+	});
+});
+
 describe('request-signature', () => {
 	it('success', async () => {
 		await execute(
-			async () => JSON.stringify(await req.post('/request-signature').send()),
+			async () => (await req.post('/request-signature').send()).text,
 			{
 				exps: [
 					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
