@@ -35,7 +35,7 @@ describe('signup', () => {
 				JSON.stringify(
 					await req
 						.post('/student/signup')
-						.send({ ...student.user, ...student.user.baseUser }),
+						.send({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{
 				exps: [
@@ -52,7 +52,7 @@ describe('signup', () => {
 				JSON.stringify(
 					await req
 						.post('/student/signup')
-						.send({ ...student.user, ...student.user.baseUser }),
+						.send({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{
 				exps: [

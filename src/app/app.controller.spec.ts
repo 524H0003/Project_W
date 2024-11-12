@@ -96,7 +96,7 @@ describe('login', () => {
 	});
 
 	it('fail due to wrong password', async () => {
-		usr = new User({ ...usr, ...user.baseUser, password: (12).string });
+		usr = new User({ ...usr, ...usr.baseUser, password: (12).string });
 
 		await execute(() => req.post('/login').send({ ...usr, ...usr.baseUser }), {
 			exps: [
