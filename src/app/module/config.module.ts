@@ -32,7 +32,6 @@ export const loadEnv =
 			AES_ALGO: Joi.string().default('aes-256-ctr'),
 			// ADMIN
 			ADMIN_EMAIL: Joi.string().default('admin'),
-			ADMIN_PASSWORD: Joi.string().default('admin'),
 			// AWS
 			AWS_REGION: Joi.string().default(false),
 			AWS_ACCESS_KEY_ID: Joi.string(),

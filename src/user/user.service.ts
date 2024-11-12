@@ -51,7 +51,7 @@ export class UserService extends DatabaseRequests<User> {
 		const id = (
 			await this.appSvc.baseUser.modify(entityId, updatedEntity.baseUser)
 		).id;
-		await this.update({ baseUser: { id } }, { ...updatedEntity });
+		await this.update({ baseUser: { id } }, updatedEntity);
 		return this.id(entityId);
 	}
 
@@ -77,6 +77,11 @@ export class UserService extends DatabaseRequests<User> {
 		return this.findOne({ baseUser: { email: input.lower }, deep: 2 });
 	}
 
+	/**
+	 * Find user by id
+	 * @param {string} id - user's id
+	 * @return {Promise<User>}
+	 */
 	id(id: string): Promise<User> {
 		return this.findOne({ baseUser: { id }, deep: 2 });
 	}

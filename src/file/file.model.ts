@@ -1,4 +1,4 @@
-import { IEvent } from 'event/event.model';
+import { IEventEntity } from 'event/event.model';
 import { IUserEntity } from 'user/user.model';
 
 // Interfaces
@@ -14,7 +14,7 @@ export interface IFile {
 	/**
 	 * File create for event
 	 */
-	atEvent: IEvent;
+	atEvent: IEventEntity;
 
 	/**
 	 * File's title

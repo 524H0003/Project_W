@@ -7,19 +7,37 @@ import {
 	ManyToOne,
 	OneToMany,
 } from 'typeorm';
-import { EventStatus, EventType, IEvent } from './event.model';
+import {
+	EventStatus,
+	EventType,
+	IEventEntity,
+	IEventInfo,
+} from './event.model';
 import { EventParticipator } from './participator/participator.entity';
 import { File } from 'file/file.entity';
 import { EventTag } from './tag/tag.entity';
 import { BlackBox } from 'app/utils/model.utils';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator/creator.entity';
+import { IEventInfoKeys } from 'models';
+import { InterfaceCasting } from 'app/utils/utils';
 
 /**
  * Event entity
  */
 @Entity({ name: 'Event' })
-export class Event extends SensitiveInfomations implements IEvent {
+export class Event extends SensitiveInfomations implements IEventEntity {
+	/**
+	 * @ignore
+	 */
+	constructor(payload: IEventInfo) {
+		super();
+
+		if (payload) {
+			Object.assign(this, InterfaceCasting.quick(payload, IEventInfoKeys));
+		}
+	}
+
 	// Relationships
 	/**
 	 * The event creator
@@ -83,7 +101,7 @@ export class Event extends SensitiveInfomations implements IEvent {
 		name: 'status',
 		type: 'enum',
 		enum: EventStatus,
-		default: EventStatus.draft,
+		default: EventStatus['Draft'],
 		enumName: 'event_status',
 	})
 	status: EventStatus;
@@ -96,7 +114,7 @@ export class Event extends SensitiveInfomations implements IEvent {
 		type: 'enum',
 		enum: EventType,
 		enumName: 'event_type',
-		default: EventType.internship,
+		default: EventType['Internship'],
 	})
 	type: EventType;
 
@@ -142,4 +160,22 @@ export class Event extends SensitiveInfomations implements IEvent {
 	 */
 	@Column(() => BlackBox, { prefix: false })
 	blackBox: BlackBox;
+
+	// Methods
+	static test(from: string) {
+		return new Event({
+			title: from + (5).string,
+			description: (20).string,
+			type: EventType['Workshop'],
+			positionsAvailable: (30).random,
+			status: EventStatus['Draft'],
+			maxParticipants: 30 + (20).random,
+			location: (30).string,
+			startDate: new Date('1/1/111'),
+			endDate: new Date('1/1/111'),
+			applicationDeadline: new Date('1/1/11'),
+			requiredSkills: '',
+			additionalFields: '',
+		});
+	}
 }

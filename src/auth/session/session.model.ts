@@ -1,4 +1,4 @@
-import { IDevice } from 'auth/device/device.model';
+import { IDeviceEntity } from 'auth/device/device.model';
 
 // Interfaces
 /**
@@ -8,7 +8,7 @@ export interface ISession {
 	/**
 	 * Session from device
 	 */
-	device: IDevice;
+	device: IDeviceEntity;
 
 	/**
 	 * Session's use time left
