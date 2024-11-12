@@ -6,9 +6,9 @@
 
 ### Đăng nhập
 
-- [x] Đăng nhập dành cho sinh viên Đại học
+- [x] Đăng nhập (dành cho sinh viên Đại học)
 
-> /api/v1/login, /api/v1/student/login
+> /api/v1/login
 
 | Miền     | Kiểu dữ liệu | Bắt buộc       |
 | -------- | ------------ | -------------- |
@@ -21,7 +21,7 @@
 
 - [x] Yêu cầu signature thông qua Email
 
-> /api/v1/change
+> /api/v1/change-password
 
 | Miền  | Kiểu dữ liệu | Bắt buộc       |
 | ----- | ------------ | -------------- |
@@ -29,7 +29,7 @@
 
 - [x] Gửi mật khẩu mới
 
-> /api/v1/change/:signature
+> /api/v1/change-password/:signature
 
 | Miền     | Kiểu dữ liệu | Bắt buộc       |
 | -------- | ------------ | -------------- |
@@ -52,9 +52,12 @@
 
 > /api/v1/employee/hook
 
-| Miền           | Kiểu dữ liệu | Bắt buộc       |
-| -------------- | ------------ | -------------- |
-| enterpriseName | string       | :green_circle: |
+| Miền           | Kiểu dữ liệu         | Bắt buộc       |
+| -------------- | -------------------- | -------------- |
+| enterpriseName | string               | :green_circle: |
+| email          | string               | :green_circle: |
+| position       | EmployeePosition[^1] | :green_circle: |
+| name           | string               | :green_circle: |
 
 - [x] Đăng ký nhân viên của doanh nghiệp
 
@@ -82,7 +85,7 @@
 | signature  | string       | :green_circle: |
 | avatar     | File         | :red_circle:   |
 
-- [ ] Giới hạn thời gian tái gửi mail xác thực mật khẩu
+- [x] Giới hạn thời gian tái gửi mail xác thực mật khẩu
 
 ### Thông báo
 

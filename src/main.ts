@@ -9,18 +9,24 @@ import { config as awsCfg } from 'aws-sdk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { MainModule } from './main.module';
+import { Enterprise } from 'enterprise/enterprise.entity';
+import { Faculty } from 'university/faculty/faculty.entity';
+import { Student } from 'university/student/student.entity';
+import { AppService } from 'app/app.service';
+import { BaseEntity } from 'typeorm';
 import { BaseUser } from 'app/app.entity';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
-		{ AdminJS } = await import('adminjs'),
+		{ AdminJS, BaseRecord } = await import('adminjs'),
 		{ buildAuthenticatedRouter } = await import('@adminjs/express'),
 		{ Database, Resource } = await import('@adminjs/typeorm'),
 		server = express(),
 		app = (
 			await NestFactory.create(MainModule, new ExpressAdapter(server), {
 				cors: {
-					origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
+					// origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
+					origin: '*',
 					// /^(https:\/\/){1}(((.*)(anhvietnguyen.id.vn){1}){1}|(localhost){1}:([0-9]){1,4})/,
 					methods: '*',
 					credentials: true,
@@ -29,10 +35,33 @@ async function bootstrap() {
 		)
 			.use(cookieParser())
 			.useGlobalPipes(new ValidationPipe()),
-		cfgSvc = app.get(ConfigService);
-	AdminJS.registerAdapter({ Resource, Database });
+		cfgSvc = app.get(ConfigService),
+		appSvc = app.get(AppService);
+
+	class CustomResource extends Resource {
+		private resourceName: string;
+
+		constructor(model: typeof BaseEntity) {
+			super(model);
+
+			this.resourceName = model.name.toLowerCase();
+		}
+
+		async findOne(id: string) {
+			const instance = await appSvc[this.resourceName].id(id);
+
+			if (!instance) {
+				return null;
+			}
+			return new BaseRecord(instance, this);
+		}
+	}
+
+	AdminJS.registerAdapter({ Resource: CustomResource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
-	const admin = new AdminJS({ resources: [BaseUser] }),
+	const admin = new AdminJS({
+			resources: [Enterprise, Faculty, Student, BaseUser],
+		}),
 		adminRouter = buildAuthenticatedRouter(
 			admin,
 			{

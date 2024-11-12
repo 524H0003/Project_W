@@ -29,29 +29,29 @@ export class AppService {
 		@Inject(forwardRef(() => AuthService))
 		public auth: AuthService,
 		@Inject(forwardRef(() => DeviceService))
-		public dvc: DeviceService,
+		public device: DeviceService,
 		@Inject(forwardRef(() => SessionService))
-		public sess: SessionService,
+		public session: SessionService,
 		@Inject(forwardRef(() => ConfigService))
-		public cfg: ConfigService,
+		public config: ConfigService,
 		@Inject(forwardRef(() => HookService))
 		public hook: HookService,
 		@Inject(forwardRef(() => MailService))
 		public mail: MailService,
 		@Inject(forwardRef(() => StudentService))
-		public stu: StudentService,
+		public student: StudentService,
 		@Inject(forwardRef(() => EnterpriseService))
-		public ent: EnterpriseService,
+		public enterprise: EnterpriseService,
 		@Inject(forwardRef(() => EmployeeService))
-		public emp: EmployeeService,
+		public employee: EmployeeService,
 		@Inject(forwardRef(() => FacultyService))
-		public fac: FacultyService,
+		public faculty: FacultyService,
 		@Inject(forwardRef(() => FileService))
 		public file: FileService,
 		@Inject(forwardRef(() => EventCreatorService))
-		public envCre: EventCreatorService,
+		public eventcreator: EventCreatorService,
 		@Inject(forwardRef(() => UserService))
-		public usr: UserService,
+		public user: UserService,
 		@Inject(forwardRef(() => SignService))
 		public sign: SignService,
 	) {

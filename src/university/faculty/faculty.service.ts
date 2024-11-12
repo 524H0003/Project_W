@@ -45,7 +45,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		if (existedUser) throw new BadRequestException('Invalid_Email');
 
 		return validation<User>(rawFaculty, async () => {
-			const eventCreator = await this.svc.envCre.assign(
+			const eventCreator = await this.svc.eventcreator.assign(
 				await this.svc.auth.signUp(
 					InterfaceCasting.quick(input, IUserSignUpKeys),
 					avatar,
@@ -62,5 +62,14 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 				).eventCreator.user;
 			}
 		});
+	}
+
+	/**
+	 * Find faculty by id
+	 * @param {string} id - faculty id
+	 * @return {Promise<Faculty>}
+	 */
+	async id(id: string): Promise<Faculty> {
+		return this.findOne({ eventCreator: { user: { baseUser: { id } } } });
 	}
 }

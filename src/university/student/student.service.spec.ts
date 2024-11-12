@@ -26,7 +26,7 @@ describe('StudentService', () => {
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.stu.signUp({
+				appSvc.student.signUp({
 					...student.user.baseUser,
 					...student.user,
 					...student,
@@ -44,7 +44,7 @@ describe('StudentService', () => {
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.stu.signUp({
+				appSvc.student.signUp({
 					...student.user.baseUser,
 					...student.user,
 					...student,

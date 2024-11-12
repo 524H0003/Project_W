@@ -25,7 +25,7 @@
       object="role"
       :alert="alert"
       v-model="input.position"
-      :list="Object.keys(EmployeePosition)"
+      :list="Object.keys(EmployeePosition).map(i => i.replace('_', ' '))"
     />
     <FormTextInputComp
       name="Password"
@@ -79,7 +79,7 @@ import { reactive } from 'vue'
 
 const input = reactive<IEmployeeSignup>({
     signature: '',
-    position: EmployeePosition.other,
+    position: EmployeePosition['Other'],
     password: '',
     name: '',
     email: '',
@@ -88,7 +88,7 @@ const input = reactive<IEmployeeSignup>({
     enterpriseName: '',
     email: '',
     name: '',
-    position: EmployeePosition.other,
+    position: EmployeePosition['Other'],
   }),
   handleSignUp = () => apiErrorHandler(assignEnterpriseUser(input)),
   request = () =>

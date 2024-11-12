@@ -25,13 +25,13 @@ beforeEach(() => {
 
 describe('UserService', () => {
 	it('assign', async () => {
-		await execute(() => appSvc.usr.assign(user), {
+		await execute(() => appSvc.user.assign(user), {
 			exps: [{ type: 'toBeInstanceOf', params: [User] }],
 			onFinish: async (result: User) => {
 				await execute(() => appSvc.baseUser.find(result.baseUser), {
 					exps: [{ type: 'toHaveLength', params: [1] }],
 				});
-				await execute(() => appSvc.usr.email(result.baseUser.email), {
+				await execute(() => appSvc.user.email(result.baseUser.email), {
 					exps: [
 						{
 							type: 'toHaveProperty',
@@ -39,7 +39,7 @@ describe('UserService', () => {
 						},
 					],
 				});
-				await execute(() => appSvc.usr.id(result.baseUser.id), {
+				await execute(() => appSvc.user.id(result.baseUser.id), {
 					exps: [
 						{
 							type: 'toHaveProperty',
@@ -52,12 +52,12 @@ describe('UserService', () => {
 	});
 
 	it('modify', async () => {
-		const dbUser = await appSvc.usr.assign(user),
+		const dbUser = await appSvc.user.assign(user),
 			newName = (20).string;
 
 		await execute(
 			() =>
-				appSvc.usr.modify(dbUser.baseUser.id, { baseUser: { name: newName } }),
+				appSvc.user.modify(dbUser.baseUser.id, { baseUser: { name: newName } }),
 			{
 				exps: [
 					{ type: 'toBeInstanceOf', params: [User] },
@@ -68,22 +68,22 @@ describe('UserService', () => {
 	});
 
 	it('remove', async () => {
-		const dbUser = await appSvc.usr.assign(user);
+		const dbUser = await appSvc.user.assign(user);
 
 		// eslint-disable-next-line @typescript-eslint/require-await
-		await execute(async () => () => appSvc.usr.remove(dbUser), {
+		await execute(async () => () => appSvc.user.remove(dbUser), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
-		await execute(() => appSvc.usr.id(dbUser.baseUser.id), {
+		await execute(() => appSvc.user.id(dbUser.baseUser.id), {
 			exps: [{ type: 'toBeNull', params: [] }],
 		});
 	});
 
 	it('updateRole', async () => {
-		const dbUser = await appSvc.usr.assign(user);
+		const dbUser = await appSvc.user.assign(user);
 
 		await execute(
-			() => appSvc.usr.updateRole(dbUser.baseUser.id, UserRole.admin),
+			() => appSvc.user.updateRole(dbUser.baseUser.id, UserRole.admin),
 			{
 				exps: [
 					{ type: 'toBeInstanceOf', params: [User] },

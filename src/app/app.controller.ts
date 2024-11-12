@@ -62,7 +62,7 @@ export class AppController {
 	 */
 	get acsKey(): string {
 		if (this._acsKey) return this._acsKey;
-		return (this._acsKey = this.svc.cfg.get('ACCESS_SECRET'));
+		return (this._acsKey = this.svc.config.get('ACCESS_SECRET'));
 	}
 
 	/**
@@ -74,7 +74,7 @@ export class AppController {
 	 */
 	get rfsKey(): string {
 		if (this._rfsKey) return this._rfsKey;
-		return (this._rfsKey = this.svc.cfg.get('REFRESH_SECRET'));
+		return (this._rfsKey = this.svc.config.get('REFRESH_SECRET'));
 	}
 
 	/**
@@ -134,7 +134,8 @@ export class AppController {
 					expires_in: usrRcv.payload.exp - usrRcv.payload.iat,
 					expires_at: usrRcv.payload.exp,
 				},
-				user: usrRcv.response,
+				user: typeof usrRcv.response !== 'string' ? usrRcv.response : '',
+				message: typeof usrRcv.response === 'string' ? usrRcv.response : '',
 			});
 	}
 
@@ -154,7 +155,7 @@ export class AppController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			await this.svc.sess.getTokens(user, mtdt),
+			await this.svc.session.getTokens(user, mtdt),
 		);
 	}
 
@@ -175,7 +176,7 @@ export class AppController {
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
-			await this.svc.stu.signUp(body);
+			await this.svc.student.signUp(body);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case 'Invalid_Student_Email':
@@ -185,11 +186,9 @@ export class AppController {
 						await this.svc.auth.login(body),
 						mtdt,
 					);
-					break;
 
 				case 'Request_New_User':
 					return this.resetPasswordViaEmail(request, response, body, mtdt);
-					break;
 
 				default:
 					throw error;
@@ -246,13 +245,13 @@ export class AppController {
 		@Res({ passthrough: true }) response: Response,
 	): Promise<void> {
 		const rfsRsl = request.user as IRefreshResult;
-		await this.svc.dvc.remove({
-			id: (await this.svc.sess.id(rfsRsl.sessionId)).device.id,
+		await this.svc.device.remove({
+			id: (await this.svc.session.id(rfsRsl.sessionId)).device.id,
 		});
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			new UserRecieve({ response: 'LogoutSuccess' }),
+			new UserRecieve({ response: 'You have been successfully logged out.' }),
 		);
 	}
 
@@ -274,14 +273,15 @@ export class AppController {
 				this.responseWithUserRecieve(request, response, usrRcv),
 			rfsRsl = request.user as IRefreshResult;
 		if (rfsRsl.status === 'lockdown') {
-			await this.svc.dvc.remove({
-				id: (await this.svc.sess.id(rfsRsl.sessionId)).device.id,
+			await this.svc.device.remove({
+				id: (await this.svc.session.id(rfsRsl.sessionId)).device.id,
 			});
 			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));
 		} else {
 			if (rfsRsl.status === 'success' && compareSync(mtdt, rfsRsl.userAgent)) {
-				return sendBack(await this.svc.sess.rotateToken(rfsRsl.sessionId));
-			} else return sendBack(await this.svc.sess.addTokens(rfsRsl.sessionId));
+				return sendBack(await this.svc.session.rotateToken(rfsRsl.sessionId));
+			} else
+				return sendBack(await this.svc.session.addTokens(rfsRsl.sessionId));
 		}
 	}
 

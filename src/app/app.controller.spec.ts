@@ -48,7 +48,7 @@ describe('signup', () => {
 			],
 		});
 
-		await execute(() => appSvc.usr.email(usr.baseUser.email), {
+		await execute(() => appSvc.user.email(usr.baseUser.email), {
 			exps: [{ type: 'toBeInstanceOf', params: [User] }],
 		});
 	});
@@ -88,7 +88,7 @@ describe('login', () => {
 
 		await execute(
 			() =>
-				appSvc.dvc.find({
+				appSvc.device.find({
 					owner: { baseUser: { email: usr.baseUser.email.lower } },
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
@@ -140,7 +140,7 @@ describe('logout', () => {
 				onFinish: () =>
 					execute(
 						() =>
-							appSvc.dvc.find({
+							appSvc.device.find({
 								owner: { baseUser: { email: usr.baseUser.email.lower } },
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },

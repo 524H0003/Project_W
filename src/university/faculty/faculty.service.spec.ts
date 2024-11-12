@@ -36,7 +36,7 @@ describe('FacultyService', () => {
 
 		await execute(
 			() =>
-				appSvc.fac.assign(
+				appSvc.faculty.assign(
 					{
 						...faculty.eventCreator.user.baseUser,
 						...faculty.eventCreator.user,
@@ -66,7 +66,7 @@ describe('FacultyService', () => {
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.fac.assign(
+				appSvc.faculty.assign(
 					{
 						...faculty.eventCreator.user.baseUser,
 						...faculty.eventCreator.user,

@@ -11,9 +11,6 @@
         'input-success': object === alert?.object && alert?.type === 'success',
       }"
     >
-      <option disabled selected>
-        Pick one
-      </option>
       <option v-for="i in list" v-bind:key="i">
         {{ i }}
       </option>

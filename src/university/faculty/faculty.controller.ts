@@ -60,7 +60,7 @@ export class FacultyController extends AppController {
 		return this.responseWithUser(
 			request,
 			response,
-			await this.svc.fac.assign(body, avatar),
+			await this.svc.faculty.assign(body, avatar),
 			mtdt,
 		);
 	}

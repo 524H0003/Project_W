@@ -61,4 +61,13 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 
 		return new Enterprise({ ...result, ...result.baseUser });
 	}
+
+	/**
+	 * Find enterprise with id
+	 * @param {string} id - enterprise's id
+	 * @return {Promise<Enterprise>}
+	 */
+	id(id: string): Promise<Enterprise> {
+		return this.findOne({ baseUser: { id } });
+	}
 }

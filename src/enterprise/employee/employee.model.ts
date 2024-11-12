@@ -50,8 +50,8 @@ export interface IEmployeeHook
 
 // Enums
 export enum EmployeePosition {
-	manager = 'manager',
-	hr = 'hr',
-	recruiter = 'recruiter',
-	other = 'other',
+	'Manager' = 'manager',
+	'Human_resource' = 'hr',
+	'Recruiter' = 'recruiter',
+	'Other' = 'other',
 }
