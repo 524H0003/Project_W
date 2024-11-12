@@ -1,7 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Cryption } from 'app/utils/auth.utils';
-import { compareSync } from 'bcrypt';
+import { compare, Cryption } from 'app/utils/auth.utils';
 import { NextFunction, Request, Response } from 'express';
 import { SignService } from './auth.service';
 
@@ -43,8 +42,8 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 
 		let acsTkn: string, rfsTkn: string;
 		for (const cki in req.cookies)
-			if (compareSync(this.rfsKey, cki)) rfsTkn = req.cookies[cki];
-			else if (compareSync(this.acsKey, cki)) acsTkn = req.cookies[cki];
+			if (compare(this.rfsKey, cki)) rfsTkn = req.cookies[cki];
+			else if (compare(this.acsKey, cki)) acsTkn = req.cookies[cki];
 
 		const tknPld = this.decrypt(rfsTkn);
 		if (!req.headers.authorization)
