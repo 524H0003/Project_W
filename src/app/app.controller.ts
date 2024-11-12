@@ -134,7 +134,8 @@ export class AppController {
 					expires_in: usrRcv.payload.exp - usrRcv.payload.iat,
 					expires_at: usrRcv.payload.exp,
 				},
-				user: usrRcv.response,
+				user: typeof usrRcv.response !== 'string' ? usrRcv.response : '',
+				message: typeof usrRcv.response === 'string' ? usrRcv.response : '',
 			});
 	}
 
@@ -250,7 +251,7 @@ export class AppController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			new UserRecieve({ response: 'LogoutSuccess' }),
+			new UserRecieve({ response: 'You have been successfully logged out.' }),
 		);
 	}
 
