@@ -38,7 +38,7 @@ export class HookService extends DatabaseRequests<Hook> {
 	async assign(
 		mtdt: string,
 		func: (signature: string) => Promise<BaseUser> | void,
-		to: '_Email' | '_Console',
+		to: '_Email' | '_Admin',
 		addInfo?: object,
 	): Promise<UserRecieve> {
 		const signature = (128).string,

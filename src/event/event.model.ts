@@ -104,7 +104,7 @@ export enum EventStatus {
 
 export enum EventType {
 	'Internship' = 'internship',
-	'Job fair' = 'job_fair',
+	'Job_fair' = 'job_fair',
 	'Workshop' = 'workshop',
 	'Seminar' = 'seminar',
 }
