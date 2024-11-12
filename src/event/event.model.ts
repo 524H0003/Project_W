@@ -4,9 +4,9 @@ import { ITag } from './tag/tag.model';
 
 // Interfaces
 /**
- * Event model
+ * Event relationship
  */
-export interface IEvent {
+export interface IEventRelationships {
 	/**
 	 * The event creator
 	 */
@@ -21,7 +21,12 @@ export interface IEvent {
 	 * Event's tags
 	 */
 	tags: ITag[];
+}
 
+/**
+ * Event model
+ */
+export interface IEventInfo {
 	/**
 	 * Event's title
 	 */
@@ -83,17 +88,22 @@ export interface IEvent {
 	additionalFields: any;
 }
 
+/**
+ * Event entity
+ */
+export interface IEventEntity extends IEventInfo, IEventRelationships {}
+
 // Enums
 export enum EventStatus {
-	draft = 'draft',
-	published = 'published',
-	cancelled = 'cancelled',
-	completed = 'completed',
+	'Draft' = 'draft',
+	'Published' = 'published',
+	'Cancelled' = 'cancelled',
+	'Completed' = 'completed',
 }
 
 export enum EventType {
-	internship = 'internship',
-	job_fair = 'job_fair',
-	workshop = 'workshop',
-	seminar = 'seminar',
+	'Internship' = 'internship',
+	'Job fair' = 'job_fair',
+	'Workshop' = 'workshop',
+	'Seminar' = 'seminar',
 }
