@@ -1,5 +1,5 @@
 import { IBaseUser, IBaseUserEmail } from 'app/app.model';
-import { IDevice } from 'auth/device/device.model';
+import { IDeviceEntity } from 'auth/device/device.model';
 import { IHook } from 'app/hook/hook.model';
 import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
@@ -61,7 +61,7 @@ export interface IUserSensitive {
 export interface IUserRelationship {
 	baseUser: IBaseUser;
 	recievedNotifications: IReciever[];
-	devices: IDevice[];
+	devices: IDeviceEntity[];
 	uploadFiles: IFile[];
 	participatedEvents: IEventParticipator[];
 	hooks: IHook[];

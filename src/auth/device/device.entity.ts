@@ -1,21 +1,22 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Session } from 'auth/session/session.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { IDevice } from './device.model';
+import { IDeviceEntity, IDeviceInfo } from './device.model';
 import { User } from 'user/user.entity';
 
 /**
  * Device entity
  */
 @Entity({ name: 'auth_device' })
-export class Device extends SensitiveInfomations implements IDevice {
+export class Device extends SensitiveInfomations implements IDeviceEntity {
 	/**
 	 * Create device with infomations
-	 * @param {IDevice} payload - the device's infomations
+	 * @param {IDeviceInfo} payload - the device's infomations
 	 */
-	constructor(payload: IDevice) {
+	constructor(payload: IDeviceInfo) {
 		super();
-		Object.assign(this, payload);
+
+		if (payload) Object.assign(this, payload);
 	}
 
 	// Relationships
@@ -41,4 +42,9 @@ export class Device extends SensitiveInfomations implements IDevice {
 	 * Device's hashed useragent from client
 	 */
 	@Column() hashedUserAgent: string;
+
+	// Methods
+	static test(from: string) {
+		return new Device({ child: '', hashedUserAgent: from + (20).string });
+	}
 }

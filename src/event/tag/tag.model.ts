@@ -1,4 +1,4 @@
-import { IEvent } from 'event/event.model';
+import { IEventEntity } from 'event/event.model';
 
 // Interfaces
 /**
@@ -13,5 +13,5 @@ export interface ITag {
 	/**
 	 * Tag to event
 	 */
-	toEvents: IEvent[];
+	toEvents: IEventEntity[];
 }

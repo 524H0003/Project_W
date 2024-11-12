@@ -41,15 +41,15 @@ export class DeviceService extends DatabaseRequests<Device> {
 
 	/**
 	 * Modify device
-	 * @param {DeepPartial<BaseUser>} entity - user
-	 * @param {DeepPartial<BaseUser>} updatedEntity - modified user
-	 * @return {Promise<BaseUser>}
+	 * @param {string} entityId - device
+	 * @param {DeepPartial<Device>} updatedEntity - modified device
+	 * @return {Promise<Device>}
 	 */
 	async modify(
-		entity: DeepPartial<Device>,
+		entityId: string,
 		updatedEntity: DeepPartial<Device>,
 	): Promise<Device> {
-		await super.update(entity, updatedEntity);
-		return new Device(await this.findOne(updatedEntity));
+		await super.update({ id: entityId }, updatedEntity);
+		return new Device(await this.id(entityId));
 	}
 }

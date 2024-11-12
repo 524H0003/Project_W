@@ -10,9 +10,35 @@ import { AuthMiddleware } from 'auth/auth.middleware';
 import { AppModule } from 'app/app.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
 	imports: [
+		// Mail
+		MailerModule.forRootAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: (cfgSvc: ConfigService): MailerOptions => {
+				return {
+					transport: {
+						host: 'smtp.gmail.com',
+						secure: true,
+						auth: {
+							user: cfgSvc.get('SMTP_USER'),
+							pass: cfgSvc.get('SMTP_PASS'),
+						},
+					},
+					defaults: { from: '"Unreal mail" <secret@student.tdtu.edu.vn>' },
+					template: {
+						dir: join(__dirname, 'templates'),
+						adapter: new HandlebarsAdapter(),
+						options: { strict: true },
+					},
+				};
+			},
+		}),
 		// Api rate limit
 		ThrottlerModule.forRoot({
 			throttlers: [{ limit: 2, ttl: 1000 }],

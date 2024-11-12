@@ -58,7 +58,7 @@ export class SessionService extends DatabaseRequests<Session> {
 			refreshToken = this.svc.sign.refresh(session.id),
 			accessToken = this.svc.sign.access(user.baseUser.id);
 
-		await this.svc.device.modify(device, { child: session.id });
+		await this.svc.device.modify(device.id, { child: session.id });
 
 		return new UserRecieve({ accessToken, refreshToken, response: user.info });
 	}
