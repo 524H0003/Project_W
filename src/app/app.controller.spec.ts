@@ -8,7 +8,6 @@ import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { AppController } from 'app/app.controller';
 import { AppModule } from 'app/app.module';
-import { Student } from 'university/student/student.entity';
 import { AppService } from './app.service';
 
 const fileName = curFile(__filename);
