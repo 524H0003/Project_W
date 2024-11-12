@@ -55,12 +55,7 @@ describe('signup', () => {
 				{
 					type: 'toMatchObject',
 					params: [
-						{
-							...usr,
-							baseUser: {
-								email: usr.baseUser.email.toLowerCase(),
-							},
-						},
+						{ ...usr, baseUser: { email: usr.baseUser.email.toLowerCase() } },
 					],
 				},
 			],
@@ -79,10 +74,7 @@ describe('signup', () => {
 						type: 'toContain',
 						params: [HttpStatus.UNPROCESSABLE_ENTITY.toString()],
 					},
-					{
-						type: 'toContain',
-						params: ['Exist_User'],
-					},
+					{ type: 'toContain', params: ['Exist_User'] },
 				],
 			},
 		);
@@ -125,14 +117,8 @@ describe('login', () => {
 				(await req.post('/login').send({ ...usr, ...usr.baseUser })).text,
 			{
 				exps: [
-					{
-						type: 'toContain',
-						params: [HttpStatus.BAD_REQUEST.toString()],
-					},
-					{
-						type: 'toContain',
-						params: ['Invalid_Password'],
-					},
+					{ type: 'toContain', params: [HttpStatus.BAD_REQUEST.toString()] },
+					{ type: 'toContain', params: ['Invalid_Password'] },
 				],
 			},
 		);

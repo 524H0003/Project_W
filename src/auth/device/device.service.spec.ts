@@ -36,10 +36,7 @@ it('modify', async () => {
 	await execute(() => appSvc.device.modify(device.id, { child: newMtdt }), {
 		exps: [
 			{ type: 'toBeInstanceOf', params: [Device] },
-			{
-				type: 'toMatchObject',
-				params: [{ child: newMtdt }],
-			},
+			{ type: 'toMatchObject', params: [{ child: newMtdt }] },
 		],
 	});
 	await execute(() => appSvc.device.findOne(device), {
