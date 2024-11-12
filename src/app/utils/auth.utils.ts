@@ -1,12 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcrypt';
 import { validate } from 'class-validator';
-import {
-	createCipheriv,
-	createDecipheriv,
-	createHash,
-	randomBytes,
-} from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
 /**
  * Validator for class
