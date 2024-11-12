@@ -17,6 +17,7 @@ export class MailService {
 	 * @ignore
 	 */
 	constructor(
+		@Inject(forwardRef(() => MailerService))
 		private mailerService: MailerService,
 		@Inject(forwardRef(() => AppService))
 		private appSvc: AppService,
@@ -38,10 +39,11 @@ export class MailService {
 	): Promise<BaseUser> {
 		const baseUser = await this.appSvc.baseUser.email(email);
 
-		if (!baseUser) throw new BadRequestException('Invalid_Email');
+		if (!baseUser && email !== this.appSvc.config.get('ADMIN_EMAIL'))
+			throw new BadRequestException('Invalid_Email');
 
 		await this.mailerService.sendMail({
-			to: baseUser.email,
+			to: baseUser?.email || email,
 			subject,
 			template: `./${template}.html`,
 			context,

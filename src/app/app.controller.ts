@@ -364,7 +364,7 @@ export class AppController {
 	 * @return {Promise<void>}
 	 */
 	@Throttle({ default: { limit: 1, ttl: 600000 } })
-	@Post('console')
+	@Post('request-signature')
 	protected async requestSignatureViaConsole(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
@@ -375,12 +375,14 @@ export class AppController {
 			response,
 			await this.svc.hook.assign(
 				mtdt,
-				(s: string) => {
-					console.log(
-						`${'-'.repeat(75)}\nOne time signature: ${s}\n${'-'.repeat(75)}`,
-					);
-				},
-				'_Console',
+				(signature: string) =>
+					this.svc.mail.send(
+						this.svc.config.get('ADMIN_EMAIL'),
+						'Signature request',
+						'sendSignatureAdmin',
+						{ signature },
+					),
+				'_Admin',
 			),
 		);
 	}

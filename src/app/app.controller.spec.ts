@@ -232,3 +232,17 @@ describe('refresh', () => {
 		);
 	});
 });
+
+describe('request-signature', () => {
+	it('success', async () => {
+		await execute(
+			async () => JSON.stringify(await req.post('/request-signature').send()),
+			{
+				exps: [
+					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
+					{ type: 'toContain', params: ['Sent_Signature_Admin'] },
+				],
+			},
+		);
+	});
+});
