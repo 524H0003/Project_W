@@ -32,7 +32,7 @@ export async function validation<T>(
  * @return {string} Hashed string
  */
 export function hash(input: string): string {
-	return hashSync(input, (8).random + 4);
+	return hashSync(input, (8).random + 4).replace('/', '$$');
 }
 
 /**
@@ -42,7 +42,7 @@ export function hash(input: string): string {
  * @return {boolean}
  */
 export function compare(origin: string, input: string): boolean {
-	return compareSync(origin, input);
+	return compareSync(origin, input.replace('$$', '/'));
 }
 
 /**
