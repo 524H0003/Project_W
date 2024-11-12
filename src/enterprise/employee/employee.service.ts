@@ -86,7 +86,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 					...option,
 					role: UserRole.enterprise,
 				}),
-				eventCreator = await this.svc.eventCreator.assign(usr);
+				eventCreator = await this.svc.eventcreator.assign(usr);
 
 			return await this.save({
 				eventCreator,
