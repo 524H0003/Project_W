@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { hashSync } from 'bcrypt';
+import { compareSync, hashSync } from 'bcrypt';
 import { validate } from 'class-validator';
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
@@ -27,7 +27,17 @@ export async function validation<T>(
  * @return {string} Hashed string
  */
 export function hash(input: string): string {
-	return hashSync(input, (8).random + 4);
+	return hashSync(input, (8).random + 4).replaceAll('/', '*');
+}
+
+/**
+ * Compare function
+ * @param {string} origin - origin string
+ * @param {string} input - hashed string
+ * @return {boolean}
+ */
+export function compare(origin: string, input: string): boolean {
+	return compareSync(origin, input.replaceAll('*', '/'));
 }
 
 /**
