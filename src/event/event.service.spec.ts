@@ -54,7 +54,6 @@ describe('EventService', () => {
 		// eslint-disable-next-line @typescript-eslint/require-await
 		await execute(async () => () => appSvc.event.remove(curEvent), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
-			onFinish: async () => {},
 		});
 		await execute(() => appSvc.event.id(curEvent.id), {
 			exps: [{ type: 'toBeNull', params: [] }],
