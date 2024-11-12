@@ -1,3 +1,4 @@
+import { IEntityId } from 'app/app.model';
 import { IEventCreatorEntity } from './creator/creator.model';
 import { IEventParticipator } from './participator/participator.model';
 import { ITag } from './tag/tag.model';
@@ -26,7 +27,7 @@ export interface IEventRelationships {
 /**
  * Event model
  */
-export interface IEventInfo {
+export interface IEventInfo extends IEntityId {
 	/**
 	 * Event's title
 	 */
