@@ -19,144 +19,31 @@ import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, MetaData } from 'auth/auth.guard';
 import { Hook } from 'app/hook/hook.entity';
 import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
-import { CookieOptions, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { memoryStorage } from 'multer';
 import { IStudentSignup } from 'university/student/student.model';
 import { IUserSignUp } from 'user/user.model';
 import { IBaseUserEmail } from './app.model';
 import { AppService } from './app.service';
-import { User, UserRecieve } from 'user/user.entity';
-import { compare, hash } from './utils/auth.utils';
+import { UserRecieve } from 'user/user.entity';
+import { compare } from './utils/auth.utils';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 import { Throttle } from '@nestjs/throttler';
+import { BaseController } from './utils/controller.utils';
 
 /**
  * Application Controller
  */
 @Controller('')
-export class AppController {
-	/**
-	 * @ignore
-	 */
-	private readonly ckiOpt: CookieOptions = {
-		httpOnly: true,
-		secure: true,
-		sameSite: 'lax',
-	};
-
+export class AppController extends BaseController {
 	/**
 	 * @ignore
 	 */
 	constructor(
 		@Inject(forwardRef(() => AppService))
 		public svc: AppService,
-	) {}
-
-	/**
-	 * @ignore
-	 */
-	private _acsKey: string;
-	/**
-	 * @ignore
-	 */
-	get acsKey(): string {
-		if (this._acsKey) return this._acsKey;
-		return (this._acsKey = this.svc.config.get('ACCESS_SECRET'));
-	}
-
-	/**
-	 * @ignore
-	 */
-	private _rfsKey: string;
-	/**
-	 * @ignore
-	 */
-	get rfsKey(): string {
-		if (this._rfsKey) return this._rfsKey;
-		return (this._rfsKey = this.svc.config.get('REFRESH_SECRET'));
-	}
-
-	/**
-	 * Clear client's cookies
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
-	 * @param {boolean} acs - if clear access token
-	 * @param {boolean} rfs - if clear refresh token
-	 */
-	private clearCookies(
-		request: Request,
-		response: Response,
-		acs: boolean = true,
-		rfs: boolean = true,
 	) {
-		for (const cki in request.cookies)
-			if (
-				(compare(this.acsKey, cki) && acs) ||
-				(compare(this.rfsKey, cki) && rfs)
-			)
-				response.clearCookie(cki, this.ckiOpt);
-	}
-
-	/**
-	 * Send client user's recieve infomations
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
-	 * @param {UserRecieve} usrRcv - user's recieve infomations
-	 * @return {void}
-	 */
-	protected responseWithUserRecieve(
-		request: Request,
-		response: Response,
-		usrRcv: UserRecieve,
-	): void {
-		this.clearCookies(request, response);
-
-		response
-			.status(HttpStatus.ACCEPTED)
-			.cookie(
-				hash(this.acsKey),
-				this.svc.auth.encrypt(
-					usrRcv.accessToken,
-					usrRcv.refreshToken.split('.')[2],
-				),
-				this.ckiOpt,
-			)
-			.cookie(
-				hash(this.rfsKey),
-				this.svc.auth.encrypt(usrRcv.refreshToken),
-				this.ckiOpt,
-			)
-			.json({
-				statusCode: HttpStatus.ACCEPTED,
-				session: {
-					access_token: usrRcv.accessToken,
-					refresh_token: usrRcv.refreshToken,
-					expires_in: usrRcv.payload.exp - usrRcv.payload.iat,
-					expires_at: usrRcv.payload.exp,
-				},
-				user: typeof usrRcv.response !== 'string' ? usrRcv.response : '',
-				message: typeof usrRcv.response === 'string' ? usrRcv.response : '',
-			});
-	}
-
-	/**
-	 * Send client user's recieve infomations
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
-	 * @param {User} user - user's recieve infomations
-	 * @return {Promise<void>}
-	 */
-	protected async responseWithUser(
-		request: Request,
-		response: Response,
-		user: User,
-		mtdt: string,
-	): Promise<void> {
-		return this.responseWithUserRecieve(
-			request,
-			response,
-			await this.svc.session.getTokens(user, mtdt),
-		);
+		super(svc);
 	}
 
 	/**

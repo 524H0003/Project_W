@@ -73,7 +73,9 @@ export interface IUserRelationship {
 export interface IUserEntity
 	extends IUserAuthentication,
 		IUserInfo,
-		IUserRelationship {}
+		IUserRelationship {
+	readonly info: IUserInfo;
+}
 
 /**
  * Fields about user's recieved properties
