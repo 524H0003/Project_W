@@ -5,6 +5,13 @@ export default {
     './src/**/*.{vue,js,ts,jsx,tsx}',
     './node_modules/flowbite/**/*.js',
   ],
+  darkMode: [
+    'variant',
+    [
+      '@media (prefers-color-scheme: dark) { &:not(.light *) }',
+      '&:is(.dark *)',
+    ],
+  ],
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require('daisyui'), require('flowbite/plugin')],
   theme: {

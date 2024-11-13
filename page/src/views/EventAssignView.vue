@@ -48,6 +48,11 @@
       type="text"
     />
     <FormDateInputComp name="Start date" v-model="input.startDate" />
+    <FormDateInputComp name="End date" v-model="input.endDate" />
+    <FormDateInputComp
+      name="Application deadline"
+      v-model="input.applicationDeadline"
+    />
   </FormContainerComp>
 </template>
 
@@ -63,14 +68,14 @@ import { reactive } from 'vue'
 const input = reactive<IEventInfo>({
     title: '',
     description: '',
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: new Date('0/0/0'),
+    endDate: new Date('0/0/0'),
     type: EventType.Internship,
     status: EventStatus.Draft,
     positionsAvailable: 0,
     maxParticipants: 0,
     location: '',
-    applicationDeadline: new Date(),
+    applicationDeadline: new Date('0/0/0'),
     requiredSkills: '',
     additionalFields: '',
   }),

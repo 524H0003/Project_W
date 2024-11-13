@@ -12,12 +12,13 @@
     >
       <IconComp name="event" />
       <input
-        id="datepicker-orientation"
         datepicker
         datepicker-orientation="top left"
+        datepicker-format="dd/mm/yyyy"
         type="text"
         placeholder="Select date"
         v-model="model"
+        :disabled="disable"
       />
     </label>
     <label v-if="object === alert?.object" class="label -my-1.5">
@@ -56,7 +57,6 @@ defineProps<{
   subBtnClick?: () => void
   alert?: IAlert
   icon?: string
-  placeholder?: string
   disable?: boolean
 }>()
 </script>
