@@ -175,7 +175,7 @@ export class FileService extends DatabaseRequests<File> {
 	async recieve(filename: string, user: BaseUser): Promise<string> {
 		const fileOnline = await this.s3Recieve(filename),
 			filePath = realpathSync(resolve(this.rootDir, filename));
-		if (fileOnline) {
+		if (fileOnline && filePath.startsWith(resolve(this.rootDir))) {
 			writeFileSync(filePath, fileOnline);
 		}
 
