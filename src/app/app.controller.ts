@@ -26,8 +26,7 @@ import { IUserSignUp } from 'user/user.model';
 import { IBaseUserEmail } from './app.model';
 import { AppService } from './app.service';
 import { User, UserRecieve } from 'user/user.entity';
-import { compareSync } from 'bcrypt';
-import { hash } from './utils/auth.utils';
+import { compare, hash } from './utils/auth.utils';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 import { Throttle } from '@nestjs/throttler';
 
@@ -92,8 +91,8 @@ export class AppController {
 	) {
 		for (const cki in request.cookies)
 			if (
-				(compareSync(this.acsKey, cki) && acs) ||
-				(compareSync(this.rfsKey, cki) && rfs)
+				(compare(this.acsKey, cki) && acs) ||
+				(compare(this.rfsKey, cki) && rfs)
 			)
 				response.clearCookie(cki, this.ckiOpt);
 	}
@@ -279,7 +278,7 @@ export class AppController {
 			});
 			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));
 		} else {
-			if (rfsRsl.status === 'success' && compareSync(mtdt, rfsRsl.userAgent)) {
+			if (rfsRsl.status === 'success' && compare(mtdt, rfsRsl.userAgent)) {
 				return sendBack(await this.svc.session.rotateToken(rfsRsl.sessionId));
 			} else
 				return sendBack(await this.svc.session.addTokens(rfsRsl.sessionId));
