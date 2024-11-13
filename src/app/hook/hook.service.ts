@@ -47,7 +47,7 @@ export class HookService extends DatabaseRequests<Hook> {
 				signature,
 				mtdt,
 				note: JSON.stringify(addInfo),
-				fromUser: baseUser ? { baseUser } : null,
+				fromBaseUser: baseUser ? baseUser : null,
 			});
 
 		return new UserRecieve({

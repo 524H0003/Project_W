@@ -3,7 +3,7 @@ import { IFacultyEntity, IFacultyInfo } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { InterfaceCasting } from 'app/utils/utils';
 import {
-	IBaseUserKeys,
+	IBaseUserInfoKeys,
 	IFacultyInfoKeys,
 	IUserAuthenticationKeys,
 } from 'models';
@@ -25,7 +25,7 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 			this.eventCreator = new EventCreator(
 				InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,
-					...IBaseUserKeys,
+					...IBaseUserInfoKeys,
 				]),
 			);
 			Object.assign(this, InterfaceCasting.quick(payload, IFacultyInfoKeys));

@@ -6,7 +6,7 @@ import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { BaseUser } from 'app/app.entity';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserKeys, IEnterpriseInfoKeys } from 'models';
+import { IBaseUserInfoKeys, IEnterpriseInfoKeys } from 'models';
 
 /**
  * Enterprise entity
@@ -24,7 +24,7 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 		if (payload) {
 			const baseUsrInfo = InterfaceCasting.quick(
 					payload!,
-					IBaseUserKeys,
+					IBaseUserInfoKeys,
 				) as unknown as BaseUser,
 				usrInfo = InterfaceCasting.quick(payload!, IEnterpriseInfoKeys);
 			Object.assign(this, usrInfo);

@@ -44,7 +44,7 @@ it('assign', async () => {
 						{
 							type: 'toMatchObject',
 							params: [
-								new Hook({ signature, mtdt, note: null, fromUser: null }),
+								new Hook({ signature, mtdt, note: null, fromBaseUser: null }),
 							],
 						},
 					],
@@ -124,7 +124,7 @@ it('validating failed', async () => {
 					mtdt,
 					signature: signature + '-',
 					note: null,
-					fromUser: null,
+					fromBaseUser: null,
 				}),
 			),
 		{

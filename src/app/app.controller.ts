@@ -231,7 +231,10 @@ export class AppController extends BaseController {
 	): Promise<void> {
 		try {
 			await this.svc.hook.validating(signature, mtdt, hook);
-			if (await this.svc.auth.changePassword(hook.fromUser, body.password)) {
+
+			const user = await this.svc.user.findOne({ baseUser: hook.fromBaseUser });
+
+			if (await this.svc.auth.changePassword(user, body.password)) {
 				return this.responseWithUserRecieve(
 					request,
 					response,

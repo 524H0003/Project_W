@@ -7,12 +7,12 @@ import TestAgent from 'supertest/lib/agent';
 import { EmployeeController } from './employee.controller';
 import cookieParser from 'cookie-parser';
 import { Employee } from './employee.entity';
-import { execute } from 'app/utils/test.utils';
+import { execute, status } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import request from 'supertest';
 import { MailerService } from '@nestjs-modules/mailer';
 import { IEnterpriseAssign } from 'enterprise/enterprise.model';
-import { IEmployeeHook } from './employee.model';
+import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 
 const fileName = curFile(__filename);
 
@@ -63,25 +63,50 @@ beforeEach(async () => {
 	await prepareEmployee(req, enterprise, mailerSvc);
 });
 
-describe('signup', () => {
+describe('hook', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req.post('/employee/signup').send({
+					await req.post('/employee/hook').send({
 						enterpriseName: enterprise.baseUser.name,
 						...employee,
 						...employee.eventCreator.user.baseUser,
 					} as IEmployeeHook),
 				),
+			{ exps: [{ type: 'toContain', params: ['Sent_Signature_Email'] }] },
+		);
+	});
+});
+
+describe('signup', () => {
+	it('success', async () => {
+		const { headers } = await req.post('/employee/hook').send({
+			enterpriseName: enterprise.baseUser.name,
+			...employee,
+			...employee.eventCreator.user.baseUser,
+		} as IEmployeeHook);
+
+		const signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0'][
+			'context'
+		]['signature'];
+
+		await execute(
+			async () =>
+				JSON.stringify(
+					await req
+						.post('/employee/signup')
+						.set('Cookie', headers['set-cookie'])
+						.send({
+							signature,
+							enterpriseName: enterprise.baseUser.name,
+							...employee,
+							...employee.eventCreator.user,
+							...employee.eventCreator.user.baseUser,
+						} as IEmployeeSignup),
+				),
 			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
-					{
-						type: 'toContain',
-						params: [employee.eventCreator.user.baseUser.name],
-					},
-				],
+				exps: [{ type: 'toContain', params: [status(HttpStatus.ACCEPTED)] }],
 			},
 		);
 		await execute(
@@ -94,6 +119,21 @@ describe('signup', () => {
 					},
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
+		);
+		await execute(
+			() =>
+				appSvc.enterprise.findOne({
+					employees: [
+						{
+							eventCreator: {
+								user: {
+									baseUser: { name: employee.eventCreator.user.baseUser.name },
+								},
+							},
+						},
+					],
+				}),
+			{ exps: [{ type: 'toBeDefined', debug: true, params: [] }] },
 		);
 	});
 });

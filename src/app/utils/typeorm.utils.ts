@@ -100,7 +100,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Finding a object
+	 * Finding an object
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>}
 	 */
@@ -116,7 +116,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Saving a object
+	 * Saving an object
 	 * @param {DeepPartial<T>} entity - the saving object
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<T>} the object from database
@@ -126,7 +126,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Deleting a object
+	 * Deleting an object
 	 * @param {FindOptionsWhere<T>} criteria - the deleting object
 	 */
 	protected async delete(criteria: FindOptionsWhere<T>) {
@@ -134,7 +134,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Updating a object
+	 * Updating an object
 	 * @param {DeepPartial<T>} entity - the updating object
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
