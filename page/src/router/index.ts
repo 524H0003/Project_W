@@ -5,6 +5,7 @@ import HookView from '@/views/HookView.vue'
 import EnterpriseAssignView from '@/views/EnterpriseAssignView.vue'
 import EmployeeSignUpView from '@/views/EmployeeSignUpView.vue'
 import FacultyAssignView from '@/views/FacultyAssignView.vue'
+import EventAssignView from '@/views/EventAssignView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,6 +15,7 @@ const router = createRouter({
     { path: '/employee/signup', component: EmployeeSignUpView },
     { path: '/hook/:signature', component: HookView },
     { path: '/faculty/assign', component: FacultyAssignView },
+    { path: '/event/assign', component: EventAssignView },
     { path: '/:pathMatch(.*)*', component: NotFoundView },
   ],
 })

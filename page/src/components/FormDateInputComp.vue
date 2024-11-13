@@ -3,18 +3,23 @@
     <label class="label -mb-1.5">
       <span class="label-text">{{ name }}</span>
     </label>
-    <select
-      class="select select-bordered"
-      v-model="model"
+    <label
+      class="input input-bordered flex items-center gap-2 relative"
       :class="{
         'input-error': object === alert?.object && alert?.type === 'error',
         'input-success': object === alert?.object && alert?.type === 'success',
       }"
     >
-      <option v-for="i in list" v-bind:key="i[0]" :value="i[1]">
-        {{ i[0].replace('_', ' ') }}
-      </option>
-    </select>
+      <IconComp name="event" />
+      <input
+        id="datepicker-orientation"
+        datepicker
+        datepicker-orientation="top left"
+        type="text"
+        placeholder="Select date"
+        v-model="model"
+      />
+    </label>
     <label v-if="object === alert?.object" class="label -my-1.5">
       <span
         class="label-text-alt"
@@ -35,14 +40,23 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { initFlowbite } from 'flowbite'
 import type { IAlert, IObject } from '@/auth.service'
+import IconComp from '@/components/IconComp.vue'
+
+onMounted(() => {
+  initFlowbite()
+})
 
 const model = defineModel()
 defineProps<{
   name: string
-  subBtnClick?: () => void
   object?: IObject
+  subBtnClick?: () => void
   alert?: IAlert
-  list: Map<string, string>
+  icon?: string
+  placeholder?: string
+  disable?: boolean
 }>()
 </script>
