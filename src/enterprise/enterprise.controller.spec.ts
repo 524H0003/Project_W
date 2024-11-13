@@ -10,12 +10,14 @@ import { execute } from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
 import { AppModule } from 'app/app.module';
 import { MailerService } from '@nestjs-modules/mailer';
+import { AppService } from 'app/app.service';
 
 const fileName = curFile(__filename);
 
 let req: TestAgent,
 	enterprise: Enterprise,
 	signature: string,
+	appSvc: AppService,
 	mailerSvc: MailerService,
 	app: INestApplication;
 
@@ -27,7 +29,9 @@ beforeAll(async () => {
 
 	app = module.createNestApplication();
 
-	await app.use(cookieParser()).init(), (mailerSvc = module.get(MailerService));
+	await app.use(cookieParser()).init(),
+		(mailerSvc = module.get(MailerService)),
+		(appSvc = module.get(AppService));
 });
 
 beforeEach(() => {
@@ -61,6 +65,13 @@ describe('assign', () => {
 					{ type: 'toContain', params: ['Success_Assign_Enterprise'] },
 				],
 			},
+		);
+		await execute(
+			() =>
+				appSvc.enterprise.findOne({
+					baseUser: { name: enterprise.baseUser.name },
+				}),
+			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 	});
 });

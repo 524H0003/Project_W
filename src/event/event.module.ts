@@ -9,6 +9,7 @@ import { EventCreator } from './creator/creator.entity';
 import { EventCreatorService } from './creator/creator.service';
 import { AppModule } from 'app/app.module';
 import { EventService } from './event.service';
+import { EventController } from './event.controller';
 
 @Module({
 	imports: [
@@ -22,6 +23,7 @@ import { EventService } from './event.service';
 	],
 	providers: [EventCreatorService, EventService],
 	exports: [EventCreatorService, EventService],
+	controllers: [EventController],
 })
 export class EventModule {
 	constructor() {
