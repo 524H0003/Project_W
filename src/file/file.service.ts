@@ -157,7 +157,7 @@ export class FileService extends DatabaseRequests<File> {
 					.digest('hex')}${extname(input.originalname)}`;
 
 		await this.s3Send(path, input.buffer);
-		writeFileSync(`${this.cfgSvc.get('SERVER_PUBLIC')}${path}`, input.buffer);
+		writeFileSync(`${this.rootDir}${path}`, input.buffer);
 
 		if (!fileName)
 			return this.save({
@@ -173,16 +173,13 @@ export class FileService extends DatabaseRequests<File> {
 	 * @return {Promise<string>} the file name or rejecting request
 	 */
 	async recieve(filename: string, user: BaseUser): Promise<string> {
-		const fileOnline = await this.s3Recieve(filename);
-		if (fileOnline) {
-			writeFileSync(
-				`${this.cfgSvc.get('SERVER_PUBLIC')}${filename}`,
-				fileOnline,
-			);
+		const fileOnline = await this.s3Recieve(filename),
+			filePath = realpathSync(resolve(this.rootDir, filename));
+		if (fileOnline && filePath.startsWith(resolve(this.rootDir))) {
+			writeFileSync(filePath, fileOnline);
 		}
 
 		try {
-			const filePath = realpathSync(resolve(this.rootDir, filename));
 			if (filePath.startsWith(resolve(this.rootDir)) && existsSync(filePath)) {
 				if (filename.match(this.serverFilesReg)) return filename;
 
