@@ -25,7 +25,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 		SignService,
 		{
 			provide: MailerService,
-			useValue: { sendMail: jest.fn().mockResolvedValue(true) },
+			useValue: { sendMail: jest.fn() },
 		},
 	],
 	exports: [MailerService],
