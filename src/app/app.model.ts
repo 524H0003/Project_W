@@ -1,7 +1,7 @@
 import { IHook } from './hook/hook.model';
 
 // Interfaces
-export interface IBaseUserInfo extends IBaseUserEmail {
+export interface IBaseUserInfo extends IBaseUserEmail, IEntityId {
 	/**
 	 * Base user name
 	 */

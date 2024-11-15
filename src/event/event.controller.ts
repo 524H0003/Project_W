@@ -4,6 +4,7 @@ import {
 	Post,
 	Req,
 	Res,
+	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
@@ -13,11 +14,12 @@ import { IEventInfo } from './event.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEventInfoKeys } from 'models';
 import { BaseController } from 'app/utils/controller.utils';
-import { UserRecieve } from 'user/user.entity';
-import { Roles } from 'auth/auth.guard';
+import { User, UserRecieve } from 'user/user.entity';
+import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { UserRole } from 'user/user.model';
 
 @Controller('event')
+@UseGuards(RoleGuard)
 export class EventController extends BaseController {
 	/**
 	 * @ignore
@@ -36,10 +38,14 @@ export class EventController extends BaseController {
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IEventInfo,
+		@CurrentUser() user: User,
 	) {
 		body = InterfaceCasting.quick(body, IEventInfoKeys);
 
-		await this.svc.event.assign(body);
+		await this.svc.event.assign({
+			...body,
+			eventCreatedBy: await this.svc.eventcreator.id(user.baseUser.id),
+		});
 		this.responseWithUserRecieve(
 			request,
 			response,

@@ -44,4 +44,13 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 		await this.delete({ user: { baseUser: { id } } });
 		await this.svc.user.remove({ baseUser: { id } });
 	}
+
+	/**
+	 * Find event creator by id
+	 * @param {string} id - event creator's id
+	 * @return {Promise<EventCreator>}
+	 */
+	id(id: string): Promise<EventCreator> {
+		return this.findOne({ user: { baseUser: { id } } });
+	}
 }

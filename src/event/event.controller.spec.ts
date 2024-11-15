@@ -26,6 +26,7 @@ let req: TestAgent,
 	mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee,
+	headers: object,
 	event: Event;
 
 beforeAll(async () => {
@@ -58,7 +59,7 @@ export async function prepareEvent(
 			'signature'
 		];
 
-	await req
+	return await req
 		.post('/employee/signup')
 		.set('Cookie', headers['set-cookie'])
 		.send({
@@ -76,13 +77,19 @@ beforeEach(async () => {
 		(enterprise = Enterprise.test(fileName)),
 		(event = Event.test(fileName));
 
-	await prepareEvent(req, enterprise, employee, mailerSvc);
+	headers = (await prepareEvent(req, enterprise, employee, mailerSvc)).headers;
 });
 
 describe('assign', () => {
 	it('success', async () => {
 		await execute(
-			async () => JSON.stringify(await req.post('/event/assign').send(event)),
+			async () =>
+				JSON.stringify(
+					await req
+						.post('/event/assign')
+						.set('Cookie', headers['set-cookie'])
+						.send(event),
+				),
 			{ exps: [{ type: 'toContain', params: ['Success_Assign_Event'] }] },
 		);
 		await execute(() => appSvc.event.findOne({ title: event.title }), {

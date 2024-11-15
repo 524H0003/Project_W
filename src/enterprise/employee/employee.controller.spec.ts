@@ -132,7 +132,7 @@ describe('signup', () => {
 						},
 					],
 				}),
-			{ exps: [{ type: 'toBeDefined', debug: true, params: [] }] },
+			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 	});
 });
