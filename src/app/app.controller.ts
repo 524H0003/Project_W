@@ -50,7 +50,7 @@ export class AppController extends BaseController {
 	 * Login request
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
-	 * @param {IStudentSignup | IUserLogin} body - login input
+	 * @param {IStudentSignup} body - login input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */

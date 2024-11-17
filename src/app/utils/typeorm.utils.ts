@@ -68,7 +68,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 					parentName.split('.').includes(i) ||
 					avoidNames.split('.').includes(i),
 			) ||
-			(input.propertyName !== input.propertyPath && !parentName)
+			input.propertyName !== input.propertyPath
 		)
 			return [];
 		const currentRelationName = parentName + input.propertyName;
