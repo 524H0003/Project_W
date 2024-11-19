@@ -17,7 +17,7 @@
         datepicker-orientation="top left"
         datepicker-format="yyyy-mm-dd"
         placeholder="Select date"
-        @focusout="updateValue($event.target!.value)"
+        @focusout="updateValue(datepickerRef!.value)"
         :disabled="disable"
         :name="name + 'DatePicker'"
         ref="datepickerRef"
