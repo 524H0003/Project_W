@@ -17,6 +17,7 @@ import {
 	IEmployeeSignup,
 } from 'enterprise/employee/employee.model';
 import { execute } from 'app/utils/test.utils';
+import { IEventInfo } from './event.model';
 
 const fileName = curFile(__filename);
 
@@ -95,5 +96,50 @@ describe('assign', () => {
 		await execute(() => appSvc.event.findOne({ title: event.title }), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 		});
+	});
+});
+
+describe('update', () => {
+	it('success', async () => {
+		const newTitle = fileName + (30).string;
+
+		await req
+			.post('/event/assign')
+			.set('Cookie', headers['set-cookie'])
+			.send(event);
+
+		await execute(
+			async () =>
+				JSON.stringify(
+					await req
+						.post('/event/update')
+						.set('Cookie', headers['set-cookie'])
+						.send({ ...event, title: newTitle } as IEventInfo),
+				),
+			{ exps: [{ type: 'toContain', params: ['Success_Update_Event'] }] },
+		);
+		await execute(() => appSvc.event.findOne({ title: newTitle }), {
+			exps: [{ type: 'toBeDefined', params: [] }],
+		});
+	});
+
+	it('failed due to invalid id', async () => {
+		await req
+			.post('/event/assign')
+			.set('Cookie', headers['set-cookie'])
+			.send(event);
+
+		const eventId = (await appSvc.event.findOne({ title: event.title })).id;
+
+		await execute(
+			async () =>
+				JSON.stringify(
+					await req
+						.post('/event/update')
+						.set('Cookie', headers['set-cookie'])
+						.send({ id: eventId.slice(0, -1) + '0' } as IEventInfo),
+				),
+			{ exps: [{ type: 'toContain', params: ['Invalid_Event_Id'] }] },
+		);
 	});
 });

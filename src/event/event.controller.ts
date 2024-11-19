@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Post,
@@ -50,6 +51,34 @@ export class EventController extends BaseController {
 			request,
 			response,
 			new UserRecieve({ response: 'Success_Assign_Event' }),
+		);
+	}
+
+	/**
+	 * Update event
+	 */
+	@Post('update')
+	@Roles([UserRole.faculty, UserRole.enterprise])
+	@UseInterceptors(NoFilesInterceptor())
+	async updateStatus(
+		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
+		@Body() body: IEventInfo,
+		@CurrentUser() user: User,
+	) {
+		body = InterfaceCasting.quick(body, IEventInfoKeys);
+
+		const event = await this.svc.event.findOne({
+			eventCreatedBy: { user: { baseUser: { id: user.baseUser.id } } },
+			id: body.id!,
+		});
+
+		if (!event) throw new BadRequestException('Invalid_Event_Id');
+		await this.svc.event.modify(event.id, body);
+		this.responseWithUserRecieve(
+			request,
+			response,
+			new UserRecieve({ response: 'Success_Update_Event' }),
 		);
 	}
 }
