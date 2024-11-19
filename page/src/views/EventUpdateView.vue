@@ -41,6 +41,14 @@
       placeholder="Enter a number"
       icon="people"
     />
+
+    <FormTextInputComp
+      name="Available positions"
+      v-model="input.positionsAvailable"
+      type="text"
+      placeholder="Enter a number"
+      icon="group"
+    />
     <FormTextInputComp
       name="Location"
       v-model="input.location"
@@ -88,11 +96,6 @@ const input = reactive<IEventInfo>({
     additionalFields: '',
   }),
   handleAssign = () => {
-    apiErrorHandler(
-      updateEvent({
-        ...input,
-        positionsAvailable: input.maxParticipants,
-      }),
-    )
+    apiErrorHandler(updateEvent({ ...input }))
   }
 </script>
