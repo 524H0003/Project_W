@@ -6,6 +6,7 @@ import EnterpriseAssignView from '@/views/EnterpriseAssignView.vue'
 import EmployeeSignUpView from '@/views/EmployeeSignUpView.vue'
 import FacultyAssignView from '@/views/FacultyAssignView.vue'
 import EventAssignView from '@/views/EventAssignView.vue'
+import EventUpdateView from '@/views/EventUpdateView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,6 +18,7 @@ const router = createRouter({
     { path: '/faculty/assign', component: FacultyAssignView },
     { path: '/event/assign', component: EventAssignView },
     { path: '/:pathMatch(.*)*', component: NotFoundView },
+    { path: '/event/update', component: EventUpdateView },
   ],
 })
 

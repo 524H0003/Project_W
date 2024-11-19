@@ -3,6 +3,7 @@ import {
   IEmployeeHook,
   IEmployeeSignup,
   IEnterpriseAssign,
+  IEntityId,
   IEventInfo,
   IFacultyAssign,
   IUserAuthentication,
@@ -40,6 +41,11 @@ export async function hookRequest(signature: string, password: string) {
 
 export async function assignEvent(input: IEventInfo) {
   const response = await axios.post(`${API_URL}/event/assign`, input)
+  return response.data
+}
+
+export async function updateEvent(input: IEventInfo & IEntityId) {
+  const response = await axios.post(`${API_URL}/event/update`, input)
   return response.data
 }
 
