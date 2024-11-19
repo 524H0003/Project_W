@@ -65,11 +65,12 @@ async function bootstrap() {
 		adminRouter = buildAuthenticatedRouter(
 			admin,
 			{
-				authenticate(email, password) {
-					return email === cfgSvc.get('ADMIN_EMAIL') &&
-						password === cfgSvc.get('ADMIN_PASSWORD')
-						? Promise.resolve({ email, password })
-						: null;
+				authenticate: async (email, password) => {
+					const hook = await appSvc.hook.findOne({ signature: password });
+
+					if (!hook || email !== cfgSvc.get('ADMIN_EMAIL')) return null;
+
+					return { email, password };
 				},
 				cookieName: 'adminjs',
 				cookiePassword: 'sessionsecret',
