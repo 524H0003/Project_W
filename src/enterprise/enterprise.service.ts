@@ -5,7 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { IEnterpriseAssign } from './enterprise.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserKeys, IEnterpriseAssignKeys, IEnterpriseKeys } from 'models';
+import {
+	IBaseUserInfoKeys,
+	IEnterpriseAssignKeys,
+	IEnterpriseKeys,
+} from 'models';
 import { AppService } from 'app/app.service';
 
 /**
@@ -45,7 +49,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 
 		input = InterfaceCasting.quick(input, [
 			...IEnterpriseAssignKeys,
-			...IBaseUserKeys,
+			...IBaseUserInfoKeys,
 		]);
 
 		const avatarFile = await this.svc.file.assign(avatar, null, {
@@ -54,7 +58,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 			result = await save({
 				...input,
 				baseUser: {
-					...InterfaceCasting.quick(input, IBaseUserKeys),
+					...InterfaceCasting.quick(input, IBaseUserInfoKeys),
 					avatarPath: avatarFile?.path,
 				},
 			});

@@ -1,6 +1,5 @@
-import { IBaseUser, IBaseUserEmail } from 'app/app.model';
+import { IBaseUserEntity, IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
 import { IDeviceEntity } from 'auth/device/device.model';
-import { IHook } from 'app/hook/hook.model';
 import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 import { JwtPayload } from 'jsonwebtoken';
@@ -59,12 +58,11 @@ export interface IUserSensitive {
  * @ignore
  */
 export interface IUserRelationship {
-	baseUser: IBaseUser;
+	baseUser: IBaseUserEntity;
 	recievedNotifications: IReciever[];
 	devices: IDeviceEntity[];
 	uploadFiles: IFile[];
 	participatedEvents: IEventParticipator[];
-	hooks: IHook[];
 }
 
 /**
@@ -73,7 +71,9 @@ export interface IUserRelationship {
 export interface IUserEntity
 	extends IUserAuthentication,
 		IUserInfo,
-		IUserRelationship {}
+		IUserRelationship {
+	readonly info: IUserInfo;
+}
 
 /**
  * Fields about user's recieved properties
@@ -108,7 +108,7 @@ export interface IUserLogin extends IUserAuthentication, IBaseUserEmail {}
 /**
  * Sign up fields
  */
-export interface IUserSignUp extends IUserAuthentication, IBaseUser {}
+export interface IUserSignUp extends IUserAuthentication, IBaseUserInfo {}
 
 // Enums
 /**

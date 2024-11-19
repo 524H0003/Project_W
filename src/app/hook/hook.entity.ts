@@ -2,7 +2,7 @@ import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { IHook } from './hook.model';
 import { BlackBox } from 'app/utils/model.utils';
-import { User } from 'user/user.entity';
+import { BaseUser } from 'app/app.entity';
 
 /**
  * Hook entity
@@ -22,8 +22,8 @@ export class Hook extends SensitiveInfomations implements IHook {
 	/**
 	 * Hook from user
 	 */
-	@ManyToOne(() => User, (_: User) => _.hooks, { nullable: true })
-	fromUser: User;
+	@ManyToOne(() => BaseUser, (_: BaseUser) => _.hooks, { nullable: true })
+	fromBaseUser: BaseUser;
 
 	// Infomations
 	/**

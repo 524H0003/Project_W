@@ -73,31 +73,19 @@ export class EmployeeController extends AppController {
 		)
 		avatar: Express.Multer.File,
 	): Promise<void> {
-		try {
-			await this.svc.hook.validating(
-				body.signature,
-				mtdt,
-				request.user as Hook,
-			);
-			return this.responseWithUser(
-				request,
-				response,
-				(
-					await this.svc.employee.signUp(
-						body,
-						avatar,
-						JSON.parse((request.user as Hook).note).enterpriseName,
-						{ role: UserRole.enterprise },
-					)
-				).eventCreator.user,
-				mtdt,
-			);
-		} catch (error) {
-			switch ((error as { message: string }).message) {
-				default:
-					throw error;
-					break;
-			}
-		}
+		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
+		return this.responseWithUser(
+			request,
+			response,
+			(
+				await this.svc.employee.signUp(
+					body,
+					avatar,
+					JSON.parse((request.user as Hook).note).enterpriseName,
+					{ role: UserRole.enterprise },
+				)
+			).eventCreator.user,
+			mtdt,
+		);
 	}
 }

@@ -10,7 +10,9 @@ export class InterfaceCasting<T, K extends keyof T> {
 	 * @param {K[]} get - the interface's properties
 	 */
 	constructor(input: T, get: readonly K[]) {
-		get.forEach((_) => (this[String(_)] = input[_]));
+		get.forEach((_) => {
+			if (typeof input[_] != 'undefined') this[String(_)] = input[_];
+		});
 	}
 
 	/**
@@ -51,8 +53,8 @@ export const logMethodCall = methodDecorator({
 			);
 		},
 	}),
-	matching = <T>(input: T[], required: T[]): boolean =>
-		required.every((i) => input.some((j) => i === j));
+	matching = <T>(input: T, required: T[]): boolean =>
+		required.some((i) => i === input);
 
 // Types
 type MethodDecorator = (

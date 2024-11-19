@@ -1,5 +1,7 @@
+import { IHook } from './hook/hook.model';
+
 // Interfaces
-export interface IBaseUserInfo {
+export interface IBaseUserInfo extends IBaseUserEmail, IEntityId {
 	/**
 	 * Base user name
 	 */
@@ -18,6 +20,10 @@ export interface IBaseUserEmail {
 	email: string;
 }
 
+export interface IBaseUserRelationships {
+	hooks: IHook[];
+}
+
 export interface IEntityId {
 	/**
 	 * Entity's unique Identify digits
@@ -25,4 +31,7 @@ export interface IEntityId {
 	id?: string;
 }
 
-export interface IBaseUser extends IBaseUserInfo, IBaseUserEmail, IEntityId {}
+export interface IBaseUserEntity
+	extends IBaseUserInfo,
+		IBaseUserRelationships,
+		IEntityId {}

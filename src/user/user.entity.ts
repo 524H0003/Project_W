@@ -3,7 +3,11 @@ import { BlackBox } from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { Device } from 'auth/device/device.entity';
 import { IFile } from 'file/file.model';
-import { IBaseUserKeys, IUserAuthenticationKeys, IUserInfoKeys } from 'models';
+import {
+	IBaseUserInfoKeys,
+	IUserAuthenticationKeys,
+	IUserInfoKeys,
+} from 'models';
 import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
@@ -15,10 +19,9 @@ import {
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
-import { Hook } from 'app/hook/hook.entity';
 import { hash } from 'app/utils/auth.utils';
 import { BaseUser } from 'app/app.entity';
-import { IBaseUser } from 'app/app.model';
+import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 
 /**
@@ -30,12 +33,12 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
-	constructor(payload: IUserAuthentication & IBaseUser) {
+	constructor(payload: IUserAuthentication & IBaseUserInfo) {
 		super();
 
 		if (payload) {
 			this.baseUser = new BaseUser(
-				InterfaceCasting.quick(payload!, IBaseUserKeys),
+				InterfaceCasting.quick(payload!, IBaseUserInfoKeys),
 			);
 			Object.assign(
 				this,
@@ -86,12 +89,6 @@ export class User extends BaseEntity implements IUserEntity {
 	 */
 	@OneToMany(() => File, (_) => _.fileCreatedBy, { onDelete: 'CASCADE' })
 	uploadFiles: IFile[];
-
-	/**
-	 * User hooks
-	 */
-	@OneToMany(() => Hook, (_: Hook) => _.fromUser, { onDelete: 'CASCADE' })
-	hooks: Hook[];
 
 	/**
 	 * User participated events
@@ -165,7 +162,7 @@ export class User extends BaseEntity implements IUserEntity {
 	get info(): IUserInfo {
 		return {
 			...InterfaceCasting.quick(this, IUserInfoKeys),
-			...InterfaceCasting.quick(this.baseUser, IBaseUserKeys),
+			...InterfaceCasting.quick(this.baseUser, IBaseUserInfoKeys),
 		};
 	}
 

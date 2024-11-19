@@ -1,4 +1,4 @@
-import { IUserEntity } from 'user/user.model';
+import { IBaseUserEntity } from 'app/app.model';
 
 // Interfaces
 /**
@@ -13,7 +13,7 @@ export interface IHook {
 	/**
 	 * Hook from user
 	 */
-	fromUser: IUserEntity;
+	fromBaseUser: IBaseUserEntity;
 
 	/**
 	 * Client's metadata

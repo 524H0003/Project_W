@@ -3,6 +3,7 @@ import {
   IEmployeeHook,
   IEmployeeSignup,
   IEnterpriseAssign,
+  IEventInfo,
   IFacultyAssign,
   IUserAuthentication,
   IUserInfo,
@@ -34,32 +35,37 @@ export async function hookRequest(signature: string, password: string) {
   const response = await axios.post(`${API_URL}/change-password/${signature}`, {
     password,
   })
-  return response.data.user
+  return response.data
+}
+
+export async function assignEvent(input: IEventInfo) {
+  const response = await axios.post(`${API_URL}/event/assign`, input)
+  return response.data
 }
 
 export async function assignEnterprise(input: IEnterpriseAssign) {
   const response = await axios.post(`${API_URL}/enterprise/assign`, input)
-  return response.data.user
+  return response.data
 }
 
 export async function assignFaculty(input: IFacultyAssign) {
   const response = await axios.post(`${API_URL}/faculty/assign`, input)
-  return response.data.user
+  return response.data
 }
 
 export async function assignEnterpriseUser(input: IEmployeeSignup) {
   const response = await axios.post(`${API_URL}/employee/signup`, input)
-  return response.data.user
+  return response.data
 }
 
 export async function requestConsole() {
   const response = await axios.post(`${API_URL}/console`)
-  return response.data.user
+  return response.data
 }
 
 export async function requestFromEmployee(input: IEmployeeHook) {
   const response = await axios.post(`${API_URL}/employee/hook`, input)
-  return response.data.user
+  return response.data
 }
 
 function saveTokens(input: IUserRecieve) {
@@ -82,42 +88,42 @@ export interface IAlert {
   object?: IObject
 }
 
-export async function apiErrorHandler<T>(func: Promise<T>) {
+export async function apiErrorHandler<T extends { message: string }>(
+  func: Promise<T>,
+) {
   alert.message = ''
   alert.type = 'processing'
 
   try {
     const response = await func
-    if (typeof response == 'string') {
-      switch (response) {
-        case 'Sent_Signature_Email':
-          alert.message =
-            'An email has sent to your email address, please check inbox and spam'
-          alert.type = 'error'
-          alert.object = 'account'
-          break
+    switch (response.message) {
+      case 'Sent_Signature_Email':
+        alert.message =
+          'An email has sent to your email address, please check inbox and spam'
+        alert.type = 'error'
+        alert.object = 'account'
+        break
 
-        case 'Success_Change_Password':
-          alert.message = 'Password changed successfully'
-          alert.type = 'success'
-          alert.object = 'password'
-          break
+      case 'Success_Change_Password':
+        alert.message = 'Password changed successfully'
+        alert.type = 'success'
+        alert.object = 'password'
+        break
 
-        case 'Sent_Signature_Console':
-          alert.message = 'Please copy signature from console'
-          alert.type = 'success'
-          alert.object = 'signature'
-          break
+      case 'Sent_Signature_Console':
+        alert.message = 'Please copy signature from console'
+        alert.type = 'success'
+        alert.object = 'signature'
+        break
 
-        case 'Success_Assign_Enterprise':
-          alert.message = 'Enterprise assigned successfully'
-          alert.type = 'success'
-          alert.object = 'account'
-          break
+      case 'Success_Assign_Enterprise':
+        alert.message = 'Enterprise assigned successfully'
+        alert.type = 'success'
+        alert.object = 'account'
+        break
 
-        default:
-          break
-      }
+      default:
+        break
     }
   } catch (e) {
     switch (

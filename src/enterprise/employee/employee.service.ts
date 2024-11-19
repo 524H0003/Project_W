@@ -81,26 +81,18 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	): Promise<Employee> {
 		input = InterfaceCasting.quick(input, IEmployeeSignupKeys);
 
-		try {
-			const usr = await this.svc.auth.signUp(input, avatar, {
-					...option,
-					role: UserRole.enterprise,
-				}),
-				eventCreator = await this.svc.eventcreator.assign(usr);
+		const usr = await this.svc.auth.signUp(input, avatar, {
+				...option,
+				role: UserRole.enterprise,
+			}),
+			eventCreator = await this.svc.eventcreator.assign(usr);
 
-			return await this.save({
-				eventCreator,
-				enterprise: await this.svc.enterprise.findOne({
-					baseUser: { name: enterpriseName },
-				}),
-				...InterfaceCasting.quick(input, IEmployeeInfoKeys),
-			});
-		} catch (error) {
-			switch ((error as { message: string }).message) {
-				default:
-					throw error;
-					break;
-			}
-		}
+		return await this.save({
+			eventCreator,
+			enterprise: await this.svc.enterprise.findOne({
+				baseUser: { name: enterpriseName },
+			}),
+			...InterfaceCasting.quick(input, IEmployeeInfoKeys),
+		});
 	}
 }

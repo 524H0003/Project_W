@@ -4,7 +4,7 @@ import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { InterfaceCasting } from 'app/utils/utils';
 import {
-	IBaseUserKeys,
+	IBaseUserInfoKeys,
 	IStudentInfoKeys,
 	IUserAuthenticationKeys,
 } from 'models';
@@ -25,7 +25,7 @@ export class Student extends BaseEntity implements IStudentEntity {
 			this.user = new User(
 				InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,
-					...IBaseUserKeys,
+					...IBaseUserInfoKeys,
 				]),
 			);
 			Object.assign(this, InterfaceCasting.quick(payload, IStudentInfoKeys));

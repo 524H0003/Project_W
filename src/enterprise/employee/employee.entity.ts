@@ -8,7 +8,7 @@ import { EventCreator } from 'event/creator/creator.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { User } from 'user/user.entity';
 import { IUserAuthentication } from 'user/user.model';
-import { IBaseUser } from 'app/app.model';
+import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'models';
 
@@ -20,7 +20,7 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	/**
 	 * Create employee entity with infomations
 	 */
-	constructor(payload: IEmployeeInfo & IUserAuthentication & IBaseUser) {
+	constructor(payload: IEmployeeInfo & IUserAuthentication & IBaseUserInfo) {
 		super();
 
 		if (payload) {

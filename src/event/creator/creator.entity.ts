@@ -3,7 +3,7 @@ import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IUserSignUp } from 'user/user.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserKeys, IUserAuthenticationKeys } from 'models';
+import { IBaseUserInfoKeys, IUserAuthenticationKeys } from 'models';
 import { IEventCreatorEntity } from './creator.model';
 
 /**
@@ -21,7 +21,7 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 			this.user = new User(
 				InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,
-					...IBaseUserKeys,
+					...IBaseUserInfoKeys,
 				]),
 			);
 		}

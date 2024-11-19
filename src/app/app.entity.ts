@@ -1,22 +1,31 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { SensitiveInfomations } from './utils/typeorm.utils';
-import { IBaseUser } from './app.model';
-import { IBaseUserKeys } from 'models';
+import { IBaseUserEntity, IBaseUserInfo } from './app.model';
 import { InterfaceCasting } from './utils/utils';
+import { Hook } from './hook/hook.entity';
+import { IBaseUserInfoKeys } from 'models';
 
 /**
  * Base user
  */
 @Entity({ name: 'app_user' })
-export class BaseUser extends SensitiveInfomations implements IBaseUser {
-	constructor(payload: IBaseUser) {
+export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
+	constructor(payload: IBaseUserInfo) {
 		super();
 		if (payload) {
-			payload = InterfaceCasting.quick(payload, IBaseUserKeys) as BaseUser;
+			payload = InterfaceCasting.quick(payload, IBaseUserInfoKeys) as BaseUser;
 			Object.assign(this, payload);
 		}
 	}
 
+	// Relationships
+	/**
+	 * Base user hooks
+	 */
+	@OneToMany(() => Hook, (_: Hook) => _.fromBaseUser, { onDelete: 'CASCADE' })
+	hooks: Hook[];
+
+	// Infomations
 	/**
 	 * Base user email address
 	 */

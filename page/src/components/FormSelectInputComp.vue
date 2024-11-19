@@ -11,8 +11,8 @@
         'input-success': object === alert?.object && alert?.type === 'success',
       }"
     >
-      <option v-for="i in list" v-bind:key="i">
-        {{ i }}
+      <option v-for="i in list" v-bind:key="i[0]" :value="i[1]">
+        {{ i[0].replace('_', ' ') }}
       </option>
     </select>
     <label v-if="object === alert?.object" class="label -my-1.5">
@@ -43,6 +43,6 @@ defineProps<{
   subBtnClick?: () => void
   object?: IObject
   alert?: IAlert
-  list: object
+  list: Map<string, string>
 }>()
 </script>

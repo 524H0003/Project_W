@@ -4,8 +4,9 @@ import { hash } from 'app/utils/auth.utils';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { Session } from './session.entity';
-import { User, UserRecieve } from 'user/user.entity';
+import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
+import { IUserEntity } from 'user/user.model';
 
 /**
  * Session service
@@ -45,10 +46,10 @@ export class SessionService extends DatabaseRequests<Session> {
 
 	/**
 	 * Get device tokens for user's recieve infomations
-	 * @param {User} user - the request from user
+	 * @param {IUserEntity} user - the request from user
 	 * @param {string} mtdt - metadata from client
 	 */
-	async getTokens(user: User, mtdt: string) {
+	async getTokens(user: IUserEntity, mtdt: string) {
 		const device = await this.svc.device.assign({
 				owner: user,
 				hashedUserAgent: hash(mtdt.toString()),

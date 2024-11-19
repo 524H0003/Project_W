@@ -25,7 +25,7 @@
       object="role"
       :alert="alert"
       v-model="input.position"
-      :list="Object.keys(EmployeePosition).map(i => i.replace('_', ' '))"
+      :list="new Map(Object.entries(EmployeePosition))"
     />
     <FormTextInputComp
       name="Password"

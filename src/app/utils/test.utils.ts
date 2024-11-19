@@ -57,3 +57,12 @@ export async function execute<
 	}
 	if (onFinish) await onFinish(funcResult);
 }
+
+/**
+ * Check if response has correct status code
+ * @param {number} code - status code
+ * @return {string}
+ */
+export function status(code: number): string {
+	return ',"status":' + code.toString();
+}

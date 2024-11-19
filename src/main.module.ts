@@ -32,7 +32,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 					},
 					defaults: { from: '"Unreal mail" <secret@student.tdtu.edu.vn>' },
 					template: {
-						dir: join(__dirname, 'templates'),
+						dir: join(__dirname, 'app/mail/templates'),
 						adapter: new HandlebarsAdapter(),
 						options: { strict: true },
 					},

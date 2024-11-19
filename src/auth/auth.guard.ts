@@ -75,7 +75,7 @@ export class RoleGuard extends AuthGuard('access') {
 			const req = this.getRequest(context),
 				user = req.user as User;
 
-			return matching([user.role], roles);
+			return matching(user.role, roles);
 		}
 		throw new InternalServerErrorException(
 			'Function not defined roles/permissions',

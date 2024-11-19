@@ -6,4 +6,9 @@
   .screen-center {
     @apply flex items-center justify-center;
   }
+
+  input,
+  input:focus {
+    @apply border-0 ring-0 !important;
+  }
 }
