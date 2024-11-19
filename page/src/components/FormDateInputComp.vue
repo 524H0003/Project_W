@@ -13,12 +13,14 @@
       <IconComp name="event" />
       <input
         datepicker
+        datepicker-buttons
         datepicker-orientation="top left"
-        datepicker-format="dd/mm/yyyy"
-        type="text"
+        datepicker-format="yyyy-mm-dd"
         placeholder="Select date"
-        v-model="model"
+        @focusout="updateValue($event.target!.value)"
         :disabled="disable"
+        :name="name + 'DatePicker'"
+        ref="datepickerRef"
       />
     </label>
     <label v-if="object === alert?.object" class="label -my-1.5">
@@ -41,22 +43,41 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { initFlowbite } from 'flowbite'
 import type { IAlert, IObject } from '@/auth.service'
 import IconComp from '@/components/IconComp.vue'
+import { initFlowbite } from 'flowbite'
+import { onMounted, ref, watch } from 'vue'
+
+const props = defineProps<{
+    name: string
+    object?: IObject
+    subBtnClick?: () => void
+    alert?: IAlert
+    icon?: string
+    disable?: boolean
+    modelValue: Date
+  }>(),
+  datepickerRef = ref<HTMLInputElement | null>(null),
+  emit = defineEmits<{
+    (e: 'update:modelValue', value: Date): void
+  }>()
 
 onMounted(() => {
   initFlowbite()
 })
 
-const model = defineModel()
-defineProps<{
-  name: string
-  object?: IObject
-  subBtnClick?: () => void
-  alert?: IAlert
-  icon?: string
-  disable?: boolean
-}>()
+const updateValue = (value: string) => {
+  const date = new Date(value)
+  if (date instanceof Date && !isNaN(date.getTime()))
+    emit('update:modelValue', new Date(value))
+}
+
+watch(
+  () => props.modelValue,
+  (newValue: Date) => {
+    if (datepickerRef.value) {
+      datepickerRef.value.value = new Date(newValue).toISOString().slice(0, 10)
+    }
+  },
+)
 </script>

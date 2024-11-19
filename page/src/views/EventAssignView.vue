@@ -79,5 +79,12 @@ const input = reactive<IEventInfo>({
     requiredSkills: '',
     additionalFields: '',
   }),
-  handleAssign = () => apiErrorHandler(assignEvent(input))
+  handleAssign = () => {
+    apiErrorHandler(
+      assignEvent({
+        ...input,
+        positionsAvailable: input.maxParticipants,
+      }),
+    )
+  }
 </script>
