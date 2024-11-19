@@ -23,10 +23,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 	],
 	providers: [
 		SignService,
-		{
-			provide: MailerService,
-			useValue: { sendMail: jest.fn() },
-		},
+		{ provide: MailerService, useValue: { sendMail: jest.fn() } },
 	],
 	exports: [MailerService],
 })

@@ -104,9 +104,7 @@ describe('signup', () => {
 							...employee.eventCreator.user.baseUser,
 						} as IEmployeeSignup),
 				),
-			{
-				exps: [{ type: 'toContain', params: [status(HttpStatus.ACCEPTED)] }],
-			},
+			{ exps: [{ type: 'toContain', params: [status(HttpStatus.ACCEPTED)] }] },
 		);
 		await execute(
 			() =>
