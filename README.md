@@ -94,7 +94,25 @@
 
 ### Sự kiện
 
-- [ ] Tạo sự kiện
+- [x] Tạo sự kiện
+
+> /api/v1/event/assign
+
+| Miền                | Kiểu dữ liệu    | Bắt buộc       |
+| ------------------- | --------------- | -------------- |
+| additionalFields    | string          | :red_circle:   |
+| applicationDeadline | ISOtimestring   | :green_circle: |
+| description         | string          | :red_circle:   |
+| endDate             | ISOtimestring   | :green_circle: |
+| location            | string          | :green_circle: |
+| maxParticipants     | number          | :green_circle: |
+| positionAvailable   | number          | :green_circle: |
+| requiredSkills      | string          | :red_circle:   |
+| startDate           | ISOtimestring   | :green_circle: |
+| status              | EventStatus[^2] | :green_circle: |
+| title               | string          | :green_circle: |
+| type                | EventType[^3]   | :green_circle: |
+
 - [ ] Cập nhật trạng thái sự kiện
 - [ ] Thêm tag cho sự kiện
 - [ ] Cho người dùng tham gia sự kiện
@@ -108,3 +126,7 @@
 ---
 
 [^1]: [Kiểu enum EmployeePosition](https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EmployeePosition)
+
+[^2]: [Kiểu enum EventStatus](https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EventStatus)
+
+[^3]: [Kiểu enum EventType](https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EventType)
