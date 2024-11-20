@@ -108,10 +108,12 @@ export class DatabaseRequests<T extends BaseEntity> {
 		const { deep = 1, relations = [''], ...newOptions } = options || {};
 		return this.repo.findOne({
 			where: <FindOptionsWhere<T>>newOptions,
-			relations: this.relations
-				.map((i) => i.split('.').slice(0, deep).join('.'))
-				.filter((i) => relations.some((j) => i.includes(j)))
-				.filter((value, index, self) => self.indexOf(value) === index),
+			relations: deep
+				? this.relations
+						.map((i) => i.split('.').slice(0, deep).join('.'))
+						.filter((i) => relations.some((j) => i.includes(j)))
+						.filter((value, index, self) => self.indexOf(value) === index)
+				: undefined,
 		});
 	}
 

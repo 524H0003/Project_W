@@ -14,11 +14,15 @@ import { Faculty } from 'university/faculty/faculty.entity';
 import { Student } from 'university/student/student.entity';
 import { AppService } from 'app/app.service';
 import { BaseEntity } from 'typeorm';
-import { BaseUser } from 'app/app.entity';
+import { Employee } from 'enterprise/employee/employee.entity';
+import { EventTag } from 'event/tag/tag.entity';
+import { Notification } from 'notification/notification.entity';
+import { Event } from 'event/event.entity';
+import { EventCreator } from 'event/creator/creator.entity';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
-		{ AdminJS, BaseRecord } = await import('adminjs'),
+		{ AdminJS, BaseRecord, flat } = await import('adminjs'),
 		{ buildAuthenticatedRouter } = await import('@adminjs/express'),
 		{ Database, Resource } = await import('@adminjs/typeorm'),
 		server = express(),
@@ -47,20 +51,97 @@ async function bootstrap() {
 			this.resourceName = model.name.toLowerCase();
 		}
 
+		isNumeric(value: any) {
+			const stringValue = String(value).replace(/,/g, '.');
+			if (isNaN(parseFloat(stringValue))) return false;
+			return isFinite(Number(stringValue));
+		}
+
+		safeParseNumber(value: any) {
+			if (this.isNumeric(value)) return Number(value);
+			return value;
+		}
+
+		/** Converts params from string to final type */
+		private customPrepareParams(params: {}) {
+			const preparedParams = { ...params };
+			this.properties().forEach((property) => {
+				const param = flat.get(preparedParams, property.path());
+				const key = property.path();
+				// eslint-disable-next-line no-continue
+				if (param === undefined) {
+					return;
+				}
+				const type = property.type();
+				if (type === 'mixed') {
+					preparedParams[key] = param;
+				}
+				if (type === 'number') {
+					if (property.isArray()) {
+						preparedParams[key] = param
+							? param.map((p) => this.safeParseNumber(p))
+							: param;
+					} else {
+						preparedParams[key] = this.safeParseNumber(param);
+					}
+				}
+				if (type === 'reference') {
+					if (param === null) {
+						preparedParams[property.column.propertyName] = null;
+					} else {
+						const [ref, foreignKey] = property.column.propertyPath.split('.');
+						const id = property.column.type === Number ? Number(param) : param;
+						preparedParams[ref] = foreignKey
+							? {
+									[foreignKey]: id,
+								}
+							: id;
+					}
+				}
+			});
+			return preparedParams;
+		}
+
 		async findOne(id: string) {
 			const instance = await appSvc[this.resourceName].id(id);
 
-			if (!instance) {
-				return null;
-			}
+			if (!instance) return null;
+
 			return new BaseRecord(instance, this);
+		}
+
+		async update(id: string, params = {}) {
+			const instance = await appSvc[this.resourceName].id(id, { deep: 0 });
+
+			if (!instance) throw new Error('Instance not found.');
+
+			const preparedParams = flat.unflatten(this.customPrepareParams(params));
+			Object.keys(preparedParams).forEach((paramName) => {
+				if (typeof instance[paramName] !== 'undefined')
+					instance[paramName] = preparedParams[paramName];
+			});
+
+			return appSvc[this.resourceName].modify(id, instance);
+		}
+
+		delete(id: string) {
+			return appSvc[this.resourceName].remove(id);
 		}
 	}
 
 	AdminJS.registerAdapter({ Resource: CustomResource, Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
 	const admin = new AdminJS({
-			resources: [Enterprise, Faculty, Student, BaseUser],
+			resources: [
+				Enterprise,
+				Faculty,
+				Student,
+				Employee,
+				EventTag,
+				Event,
+				Notification,
+				EventCreator,
+			],
 		}),
 		adminRouter = buildAuthenticatedRouter(
 			admin,
