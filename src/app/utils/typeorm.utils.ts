@@ -11,6 +11,9 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 export type FindOptionsWithCustom<T> = DeepPartial<T> & {
 	deep?: number;
+	take?: number;
+	skip?: number;
+	order?: object;
 	relations?: string[];
 };
 
@@ -89,9 +92,19 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @return {Promise<T[]>} array of found objects
 	 */
 	find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
-		const { deep = 1, relations = [''], ...newOptions } = options || {};
+		const {
+			deep = 1,
+			relations = [''],
+			take = 50,
+			skip = 0,
+			order = undefined,
+			...newOptions
+		} = options || {};
 		return this.repo.find({
 			where: <FindOptionsWhere<T>>newOptions,
+			take,
+			skip,
+			order,
 			relations: this.relations
 				.map((i) => i.split('.').slice(0, deep).join('.'))
 				.filter((i) => relations.some((j) => i.includes(j)))

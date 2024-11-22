@@ -39,7 +39,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	 */
 	async assign(
 		input: IEnterpriseAssign,
-		avatar: Express.Multer.File,
+		avatar: Express.Multer.File = null,
 	): Promise<Enterprise> {
 		const save = async (
 			entity: DeepPartial<Enterprise>,

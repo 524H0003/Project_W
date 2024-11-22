@@ -44,7 +44,7 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 		nullable: false,
 		onDelete: 'CASCADE',
 	})
-	@JoinColumn({ name: 'enterprise_id' })
+	@JoinColumn({ name: 'enterpriseId' })
 	enterprise: Enterprise;
 
 	// Infomations
