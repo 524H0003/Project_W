@@ -9,10 +9,7 @@ import {
 } from 'typeorm';
 
 export const getAdminJS = async (svc: AppService) => {
-	type ResourceWithOptions = {
-		resource: any;
-		options: any;
-	};
+	type ResourceWithOptions = { resource: any; options: any };
 
 	const { AdminJS, BaseRecord, flat } = await import('adminjs'),
 		uuidRegex =
@@ -202,11 +199,7 @@ export const getAdminJS = async (svc: AppService) => {
 							const [ref, foreignKey] = property.column.propertyPath.split('.');
 							const id =
 								property.column.type === Number ? Number(param) : param;
-							preparedParams[ref] = foreignKey
-								? {
-										[foreignKey]: id,
-									}
-								: id;
+							preparedParams[ref] = foreignKey ? { [foreignKey]: id } : id;
 						}
 					}
 				});
@@ -220,9 +213,7 @@ export const getAdminJS = async (svc: AppService) => {
 					...convertFilter(filter),
 					take: limit,
 					skip: offset,
-					order: {
-						[sortBy]: (direction || 'asc').toUpperCase(),
-					},
+					order: { [sortBy]: (direction || 'asc').toUpperCase() },
 				});
 				return instances.map((instance) => new BaseRecord(instance, this));
 			}
