@@ -70,7 +70,7 @@ it('remove', async () => {
 	const dbUser = await appSvc.user.assign(user);
 
 	// eslint-disable-next-line @typescript-eslint/require-await
-	await execute(async () => () => appSvc.user.remove(dbUser), {
+	await execute(async () => () => appSvc.user.remove(dbUser.baseUser.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
 	await execute(() => appSvc.user.id(dbUser.baseUser.id), {

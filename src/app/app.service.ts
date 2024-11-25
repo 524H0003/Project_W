@@ -107,13 +107,10 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 
 	/**
 	 * Remove base user
-	 * @param {DeepPartial<BaseUser>} criteria - removing user
+	 * @param {string} entityId - base user's id
 	 */
-	async remove(criteria: DeepPartial<BaseUser>) {
-		const id =
-			criteria.id ||
-			(await this.findOne({ ...criteria, email: criteria.email.lower })).id;
-		await this.delete({ id });
+	async remove(entityId: string) {
+		await this.delete({ id: entityId });
 	}
 
 	/**

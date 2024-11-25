@@ -23,7 +23,7 @@ interface AuthState {
 }
 
 export async function authRequest(
-  type: 'login' | 'signup' | 'logout' | 'change-password',
+  type: 'login' | 'signup' | 'logout' | 'change-password' | 'request-signature',
   user?: Required<IUserAuthentication>,
 ) {
   const response = await axios.post(`${API_URL}/${type}`, user)

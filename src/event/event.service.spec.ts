@@ -51,7 +51,7 @@ it('remove', async () => {
 	const curEvent = await appSvc.event.assign(event);
 
 	// eslint-disable-next-line @typescript-eslint/require-await
-	await execute(async () => () => appSvc.event.remove(curEvent), {
+	await execute(async () => () => appSvc.event.remove(curEvent.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
 	await execute(() => appSvc.event.id(curEvent.id), {
