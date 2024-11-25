@@ -38,8 +38,13 @@ async function bootstrap() {
 			.useGlobalPipes(new ValidationPipe()),
 		cfgSvc = app.get(ConfigService),
 		appSvc = app.get(AppService),
-		{ AdminJS, buildAuthenticatedRouter, getCustomResource, Database } =
-			await getAdminJS(appSvc);
+		{
+			AdminJS,
+			buildAuthenticatedRouter,
+			getCustomResource,
+			Database,
+			generalDisplay,
+		} = await getAdminJS(appSvc);
 
 	AdminJS.registerAdapter({ Resource: getCustomResource(), Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
@@ -53,7 +58,7 @@ async function bootstrap() {
 				Event,
 				Notification,
 				EventCreator,
-			],
+			].map((i) => generalDisplay(i)),
 		}),
 		adminRouter = buildAuthenticatedRouter(
 			admin,

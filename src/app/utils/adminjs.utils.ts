@@ -8,9 +8,12 @@ import {
 	Raw,
 } from 'typeorm';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export const getAdminJS = async (svc: AppService) => {
+	type ResourceWithOptions = {
+		resource: any;
+		options: any;
+	};
+
 	const { AdminJS, BaseRecord, flat } = await import('adminjs'),
 		uuidRegex =
 			/^[0-9A-F]{8}-[0-9A-F]{4}-[5|4|3|2|1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
@@ -127,7 +130,25 @@ export const getAdminJS = async (svc: AppService) => {
 			return where;
 		},
 		{ buildAuthenticatedRouter } = await import('@adminjs/express'),
-		{ Database, Resource } = await import('@adminjs/typeorm');
+		{ Database, Resource } = await import('@adminjs/typeorm'),
+		fullyHideActions = { list: false, edit: false, show: false },
+		generalDisplay = (resource: any): ResourceWithOptions => ({
+			resource,
+			options: {
+				properties: Object.assign(
+					{},
+					...[
+						'_hashedPassword',
+						'eventCreator.user._hashedPassword',
+						'user._hashedPassword',
+						'user.blackBox.createdAt',
+						'user.baseUser.avatarPath',
+						'user.blackBox.updatedAt',
+						'user.baseUser.id',
+					].map((i) => ({ [i]: { isVisible: fullyHideActions } })),
+				),
+			},
+		});
 
 	const getCustomResource = (): typeof Resource =>
 		class CustomResource extends Resource {
@@ -206,18 +227,9 @@ export const getAdminJS = async (svc: AppService) => {
 			}
 
 			async findOne(id: string) {
-				let instance = await svc[this.resourceName].id(id);
+				const instance = await svc[this.resourceName].id(id);
 
 				if (!instance) return null;
-
-				const unflattenedParams = this.customPrepareParams(instance);
-
-				instance = {};
-				Object.keys(unflattenedParams).forEach((i) => {
-					let name = i.split('.').at(-1);
-					if (name === '_hashedPassword') name = 'password';
-					if (unflattenedParams[i]) instance[name] = unflattenedParams[i];
-				});
 
 				return new BaseRecord(instance, this);
 			}
@@ -254,5 +266,11 @@ export const getAdminJS = async (svc: AppService) => {
 			}
 		};
 
-	return { AdminJS, buildAuthenticatedRouter, Database, getCustomResource };
+	return {
+		AdminJS,
+		buildAuthenticatedRouter,
+		Database,
+		getCustomResource,
+		generalDisplay,
+	};
 };
