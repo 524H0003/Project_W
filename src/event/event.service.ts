@@ -50,11 +50,9 @@ export class EventService extends DatabaseRequests<Event> {
 
 	/**
 	 * Remove event
-	 * @param {DeepPartial<Event>} criteria - deleting event
+	 * @param {string} entityId - event's id
 	 */
-	async remove(criteria: DeepPartial<Event>) {
-		const id = criteria.id || (await this.findOne(criteria)).id;
-
-		await this.delete({ id });
+	async remove(entityId: string) {
+		await this.delete({ id: entityId });
 	}
 }

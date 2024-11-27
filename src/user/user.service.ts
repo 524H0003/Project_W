@@ -5,7 +5,6 @@ import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
 import { AppService } from 'app/app.service';
-import { BaseUser } from 'app/app.entity';
 
 /**
  * Services for user
@@ -57,15 +56,11 @@ export class UserService extends DatabaseRequests<User> {
 
 	/**
 	 * Remove user
-	 * @param {DeepPartial<User>} criteria - deleting user
+	 * @param {string} entityId - user's id
 	 */
-	async remove(criteria: DeepPartial<User>) {
-		const id =
-			(criteria.baseUser as BaseUser).id ||
-			(await this.findOne(criteria)).baseUser.id;
-
-		await this.delete({ baseUser: { id } });
-		await this.appSvc.baseUser.remove({ id });
+	async remove(entityId: string) {
+		await this.delete({ baseUser: { id: entityId } });
+		await this.appSvc.baseUser.remove(entityId);
 	}
 
 	/**

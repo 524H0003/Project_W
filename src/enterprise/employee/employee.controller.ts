@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 import { MetaData } from 'auth/auth.guard';
-import { UserRole } from 'user/user.model';
 import { Request, Response } from 'express';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { AuthGuard } from '@nestjs/passport';
@@ -78,11 +77,12 @@ export class EmployeeController extends AppController {
 			request,
 			response,
 			(
-				await this.svc.employee.signUp(
-					body,
+				await this.svc.employee.assign(
+					{
+						...body,
+						enterpriseId: JSON.parse((request.user as Hook).note).enterpriseId,
+					},
 					avatar,
-					JSON.parse((request.user as Hook).note).enterpriseName,
-					{ role: UserRole.enterprise },
 				)
 			).eventCreator.user,
 			mtdt,

@@ -9,7 +9,6 @@ import { Employee } from './employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
-import { IAuthSignUpOption } from 'auth/auth.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import {
 	IEmployeeHookKeys,
@@ -62,7 +61,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 					},
 				),
 			'_Email',
-			{ enterpriseName: ent.baseUser.name },
+			{ enterpriseId: ent.baseUser.id },
 		);
 	}
 
@@ -73,25 +72,25 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	 * @param {IAuthSignUpOption} option - function's option
 	 * @return {Promise<Employee>}
 	 */
-	async signUp(
-		input: IEmployeeSignup,
-		avatar: Express.Multer.File,
-		enterpriseName: string,
-		option?: IAuthSignUpOption,
+	async assign(
+		input: IEmployeeSignup & { enterpriseId: string },
+		avatar: Express.Multer.File = null,
 	): Promise<Employee> {
+		const enterprise = await this.svc.enterprise.id(
+			input.enterpriseId || input.id,
+		);
 		input = InterfaceCasting.quick(input, IEmployeeSignupKeys);
 
+		if (!enterprise) throw new BadRequestException('Invalid_Enterprise_Id');
+
 		const usr = await this.svc.auth.signUp(input, avatar, {
-				...option,
 				role: UserRole.enterprise,
 			}),
 			eventCreator = await this.svc.eventcreator.assign(usr);
 
 		return await this.save({
 			eventCreator,
-			enterprise: await this.svc.enterprise.findOne({
-				baseUser: { name: enterpriseName },
-			}),
+			enterprise,
 			...InterfaceCasting.quick(input, IEmployeeInfoKeys),
 		});
 	}

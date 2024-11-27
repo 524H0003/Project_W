@@ -42,8 +42,9 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	 */
 	@ManyToOne(() => Enterprise, (_: Enterprise) => _.employees, {
 		nullable: false,
+		onDelete: 'CASCADE',
 	})
-	@JoinColumn({ name: 'enterprise_id' })
+	@JoinColumn({ name: 'enterpriseId' })
 	enterprise: Enterprise;
 
 	// Infomations

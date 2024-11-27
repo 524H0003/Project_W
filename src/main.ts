@@ -13,14 +13,15 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import { Faculty } from 'university/faculty/faculty.entity';
 import { Student } from 'university/student/student.entity';
 import { AppService } from 'app/app.service';
-import { BaseEntity } from 'typeorm';
-import { BaseUser } from 'app/app.entity';
+import { Employee } from 'enterprise/employee/employee.entity';
+import { EventTag } from 'event/tag/tag.entity';
+import { Notification } from 'notification/notification.entity';
+import { Event } from 'event/event.entity';
+import { getAdminJS } from 'app/utils/adminjs.utils';
+import { EventCreator } from 'event/creator/creator.entity';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
-		{ AdminJS, BaseRecord } = await import('adminjs'),
-		{ buildAuthenticatedRouter } = await import('@adminjs/express'),
-		{ Database, Resource } = await import('@adminjs/typeorm'),
 		server = express(),
 		app = (
 			await NestFactory.create(MainModule, new ExpressAdapter(server), {
@@ -36,40 +37,38 @@ async function bootstrap() {
 			.use(cookieParser())
 			.useGlobalPipes(new ValidationPipe()),
 		cfgSvc = app.get(ConfigService),
-		appSvc = app.get(AppService);
+		appSvc = app.get(AppService),
+		{
+			AdminJS,
+			buildAuthenticatedRouter,
+			getCustomResource,
+			Database,
+			generalDisplay,
+		} = await getAdminJS(appSvc);
 
-	class CustomResource extends Resource {
-		private resourceName: string;
-
-		constructor(model: typeof BaseEntity) {
-			super(model);
-
-			this.resourceName = model.name.toLowerCase();
-		}
-
-		async findOne(id: string) {
-			const instance = await appSvc[this.resourceName].id(id);
-
-			if (!instance) {
-				return null;
-			}
-			return new BaseRecord(instance, this);
-		}
-	}
-
-	AdminJS.registerAdapter({ Resource: CustomResource, Database });
+	AdminJS.registerAdapter({ Resource: getCustomResource(), Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
 	const admin = new AdminJS({
-			resources: [Enterprise, Faculty, Student, BaseUser],
+			resources: [
+				Enterprise,
+				Faculty,
+				Student,
+				Employee,
+				EventTag,
+				Event,
+				Notification,
+				EventCreator,
+			].map((i) => generalDisplay(i)),
 		}),
 		adminRouter = buildAuthenticatedRouter(
 			admin,
 			{
-				authenticate(email, password) {
-					return email === cfgSvc.get('ADMIN_EMAIL') &&
-						password === cfgSvc.get('ADMIN_PASSWORD')
-						? Promise.resolve({ email, password })
-						: null;
+				authenticate: async (email, password) => {
+					const hook = await appSvc.hook.findOne({ signature: password });
+
+					if (!hook || email !== cfgSvc.get('ADMIN_EMAIL')) return null;
+
+					return { email, password };
 				},
 				cookieName: 'adminjs',
 				cookiePassword: 'sessionsecret',
