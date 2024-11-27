@@ -17,6 +17,7 @@ import { FileService } from 'file/file.service';
 import { EventCreatorService } from 'event/creator/creator.service';
 import { UserService } from 'user/user.service';
 import { EventService } from 'event/event.service';
+import { EventTagService } from 'event/tag/tag.service';
 
 /**
  * @ignore
@@ -57,6 +58,8 @@ export class AppService {
 		public sign: SignService,
 		@Inject(forwardRef(() => EventService))
 		public event: EventService,
+		@Inject(forwardRef(() => EventTagService))
+		public eventTag: EventTagService,
 	) {
 		this.baseUser = new BaseUserService(baseUserRepo);
 	}

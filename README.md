@@ -140,7 +140,6 @@
 ### Trang admin (quản lý database)
 
 - [ ] Cập nhật, thêm, xóa và hiển thị thực thể
-- [ ] Hiển thị biểu đồ theo dữ liệu yêu cầu
 
 ---
 

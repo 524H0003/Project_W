@@ -2,7 +2,6 @@ import {
 	Column,
 	Entity,
 	JoinColumn,
-	JoinTable,
 	ManyToMany,
 	ManyToOne,
 	OneToMany,
@@ -65,8 +64,9 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	/**
 	 * Event's tags
 	 */
-	@ManyToMany(() => EventTag, { onDelete: 'CASCADE' })
-	@JoinTable({ name: 'EventTag' })
+	@ManyToMany(() => EventTag, (_: EventTag) => _.toEvents, {
+		onDelete: 'CASCADE',
+	})
 	tags: EventTag[];
 
 	// Infomations
