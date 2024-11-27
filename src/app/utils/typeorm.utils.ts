@@ -17,6 +17,8 @@ export type FindOptionsWithCustom<T> = DeepPartial<T> & {
 	relations?: string[];
 };
 
+export type NonArray<T> = T extends (infer U)[] ? U : T;
+
 /**
  * Sensitive infomations in entity
  */
@@ -128,6 +130,30 @@ export class DatabaseRequests<T extends BaseEntity> {
 						.filter((value, index, self) => self.indexOf(value) === index)
 				: undefined,
 		});
+	}
+
+	/**
+	 * Push an entity to field's array
+	 * @param {string} id - the id of entity
+	 * @param {K} field - the pushing field
+	 * @param {NonArray<T[K]>} entity - the push entity
+	 */
+	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
+		const obj = await this.id(id);
+		obj[field as unknown as string].push(entity);
+		return this.id(id);
+	}
+
+	/**
+	 * Push many entities to field's array
+	 * @param {string} id - the id of entity
+	 * @param {K} field - the pushing field
+	 * @param {T[K]} entities - the push entities
+	 */
+	async pushMany<K extends keyof T>(id: string, field: K, entities: T[K]) {
+		const obj = await this.id(id);
+		obj[field as unknown as string].push(entities);
+		return this.id(id);
 	}
 
 	/**
