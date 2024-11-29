@@ -2,7 +2,8 @@ import { AppService } from 'app/app.service';
 import { CookieOptions, Request, Response } from 'express';
 import { compare, hash } from './auth.utils';
 import { HttpStatus } from '@nestjs/common';
-import { IUserEntity, IUserRecieve } from 'user/user.model';
+import { IUserRecieve } from 'user/user.model';
+import { User } from 'user/user.entity';
 
 export class BaseController {
 	/**
@@ -116,7 +117,7 @@ export class BaseController {
 	protected async responseWithUser(
 		request: Request,
 		response: Response,
-		user: IUserEntity,
+		user: User,
 		mtdt: string,
 	): Promise<void> {
 		return this.responseWithUserRecieve(

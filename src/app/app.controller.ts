@@ -66,7 +66,7 @@ export class AppController extends BaseController {
 			await this.svc.student.signUp(body);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
-				case 'Invalid_Student_Email':
+				case 'Exist_User':
 					return this.responseWithUser(
 						request,
 						response,
@@ -165,7 +165,10 @@ export class AppController extends BaseController {
 			});
 			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));
 		} else {
-			if (rfsRsl.status === 'success' && compare(mtdt, rfsRsl.userAgent)) {
+			if (
+				rfsRsl.status === 'success' &&
+				compare(mtdt, rfsRsl.hashedUserAgent)
+			) {
 				return sendBack(await this.svc.session.rotateToken(rfsRsl.sessionId));
 			} else
 				return sendBack(await this.svc.session.addTokens(rfsRsl.sessionId));

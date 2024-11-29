@@ -24,28 +24,29 @@ function createKeys(node: InterfaceDeclaration) {
 				),
 			extendedInterfaces: string[] = node
 				.getProperties()
-				.map((i) => i.getName());
+				.map((i) => (i.hasQuestionToken() ? '' : i.getName()));
 
 		for (const extendedType of extendedTypes)
 			extendedInterfaces.push(...getInterface(extendedType));
 
 		return extendedInterfaces.filter(
-			(item, index) => extendedInterfaces.indexOf(item) === index,
+			(item, index) => extendedInterfaces.indexOf(item) === index && item,
 		);
 	}
 
 	const allKeys = getInterface(node).sort((a, b) => a.localeCompare(b));
-	IKeysOut.addVariableStatement({
-		isExported: true,
-		declarationKind: VariableDeclarationKind.Const,
-		declarations: [
-			{
-				name: `${node.getName()}Keys`,
-				initializer: (writer) =>
-					writer.write(`${JSON.stringify(allKeys)} as const`),
-			},
-		],
-	});
+	if (allKeys.length)
+		IKeysOut.addVariableStatement({
+			isExported: true,
+			declarationKind: VariableDeclarationKind.Const,
+			declarations: [
+				{
+					name: `${node.getName()}Keys`,
+					initializer: (writer) =>
+						writer.write(`${JSON.stringify(allKeys)} as const`),
+				},
+			],
+		});
 }
 for (const file of IKeysFiles) {
 	if (/(build.ts|types.ts|models.ts)/.test(file.getBaseName())) continue;

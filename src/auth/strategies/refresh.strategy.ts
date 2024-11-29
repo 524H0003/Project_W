@@ -27,7 +27,7 @@ export interface IRefreshResult {
 	/**
 	 * Client's user agent
 	 */
-	userAgent?: string;
+	hashedUserAgent?: string;
 }
 
 /**
@@ -63,7 +63,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 					await this.sesSvc.useToken(session.id);
 					return {
 						status: 'success',
-						userAgent: session.device.hashedUserAgent,
+						hashedUserAgent: session.device.hashedUserAgent,
 						sessionId: session.id,
 					};
 				} else {

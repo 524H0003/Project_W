@@ -115,7 +115,7 @@
 
 - [x] Cập nhật trạng thái sự kiện
 
-> /api/v1/event/assign
+> /api/v1/event/update
 
 | Miền                | Kiểu dữ liệu    | Bắt buộc       |
 | ------------------- | --------------- | -------------- |
