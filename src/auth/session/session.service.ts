@@ -4,9 +4,8 @@ import { hash } from 'app/utils/auth.utils';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { Session } from './session.entity';
-import { UserRecieve } from 'user/user.entity';
+import { User, UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
-import { IUserEntity } from 'user/user.model';
 
 /**
  * Session service
@@ -46,20 +45,24 @@ export class SessionService extends DatabaseRequests<Session> {
 
 	/**
 	 * Get device tokens for user's recieve infomations
-	 * @param {IUserEntity} user - the request from user
+	 * @param {User} user -  user from the request
 	 * @param {string} mtdt - metadata from client
 	 */
-	async getTokens(user: IUserEntity, mtdt: string) {
-		const device = await this.svc.device.assign({
-				owner: user,
-				hashedUserAgent: hash(mtdt.toString()),
+	async getTokens(user: User, mtdt: string) {
+		const hashedUserAgent = hash(mtdt),
+			accessToken = this.svc.sign.access(user.baseUser.id),
+			device = await this.svc.device.assign({
+				owner: await this.svc.user.email(user.baseUser.email),
+				hashedUserAgent: accessToken,
 				child: null,
 			}),
 			session = await this.assign({ child: null, parrent: device.id, device }),
-			refreshToken = this.svc.sign.refresh(session.id),
-			accessToken = this.svc.sign.access(user.baseUser.id);
+			refreshToken = this.svc.sign.refresh(session.id);
 
-		await this.svc.device.modify(device.id, { child: session.id });
+		await this.svc.device.modify(device.id, {
+			child: session.id,
+			hashedUserAgent,
+		});
 
 		return new UserRecieve({ accessToken, refreshToken, response: user.info });
 	}
