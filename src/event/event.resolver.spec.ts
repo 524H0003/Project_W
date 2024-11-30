@@ -23,7 +23,7 @@ import {
 	UpdateEvent,
 	UpdateEventMutation,
 	UpdateEventMutationVariables,
-} from 'generated/graphql';
+} from 'graphql/graphql';
 
 const fileName = curFile(__filename);
 
