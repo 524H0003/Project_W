@@ -12,7 +12,7 @@
 	"explorer.fileNesting.patterns": {
 		"*.entity.ts": "$(capture).model.ts",
 		"*.ts": "$(capture).spec.ts",
-		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest*.config.ts, README.MD, nest-cli.json, procfile, .gitignore",
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest*.config.ts, README.MD, nest-cli.json, procfile, .gitignore, codegen.ts",
 		"tsconfig.json": "tsconfig.*.json, env.d.ts"
 	},
 	"explorerExclude.backup": {},
@@ -38,7 +38,9 @@
 		"secrets": true,
 		"src/build.ts": true,
 		"src/models.ts": true,
-		"types": true
+		"types": true,
+		"**/graphql": true,
+		"src/types.ts": true
 	},
 	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {

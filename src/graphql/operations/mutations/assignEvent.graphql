@@ -1,0 +1,17 @@
+mutation assignEvent($input: EventAssign!){
+    assignEvent(input: $input){
+        additionalFields
+        applicationDeadline
+        description
+        endDate
+        id
+        location
+        maxParticipants
+        positionsAvailable
+        requiredSkills
+        startDate
+        status
+        title
+        type
+    }
+}

@@ -86,7 +86,7 @@ export interface IEventInfo extends IEntityId {
 	/**
 	 * Addition fields
 	 */
-	additionalFields: any;
+	additionalFields?: object;
 }
 
 /**

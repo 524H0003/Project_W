@@ -7,7 +7,6 @@ import { TestModule } from 'app/module/test.module';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import TestAgent from 'supertest/lib/agent';
-import { EventController } from './event.controller';
 import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import { Event } from './event.entity';
@@ -16,8 +15,15 @@ import {
 	IEmployeeHook,
 	IEmployeeSignup,
 } from 'enterprise/employee/employee.model';
-import { execute } from 'app/utils/test.utils';
-import { IEventInfo } from './event.model';
+import { execute, sendGQL, SendGQLType } from 'app/utils/test.utils';
+import {
+	AssignEvent,
+	AssignEventMutation,
+	AssignEventMutationVariables,
+	UpdateEvent,
+	UpdateEventMutation,
+	UpdateEventMutationVariables,
+} from 'generated/graphql';
 
 const fileName = curFile(__filename);
 
@@ -33,7 +39,6 @@ let req: TestAgent,
 beforeAll(async () => {
 	const module: TestingModule = await Test.createTestingModule({
 		imports: [AppModule, TestModule],
-		controllers: [EventController],
 	}).compile();
 
 	(appSvc = module.get(AppService)),
@@ -41,6 +46,7 @@ beforeAll(async () => {
 		(mailerSvc = module.get(MailerService));
 
 	await app.use(cookieParser()).init();
+	req = request(app.getHttpServer());
 });
 
 export async function prepareEvent(
@@ -73,73 +79,83 @@ export async function prepareEvent(
 }
 
 beforeEach(async () => {
-	(req = request(app.getHttpServer())),
-		(employee = Employee.test(fileName)),
+	(employee = Employee.test(fileName)),
 		(enterprise = Enterprise.test(fileName)),
 		(event = Event.test(fileName));
 
 	headers = (await prepareEvent(req, enterprise, employee, mailerSvc)).headers;
 });
 
-describe('assign', () => {
+describe('assignEvent', () => {
+	let send: SendGQLType<AssignEventMutation, AssignEventMutationVariables>;
+
+	beforeAll(() => {
+		send = sendGQL(req, AssignEvent);
+	});
+
 	it('success', async () => {
 		await execute(
 			async () =>
-				JSON.stringify(
-					await req
-						.post('/event/assign')
-						.set('Cookie', headers['set-cookie'])
-						.send(event),
-				),
-			{ exps: [{ type: 'toContain', params: ['Success_Assign_Event'] }] },
+				JSON.stringify(await send({ input: event }, headers['set-cookie'])),
+			{
+				exps: [{ type: 'toContain', params: [event.title] }],
+			},
 		);
-		await execute(() => appSvc.event.findOne({ title: event.title }), {
-			exps: [{ type: 'toBeDefined', params: [] }],
+		await execute(() => appSvc.event.find({ title: event.title }), {
+			exps: [{ type: 'toHaveLength', params: [1] }],
 		});
 	});
 });
 
-describe('update', () => {
-	it('success', async () => {
-		const newTitle = fileName + (30).string;
+describe('updateEvent', () => {
+	let send: SendGQLType<UpdateEventMutation, UpdateEventMutationVariables>,
+		sendAssign: SendGQLType<AssignEventMutation, AssignEventMutationVariables>;
 
-		await req
-			.post('/event/assign')
-			.set('Cookie', headers['set-cookie'])
-			.send(event);
+	beforeAll(() => {
+		send = sendGQL(req, UpdateEvent);
+		sendAssign = sendGQL(req, AssignEvent);
+	});
+
+	it('success', async () => {
+		const newTitle = fileName + (30).string,
+			eventId = (await sendAssign({ input: event }, headers['set-cookie']))
+				.assignEvent.id;
 
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req
-						.post('/event/update')
-						.set('Cookie', headers['set-cookie'])
-						.send({ ...event, title: newTitle } as IEventInfo),
+					await send(
+						{ input: { id: eventId, title: newTitle } },
+						headers['set-cookie'],
+					),
 				),
-			{ exps: [{ type: 'toContain', params: ['Success_Update_Event'] }] },
+			{
+				exps: [{ type: 'toContain', params: [newTitle] }],
+			},
 		);
-		await execute(() => appSvc.event.findOne({ title: newTitle }), {
-			exps: [{ type: 'toBeDefined', params: [] }],
+		await execute(() => appSvc.event.find({ title: newTitle }), {
+			exps: [{ type: 'toHaveLength', params: [1] }],
+		});
+		await execute(() => appSvc.event.find({ title: event.title }), {
+			exps: [{ type: 'toHaveLength', params: [0] }],
 		});
 	});
 
 	it('failed due to invalid id', async () => {
-		await req
-			.post('/event/assign')
-			.set('Cookie', headers['set-cookie'])
-			.send(event);
-
-		const eventId = (await appSvc.event.findOne({ title: event.title })).id;
+		const id = (await sendAssign({ input: event }, headers['set-cookie']))
+			.assignEvent.id;
 
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req
-						.post('/event/update')
-						.set('Cookie', headers['set-cookie'])
-						.send({ id: eventId.slice(0, -1) + '0' } as IEventInfo),
+					await send(
+						{ input: { id: id.slice(0, -1) + '0' } },
+						headers['set-cookie'],
+					),
 				),
-			{ exps: [{ type: 'toContain', params: ['Invalid_Event_Id'] }] },
+			{
+				exps: [{ type: 'toContain', params: ['Invalid_Event_Id'] }],
+			},
 		);
 	});
 });
