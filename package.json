@@ -54,6 +54,7 @@
 		"express": "^4.21.1",
 		"geojson": "^0.5.0",
 		"graphql": "^16.9.0",
+		"graphql-tag": "^2.12.6",
 		"graphql-type-json": "^0.3.2",
 		"handlebars": "^4.7.8",
 		"http": "^0.0.1-security",
