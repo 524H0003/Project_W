@@ -1,4 +1,8 @@
 // Interfaces
+
+import { DocumentNode, print } from 'graphql';
+import TestAgent from 'supertest/lib/agent';
+
 /**
  * Test's expectations
  */
@@ -65,4 +69,32 @@ export async function execute<
  */
 export function status(code: number): string {
 	return ',"status":' + code.toString();
+}
+
+/**
+ * sendGQL ouptut type
+ */
+export type SendGQLType<T, K> = (variables: K, cookie?: any) => Promise<T>;
+
+/**
+ * GraphQL query runner
+ * @param {TestAgent} req - the request module
+ * @param {DocumentNode} astQuery - the graphql query
+ * @param {K} variables - query's variables
+ */
+export function sendGQL<T, K>(
+	req: TestAgent,
+	astQuery: DocumentNode,
+): SendGQLType<T, K> {
+	const query = print(astQuery);
+
+	return async (variables: K, cookie?: any) => {
+		const result = await req
+			.post('/graphql')
+			.set('Cookie', cookie)
+			.set('Content-Type', 'application/json')
+			.send(JSON.stringify({ query, variables }));
+
+		return (result.body.data || result) as T;
+	};
 }

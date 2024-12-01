@@ -1,8 +1,4 @@
-import {
-	Injectable,
-	NotAcceptableException,
-	UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
@@ -75,14 +71,9 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 		} catch (error) {
 			switch ((error as { name: string }).name) {
 				case 'QueryFailedError':
-					throw new NotAcceptableException('Invalid refresh token');
-					break;
-
-				default:
-					throw error;
 					break;
 			}
 		}
-		throw new UnauthorizedException('Invalid refresh token');
+		throw new UnauthorizedException('Invalid_Refresh_Token');
 	}
 }

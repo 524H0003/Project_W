@@ -1,3 +1,4 @@
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
 	BaseEntity,
 	DeepPartial,
@@ -22,6 +23,7 @@ export type NonArray<T> = T extends (infer U)[] ? U : T;
 /**
  * Sensitive infomations in entity
  */
+@ObjectType()
 export class SensitiveInfomations extends BaseEntity {
 	/**
 	 * @ignore
@@ -34,7 +36,9 @@ export class SensitiveInfomations extends BaseEntity {
 	/**
 	 * Unique identifier
 	 */
-	@PrimaryGeneratedColumn('uuid') id: string;
+	@Field()
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 }
 
 /**
