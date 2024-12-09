@@ -61,7 +61,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run test:unit
+      - run: npm run build && npm run test:unit
 
       - name: Jest Coverage Comment
         uses: MishaKav/jest-coverage-comment@main
@@ -108,7 +108,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run test:e2e
+      - run: npm run build && npm run test:e2e
 
       - name: Jest Coverage Comment (e2e)
         uses: MishaKav/jest-coverage-comment@main
