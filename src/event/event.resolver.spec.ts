@@ -52,9 +52,7 @@ describe('assignEvent', () => {
 		await execute(
 			async () =>
 				(await send({ input: event }, headers['set-cookie'])).assignEvent,
-			{
-				exps: [{ type: 'toHaveProperty', params: ['title', event.title] }],
-			},
+			{ exps: [{ type: 'toHaveProperty', params: ['title', event.title] }] },
 		);
 		await execute(() => svc.event.find({ title: event.title }), {
 			exps: [{ type: 'toHaveLength', params: [1] }],
@@ -87,9 +85,7 @@ describe('updateEvent', () => {
 						headers['set-cookie'],
 					)
 				).updateEvent,
-			{
-				exps: [{ type: 'toHaveProperty', params: ['title', newTitle] }],
-			},
+			{ exps: [{ type: 'toHaveProperty', params: ['title', newTitle] }] },
 		);
 		await execute(() => svc.event.find({ title: newTitle }), {
 			exps: [{ type: 'toHaveLength', params: [1] }],
@@ -108,9 +104,7 @@ describe('updateEvent', () => {
 						headers['set-cookie'],
 					),
 				),
-			{
-				exps: [{ type: 'toContain', params: ['Invalid_Event_Id'] }],
-			},
+			{ exps: [{ type: 'toContain', params: ['Invalid_Event_Id'] }] },
 		);
 	});
 });
