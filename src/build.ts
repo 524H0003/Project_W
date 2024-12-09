@@ -27,7 +27,7 @@ function createKeys(node: InterfaceDeclaration) {
 				.map((i) => i.getName());
 
 		for (const extendedType of extendedTypes)
-			if (extendedType) extendedInterfaces.push(...getInterface(extendedType));
+			extendedInterfaces.push(...getInterface(extendedType));
 
 		return extendedInterfaces.filter(
 			(item, index) => extendedInterfaces.indexOf(item) === index,

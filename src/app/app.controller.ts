@@ -76,6 +76,9 @@ export class AppController extends BaseController {
 
 				case 'Request_New_User':
 					return this.resetPasswordViaEmail(request, response, body, mtdt);
+
+				default:
+					throw error;
 			}
 		}
 	}

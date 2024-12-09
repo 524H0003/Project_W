@@ -21,8 +21,6 @@ const config: Config = {
 		'!src/**/*.model.ts',
 		'!src/*.ts',
 		'!src/**/*.entity.ts',
-		'!src/**/*.resolver.ts',
-		'!src/**/*utils.ts',
 	],
 };
 

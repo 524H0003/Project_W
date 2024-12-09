@@ -9,8 +9,8 @@ import { EventCreator } from './creator/creator.entity';
 import { EventCreatorService } from './creator/creator.service';
 import { AppModule } from 'app/app.module';
 import { EventService } from './event.service';
+import { EventController } from './event.controller';
 import { EventTagService } from './tag/tag.service';
-import { EventResolver } from './event.resolver';
 
 @Module({
 	imports: [
@@ -22,13 +22,9 @@ import { EventResolver } from './event.resolver';
 		]),
 		forwardRef(() => AppModule),
 	],
-	providers: [
-		EventCreatorService,
-		EventService,
-		EventTagService,
-		EventResolver,
-	],
+	providers: [EventCreatorService, EventService, EventTagService],
 	exports: [EventCreatorService, EventService, EventTagService],
+	controllers: [EventController],
 })
 export class EventModule {
 	constructor() {
