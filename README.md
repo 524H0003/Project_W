@@ -96,42 +96,11 @@
 
 - [x] Tạo sự kiện
 
-> /api/v1/event/assign
-
-| Miền                | Kiểu dữ liệu    | Bắt buộc       |
-| ------------------- | --------------- | -------------- |
-| additionalFields    | string          | :red_circle:   |
-| applicationDeadline | ISOtimestring   | :green_circle: |
-| description         | string          | :red_circle:   |
-| endDate             | ISOtimestring   | :green_circle: |
-| location            | string          | :green_circle: |
-| maxParticipants     | number          | :green_circle: |
-| positionAvailable   | number          | :green_circle: |
-| requiredSkills      | string          | :red_circle:   |
-| startDate           | ISOtimestring   | :green_circle: |
-| status              | EventStatus[^2] | :green_circle: |
-| title               | string          | :green_circle: |
-| type                | EventType[^3]   | :green_circle: |
+> [/graphql]()
 
 - [x] Cập nhật trạng thái sự kiện
 
-> /api/v1/event/update
-
-| Miền                | Kiểu dữ liệu    | Bắt buộc       |
-| ------------------- | --------------- | -------------- |
-| id                  | string          | :green_circle: |
-| additionalFields    | string          | :red_circle:   |
-| applicationDeadline | ISOtimestring   | :red_circle:   |
-| description         | string          | :red_circle:   |
-| endDate             | ISOtimestring   | :red_circle:   |
-| location            | string          | :red_circle:   |
-| maxParticipants     | number          | :red_circle:   |
-| positionAvailable   | number          | :red_circle:   |
-| requiredSkills      | string          | :red_circle:   |
-| startDate           | ISOtimestring   | :red_circle:   |
-| status              | EventStatus[^2] | :red_circle:   |
-| title               | string          | :red_circle:   |
-| type                | EventType[^3]   | :red_circle:   |
+> [/graphql]()
 
 - [ ] Thêm tag cho sự kiện
 - [ ] Cho người dùng tham gia sự kiện
