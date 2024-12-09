@@ -96,11 +96,11 @@
 
 - [x] Tạo sự kiện
 
-> [/graphql]()
+> [/graphql](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L26-L39)
 
 - [x] Cập nhật trạng thái sự kiện
 
-> [/graphql]()
+> [/graphql](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L41-L55)
 
 - [ ] Thêm tag cho sự kiện
 - [ ] Cho người dùng tham gia sự kiện
