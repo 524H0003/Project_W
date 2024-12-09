@@ -10,12 +10,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: 'The triathlon'
+	changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      project: ${{ steps.filter.outputs.project }}
+    steps:
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          project:
+            - '**.ts'
+            - '**.json'
 
-		paths:
-      - '**.ts'
-			- '**.json'
+  triathlon:
+    needs: changes
+    if: ${{ needs.changes.outputs.project == 'true' }}
+
+    name: 'The triathlon'
 
     runs-on: ubuntu-latest
 
