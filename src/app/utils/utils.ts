@@ -214,6 +214,11 @@ declare global {
 	 * @return {any[]} the output array with length
 	 */
 	function array(length: number, initValue?: any): any[];
+	/**
+	 * Delay function
+	 * @param {number} ms - delay in milisecond
+	 */
+	function delay(ms: number): Promise<void>;
 }
 
 // Global functions
@@ -224,12 +229,19 @@ try {
 			.lastElement.split('.')
 			.map((w) => w[0].toUpperCase() + w.slice(1))
 			.slice(0, cut)
-			.join('');
+			.join('') +
+		'_' +
+		(5).string;
 	global.array = (length: number, initValue: any = '') =>
 		Array(length)
 			.join()
 			.split(',')
 			.map(() => initValue);
+	global.delay = async (ms: number) => {
+		await new Promise<void>((resolve) => setTimeout(() => resolve(), ms)).then(
+			() => console.log('fired'),
+		);
+	};
 } catch {}
 // String.prototype
 Object.defineProperty(String.prototype, 'randomChar', {

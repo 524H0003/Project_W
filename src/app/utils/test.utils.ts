@@ -1,4 +1,20 @@
 // Interfaces
+
+import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from 'app/app.module';
+import { AppService } from 'app/app.service';
+import { TestModule } from 'app/module/test.module';
+import cookieParser from 'cookie-parser';
+import { DocumentNode, print } from 'graphql';
+import TestAgent from 'supertest/lib/agent';
+import request from 'supertest';
+
+/**
+ * Exported variables
+ */
+let req: TestAgent, app: INestApplication;
+
 /**
  * Test's expectations
  */
@@ -65,4 +81,45 @@ export async function execute<
  */
 export function status(code: number): string {
 	return ',"status":' + code.toString();
+}
+
+/**
+ * sendGQL ouptut type
+ */
+export type SendGQLType<T, K> = (variables: K, cookie?: any) => Promise<T>;
+
+/**
+ * GraphQL query runner
+ * @param {DocumentNode} astQuery - the graphql query
+ * @return {T}
+ */
+export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
+	const query = print(astQuery);
+
+	return async (variables: K, cookie?: any) => {
+		const result = await req
+			.post('/graphql')
+			.set('Cookie', cookie)
+			.set('Content-Type', 'application/json')
+			.send(JSON.stringify({ query, variables }));
+
+		return (result.body.data || result) as T;
+	};
+}
+
+/**
+ * Init jest test
+ */
+export async function initJest() {
+	const module: TestingModule = await Test.createTestingModule({
+		imports: [AppModule, TestModule],
+	}).compile();
+
+	const appSvc = module.get(AppService);
+	app = module.createNestApplication();
+
+	await app.use(cookieParser()).init();
+	req = request(app.getHttpServer());
+
+	return { module, appSvc, req };
 }

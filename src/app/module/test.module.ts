@@ -13,7 +13,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 	imports: [
 		GraphQLModule.forRoot({
 			driver: ApolloDriver,
-			autoSchemaFile: 'schema.gql',
+			autoSchemaFile: 'src/schema.gql',
 			sortSchema: true,
 			playground: false,
 		}),

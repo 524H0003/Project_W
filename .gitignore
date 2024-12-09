@@ -64,12 +64,13 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# GraphQl files
-**/schema.gql
-
 # Secret files
 secrets/*.pem
 **/*.env*
 
 # Execlude files
 !page/src/shims-vue.d.ts
+
+# GraphQL
+graphql/
+src/compiled_graphql.ts
