@@ -96,13 +96,15 @@ describe('updateEvent', () => {
 	});
 
 	it('failed due to invalid id', async () => {
+		const newId =
+			eventId.at(-1) !== '0'
+				? eventId.slice(0, -1) + '0'
+				: eventId.slice(0, -1) + '1';
+
 		await execute(
 			async () =>
 				JSON.stringify(
-					await send(
-						{ input: { id: eventId.slice(0, -1) + '0' } },
-						headers['set-cookie'],
-					),
+					await send({ input: { id: newId } }, headers['set-cookie']),
 				),
 			{ exps: [{ type: 'toContain', params: ['Invalid_Event_Id'] }] },
 		);
