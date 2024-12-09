@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-	changes:
+  changes:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
