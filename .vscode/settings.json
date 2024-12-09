@@ -41,9 +41,7 @@
 		"src/types.ts": true,
 		"types": true
 	},
-	"jest.outputConfig": {
-		"clearOnRun": "terminal"
-	},
+	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,
