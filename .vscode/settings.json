@@ -20,7 +20,9 @@
 		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest*.config.ts, README.MD, nest-cli.json, procfile, .gitignore, codegen.ts",
 		"tsconfig.json": "tsconfig.*.json, env.d.ts"
 	},
-	"explorerExclude.backup": {
+	"explorerExclude.backup": {},
+	"files.eol": "\n",
+	"files.exclude": {
 		"**/.git": true,
 		"**/.svn": true,
 		"**/.hg": true,
@@ -45,33 +47,6 @@
 		"**/graphql": true,
 		"src/types.ts": true,
 		"coverage": true
-	},
-	"files.eol": "\n",
-	"files.exclude": {
-		"**/.git": false,
-		"**/.svn": false,
-		"**/.hg": false,
-		"**/CVS": false,
-		"**/.DS_Store": false,
-		"**/Thumbs.db": false,
-		"**/*.tsbuildinfo": false,
-		"**/dist": false,
-		"**/node_modules": false,
-		"**/schema.gql": false,
-		".adminjs": false,
-		".devcontainer": false,
-		".git": false,
-		"LICENSE": false,
-		"documentation": false,
-		"public": false,
-		"reports": false,
-		"secrets": false,
-		"src/build.ts": false,
-		"src/models.ts": false,
-		"types": false,
-		"**/graphql": false,
-		"src/types.ts": false,
-		"coverage": false
 	},
 	"jest.outputConfig": {
 		"clearOnRun": "terminal"
