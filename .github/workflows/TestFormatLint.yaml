@@ -143,8 +143,6 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: ikalnytskyi/action-setup-postgres@v6
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
