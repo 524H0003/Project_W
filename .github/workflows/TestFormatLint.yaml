@@ -17,19 +17,21 @@ jobs:
     outputs:
       project: ${{ steps.filter.outputs.project }}
     steps:
-    - uses: dorny/paths-filter@v3
-      id: filter
-      with:
-        filters: |
-          project:
-            - '**.ts'
-            - '**.json'
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          base: HEAD
+          filters: |
+            project:
+              - '**.ts'
+              - '**.json'
 
-  triathlon:
+  Test_Unit:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
 
-    name: 'The triathlon'
+    name: 'Test Unit'
 
     runs-on: ubuntu-latest
 
@@ -55,15 +57,12 @@ jobs:
 
       - uses: actions/cache@v4
         with:
-          path: "**/node_modules"
+          path: '**/node_modules'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run triathlon
-        env:
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      - run: npm run build && npm run test:unit
 
       - name: Jest Coverage Comment
         uses: MishaKav/jest-coverage-comment@main
@@ -75,6 +74,43 @@ jobs:
           create-new-comment: true
           junitxml-path: ./reports/junit.xml
 
+  Test_E2E:
+    needs: changes
+    if: ${{ needs.changes.outputs.project == 'true' }}
+
+    name: 'Test e2e'
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+      actions: write
+      checks: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: ikalnytskyi/action-setup-postgres@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/cache@v4
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm run build && npm run test:e2e
+
       - name: Jest Coverage Comment (e2e)
         uses: MishaKav/jest-coverage-comment@main
         id: coverageCommentE2E
@@ -84,6 +120,42 @@ jobs:
           coverage-path: ./coverage/coverage_e2e.txt
           create-new-comment: true
           junitxml-path: ./reports_e2e/junit.xml
+
+  FormatAndLint:
+    needs:
+      - Test_E2E
+      - Test_Unit
+
+    name: 'Format & Lint'
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+      actions: write
+      checks: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/cache@v4
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm run format && npm run lint
 
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
