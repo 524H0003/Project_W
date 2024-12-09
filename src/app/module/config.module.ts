@@ -39,7 +39,7 @@ export const loadEnv =
 			AWS_ENDPOINT: Joi.string(),
 			AWS_BUCKET: Joi.string(),
 			// SMTP
-			SMTP_USER: Joi.string().required(),
-			SMTP_PASS: Joi.string().required(),
+			SMTP_USER: Joi.string().default(''),
+			SMTP_PASS: Joi.string().default(''),
 		}),
 	});
