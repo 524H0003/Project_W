@@ -1,18 +1,13 @@
 {
 	"debug.javascript.autoAttachFilter": "disabled",
-	"editor.codeActionsOnSave": {
-		"source.fixAll": "explicit"
-	},
+	"editor.codeActionsOnSave": { "source.fixAll": "explicit" },
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
 	"editor.formatOnSave": true,
 	"editor.insertSpaces": false,
 	"editor.tabSize": 2,
-	"editor.tokenColorCustomizations": {
-		"comments": "",
-		"textMateRules": []
-	},
+	"editor.tokenColorCustomizations": { "comments": "", "textMateRules": [] },
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.patterns": {
 		"*.entity.ts": "$(capture).model.ts",
@@ -24,29 +19,27 @@
 	"files.eol": "\n",
 	"files.exclude": {
 		"**/.git": true,
-		"**/.svn": true,
 		"**/.hg": true,
+		"**/.svn": true,
 		"**/CVS": true,
-		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
-		"**/*.tsbuildinfo": true,
 		"**/dist": true,
+		"**/graphql": true,
 		"**/node_modules": true,
 		"**/schema.gql": true,
 		".adminjs": true,
 		".devcontainer": true,
 		".git": true,
 		"LICENSE": true,
+		"coverage": true,
 		"documentation": true,
 		"public": true,
 		"reports": true,
 		"secrets": true,
 		"src/build.ts": true,
 		"src/models.ts": true,
-		"types": true,
-		"**/graphql": true,
 		"src/types.ts": true,
-		"coverage": true
+		"types": true
 	},
 	"jest.outputConfig": {
 		"clearOnRun": "terminal"
