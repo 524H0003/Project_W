@@ -74,7 +74,7 @@ jobs:
           junitxml-path: ./reports/junit.xml
 
   Test_E2E:
-      needs: changes
+    needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
 
     name: 'Test e2e'
@@ -121,7 +121,7 @@ jobs:
           junitxml-path: ./reports_e2e/junit.xml
 
   Format&Lint:
-		needs:
+    needs:
       - Test_E2E
       - Test_Unit
     if: ${{ needs.changes.outputs.project == 'true' }}
