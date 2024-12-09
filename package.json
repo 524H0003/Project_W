@@ -18,7 +18,7 @@
 		"start:dev": "nest start --watch",
 		"start:prod": "node dist/main",
 		"pretest": "npm run buildfile",
-		"gqlgen": " gqlg --schemaFilePath ./src/graphql/schema.gql --destDirPath ./src/graphql/operations --ext graphql",
+		"gqlgen": " gqlg --schemaFilePath ./src/schema.gql --destDirPath ./graphql/operations --ext graphql",
 		"test": "jest --config=jest.all.config.ts",
 		"test:e2e": "jest --config=jest.e2e.config.ts",
 		"test:unit": "jest --config=jest.unit.config.ts",

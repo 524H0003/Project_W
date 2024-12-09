@@ -1,7 +1,19 @@
 // Interfaces
 
+import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from 'app/app.module';
+import { AppService } from 'app/app.service';
+import { TestModule } from 'app/module/test.module';
+import cookieParser from 'cookie-parser';
 import { DocumentNode, print } from 'graphql';
 import TestAgent from 'supertest/lib/agent';
+import request from 'supertest';
+
+/**
+ * Exported variables
+ */
+let req: TestAgent, app: INestApplication;
 
 /**
  * Test's expectations
@@ -78,14 +90,10 @@ export type SendGQLType<T, K> = (variables: K, cookie?: any) => Promise<T>;
 
 /**
  * GraphQL query runner
- * @param {TestAgent} req - the request module
  * @param {DocumentNode} astQuery - the graphql query
- * @param {K} variables - query's variables
+ * @return {T}
  */
-export function sendGQL<T, K>(
-	req: TestAgent,
-	astQuery: DocumentNode,
-): SendGQLType<T, K> {
+export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
 	return async (variables: K, cookie?: any) => {
@@ -97,4 +105,21 @@ export function sendGQL<T, K>(
 
 		return (result.body.data || result) as T;
 	};
+}
+
+/**
+ * Init jest test
+ */
+export async function initJest() {
+	const module: TestingModule = await Test.createTestingModule({
+		imports: [AppModule, TestModule],
+	}).compile();
+
+	const appSvc = module.get(AppService);
+	app = module.createNestApplication();
+
+	await app.use(cookieParser()).init();
+	req = request(app.getHttpServer());
+
+	return { module, appSvc, req };
 }

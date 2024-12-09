@@ -152,7 +152,7 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	 * Application deadline
 	 */
 	@Field()
-	@Column({ name: 'application_deadline', type: 'date' })
+	@Column({ name: 'application_deadline', type: 'timestamp with time zone' })
 	applicationDeadline: Date;
 
 	/**
@@ -186,9 +186,15 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 			status: EventStatus['Draft'],
 			maxParticipants: 30 + (20).random,
 			location: (30).string,
-			startDate: new Date('1/1/111'),
-			endDate: new Date('1/1/111'),
-			applicationDeadline: new Date('1/1/11'),
+			startDate: new Date(
+				`${(10).random + 1}/${(20).random + 2}/20${(90).random + 3}`,
+			).toISOString(),
+			endDate: new Date(
+				`${(10).random + 1}/${(20).random + 2}/20${(90).random + 3}`,
+			).toISOString(),
+			applicationDeadline: new Date(
+				`${(10).random + 1}/${(20).random + 2}/20${(90).random + 3}`,
+			).toISOString(),
 			requiredSkills: '',
 		});
 	}

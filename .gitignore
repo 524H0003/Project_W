@@ -70,3 +70,7 @@ secrets/*.pem
 
 # Execlude files
 !page/src/shims-vue.d.ts
+
+# GraphQL
+graphql/
+src/compiled_graphql.ts

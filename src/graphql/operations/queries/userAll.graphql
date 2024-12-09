@@ -1,5 +1,0 @@
-query userAll{
-    userAll{
-        role
-    }
-}

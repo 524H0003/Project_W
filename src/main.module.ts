@@ -53,7 +53,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 				'subscriptions-transport-ws': false,
 			},
 			// Code first
-			autoSchemaFile: 'src/graphql/schema.gql',
+			autoSchemaFile: 'src/schema.gql',
 			sortSchema: true,
 			// Init Apollo SandBox
 			playground: false,
