@@ -20,11 +20,11 @@
 		"pretest": "npm run buildfile",
 		"gqlgen": " gqlg --schemaFilePath ./src/schema.gql --destDirPath ./graphql/operations --ext graphql",
 		"test": "jest --config=jest.all.config.ts",
-		"test:e2e": "jest --config=jest.e2e.config.ts",
-		"test:unit": "jest --config=jest.unit.config.ts",
+		"test:controller": "jest --config=jest.controller.config.ts",
+		"test:resolver": "jest --config=jest.resolver.config.ts",
+		"test:service": "jest --config=jest.service.config.ts",
 		"test:debug": "jest --debug",
 		"types": "tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/types.ts",
-		"triathlon": "npm run build && npm run test:unit && npm run test:e2e && npm run format && npm run lint",
 		"codegen": "graphql-codegen --config codegen.ts"
 	},
 	"dependencies": {

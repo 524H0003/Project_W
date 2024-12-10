@@ -9,13 +9,17 @@ const config: Config = {
 	reporters: [
 		'default',
 		['github-actions', { silent: false }],
-		['jest-junit', { outputDirectory: 'reports_e2e', outputName: 'junit.xml' }],
+		[
+			'jest-junit',
+			{ outputDirectory: 'reports', outputName: 'controller.xml' },
+		],
 	],
 	collectCoverage: true,
-	coverageReporters: [['text', { file: 'coverage_e2e.txt' }]],
+	coverageReporters: [['text', { file: 'controller.txt' }]],
 	collectCoverageFrom: [
 		'src/**/*.ts',
 		'!src/**/*.resolver.ts',
+		// Compulsory
 		'!src/**/*.module.ts',
 		'!src/**/*.spec.ts',
 		'!src/models.ts',

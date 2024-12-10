@@ -36,11 +36,11 @@ jobs:
               - '**.ts'
               - '**.json'
 
-  Test_Unit:
+  Test_service:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
 
-    name: 'Test Unit'
+    name: 'Test Services'
 
     runs-on: ubuntu-latest
 
@@ -71,23 +71,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run build && npm run test:unit
+      - run: npm run build && npm run test:service
 
-      - name: Jest Coverage Comment
+      - name: Service coverage
         uses: MishaKav/jest-coverage-comment@main
         id: coverageComment
         with:
-          title: Test report
+          title: Service coverage
           coverage-title: Coverage result
-          coverage-path: ./coverage/coverage.txt
+          coverage-path: ./coverage/service.txt
           create-new-comment: true
-          junitxml-path: ./reports/junit.xml
+          junitxml-path: ./reports/service.xml
 
-  Test_E2E:
+  Test_resolver:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
 
-    name: 'Test e2e'
+    name: 'Test resolvers'
 
     runs-on: ubuntu-latest
 
@@ -118,22 +118,70 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run build && npm run test:e2e
+      - run: npm run build && npm run test:resolver
 
-      - name: Jest Coverage Comment (e2e)
+      - name: Resolver coverage
         uses: MishaKav/jest-coverage-comment@main
         id: coverageCommentE2E
         with:
-          title: Test report (end 2 end)
+          title: Resolver coverage
           coverage-title: Coverage result
-          coverage-path: ./coverage/coverage_e2e.txt
+          coverage-path: ./coverage/resolver.txt
           create-new-comment: true
-          junitxml-path: ./reports_e2e/junit.xml
+          junitxml-path: ./reports/resolver.xml
+
+  Test_controller:
+    needs: changes
+    if: ${{ needs.changes.outputs.project == 'true' }}
+
+    name: 'Test controllers'
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+      actions: write
+      checks: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: ikalnytskyi/action-setup-postgres@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/cache@v4
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm run build && npm run test:controller
+
+      - name: Controller coverage
+        uses: MishaKav/jest-coverage-comment@main
+        id: coverageCommentE2E
+        with:
+          title: Controller coverage
+          coverage-title: Coverage result
+          coverage-path: ./coverage/controller.txt
+          create-new-comment: true
+          junitxml-path: ./reports/controller.xml
 
   FormatAndLint:
     needs:
-      - Test_E2E
-      - Test_Unit
+      - Test_service
+      - Test_resolver
+      - Test_controller
 
     name: 'Format & Lint'
 
