@@ -49,6 +49,6 @@ export class EventResolver {
 
 		input = InterfaceCasting.quick(input, IEventInfoKeys);
 
-		return await this.svc.event.modify(event.id, input);
+		return this.svc.event.modify(event.id, input);
 	}
 }

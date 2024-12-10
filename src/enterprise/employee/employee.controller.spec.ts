@@ -12,7 +12,7 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import request from 'supertest';
 import { MailerService } from '@nestjs-modules/mailer';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
-import { prepareEmployee } from './employee.controller.spec.utils';
+import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
 
 const fileName = curFile(__filename);
 
@@ -40,7 +40,7 @@ beforeEach(async () => {
 		(employee = Employee.test(fileName)),
 		(enterprise = Enterprise.test(fileName));
 
-	await prepareEmployee(req, enterprise, mailerSvc);
+	await assignEnterprise(req, enterprise, mailerSvc);
 });
 
 describe('hook', () => {

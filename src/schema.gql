@@ -25,7 +25,7 @@ type Event {
 
 input EventAssign {
   additionalFields: JSON = ""
-  applicationDeadline: DateTime!
+  applicationDeadline: DateTime
   description: String = ""
   endDate: DateTime!
   location: String!
@@ -36,6 +36,21 @@ input EventAssign {
   status: String = "draft"
   title: String!
   type: String = "internship"
+}
+
+type EventTag {
+  id: String!
+  name: String!
+  toEvents: [Event!]
+}
+
+input EventTagAssign {
+  name: String!
+}
+
+input EventTagAttach {
+  eventId: String!
+  name: String!
 }
 
 input EventUpdate {
@@ -61,6 +76,8 @@ scalar JSON
 
 type Mutation {
   assignEvent(input: EventAssign!): Event!
+  assignEventTag(input: EventTagAssign!): EventTag!
+  attachEventTag(input: EventTagAttach!): EventTag!
   updateEvent(input: EventUpdate!): Event!
 }
 

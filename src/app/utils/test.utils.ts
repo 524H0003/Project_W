@@ -13,7 +13,7 @@ import request from 'supertest';
 /**
  * Exported variables
  */
-let req: TestAgent, app: INestApplication;
+let requester: TestAgent, app: INestApplication;
 
 /**
  * Test's expectations
@@ -46,18 +46,18 @@ interface Expectation<T, K extends keyof jest.Matchers<T>> {
  * @param {object} options - the options to execute
  */
 export async function execute<
-	T extends (...args: any[]) => Promise<any>,
-	K extends keyof jest.Matchers<T>,
+	R,
+	K extends keyof jest.Matchers<(...args: any[]) => Promise<R>>,
 >(
-	func: T,
+	func: (...args: any[]) => Promise<R>,
 	options: {
 		throwError?: boolean;
 		numOfRun?: number;
-		exps: Expectation<T, K>[];
-		onFinish?: (result: any) => void;
+		exps: Expectation<typeof func, K>[];
+		onFinish?: (result: R) => void;
 	},
 ) {
-	let funcResult: any;
+	let funcResult: R;
 	const { throwError = false, numOfRun = 1, exps, onFinish = null } = options;
 
 	if (!throwError && numOfRun - 1) await numOfRun.ra(func);
@@ -97,7 +97,7 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
 	return async (variables: K, cookie?: any) => {
-		const result = await req
+		const result = await requester
 			.post('/graphql')
 			.set('Cookie', cookie)
 			.set('Content-Type', 'application/json')
@@ -119,7 +119,7 @@ export async function initJest() {
 	app = module.createNestApplication();
 
 	await app.use(cookieParser()).init();
-	req = request(app.getHttpServer());
+	requester = request(app.getHttpServer());
 
-	return { module, appSvc, req };
+	return { module, appSvc, requester };
 }

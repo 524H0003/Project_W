@@ -145,7 +145,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
-		return this.id(id);
+		return this.save(obj);
 	}
 
 	/**

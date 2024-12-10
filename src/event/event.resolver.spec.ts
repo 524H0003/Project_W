@@ -3,8 +3,6 @@ import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Event } from './event.entity';
 import { execute, initJest, sendGQL } from 'app/utils/test.utils';
-
-import { prepareEvent } from './event.resolver.spec.utils';
 import {
 	AssignEvent,
 	AssignEventMutation,
@@ -15,6 +13,7 @@ import {
 } from 'compiled_graphql';
 import { AppService } from 'app/app.service';
 import TestAgent from 'supertest/lib/agent';
+import { assignEmployee } from '../enterprise/employee/employee.controller.spec.utils';
 
 const fileName = curFile(__filename);
 
@@ -23,15 +22,13 @@ let mailerSvc: MailerService,
 	employee: Employee,
 	headers: object,
 	svc: AppService,
-	request: TestAgent,
+	req: TestAgent,
 	event: Event;
 
 beforeAll(async () => {
-	const { module, appSvc, req } = await initJest();
+	const { module, appSvc, requester } = await initJest();
 
-	svc = appSvc;
-	request = req;
-	mailerSvc = module.get(MailerService);
+	(svc = appSvc), (req = requester), (mailerSvc = module.get(MailerService));
 });
 
 beforeEach(async () => {
@@ -39,7 +36,7 @@ beforeEach(async () => {
 		(enterprise = Enterprise.test(fileName)),
 		(event = Event.test(fileName));
 
-	headers = (await prepareEvent(request, enterprise, employee, mailerSvc))
+	headers = (await assignEmployee(req, enterprise, employee, mailerSvc))
 		.headers;
 });
 

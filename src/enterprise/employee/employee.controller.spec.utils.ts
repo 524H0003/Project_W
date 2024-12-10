@@ -1,24 +1,38 @@
 import { MailerService } from '@nestjs-modules/mailer';
+import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
+import { Employee } from 'enterprise/employee/employee.entity';
+import {
+	IEmployeeHook,
+	IEmployeeSignup,
+} from 'enterprise/employee/employee.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import { IEnterpriseAssign } from 'enterprise/enterprise.model';
 import TestAgent from 'supertest/lib/agent';
 
-export async function prepareEmployee(
+export async function assignEmployee(
 	req: TestAgent,
 	enterprise: Enterprise,
+	employee: Employee,
 	mailerSvc: MailerService,
 ) {
-	const { headers } = await req.post('/request-signature').send(),
-		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0]['context'][
+	await assignEnterprise(req, enterprise, mailerSvc);
+
+	const { headers } = await req.post('/employee/hook').send({
+			enterpriseName: enterprise.baseUser.name,
+			...employee,
+			...employee.eventCreator.user.baseUser,
+		} as IEmployeeHook),
+		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0']['context'][
 			'signature'
 		];
 
-	await req
-		.post('/enterprise/assign')
+	return await req
+		.post('/employee/signup')
 		.set('Cookie', headers['set-cookie'])
 		.send({
 			signature,
-			...enterprise,
-			...enterprise.baseUser,
-		} as IEnterpriseAssign);
+			enterpriseName: enterprise.baseUser.name,
+			...employee,
+			...employee.eventCreator.user,
+			...employee.eventCreator.user.baseUser,
+		} as IEmployeeSignup);
 }
