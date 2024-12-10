@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
 import { ITagInfo } from './tag.model';
-import { Event } from 'event/event.entity';
 
 /**
  * Event's tag service
@@ -27,17 +26,12 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 	 * Create tag
 	 * @param {ITagInfo} input - tag's infomations
 	 */
-	async assign(input: ITagInfo, toEvent?: Event): Promise<EventTag> {
+	async assign(input: ITagInfo): Promise<EventTag> {
 		const existedTag = await this.svc.eventTag.findOne(input);
 
-		if (existedTag) {
-			if (!toEvent) return existedTag;
-			return this.attach(existedTag, toEvent.id);
-		}
+		if (existedTag) return existedTag;
 
-		return new EventTag(
-			await this.save({ name: input.name, toEvents: [toEvent!] }),
-		);
+		return new EventTag(await this.save({ name: input.name }));
 	}
 
 	/**

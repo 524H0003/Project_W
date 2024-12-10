@@ -152,7 +152,11 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	 * Application deadline
 	 */
 	@Field()
-	@Column({ name: 'application_deadline', type: 'timestamp with time zone' })
+	@Column({
+		name: 'application_deadline',
+		type: 'timestamp with time zone',
+		nullable: true,
+	})
 	applicationDeadline: Date;
 
 	/**
@@ -205,7 +209,7 @@ export class EventAssign implements IEventInfo {
 	@Field() title: string;
 	@Field() startDate: Date;
 	@Field() endDate: Date;
-	@Field() applicationDeadline: Date;
+	@Field({ nullable: true }) applicationDeadline: Date;
 	@Field() positionsAvailable: number;
 	@Field() maxParticipants: number;
 	@Field() location: string;
