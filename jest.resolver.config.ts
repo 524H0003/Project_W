@@ -9,10 +9,7 @@ const config: Config = {
 	reporters: [
 		'default',
 		['github-actions', { silent: false }],
-		[
-			'jest-junit',
-			{ outputDirectory: 'reports', outputName: 'resolver.xml' },
-		],
+		['jest-junit', { outputDirectory: 'reports', outputName: 'resolver.xml' }],
 	],
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'resolver.txt' }]],
