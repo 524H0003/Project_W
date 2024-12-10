@@ -13,18 +13,7 @@ const config: Config = {
 	],
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'resolver.txt' }]],
-	collectCoverageFrom: [
-		'src/**/*.ts',
-		'!src/**/*.controller.ts',
-		// Compulsory
-		'!src/**/*.module.ts',
-		'!src/**/*.spec.ts',
-		'!src/models.ts',
-		'!src/**/*.model.ts',
-		'!src/*.ts',
-		'!src/**/*.entity.ts',
-		'!src/**/*utils.ts',
-	],
+	collectCoverageFrom: ['src/**/*.resolver.ts'],
 };
 
 export default config;
