@@ -30,7 +30,7 @@ jobs:
       - id: 'getBranch'
         run: |
           if [[ $GITHUB_REF_NAME == 'master' ]]; then
-              echo "test=''" >> "$GITHUB_OUTPUT"
+              echo "test=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           else
               echo "test='HEAD'" >> "$GITHUB_OUTPUT"
           fi
