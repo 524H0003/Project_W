@@ -96,13 +96,20 @@
 
 - [x] Tạo sự kiện
 
-> [/graphql](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L26-L39)
+> [/graphql assignEvent](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L78)
 
 - [x] Cập nhật trạng thái sự kiện
 
-> [/graphql](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L41-L55)
+> [/graphql updateEvent](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L81)
 
-- [ ] Thêm tag cho sự kiện
+- [x] Tạo tag
+
+> [/graphql assignEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L79)
+
+- [x] Thêm tag cho sự kiện
+
+> [/graphql attachEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L80)
+
 - [ ] Cho người dùng tham gia sự kiện
 - [ ] Cập nhật thông tin người tham gia sự kiện
 

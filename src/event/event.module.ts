@@ -11,6 +11,7 @@ import { AppModule } from 'app/app.module';
 import { EventService } from './event.service';
 import { EventTagService } from './tag/tag.service';
 import { EventResolver } from './event.resolver';
+import { EventTagResolver } from './tag/tag.resolver';
 
 @Module({
 	imports: [
@@ -27,6 +28,7 @@ import { EventResolver } from './event.resolver';
 		EventService,
 		EventTagService,
 		EventResolver,
+		EventTagResolver,
 	],
 	exports: [EventCreatorService, EventService, EventTagService],
 })

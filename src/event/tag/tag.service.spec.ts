@@ -46,44 +46,6 @@ describe('assign', () => {
 			},
 		});
 	});
-
-	it('success when assign with event', async () => {
-		const event = Event.test(fileName),
-			assignedEvent = await appSvc.event.assign(event);
-
-		await execute(() => appSvc.eventTag.assign(eventTag, assignedEvent), {
-			exps: [{ type: 'toBeInstanceOf', params: [EventTag] }],
-			onFinish: async (result: EventTag) => {
-				await execute(() => appSvc.eventTag.find({ id: result.id }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
-				await execute(
-					() => appSvc.event.findOne({ tags: [{ id: result.id }] }),
-					{ exps: [{ type: 'toBeDefined', params: [] }] },
-				);
-			},
-		});
-	});
-
-	it('success when assign with event and already assigned', async () => {
-		const event = Event.test(fileName),
-			assignedEvent = await appSvc.event.assign(event);
-
-		await appSvc.eventTag.assign(eventTag);
-
-		await execute(() => appSvc.eventTag.assign(eventTag, assignedEvent), {
-			exps: [{ type: 'toBeInstanceOf', params: [EventTag] }],
-			onFinish: async (result: EventTag) => {
-				await execute(() => appSvc.eventTag.find({ id: result.id }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
-				await execute(
-					() => appSvc.event.findOne({ tags: [{ id: result.id }] }),
-					{ exps: [{ type: 'toBeDefined', params: [] }] },
-				);
-			},
-		});
-	});
 });
 
 describe('attach', () => {
