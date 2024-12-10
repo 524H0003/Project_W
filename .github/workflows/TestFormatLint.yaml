@@ -18,10 +18,19 @@ jobs:
       project: ${{ steps.filter.outputs.project }}
     steps:
       - uses: actions/checkout@v4
+
+      - id: 'getBranch'
+        run: |
+          if [[ $GITHUB_REF_NAME == 'master' ]]; then
+              echo "test='HEAD'" >> "$GITHUB_OUTPUT"
+          else
+              echo "test=''" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: dorny/paths-filter@v3
         id: filter
         with:
-          base: HEAD
+          base: ${{ steps.getBranch.outputs.test }}
           filters: |
             project:
               - '**.ts'
