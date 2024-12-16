@@ -9,11 +9,12 @@ import {
 } from './notification.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { INotificationInfoKeys } from 'models';
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 /**
  * Notification entity
  */
+@ObjectType()
 @Entity({ name: 'Notification' })
 export class Notification
 	extends SensitiveInfomations

@@ -77,8 +77,30 @@ scalar JSON
 type Mutation {
   assignEvent(input: EventAssign!): Event!
   assignEventTag(input: EventTagAssign!): EventTag!
+  assignNotification(input: NotificationAssign!): Notification!
   attachEventTag(input: EventTagAttach!): EventTag!
   updateEvent(input: EventUpdate!): Event!
+  updateNotification(input: NotificationUpdate!): Notification!
+}
+
+type Notification {
+  content: String!
+  id: String!
+  title: String!
+  type: notification_type!
+}
+
+input NotificationAssign {
+  content: String!
+  title: String!
+  type: String!
+}
+
+input NotificationUpdate {
+  content: String
+  id: String!
+  title: String
+  type: String
 }
 
 type Query {
@@ -110,4 +132,11 @@ enum event_type {
   Job_fair
   Seminar
   Workshop
+}
+
+enum notification_type {
+  event
+  participation
+  progress
+  system
 }
