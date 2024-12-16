@@ -9,6 +9,7 @@ import {
 } from './notification.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { INotificationInfoKeys } from 'models';
+import { Field, InputType } from '@nestjs/graphql';
 
 /**
  * Notification entity
@@ -46,12 +47,14 @@ export class Notification
 	 * Notification title
 	 */
 	@Column({ name: 'title', type: 'text' })
+	@Field()
 	title: string;
 
 	/**
 	 * Notification content
 	 */
 	@Column({ name: 'content', type: 'text' })
+	@Field()
 	content: string;
 
 	/**
@@ -63,6 +66,7 @@ export class Notification
 		enum: NotificationType,
 		enumName: 'notification_type',
 	})
+	@Field(() => NotificationType)
 	type: NotificationType;
 
 	// Embedded Entity
@@ -80,4 +84,19 @@ export class Notification
 			type: NotificationType.participation,
 		});
 	}
+}
+
+@InputType()
+export class NotificationAssign implements INotificationInfo {
+	@Field() title: string;
+	@Field() content: string;
+	@Field() type: NotificationType;
+}
+
+@InputType()
+export class NotificationUpdate implements INotificationInfo {
+	@Field({ nullable: true }) title: string;
+	@Field({ nullable: true }) content: string;
+	@Field({ nullable: true }) type: NotificationType;
+	@Field() id: string;
 }
