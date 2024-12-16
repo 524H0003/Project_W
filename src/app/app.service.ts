@@ -18,6 +18,7 @@ import { EventCreatorService } from 'event/creator/creator.service';
 import { UserService } from 'user/user.service';
 import { EventService } from 'event/event.service';
 import { EventTagService } from 'event/tag/tag.service';
+import { NotificationService } from 'notification/notification.service';
 
 /**
  * @ignore
@@ -60,6 +61,8 @@ export class AppService {
 		public event: EventService,
 		@Inject(forwardRef(() => EventTagService))
 		public eventTag: EventTagService,
+		@Inject(forwardRef(() => NotificationService))
+		public noti: NotificationService,
 	) {
 		this.baseUser = new BaseUserService(baseUserRepo);
 	}

@@ -1,4 +1,4 @@
-import { INotification } from 'notification/notification.model';
+import { INotificationInfo } from 'notification/notification.model';
 import { IUserEntity } from 'user/user.model';
 
 // Interfaces
@@ -14,7 +14,7 @@ export interface IReciever {
 	/**
 	 * Notification origin
 	 */
-	fromNotification: INotification;
+	fromNotification: INotificationInfo;
 
 	/**
 	 * Notification status

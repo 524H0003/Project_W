@@ -1,8 +1,14 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { INotification, NotificationType } from './notification.model';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { BlackBox } from 'app/utils/model.utils';
 import { Reciever } from './reciever/reciever.entity';
+import {
+	INotificationEntity,
+	INotificationInfo,
+	NotificationType,
+} from './notification.model';
+import { InterfaceCasting } from 'app/utils/utils';
+import { INotificationInfoKeys } from 'models';
 
 /**
  * Notification entity
@@ -10,8 +16,22 @@ import { Reciever } from './reciever/reciever.entity';
 @Entity({ name: 'Notification' })
 export class Notification
 	extends SensitiveInfomations
-	implements INotification
+	implements INotificationEntity
 {
+	/**
+	 * @ignore
+	 */
+	constructor(payload: INotificationInfo) {
+		super();
+
+		if (payload) {
+			Object.assign(
+				this,
+				InterfaceCasting.quick(payload, INotificationInfoKeys),
+			);
+		}
+	}
+
 	// Relationships
 	/**
 	 * Notification send to
@@ -51,4 +71,13 @@ export class Notification
 	 */
 	@Column(() => BlackBox, { prefix: false })
 	blackBox: BlackBox;
+
+	// Methods
+	static test(from: string) {
+		return new Notification({
+			title: from + (5).string,
+			content: (30).string,
+			type: NotificationType.participation,
+		});
+	}
 }

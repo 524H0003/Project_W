@@ -143,5 +143,6 @@
 			"isWholeLine": true,
 			"text": " Core Entity"
 		}
-	]
+	],
+	"testing.automaticallyOpenTestResults": "neverOpen"
 }
