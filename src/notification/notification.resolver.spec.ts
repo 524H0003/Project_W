@@ -10,6 +10,9 @@ import {
 	AssignNotification,
 	AssignNotificationMutation,
 	AssignNotificationMutationVariables,
+	UpdateNotification,
+	UpdateNotificationMutation,
+	UpdateNotificationMutationVariables,
 } from 'compiled_graphql';
 
 const fileName = curFile(__filename);
@@ -57,5 +60,58 @@ describe('assignNotification', () => {
 		await execute(() => svc.noti.find({ title: notification.title }), {
 			exps: [{ type: 'toHaveLength', params: [1] }],
 		});
+	});
+});
+
+describe('updateNotification', () => {
+	const send = sendGQL<
+		UpdateNotificationMutation,
+		UpdateNotificationMutationVariables
+	>(UpdateNotification);
+	let notificationId: string;
+
+	beforeEach(async () => {
+		notificationId = (
+			await sendGQL<
+				AssignNotificationMutation,
+				AssignNotificationMutationVariables
+			>(AssignNotification)({ input: notification }, headers['set-cookie'])
+		).assignNotification.id;
+	});
+
+	it('success', async () => {
+		const newContent = 'Edited_' + (30).string;
+
+		await execute(
+			async () =>
+				(
+					await send(
+						{ input: { id: notificationId, content: newContent } },
+						headers['set-cookie'],
+					)
+				).updateNotification,
+			{ exps: [{ type: 'toHaveProperty', params: ['content', newContent] }] },
+		);
+		await execute(() => svc.noti.find({ content: newContent }), {
+			exps: [{ type: 'toHaveLength', params: [1] }],
+		});
+		await execute(() => svc.noti.find({ content: notification.content }), {
+			exps: [{ type: 'toHaveLength', params: [0] }],
+		});
+	});
+
+	it('failed due to invalid id', async () => {
+		const newId =
+			notificationId.at(-1) !== '0'
+				? notificationId.slice(0, -1) + '0'
+				: notificationId.slice(0, -1) + '1';
+
+		await execute(
+			async () =>
+				JSON.stringify(
+					await send({ input: { id: newId } }, headers['set-cookie']),
+				),
+			{ exps: [{ type: 'toContain', params: ['Invalid_Notification_Id'] }] },
+		);
 	});
 });
