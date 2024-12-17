@@ -1,14 +1,27 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { IReciever } from './reciever.model';
 import { User } from 'user/user.entity';
 import { Notification } from 'notification/notification.entity';
+import { IRecieverEntity, IRecieverInfo } from './reciever.model';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IRecieverInfoKeys } from 'models';
 
 /**
  * Reciever entity
  */
 @Entity({ name: 'UserNotification' })
-export class Reciever extends SensitiveInfomations implements IReciever {
+export class Reciever extends SensitiveInfomations implements IRecieverEntity {
+	/**
+	 * @ignore
+	 */
+	constructor(payload: IRecieverInfo) {
+		super();
+
+		if (payload) {
+			Object.assign(this, InterfaceCasting.quick(payload, IRecieverInfoKeys));
+		}
+	}
+
 	// Relationships
 	/**
 	 * Recieve user
@@ -28,12 +41,17 @@ export class Reciever extends SensitiveInfomations implements IReciever {
 	/**
 	 * Notification status
 	 */
-	@Column({ name: 'is_read' })
+	@Column({ name: 'is_read', default: false })
 	isRead: boolean;
 
 	/**
 	 * Notification time record
 	 */
-	@Column({ name: 'read_at', type: 'timestamp with time zone' })
+	@Column({
+		name: 'read_at',
+		type: 'timestamp with time zone',
+		nullable: true,
+		default: null,
+	})
 	readAt: Date;
 }

@@ -157,7 +157,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	async pushMany<K extends keyof T>(id: string, field: K, entities: T[K]) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entities);
-		return this.id(id);
+		return this.save(obj);
 	}
 
 	/**

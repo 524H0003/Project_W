@@ -1,21 +1,11 @@
 import { INotificationInfo } from 'notification/notification.model';
-import { IUserEntity } from 'user/user.model';
+import { IUserInfo } from 'user/user.model';
 
 // Interfaces
 /**
  * Notification reciever to user
  */
-export interface IReciever {
-	/**
-	 * Recieve user
-	 */
-	toUser: IUserEntity;
-
-	/**
-	 * Notification origin
-	 */
-	fromNotification: INotificationInfo;
-
+export interface IRecieverInfo {
 	/**
 	 * Notification status
 	 */
@@ -26,3 +16,25 @@ export interface IReciever {
 	 */
 	readAt: Date;
 }
+
+/**
+ * Notification's relationships
+ */
+export interface IRecieverRelationships {
+	/**
+	 * Recieve user
+	 */
+	toUser: IUserInfo;
+
+	/**
+	 * Notification origin
+	 */
+	fromNotification: INotificationInfo;
+}
+
+/**
+ * Notification's entity
+ */
+export interface IRecieverEntity
+	extends IRecieverRelationships,
+		IRecieverInfo {}

@@ -19,6 +19,7 @@ import { UserService } from 'user/user.service';
 import { EventService } from 'event/event.service';
 import { EventTagService } from 'event/tag/tag.service';
 import { NotificationService } from 'notification/notification.service';
+import { RecieverService } from 'notification/reciever/reciever.service';
 
 /**
  * @ignore
@@ -63,6 +64,8 @@ export class AppService {
 		public eventTag: EventTagService,
 		@Inject(forwardRef(() => NotificationService))
 		public noti: NotificationService,
+		@Inject(forwardRef(() => RecieverService))
+		public recie: RecieverService,
 	) {
 		this.baseUser = new BaseUserService(baseUserRepo);
 	}

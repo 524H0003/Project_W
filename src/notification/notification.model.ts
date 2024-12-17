@@ -1,5 +1,5 @@
 import { IEntityId } from 'app/app.model';
-import { IReciever } from './reciever/reciever.model';
+import { IRecieverEntity } from './reciever/reciever.model';
 
 // Interfaces
 /**
@@ -29,7 +29,7 @@ export interface INotificationRelationship {
 	/**
 	 * Notification send to
 	 */
-	sent: IReciever[];
+	sent: IRecieverEntity[];
 }
 
 /**
