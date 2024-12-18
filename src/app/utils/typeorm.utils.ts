@@ -167,7 +167,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @return {Promise<T>} the object from database
 	 */
 	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
-		return this.repo.save(entity, options);
+		return this.repo.save(entity, options) as Promise<T>;
 	}
 
 	/**
