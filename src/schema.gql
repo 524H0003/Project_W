@@ -113,7 +113,7 @@ type Query {
 type Reciever {
   id: String!
   isRead: Boolean!
-  readAt: DateTime!
+  readAt: DateTime
 }
 
 input RecieverAssign {

@@ -3,6 +3,7 @@ import { AppService } from 'app/app.service';
 import { execute, initJest, sendGQL } from 'app/utils/test.utils';
 import {
 	AssignReciever,
+	AssignRecieverMany,
 	AssignRecieverManyMutation,
 	AssignRecieverManyMutationVariables,
 	AssignRecieverMutation,
@@ -69,11 +70,65 @@ describe('assignReciever', () => {
 					)
 				).assignReciever,
 			{
-				exps: [{ type: 'toBeDefined', params: [], debug: true }],
+				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
 					await execute(() => svc.recie.id(result.id), {
 						exps: [{ type: 'toBeDefined', params: [] }],
 					});
+				},
+			},
+		);
+	});
+});
+
+describe('assignRecieverMany', () => {
+	const usersId: string[] = [],
+		send = sendGQL<
+			AssignRecieverManyMutation,
+			AssignRecieverManyMutationVariables
+		>(AssignRecieverMany);
+
+	beforeEach(async () => {
+		for (let i = 0; i < 5; i++) {
+			const tUser = User.test(fileName);
+			if (tUser.hashedPassword) true;
+			usersId.push((await svc.user.assign(tUser)).baseUser.id);
+		}
+	});
+
+	it('success', async () => {
+		await execute(
+			async () =>
+				(
+					await send(
+						{
+							input: {
+								notificationId: notification.id,
+								usersId,
+							},
+						},
+						headers['set-cookie'],
+					)
+				).assignRecieverMany,
+			{
+				exps: [{ type: 'toBeDefined', params: [] }],
+				onFinish: async (result) => {
+					for (const { id } of result) {
+						await execute(
+							() =>
+								svc.user.findOne({
+									recievedNotifications: [{ id }],
+								}),
+							{ exps: [{ type: 'toBeDefined', params: [] }] },
+						);
+						await execute(
+							() =>
+								svc.noti.findOne({
+									sent: [{ id }],
+								}),
+							{ exps: [{ type: 'toBeDefined', params: [] }] },
+						);
+					}
 				},
 			},
 		);

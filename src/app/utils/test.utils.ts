@@ -103,9 +103,7 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 			.set('Content-Type', 'application/json')
 			.send(JSON.stringify({ query, variables }));
 		if (result.body.data) return result.body.data;
-		throw new BadRequestException(
-			'Invalid_Graphql_Request ' + JSON.stringify(result.body.errors),
-		);
+		throw new Error(result.body.errors[0].message);
 	};
 }
 

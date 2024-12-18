@@ -48,7 +48,7 @@ describe('assign', () => {
 	});
 });
 
-describe('assign', () => {
+describe('assignMany', () => {
 	const usersId: string[] = [];
 
 	beforeEach(async () => {
