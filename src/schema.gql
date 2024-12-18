@@ -78,6 +78,8 @@ type Mutation {
   assignEvent(input: EventAssign!): Event!
   assignEventTag(input: EventTagAssign!): EventTag!
   assignNotification(input: NotificationAssign!): Notification!
+  assignReciever(input: RecieverAssign!): Reciever!
+  assignRecieverMany(input: RecieverAssignMany!): [Reciever!]!
   attachEventTag(input: EventTagAttach!): EventTag!
   updateEvent(input: EventUpdate!): Event!
   updateNotification(input: NotificationUpdate!): Notification!
@@ -106,6 +108,22 @@ input NotificationUpdate {
 type Query {
   user(id: String!): User!
   userAll: [User!]!
+}
+
+type Reciever {
+  id: String!
+  isRead: Boolean!
+  readAt: DateTime!
+}
+
+input RecieverAssign {
+  notificationId: String!
+  userId: String!
+}
+
+input RecieverAssignMany {
+  notificationId: String!
+  usersId: [String!]!
 }
 
 type User {

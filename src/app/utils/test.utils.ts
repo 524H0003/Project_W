@@ -1,6 +1,6 @@
 // Interfaces
 
-import { INestApplication } from '@nestjs/common';
+import { BadRequestException, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
@@ -96,14 +96,16 @@ export type SendGQLType<T, K> = (variables: K, cookie?: any) => Promise<T>;
 export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
-	return async (variables: K, cookie?: any) => {
+	return async (variables: K, cookie?: any): Promise<T> => {
 		const result = await requester
 			.post('/graphql')
 			.set('Cookie', cookie)
 			.set('Content-Type', 'application/json')
 			.send(JSON.stringify({ query, variables }));
-
-		return (result.body.data || result) as T;
+		if (result.body.data) return result.body.data;
+		throw new BadRequestException(
+			'Invalid_Graphql_Request ' + JSON.stringify(result.body.errors),
+		);
 	};
 }
 

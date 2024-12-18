@@ -8,13 +8,19 @@ import { NotificationResolver } from './notification.resolver';
 import { registerEnumType } from '@nestjs/graphql';
 import { NotificationType } from './notification.model';
 import { RecieverService } from './reciever/reciever.service';
+import { RecieverResolver } from './reciever/reciever.resolver';
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Notification, Reciever]),
 		forwardRef(() => AppModule),
 	],
-	providers: [NotificationService, NotificationResolver, RecieverService],
+	providers: [
+		NotificationService,
+		NotificationResolver,
+		RecieverService,
+		RecieverResolver,
+	],
 	exports: [NotificationService, RecieverService],
 })
 export class NotificationModule {

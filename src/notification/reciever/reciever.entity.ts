@@ -5,10 +5,12 @@ import { Notification } from 'notification/notification.entity';
 import { IRecieverEntity, IRecieverInfo } from './reciever.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IRecieverInfoKeys } from 'models';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 /**
  * Reciever entity
  */
+@ObjectType()
 @Entity({ name: 'UserNotification' })
 export class Reciever extends SensitiveInfomations implements IRecieverEntity {
 	/**
@@ -41,12 +43,14 @@ export class Reciever extends SensitiveInfomations implements IRecieverEntity {
 	/**
 	 * Notification status
 	 */
+	@Field()
 	@Column({ name: 'is_read', default: false })
 	isRead: boolean;
 
 	/**
 	 * Notification time record
 	 */
+	@Field({ nullable: true })
 	@Column({
 		name: 'read_at',
 		type: 'timestamp with time zone',
@@ -54,4 +58,16 @@ export class Reciever extends SensitiveInfomations implements IRecieverEntity {
 		default: null,
 	})
 	readAt: Date;
+}
+
+@InputType()
+export class RecieverAssign {
+	@Field() notificationId: string;
+	@Field() userId: string;
+}
+
+@InputType()
+export class RecieverAssignMany {
+	@Field() notificationId: string;
+	@Field(() => [String]) usersId: string[];
 }
