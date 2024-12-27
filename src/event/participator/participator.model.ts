@@ -1,3 +1,4 @@
+import { IEntityId } from 'app/app.model';
 import { IEventEntity } from 'event/event.model';
 import { IUserEntity } from 'user/user.model';
 
@@ -5,7 +6,7 @@ import { IUserEntity } from 'user/user.model';
 /**
  * Event participator model
  */
-export interface IEventParticipator {
+export interface IEventParticipatorRelationships {
 	/**
 	 * Participator from event
 	 */
@@ -15,7 +16,12 @@ export interface IEventParticipator {
 	 * The user participate event
 	 */
 	participatedBy: IUserEntity;
+}
 
+/**
+ * Event participator's info
+ */
+export interface IEventParticipatorInfo extends IEntityId {
 	/**
 	 * The role in event
 	 */
@@ -49,8 +55,15 @@ export interface IEventParticipator {
 	/**
 	 * Addition data
 	 */
-	additionalData: any;
+	additionalData: object;
 }
+
+/**
+ * Event participator's entity
+ */
+export interface IEventParticipatorEntiy
+	extends IEventParticipatorInfo,
+		IEventParticipatorRelationships {}
 
 // Enums
 export enum EventParticipatorStatus {

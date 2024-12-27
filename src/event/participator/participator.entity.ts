@@ -2,11 +2,14 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import {
 	EventParticipatorRole,
 	EventParticipatorStatus,
-	IEventParticipator,
+	IEventParticipatorEntiy,
+	IEventParticipatorInfo,
 } from './participator.model';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IEventParticipatorInfoKeys } from 'models';
 
 /**
  * Event participator entity
@@ -14,8 +17,22 @@ import { User } from 'user/user.entity';
 @Entity({ name: 'EventParticipation' })
 export class EventParticipator
 	extends SensitiveInfomations
-	implements IEventParticipator
+	implements IEventParticipatorEntiy
 {
+	/**
+	 * @ignore
+	 */
+	constructor(payload: IEventParticipatorInfo) {
+		super();
+
+		if (payload) {
+			Object.assign(
+				this,
+				InterfaceCasting.quick(payload, IEventParticipatorInfoKeys),
+			);
+		}
+	}
+
 	// Relationships
 	/**
 	 * Participator from event
@@ -35,7 +52,7 @@ export class EventParticipator
 	/**
 	 * If participator attended
 	 */
-	@Column({ name: 'attendance' })
+	@Column({ name: 'attendance', default: false })
 	isAttended: boolean;
 
 	/**
@@ -47,20 +64,24 @@ export class EventParticipator
 	/**
 	 * Participator interview time record
 	 */
-	@Column({ name: 'interview_time', type: 'timestamp with time zone' })
+	@Column({
+		name: 'interview_time',
+		type: 'timestamp with time zone',
+		nullable: true,
+	})
 	interviewAt: Date;
 
 	/**
 	 * Participator interview note
 	 */
-	@Column({ name: 'interview_notes', type: 'text' })
+	@Column({ name: 'interview_notes', type: 'text', default: '' })
 	interviewNote: string;
 
 	/**
 	 * Addition data
 	 */
-	@Column({ name: 'additional_data', type: 'jsonb' })
-	additionalData: any;
+	@Column({ name: 'additional_data', default: {}, type: 'jsonb' })
+	additionalData: object;
 
 	/**
 	 * The status in event
@@ -70,6 +91,7 @@ export class EventParticipator
 		type: 'enum',
 		enum: EventParticipatorStatus,
 		enumName: 'participation_status',
+		default: EventParticipatorStatus.registered,
 	})
 	status: EventParticipatorStatus;
 
@@ -81,6 +103,7 @@ export class EventParticipator
 		type: 'enum',
 		enum: EventParticipatorRole,
 		enumName: 'participation_role',
+		default: EventParticipatorRole.attendee,
 	})
 	role: EventParticipatorRole;
 }

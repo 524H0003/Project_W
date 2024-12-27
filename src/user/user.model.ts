@@ -1,6 +1,6 @@
 import { IBaseUserEntity, IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
 import { IDeviceEntity } from 'auth/device/device.model';
-import { IEventParticipator } from 'event/participator/participator.model';
+import { IEventParticipatorEntiy } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 import { JwtPayload } from 'jsonwebtoken';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';
@@ -62,7 +62,7 @@ export interface IUserRelationship {
 	recievedNotifications: IRecieverEntity[];
 	devices: IDeviceEntity[];
 	uploadFiles: IFile[];
-	participatedEvents: IEventParticipator[];
+	participatedEvents: IEventParticipatorEntiy[];
 }
 
 /**

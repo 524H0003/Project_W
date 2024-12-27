@@ -25,7 +25,7 @@ export async function assignEmployee(
 			'signature'
 		];
 
-	return await req
+	return req
 		.post('/employee/signup')
 		.set('Cookie', headers['set-cookie'])
 		.send({
