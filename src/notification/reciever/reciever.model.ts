@@ -1,3 +1,4 @@
+import { IEntityId } from 'app/app.model';
 import { INotificationInfo } from 'notification/notification.model';
 import { IUserInfo } from 'user/user.model';
 
@@ -5,7 +6,7 @@ import { IUserInfo } from 'user/user.model';
 /**
  * Notification reciever to user
  */
-export interface IRecieverInfo {
+export interface IRecieverInfo extends IEntityId {
 	/**
 	 * Notification status
 	 */

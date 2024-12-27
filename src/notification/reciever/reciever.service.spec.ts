@@ -83,3 +83,60 @@ describe('assignMany', () => {
 		});
 	});
 });
+
+describe('read', () => {
+	let reciever: Reciever;
+
+	beforeEach(async () => {
+		reciever = await svc.recie.assign(notification.id, user.baseUser.id);
+	});
+
+	it('success', async () => {
+		await execute(() => svc.recie.read(reciever.id, user.baseUser.id), {
+			exps: [{ type: 'toBeInstanceOf', params: [Reciever] }],
+			onFinish: async (result) => {
+				await execute(() => svc.recie.findOne({ id: result.id }), {
+					exps: [
+						{ type: 'toHaveProperty', params: ['isRead', true] },
+						{ type: 'toHaveProperty', params: ['readAt', null], not: true },
+					],
+				});
+			},
+		});
+	});
+});
+
+describe('readMany', () => {
+	const recieversId: string[] = [];
+
+	beforeEach(async () => {
+		for (let i = 0; i < 5; i++)
+			recieversId.push(
+				(
+					await svc.recie.assign(
+						(
+							await svc.noti.assign(
+								Notification.test(fileName + '_' + (5).string),
+							)
+						).id,
+						user.baseUser.id,
+					)
+				).id,
+			);
+	});
+
+	it('success', async () => {
+		await execute(() => svc.recie.readMany(recieversId, user.baseUser.id), {
+			exps: [{ type: 'toBeInstanceOf', params: [Array<Reciever>] }],
+			onFinish: async (result) => {
+				for (let i = 0; i < 5; i++)
+					await execute(() => svc.recie.findOne({ id: result[i].id }), {
+						exps: [
+							{ type: 'toHaveProperty', params: ['isRead', true] },
+							{ type: 'toHaveProperty', params: ['readAt', null], not: true },
+						],
+					});
+			},
+		});
+	});
+});

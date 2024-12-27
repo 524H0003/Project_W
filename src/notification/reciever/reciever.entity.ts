@@ -71,3 +71,13 @@ export class RecieverAssignMany {
 	@Field() notificationId: string;
 	@Field(() => [String]) usersId: string[];
 }
+
+@InputType()
+export class ReadNotification {
+	@Field() recieverId: string;
+}
+
+@InputType()
+export class ReadNotificationMany {
+	@Field(() => [String]) recieversId: string[];
+}
