@@ -92,10 +92,14 @@
 - [x] Tạo thông báo
 > [/graphql assignNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L80)
 
-- [x] Gửi thông báo cho người dùng
-> [/graphql updateNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L85)
+- [x] Cập nhật thông báo
+> [/graphql updateNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L8)
 
-- [ ] Đánh dấu đã xem thông báo
+- [x] Gửi thông báo cho người dùng
+> [/graphql assignReciever(Many)](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L81-L82)
+
+- [x] Đánh dấu đã xem thông báo
+> [/graphql readNotification(Many)](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L84-L85)
 
 ### Sự kiện
 
