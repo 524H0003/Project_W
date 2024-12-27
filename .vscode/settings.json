@@ -45,6 +45,7 @@
 		"showInlineError": true,
 		"type": "on-demand"
 	},
+	"testing.automaticallyOpenTestResults": "neverOpen",
 	"testing.openTesting": "neverOpen",
 	"todohighlight.keywords": [
 		{
@@ -143,6 +144,5 @@
 			"isWholeLine": true,
 			"text": " Core Entity"
 		}
-	],
-	"testing.automaticallyOpenTestResults": "neverOpen"
+	]
 }

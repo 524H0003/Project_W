@@ -65,19 +65,12 @@ describe('assignMany', () => {
 			onFinish: async (result) => {
 				for (const { id } of result) {
 					await execute(
-						() =>
-							svc.user.findOne({
-								recievedNotifications: [{ id }],
-							}),
+						() => svc.user.findOne({ recievedNotifications: [{ id }] }),
 						{ exps: [{ type: 'toBeDefined', params: [] }] },
 					);
-					await execute(
-						() =>
-							svc.noti.findOne({
-								sent: [{ id }],
-							}),
-						{ exps: [{ type: 'toBeDefined', params: [] }] },
-					);
+					await execute(() => svc.noti.findOne({ sent: [{ id }] }), {
+						exps: [{ type: 'toBeDefined', params: [] }],
+					});
 				}
 			},
 		});

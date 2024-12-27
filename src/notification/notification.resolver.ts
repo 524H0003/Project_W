@@ -23,9 +23,7 @@ export class NotificationResolver {
 	@Mutation(() => Notification)
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async assignNotification(@Args('input') input: NotificationAssign) {
-		return this.svc.noti.assign({
-			...input,
-		});
+		return this.svc.noti.assign({ ...input });
 	}
 
 	/**
