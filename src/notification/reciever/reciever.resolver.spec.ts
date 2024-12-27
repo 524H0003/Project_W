@@ -1,6 +1,11 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
-import { execute, initJest, sendGQL } from 'app/utils/test.utils';
+import {
+	disableDescribe,
+	execute,
+	initJest,
+	sendGQL,
+} from 'app/utils/test.utils';
 import {
 	AssignReciever,
 	AssignRecieverMany,
@@ -8,6 +13,9 @@ import {
 	AssignRecieverManyMutationVariables,
 	AssignRecieverMutation,
 	AssignRecieverMutationVariables,
+	ReadNotification,
+	ReadNotificationMutation,
+	ReadNotificationMutationVariables,
 } from 'compiled_graphql';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
@@ -16,6 +24,8 @@ import { Notification } from 'notification/notification.entity';
 import { assignNoti } from 'notification/notification.resolver.spec.utils';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
+import { Reciever } from './reciever.entity';
+import { Student } from 'university/student/student.entity';
 
 const fileName = curFile(__filename);
 
@@ -129,6 +139,48 @@ describe('assignRecieverMany', () => {
 							{ exps: [{ type: 'toBeDefined', params: [] }] },
 						);
 					}
+				},
+			},
+		);
+	});
+});
+
+disableDescribe('readNotification', () => {
+	const send = sendGQL<
+		ReadNotificationMutation,
+		ReadNotificationMutationVariables
+	>(ReadNotification);
+
+	let reciever: Reciever, userHeaders: object;
+
+	beforeEach(async () => {
+		const tUser = Student.test(fileName);
+		(
+			await req
+				.post('/student/signup')
+				.send({ ...tUser.user, ...tUser.user.baseUser })
+		).headers;
+		reciever = await svc.recie.assign(notification.id, tUser.user.baseUser.id);
+		userHeaders = await req
+			.post('/login')
+			.send({ ...tUser, ...tUser.user.baseUser, ...tUser.user });
+	});
+
+	it('success', async () => {
+		await execute(
+			async () =>
+				(
+					await send(
+						{ input: { recieverId: reciever.id } },
+						userHeaders['set-cookie'],
+					)
+				).readNotification,
+			{
+				exps: [{ type: 'toBeDefined', params: [] }],
+				onFinish: async (result) => {
+					await execute(() => svc.recie.id(result.id), {
+						exps: [{ type: 'toBeDefined', params: [] }],
+					});
 				},
 			},
 		);

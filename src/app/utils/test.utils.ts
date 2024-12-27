@@ -1,6 +1,4 @@
-// Interfaces
-
-import { BadRequestException, INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
@@ -123,3 +121,13 @@ export async function initJest() {
 
 	return { module, appSvc, requester };
 }
+
+/**
+ * Disable test function
+ */
+export function disableDescribe(
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	name: string,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	func: () => void | Promise<void>,
+) {}
