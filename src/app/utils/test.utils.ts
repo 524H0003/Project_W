@@ -1,5 +1,3 @@
-// Interfaces
-
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'app/app.module';
@@ -96,14 +94,14 @@ export type SendGQLType<T, K> = (variables: K, cookie?: any) => Promise<T>;
 export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
-	return async (variables: K, cookie?: any) => {
+	return async (variables: K, cookie?: any): Promise<T> => {
 		const result = await requester
 			.post('/graphql')
 			.set('Cookie', cookie)
 			.set('Content-Type', 'application/json')
 			.send(JSON.stringify({ query, variables }));
-
-		return (result.body.data || result) as T;
+		if (result.body.data) return result.body.data;
+		throw new Error(result.body.errors[0].message);
 	};
 }
 
@@ -123,3 +121,13 @@ export async function initJest() {
 
 	return { module, appSvc, requester };
 }
+
+/**
+ * Disable test function
+ */
+export function disableDescribe(
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	name: string,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	func: () => void | Promise<void>,
+) {}

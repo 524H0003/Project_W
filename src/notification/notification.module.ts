@@ -3,11 +3,28 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notification } from './notification.entity';
 import { Reciever } from './reciever/reciever.entity';
 import { AppModule } from 'app/app.module';
+import { NotificationService } from './notification.service';
+import { NotificationResolver } from './notification.resolver';
+import { registerEnumType } from '@nestjs/graphql';
+import { NotificationType } from './notification.model';
+import { RecieverService } from './reciever/reciever.service';
+import { RecieverResolver } from './reciever/reciever.resolver';
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Notification, Reciever]),
 		forwardRef(() => AppModule),
 	],
+	providers: [
+		NotificationService,
+		NotificationResolver,
+		RecieverService,
+		RecieverResolver,
+	],
+	exports: [NotificationService, RecieverService],
 })
-export class NotificationModule {}
+export class NotificationModule {
+	constructor() {
+		registerEnumType(NotificationType, { name: 'notification_type' });
+	}
+}

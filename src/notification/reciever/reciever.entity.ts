@@ -1,14 +1,29 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { IReciever } from './reciever.model';
 import { User } from 'user/user.entity';
 import { Notification } from 'notification/notification.entity';
+import { IRecieverEntity, IRecieverInfo } from './reciever.model';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IRecieverInfoKeys } from 'models';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 /**
  * Reciever entity
  */
+@ObjectType()
 @Entity({ name: 'UserNotification' })
-export class Reciever extends SensitiveInfomations implements IReciever {
+export class Reciever extends SensitiveInfomations implements IRecieverEntity {
+	/**
+	 * @ignore
+	 */
+	constructor(payload: IRecieverInfo) {
+		super();
+
+		if (payload) {
+			Object.assign(this, InterfaceCasting.quick(payload, IRecieverInfoKeys));
+		}
+	}
+
 	// Relationships
 	/**
 	 * Recieve user
@@ -28,12 +43,41 @@ export class Reciever extends SensitiveInfomations implements IReciever {
 	/**
 	 * Notification status
 	 */
-	@Column({ name: 'is_read' })
+	@Field()
+	@Column({ name: 'is_read', default: false })
 	isRead: boolean;
 
 	/**
 	 * Notification time record
 	 */
-	@Column({ name: 'read_at', type: 'timestamp with time zone' })
+	@Field({ nullable: true })
+	@Column({
+		name: 'read_at',
+		type: 'timestamp with time zone',
+		nullable: true,
+		default: null,
+	})
 	readAt: Date;
+}
+
+@InputType()
+export class RecieverAssign {
+	@Field() notificationId: string;
+	@Field() userId: string;
+}
+
+@InputType()
+export class RecieverAssignMany {
+	@Field() notificationId: string;
+	@Field(() => [String]) usersId: string[];
+}
+
+@InputType()
+export class ReadNotification {
+	@Field() recieverId: string;
+}
+
+@InputType()
+export class ReadNotificationMany {
+	@Field(() => [String]) recieversId: string[];
 }

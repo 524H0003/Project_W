@@ -5,8 +5,6 @@ import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { UserRole } from 'user/user.model';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Event, EventAssign, EventUpdate } from './event.entity';
-import { IEventInfoKeys } from 'models';
-import { InterfaceCasting } from 'app/utils/utils';
 
 @Resolver(() => Event)
 @UseGuards(RoleGuard)
@@ -46,8 +44,6 @@ export class EventResolver {
 		});
 
 		if (!event) throw new BadRequestException('Invalid_Event_Id');
-
-		input = InterfaceCasting.quick(input, IEventInfoKeys);
 
 		return this.svc.event.modify(event.id, input);
 	}

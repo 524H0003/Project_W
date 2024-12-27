@@ -1,17 +1,39 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { INotification, NotificationType } from './notification.model';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { BlackBox } from 'app/utils/model.utils';
 import { Reciever } from './reciever/reciever.entity';
+import {
+	INotificationEntity,
+	INotificationInfo,
+	NotificationType,
+} from './notification.model';
+import { InterfaceCasting } from 'app/utils/utils';
+import { INotificationInfoKeys } from 'models';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 /**
  * Notification entity
  */
+@ObjectType()
 @Entity({ name: 'Notification' })
 export class Notification
 	extends SensitiveInfomations
-	implements INotification
+	implements INotificationEntity
 {
+	/**
+	 * @ignore
+	 */
+	constructor(payload: INotificationInfo) {
+		super();
+
+		if (payload) {
+			Object.assign(
+				this,
+				InterfaceCasting.quick(payload, INotificationInfoKeys),
+			);
+		}
+	}
+
 	// Relationships
 	/**
 	 * Notification send to
@@ -26,12 +48,14 @@ export class Notification
 	 * Notification title
 	 */
 	@Column({ name: 'title', type: 'text' })
+	@Field()
 	title: string;
 
 	/**
 	 * Notification content
 	 */
 	@Column({ name: 'content', type: 'text' })
+	@Field()
 	content: string;
 
 	/**
@@ -43,6 +67,7 @@ export class Notification
 		enum: NotificationType,
 		enumName: 'notification_type',
 	})
+	@Field(() => NotificationType)
 	type: NotificationType;
 
 	// Embedded Entity
@@ -51,4 +76,28 @@ export class Notification
 	 */
 	@Column(() => BlackBox, { prefix: false })
 	blackBox: BlackBox;
+
+	// Methods
+	static test(from: string) {
+		return new Notification({
+			title: from + (5).string,
+			content: (30).string,
+			type: NotificationType.participation,
+		});
+	}
+}
+
+@InputType()
+export class NotificationAssign implements INotificationInfo {
+	@Field() title: string;
+	@Field() content: string;
+	@Field() type: NotificationType;
+}
+
+@InputType()
+export class NotificationUpdate implements INotificationInfo {
+	@Field({ nullable: true }) title: string;
+	@Field({ nullable: true }) content: string;
+	@Field({ nullable: true }) type: NotificationType;
+	@Field() id: string;
 }

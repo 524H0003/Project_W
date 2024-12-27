@@ -89,8 +89,17 @@
 
 ### Thông báo
 
-- [ ] Tạo thông báo
-- [ ] Đánh dấu đã xem thông báo
+- [x] Tạo thông báo
+> [/graphql assignNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L80)
+
+- [x] Cập nhật thông báo
+> [/graphql updateNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L8)
+
+- [x] Gửi thông báo cho người dùng
+> [/graphql assignReciever(Many)](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L81-L82)
+
+- [x] Đánh dấu đã xem thông báo
+> [/graphql readNotification(Many)](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L84-L85)
 
 ### Sự kiện
 
@@ -100,7 +109,7 @@
 
 - [x] Cập nhật trạng thái sự kiện
 
-> [/graphql updateEvent](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L81)
+> [/graphql updateEvent](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L84)
 
 - [x] Tạo tag
 
@@ -108,7 +117,7 @@
 
 - [x] Thêm tag cho sự kiện
 
-> [/graphql attachEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L80)
+> [/graphql attachEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L83)
 
 - [ ] Cho người dùng tham gia sự kiện
 - [ ] Cập nhật thông tin người tham gia sự kiện

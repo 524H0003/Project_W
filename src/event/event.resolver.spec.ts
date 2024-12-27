@@ -99,11 +99,13 @@ describe('updateEvent', () => {
 				: eventId.slice(0, -1) + '1';
 
 		await execute(
-			async () =>
-				JSON.stringify(
-					await send({ input: { id: newId } }, headers['set-cookie']),
-				),
-			{ exps: [{ type: 'toContain', params: ['Invalid_Event_Id'] }] },
+			// eslint-disable-next-line @typescript-eslint/require-await
+			async () => async () =>
+				await send({ input: { id: newId } }, headers['set-cookie']),
+			{
+				throwError: true,
+				exps: [{ type: 'toThrow', params: ['Invalid_Event_Id'] }],
+			},
 		);
 	});
 });

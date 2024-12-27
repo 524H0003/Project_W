@@ -1,10 +1,11 @@
-import { IReciever } from './reciever/reciever.model';
+import { IEntityId } from 'app/app.model';
+import { IRecieverEntity } from './reciever/reciever.model';
 
 // Interfaces
 /**
- * Notification model
+ * Notification's infomations
  */
-export interface INotification {
+export interface INotificationInfo extends IEntityId {
 	/**
 	 * Notification title
 	 */
@@ -19,12 +20,24 @@ export interface INotification {
 	 * Notification type
 	 */
 	type: NotificationType;
+}
 
+/**
+ * Notification's relationships
+ */
+export interface INotificationRelationship {
 	/**
 	 * Notification send to
 	 */
-	sent: IReciever[];
+	sent: IRecieverEntity[];
 }
+
+/**
+ * Notification entity
+ */
+export interface INotificationEntity
+	extends INotificationInfo,
+		INotificationRelationship {}
 
 // Enums
 export enum NotificationType {

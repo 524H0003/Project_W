@@ -3,7 +3,7 @@ import { IDeviceEntity } from 'auth/device/device.model';
 import { IEventParticipator } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 import { JwtPayload } from 'jsonwebtoken';
-import { IReciever } from 'notification/reciever/reciever.model';
+import { IRecieverEntity } from 'notification/reciever/reciever.model';
 
 // Interfaces
 /**
@@ -59,7 +59,7 @@ export interface IUserSensitive {
  */
 export interface IUserRelationship {
 	baseUser: IBaseUserEntity;
-	recievedNotifications: IReciever[];
+	recievedNotifications: IRecieverEntity[];
 	devices: IDeviceEntity[];
 	uploadFiles: IFile[];
 	participatedEvents: IEventParticipator[];
