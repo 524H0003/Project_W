@@ -85,7 +85,7 @@ describe('read', () => {
 	});
 
 	it('success', async () => {
-		await execute(() => svc.recie.read(reciever.id, user.baseUser.id), {
+		await execute(() => svc.recie.read(reciever.id), {
 			exps: [{ type: 'toBeInstanceOf', params: [Reciever] }],
 			onFinish: async (result) => {
 				await execute(() => svc.recie.findOne({ id: result.id }), {
@@ -119,7 +119,7 @@ describe('readMany', () => {
 	});
 
 	it('success', async () => {
-		await execute(() => svc.recie.readMany(recieversId, user.baseUser.id), {
+		await execute(() => svc.recie.readMany(recieversId), {
 			exps: [{ type: 'toBeInstanceOf', params: [Array<Reciever>] }],
 			onFinish: async (result) => {
 				for (let i = 0; i < 5; i++)

@@ -186,9 +186,9 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 			title: from + (5).string,
 			description: (20).string,
 			type: EventType['Workshop'],
-			positionsAvailable: (30).random,
+			positionsAvailable: (30).random + 2,
 			status: EventStatus['Draft'],
-			maxParticipants: 30 + (20).random,
+			maxParticipants: 32 + (20).random,
 			location: (30).string,
 			startDate: new Date(
 				`${(10).random + 1}/${(20).random + 2}/20${(90).random + 3}`,

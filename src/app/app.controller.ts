@@ -232,7 +232,9 @@ export class AppController extends BaseController {
 		try {
 			await this.svc.hook.validating(signature, mtdt, hook);
 
-			const user = await this.svc.user.findOne({ baseUser: hook.fromBaseUser });
+			const user = await this.svc.user.findOne({
+				baseUser: { email: hook.fromBaseUser.email },
+			});
 
 			if (await this.svc.auth.changePassword(user, body.password)) {
 				return this.responseWithUserRecieve(

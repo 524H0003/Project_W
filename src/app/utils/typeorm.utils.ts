@@ -179,7 +179,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Updating an object
+	 * Updating object
 	 * @param {DeepPartial<T>} entity - the updating object
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
@@ -188,6 +188,17 @@ export class DatabaseRequests<T extends BaseEntity> {
 		updatedEntity?: QueryDeepPartialEntity<T>,
 	) {
 		await this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
+	}
+
+	/**
+	 * Modifying object
+	 * @param {string} entityId - Entity's id
+	 * @param {DeepPartial<T>} updatedEntity - Modified entity
+	 * @return {Promise<T>}
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await
+	async modify(entityId: string, updatedEntity: DeepPartial<T>): Promise<T> {
+		throw new Error("This function didn't implemented!");
 	}
 
 	/**
