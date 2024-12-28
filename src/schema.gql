@@ -38,6 +38,33 @@ input EventAssign {
   type: String = "internship"
 }
 
+type EventParticipator {
+  additionalData: JSON!
+  id: String!
+  interviewAt: DateTime
+  interviewNote: String!
+  isAttended: Boolean!
+  registeredAt: DateTime!
+  role: String!
+  status: String!
+}
+
+input EventParticipatorAssign {
+  eventId: String!
+  userId: String!
+}
+
+input EventParticipatorUpdate {
+  additionalData: JSON = ""
+  id: String!
+  interviewAt: DateTime
+  interviewNote: String
+  isAttended: Boolean
+  registeredAt: DateTime
+  role: String
+  status: String
+}
+
 type EventTag {
   id: String!
   name: String!
@@ -78,6 +105,7 @@ type Mutation {
   assignEvent(input: EventAssign!): Event!
   assignEventTag(input: EventTagAssign!): EventTag!
   assignNotification(input: NotificationAssign!): Notification!
+  assignParticipator(input: EventParticipatorAssign!): EventParticipator!
   assignReciever(input: RecieverAssign!): Reciever!
   assignRecieverMany(input: RecieverAssignMany!): [Reciever!]!
   attachEventTag(input: EventTagAttach!): EventTag!
@@ -85,6 +113,7 @@ type Mutation {
   readNotificationMany(input: ReadNotificationMany!): [Reciever!]!
   updateEvent(input: EventUpdate!): Event!
   updateNotification(input: NotificationUpdate!): Notification!
+  updateParticipator(input: EventParticipatorUpdate!): EventParticipator!
 }
 
 type Notification {

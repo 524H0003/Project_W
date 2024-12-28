@@ -13,6 +13,7 @@ import { EventTagService } from './tag/tag.service';
 import { EventResolver } from './event.resolver';
 import { EventTagResolver } from './tag/tag.resolver';
 import { EventParticipatorService } from './participator/participator.service';
+import { EventParticipatorResolver } from './participator/participator.resolver';
 
 @Module({
 	imports: [
@@ -31,6 +32,7 @@ import { EventParticipatorService } from './participator/participator.service';
 		EventParticipatorService,
 		EventResolver,
 		EventTagResolver,
+		EventParticipatorResolver,
 	],
 	exports: [
 		EventCreatorService,

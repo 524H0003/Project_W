@@ -7,7 +7,7 @@ import {
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { EventParticipator } from './participator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
 
 /**
@@ -52,5 +52,19 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 				registeredAt: new Date(),
 			}),
 		);
+	}
+
+	/**
+	 * Modify participator infomations
+	 * @param {string} entityId - participator's id
+	 * @param {DeepPartial<EventParticipator>} updatedEntity - modified participator infomations
+	 * @return {Promise<EventParticipator>}
+	 */
+	async modify(
+		entityId: string,
+		updatedEntity: DeepPartial<EventParticipator>,
+	): Promise<EventParticipator> {
+		if (updatedEntity) await this.update({ id: entityId }, updatedEntity);
+		return new EventParticipator(await this.id(entityId));
 	}
 }

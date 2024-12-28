@@ -49,7 +49,7 @@ beforeEach(async () => {
 		(user = User.test(fileName)),
 		(enterprise = Enterprise.test(fileName));
 
-	headers = (await assignEmployee(req, enterprise, employee, mailerSvc))
+	headers = (await assignEmployee(req, svc, enterprise, employee, mailerSvc))
 		.headers;
 	await req.post('/signup').send({ ...user, ...user.baseUser });
 	user = await svc.user.findOne({ baseUser: { name: user.baseUser.name } });

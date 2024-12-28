@@ -7,32 +7,46 @@ import {
 } from 'enterprise/employee/employee.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import TestAgent from 'supertest/lib/agent';
+import { AppService } from 'app/app.service';
 
 export async function assignEmployee(
 	req: TestAgent,
+	svc: AppService,
 	enterprise: Enterprise,
-	employee: Employee,
+	empInp: Employee,
 	mailerSvc: MailerService,
 ) {
 	await assignEnterprise(req, enterprise, mailerSvc);
 
-	const { headers } = await req.post('/employee/hook').send({
-			enterpriseName: enterprise.baseUser.name,
-			...employee,
-			...employee.eventCreator.user.baseUser,
-		} as IEmployeeHook),
+	const empHeaders = (
+			await req.post('/employee/hook').send({
+				enterpriseName: enterprise.baseUser.name,
+				...empInp,
+				...empInp.eventCreator.user.baseUser,
+			} as IEmployeeHook)
+		).headers,
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0']['context'][
 			'signature'
-		];
+		],
+		{ headers } = await req
+			.post('/employee/signup')
+			.set('Cookie', empHeaders['set-cookie'])
+			.send({
+				signature,
+				enterpriseName: enterprise.baseUser.name,
+				...empInp,
+				...empInp.eventCreator.user,
+				...empInp.eventCreator.user.baseUser,
+			} as IEmployeeSignup),
+		employee = await svc.employee.findOne({
+			eventCreator: {
+				user: {
+					baseUser: {
+						email: empInp.eventCreator.user.baseUser.email.toLowerCase(),
+					},
+				},
+			},
+		});
 
-	return req
-		.post('/employee/signup')
-		.set('Cookie', headers['set-cookie'])
-		.send({
-			signature,
-			enterpriseName: enterprise.baseUser.name,
-			...employee,
-			...employee.eventCreator.user,
-			...employee.eventCreator.user.baseUser,
-		} as IEmployeeSignup);
+	return { headers, employee };
 }

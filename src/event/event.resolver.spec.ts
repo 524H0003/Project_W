@@ -36,7 +36,7 @@ beforeEach(async () => {
 		(enterprise = Enterprise.test(fileName)),
 		(event = Event.test(fileName));
 
-	headers = (await assignEmployee(req, enterprise, employee, mailerSvc))
+	headers = (await assignEmployee(req, svc, enterprise, employee, mailerSvc))
 		.headers;
 });
 

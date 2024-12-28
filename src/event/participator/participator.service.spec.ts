@@ -64,3 +64,16 @@ describe('assign', () => {
 		);
 	});
 });
+
+describe('modify', () => {
+	it('success', async () => {
+		const interviewNote = (30).string;
+
+		await execute(() => svc.eventParti.modify(event.id, { interviewNote }), {
+			exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
+		});
+		await execute(() => svc.eventParti.findOne({ interviewNote }), {
+			exps: [{ type: 'toBeDefined', params: [] }],
+		});
+	});
+});

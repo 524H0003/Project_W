@@ -36,7 +36,7 @@ beforeEach(async () => {
 		(notification = Notification.test(fileName)),
 		(enterprise = Enterprise.test(fileName));
 
-	headers = (await assignEmployee(req, enterprise, employee, mailerSvc))
+	headers = (await assignEmployee(req, svc, enterprise, employee, mailerSvc))
 		.headers;
 });
 

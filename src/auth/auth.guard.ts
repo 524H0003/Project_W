@@ -33,6 +33,10 @@ export const Roles = Reflector.createDecorator<UserRole[]>(),
 	CurrentUser = createParamDecorator(
 		(data: unknown, context: ExecutionContext) => convertForGql(context).user,
 	),
+	CurrentUserId = createParamDecorator(
+		(data: unknown, context: ExecutionContext) =>
+			(convertForGql(context).user as User).baseUser.id,
+	),
 	MetaData = createParamDecorator(
 		(data: unknown, context: ExecutionContext): string =>
 			JSON.stringify(

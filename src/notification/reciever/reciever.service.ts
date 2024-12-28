@@ -51,11 +51,10 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	/**
 	 * Read a notification
 	 * @param {string} recieverId - the reciever's id
-	 * @param {string} userId - user's id
 	 * @return {Promise<Reciever>}
 	 */
-	async read(recieverId: string, userId: string): Promise<Reciever> {
-		return this.modify(recieverId, userId, {
+	async read(recieverId: string): Promise<Reciever> {
+		return this.modify(recieverId, {
 			isRead: true,
 			readAt: new Date(),
 		});
@@ -64,14 +63,10 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	/**
 	 * Read notifications
 	 * @param {string[]} notificationsId - the notification's id
-	 * @param {string} userId - user's id
 	 * @return {Promise<Reciever[]>}
 	 */
-	async readMany(
-		notificationsId: string[],
-		userId: string,
-	): Promise<Reciever[]> {
-		return Promise.all(notificationsId.map((id) => this.read(id, userId)));
+	async readMany(notificationsId: string[]): Promise<Reciever[]> {
+		return Promise.all(notificationsId.map((id) => this.read(id)));
 	}
 
 	/**
@@ -82,13 +77,9 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 */
 	async modify(
 		entityId: string,
-		userId: string,
 		updatedEntity: DeepPartial<Reciever>,
 	): Promise<Reciever> {
-		await this.update(
-			{ id: entityId, toUser: { baseUser: { id: userId } } },
-			updatedEntity,
-		);
+		await this.update({ id: entityId }, updatedEntity);
 		return this.id(entityId);
 	}
 }

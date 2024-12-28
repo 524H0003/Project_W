@@ -90,37 +90,36 @@
 ### Thông báo
 
 - [x] Tạo thông báo
-> [/graphql assignNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L80)
+> [/graphql assignNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L107)
 
 - [x] Cập nhật thông báo
-> [/graphql updateNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L8)
+> [/graphql updateNotification](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L115)
 
 - [x] Gửi thông báo cho người dùng
-> [/graphql assignReciever(Many)](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L81-L82)
+> [/graphql assignReciever(Many)](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L109-L110)
 
 - [x] Đánh dấu đã xem thông báo
-> [/graphql readNotification(Many)](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L84-L85)
+> [/graphql readNotification(Many)](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L112-L113)
 
 ### Sự kiện
 
 - [x] Tạo sự kiện
-
-> [/graphql assignEvent](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L78)
+> [/graphql assignEvent](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L105)
 
 - [x] Cập nhật trạng thái sự kiện
-
-> [/graphql updateEvent](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L84)
+> [/graphql updateEvent](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L114)
 
 - [x] Tạo tag
-
-> [/graphql assignEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L79)
+> [/graphql assignEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L106)
 
 - [x] Thêm tag cho sự kiện
+> [/graphql attachEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L111)
 
-> [/graphql attachEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L83)
+- [x] Cho người dùng tham gia sự kiện
+> [/graphql assignParticipator](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L108)
 
-- [ ] Cho người dùng tham gia sự kiện
-- [ ] Cập nhật thông tin người tham gia sự kiện
+- [x] Cập nhật thông tin người tham gia sự kiện
+> [/graphql updateParticipator](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L116)
 
 ### Trang admin (quản lý database)
 
