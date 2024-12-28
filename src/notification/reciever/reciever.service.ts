@@ -54,10 +54,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 * @return {Promise<Reciever>}
 	 */
 	async read(recieverId: string): Promise<Reciever> {
-		return this.modify(recieverId, {
-			isRead: true,
-			readAt: new Date(),
-		});
+		return this.modify(recieverId, { isRead: true, readAt: new Date() });
 	}
 
 	/**

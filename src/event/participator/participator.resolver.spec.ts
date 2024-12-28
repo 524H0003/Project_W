@@ -64,9 +64,7 @@ describe('assignParticipator', () => {
 			async () =>
 				(
 					await send(
-						{
-							input: { userId: student.user.baseUser.id, eventId: event.id },
-						},
+						{ input: { userId: student.user.baseUser.id, eventId: event.id } },
 						stuHeaders['set-cookie'],
 					)
 				).assignParticipator,
@@ -96,9 +94,7 @@ describe('updateParticipator', () => {
 				AssignParticipatorMutation,
 				AssignParticipatorMutationVariables
 			>(AssignParticipator)(
-				{
-					input: { userId: student.user.baseUser.id, eventId: event.id },
-				},
+				{ input: { userId: student.user.baseUser.id, eventId: event.id } },
 				stuHeaders['set-cookie'],
 			)
 		).assignParticipator.id;
