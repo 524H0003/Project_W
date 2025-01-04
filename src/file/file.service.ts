@@ -159,10 +159,7 @@ export class FileService extends DatabaseRequests<File> {
 		writeFileSync(`${this.rootDir}${path}`, input.buffer);
 
 		if (!fileName)
-			return this.save({
-				path,
-				fileCreatedBy: { baseUser: { id: user.id } },
-			});
+			return this.save({ path, fileCreatedBy: { baseUser: { id: user.id } } });
 	}
 
 	/**

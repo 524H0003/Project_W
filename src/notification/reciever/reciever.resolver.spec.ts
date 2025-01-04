@@ -72,12 +72,7 @@ describe('assignReciever', () => {
 			async () =>
 				(
 					await send(
-						{
-							input: {
-								notificationId: notification.id,
-								userId: user.id,
-							},
-						},
+						{ input: { notificationId: notification.id, userId: user.id } },
 						headers['set-cookie'],
 					)
 				).assignReciever,
@@ -244,9 +239,7 @@ describe('listAllNotifications', () => {
 		await execute(
 			async () =>
 				(await send({}, userHeaders['set-cookie'])).listAllNotifications.length,
-			{
-				exps: [{ type: 'toEqual', params: [5] }],
-			},
+			{ exps: [{ type: 'toEqual', params: [5] }] },
 		);
 	});
 
