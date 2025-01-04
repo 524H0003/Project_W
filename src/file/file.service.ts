@@ -24,7 +24,6 @@ import {
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
-import { BaseUser } from 'app/app.entity';
 
 /**
  * File services
