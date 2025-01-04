@@ -1,11 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
-import {
-	disableDescribe,
-	execute,
-	initJest,
-	sendGQL,
-} from 'app/utils/test.utils';
+import { execute, initJest, sendGQL } from 'app/utils/test.utils';
 import {
 	AssignReciever,
 	AssignRecieverMany,
@@ -14,6 +9,9 @@ import {
 	AssignRecieverMutation,
 	AssignRecieverMutationVariables,
 	ReadNotification,
+	ReadNotificationMany,
+	ReadNotificationManyMutation,
+	ReadNotificationManyMutationVariables,
 	ReadNotificationMutation,
 	ReadNotificationMutationVariables,
 } from 'compiled_graphql';
@@ -26,6 +24,7 @@ import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { Reciever } from './reciever.entity';
 import { Student } from 'university/student/student.entity';
+import { assignStudent } from 'university/student/student.controller.spec.utils';
 
 const fileName = curFile(__filename);
 
@@ -73,7 +72,7 @@ describe('assignReciever', () => {
 						{
 							input: {
 								notificationId: notification.id,
-								userId: user.baseUser.id,
+								userId: user.id,
 							},
 						},
 						headers['set-cookie'],
@@ -102,7 +101,7 @@ describe('assignRecieverMany', () => {
 		for (let i = 0; i < 5; i++) {
 			const tUser = User.test(fileName);
 			if (tUser.hashedPassword) true;
-			usersId.push((await svc.user.assign(tUser)).baseUser.id);
+			usersId.push((await svc.user.assign(tUser)).id);
 		}
 	});
 
@@ -133,7 +132,7 @@ describe('assignRecieverMany', () => {
 	});
 });
 
-disableDescribe('readNotification', () => {
+describe('readNotification', () => {
 	const send = sendGQL<
 		ReadNotificationMutation,
 		ReadNotificationMutationVariables
@@ -143,15 +142,8 @@ disableDescribe('readNotification', () => {
 
 	beforeEach(async () => {
 		const tUser = Student.test(fileName);
-		(
-			await req
-				.post('/student/signup')
-				.send({ ...tUser.user, ...tUser.user.baseUser })
-		).headers;
-		reciever = await svc.recie.assign(notification.id, tUser.user.baseUser.id);
-		userHeaders = await req
-			.post('/login')
-			.send({ ...tUser, ...tUser.user.baseUser, ...tUser.user });
+		userHeaders = (await assignStudent(req, svc, tUser, mailerSvc)).headers;
+		reciever = await svc.recie.assign(notification.id, tUser.user.id);
 	});
 
 	it('success', async () => {
@@ -164,11 +156,55 @@ disableDescribe('readNotification', () => {
 					)
 				).readNotification,
 			{
+				exps: [{ type: 'toHaveProperty', params: ['isRead', true] }],
+				onFinish: async (result) => {
+					await execute(async () => (await svc.recie.id(result.id)).isRead, {
+						exps: [{ type: 'toEqual', params: [true] }],
+					});
+				},
+			},
+		);
+	});
+});
+
+describe('readNotificationMany', () => {
+	const send = sendGQL<
+			ReadNotificationManyMutation,
+			ReadNotificationManyMutationVariables
+		>(ReadNotificationMany),
+		recieversId: string[] = [];
+
+	let userHeaders: object;
+
+	beforeEach(async () => {
+		const tUser = Student.test(fileName),
+			{ headers, student } = await assignStudent(req, svc, tUser, mailerSvc);
+
+		userHeaders = headers;
+
+		for (let i = 0; i < 5; i++) {
+			recieversId.push(
+				(await svc.recie.assign(notification.id, student.user.id)).id,
+			);
+		}
+	});
+
+	it('success', async () => {
+		await execute(
+			async () =>
+				(await send({ input: { recieversId } }, userHeaders['set-cookie']))
+					.readNotificationMany,
+			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
-					await execute(() => svc.recie.id(result.id), {
-						exps: [{ type: 'toBeDefined', params: [] }],
-					});
+					await Promise.all(
+						result.map(
+							async ({ id }) =>
+								await execute(async () => (await svc.recie.id(id)).isRead, {
+									exps: [{ type: 'toEqual', params: [true] }],
+								}),
+						),
+					);
 				},
 			},
 		);
