@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
 	ReadNotification,
 	ReadNotificationMany,
@@ -7,9 +7,10 @@ import {
 	RecieverAssignMany,
 } from './reciever.entity';
 import { UseGuards } from '@nestjs/common';
-import { RoleGuard, Roles } from 'auth/auth.guard';
+import { AllowPublic, CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
+import { User } from 'user/user.entity';
 
 @Resolver(() => Reciever)
 @UseGuards(RoleGuard)
@@ -19,6 +20,7 @@ export class RecieverResolver {
 	 */
 	constructor(public svc: AppService) {}
 
+	// Mutations
 	/**
 	 * Assign user to recieve notification
 	 */
@@ -53,5 +55,21 @@ export class RecieverResolver {
 	@Roles([UserRole.student])
 	async readNotificationMany(@Args('input') input: ReadNotificationMany) {
 		return this.svc.recie.readMany(input.recieversId);
+	}
+
+	// Queries
+	/**
+	 * list all notification
+	 */
+	@Query(() => [Reciever])
+	@AllowPublic()
+	async listAllNotifications(
+		@Args('isRead') isRead: boolean = false,
+		@CurrentUser() user: User,
+	) {
+		return this.svc.recie.find({
+			isRead,
+			toUser: { baseUser: { id: user.id } },
+		});
 	}
 }
