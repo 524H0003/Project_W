@@ -44,7 +44,7 @@ describe('seeUploadedFile', () => {
 
 		headers = e.headers;
 
-		await appSvc.user.updateRole(usr.baseUser.id, UserRole.admin);
+		await appSvc.user.updateRole(usr.id, UserRole.admin);
 	});
 
 	it('success on server files', async () => {

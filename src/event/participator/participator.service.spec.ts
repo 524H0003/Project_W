@@ -30,22 +30,19 @@ beforeEach(async () => {
 
 describe('assign', () => {
 	it('success', async () => {
-		await execute(
-			() => svc.eventParti.assign(student.user.baseUser.id, event.id),
-			{
-				exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
-				onFinish: async (result: EventParticipator) => {
-					await execute(
-						() => svc.event.findOne({ participators: [{ id: result.id }] }),
-						{ exps: [{ type: 'toBeDefined', params: [] }] },
-					);
-					await execute(
-						() => svc.user.findOne({ participatedEvents: [{ id: result.id }] }),
-						{ exps: [{ type: 'toBeDefined', params: [] }] },
-					);
-				},
+		await execute(() => svc.eventParti.assign(student.user.id, event.id), {
+			exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
+			onFinish: async (result: EventParticipator) => {
+				await execute(
+					() => svc.event.findOne({ participators: [{ id: result.id }] }),
+					{ exps: [{ type: 'toBeDefined', params: [] }] },
+				);
+				await execute(
+					() => svc.user.findOne({ participatedEvents: [{ id: result.id }] }),
+					{ exps: [{ type: 'toBeDefined', params: [] }] },
+				);
 			},
-		);
+		});
 	});
 
 	it('failed due to not have any position left', async () => {
@@ -55,8 +52,7 @@ describe('assign', () => {
 
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => () =>
-				svc.eventParti.assign(student.user.baseUser.id, event.id),
+			async () => () => svc.eventParti.assign(student.user.id, event.id),
 			{
 				throwError: true,
 				exps: [{ type: 'toThrow', params: ['Invalid_Event_Request'] }],

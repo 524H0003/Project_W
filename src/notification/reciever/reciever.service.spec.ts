@@ -24,14 +24,14 @@ beforeAll(async () => {
 
 describe('assign', () => {
 	it('success', async () => {
-		await execute(() => svc.recie.assign(notification.id, user.baseUser.id), {
+		await execute(() => svc.recie.assign(notification.id, user.id), {
 			exps: [{ type: 'toBeInstanceOf', params: [Reciever] }],
 			onFinish: async (result) => {
 				await execute(
 					() =>
 						svc.user.findOne({
 							recievedNotifications: [{ id: result.id }],
-							baseUser: { id: user.baseUser.id },
+							baseUser: { id: user.id },
 						}),
 					{ exps: [{ type: 'toBeDefined', params: [] }] },
 				);
@@ -55,7 +55,7 @@ describe('assignMany', () => {
 		for (let i = 0; i < 5; i++) {
 			const tUser = User.test(fileName);
 			if (tUser.hashedPassword) true;
-			usersId.push((await svc.user.assign(tUser)).baseUser.id);
+			usersId.push((await svc.user.assign(tUser)).id);
 		}
 	});
 
@@ -81,7 +81,7 @@ describe('read', () => {
 	let reciever: Reciever;
 
 	beforeEach(async () => {
-		reciever = await svc.recie.assign(notification.id, user.baseUser.id);
+		reciever = await svc.recie.assign(notification.id, user.id);
 	});
 
 	it('success', async () => {
@@ -112,7 +112,7 @@ describe('readMany', () => {
 								Notification.test(fileName + '_' + (5).string),
 							)
 						).id,
-						user.baseUser.id,
+						user.id,
 					)
 				).id,
 			);

@@ -64,7 +64,7 @@ describe('assignParticipator', () => {
 			async () =>
 				(
 					await send(
-						{ input: { userId: student.user.baseUser.id, eventId: event.id } },
+						{ input: { userId: student.user.id, eventId: event.id } },
 						stuHeaders['set-cookie'],
 					)
 				).assignParticipator,
@@ -73,7 +73,7 @@ describe('assignParticipator', () => {
 		await execute(
 			() =>
 				svc.eventParti.findOne({
-					participatedBy: { baseUser: { id: student.user.baseUser.id } },
+					participatedBy: { baseUser: { id: student.user.id } },
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
@@ -94,7 +94,7 @@ describe('updateParticipator', () => {
 				AssignParticipatorMutation,
 				AssignParticipatorMutationVariables
 			>(AssignParticipator)(
-				{ input: { userId: student.user.baseUser.id, eventId: event.id } },
+				{ input: { userId: student.user.id, eventId: event.id } },
 				stuHeaders['set-cookie'],
 			)
 		).assignParticipator.id;

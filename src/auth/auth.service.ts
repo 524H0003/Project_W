@@ -56,7 +56,7 @@ export class AuthService extends Cryption {
 					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
 						avatarFile = await this.fileSvc.assign(avatar, newUser);
 					return await this.usrSvc.modify(
-						newUser.baseUser.id,
+						newUser.id,
 						avatarFile ? { baseUser: { avatarPath: avatarFile.path } } : {},
 					);
 				}
@@ -96,12 +96,12 @@ export class AuthService extends Cryption {
 	 * @return {Promise<User>} updated user
 	 */
 	async changePassword(user: User, password: string): Promise<User> {
-		let newUser = await this.usrSvc.id(user.baseUser.id);
+		let newUser = await this.usrSvc.id(user.id);
 		newUser.password = password;
 		return validation(newUser, () => {
 			if (newUser.hashedPassword) {
 				newUser = InterfaceCasting.delete(newUser, IUserRelationshipKeys);
-				return this.usrSvc.modify(user.baseUser.id, newUser);
+				return this.usrSvc.modify(user.id, newUser);
 			}
 		});
 	}

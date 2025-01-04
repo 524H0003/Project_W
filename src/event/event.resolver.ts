@@ -25,7 +25,7 @@ export class EventResolver {
 	) {
 		return this.svc.event.assign({
 			...input,
-			eventCreatedBy: await this.svc.eventcreator.id(user.baseUser.id),
+			eventCreatedBy: await this.svc.eventcreator.id(user.id),
 		});
 	}
 
@@ -39,7 +39,7 @@ export class EventResolver {
 		@CurrentUser() user: User,
 	) {
 		const event = await this.svc.event.findOne({
-			eventCreatedBy: { user: { baseUser: { id: user.baseUser.id } } },
+			eventCreatedBy: { user: { baseUser: { id: user.id } } },
 			id: input.id,
 		});
 

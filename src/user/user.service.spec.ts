@@ -38,7 +38,7 @@ it('assign', async () => {
 					},
 				],
 			});
-			await execute(() => appSvc.user.id(result.baseUser.id), {
+			await execute(() => appSvc.user.id(result.id), {
 				exps: [
 					{
 						type: 'toHaveProperty',
@@ -55,8 +55,7 @@ it('modify', async () => {
 		newName = (20).string;
 
 	await execute(
-		() =>
-			appSvc.user.modify(dbUser.baseUser.id, { baseUser: { name: newName } }),
+		() => appSvc.user.modify(dbUser.id, { baseUser: { name: newName } }),
 		{
 			exps: [
 				{ type: 'toBeInstanceOf', params: [User] },
@@ -70,10 +69,10 @@ it('remove', async () => {
 	const dbUser = await appSvc.user.assign(user);
 
 	// eslint-disable-next-line @typescript-eslint/require-await
-	await execute(async () => () => appSvc.user.remove(dbUser.baseUser.id), {
+	await execute(async () => () => appSvc.user.remove(dbUser.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
-	await execute(() => appSvc.user.id(dbUser.baseUser.id), {
+	await execute(() => appSvc.user.id(dbUser.id), {
 		exps: [{ type: 'toBeNull', params: [] }],
 	});
 });
@@ -81,13 +80,10 @@ it('remove', async () => {
 it('updateRole', async () => {
 	const dbUser = await appSvc.user.assign(user);
 
-	await execute(
-		() => appSvc.user.updateRole(dbUser.baseUser.id, UserRole.admin),
-		{
-			exps: [
-				{ type: 'toBeInstanceOf', params: [User] },
-				{ type: 'toHaveProperty', params: ['role', UserRole.admin] },
-			],
-		},
-	);
+	await execute(() => appSvc.user.updateRole(dbUser.id, UserRole.admin), {
+		exps: [
+			{ type: 'toBeInstanceOf', params: [User] },
+			{ type: 'toHaveProperty', params: ['role', UserRole.admin] },
+		],
+	});
 });

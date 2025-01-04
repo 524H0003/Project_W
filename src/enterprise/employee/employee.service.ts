@@ -61,7 +61,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 					},
 				),
 			'_Email',
-			{ enterpriseId: ent.baseUser.id },
+			{ enterpriseId: ent.id },
 		);
 	}
 

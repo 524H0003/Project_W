@@ -83,4 +83,12 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 			email: (30).string + '@lmao.uk',
 		});
 	}
+
+	/**
+	 * Get user's id
+	 * @return {string}
+	 */
+	get id(): string {
+		return this.baseUser.id;
+	}
 }
