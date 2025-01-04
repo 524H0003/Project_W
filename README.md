@@ -52,25 +52,25 @@
 
 > /api/v1/employee/hook
 
-| Miền           | Kiểu dữ liệu         | Bắt buộc       |
-| -------------- | -------------------- | -------------- |
-| enterpriseName | string               | :green_circle: |
-| email          | string               | :green_circle: |
-| position       | EmployeePosition[^1] | :green_circle: |
-| name           | string               | :green_circle: |
+| Miền           | Kiểu dữ liệu       | Bắt buộc       |
+| -------------- | ------------------ | -------------- |
+| enterpriseName | string             | :green_circle: |
+| email          | string             | :green_circle: |
+| position       | [EmployeePosition] | :green_circle: |
+| name           | string             | :green_circle: |
 
 - [x] Đăng ký nhân viên của doanh nghiệp
 
 > /api/v1/employee/signup
 
-| Miền      | Kiểu dữ liệu         | Bắt buộc       |
-| --------- | -------------------- | -------------- |
-| email     | string               | :green_circle: |
-| password  | string               | :green_circle: |
-| name      | string               | :green_circle: |
-| position  | EmployeePosition[^1] | :green_circle: |
-| signature | string               | :green_circle: |
-| avatar    | File                 | :red_circle:   |
+| Miền      | Kiểu dữ liệu       | Bắt buộc       |
+| --------- | ------------------ | -------------- |
+| email     | string             | :green_circle: |
+| password  | string             | :green_circle: |
+| name      | string             | :green_circle: |
+| position  | [EmployeePosition] | :green_circle: |
+| signature | string             | :green_circle: |
+| avatar    | File               | :red_circle:   |
 
 - [x] Đăng ký tài khoản khoa của Đại học
 
@@ -91,61 +91,55 @@
 
 - [x] Tạo thông báo
 
-  > [/graphql assignNotification](./src/schema.gql#L107)
+  > /graphql [assignNotification](./src/schema.gql#L107)
 
 - [x] Cập nhật thông báo
 
-  > [/graphql updateNotification](./src/schema.gql#L115)
+  > /graphql [updateNotification](./src/schema.gql#L115)
 
 - [x] Gửi thông báo cho người dùng
 
-  > [/graphql assignReciever(Many)](./src/schema.gql#L109-L110)
+  > /graphql [assignReciever(Many)](./src/schema.gql#L109-L110)
 
 - [x] Đánh dấu đã xem thông báo
 
-  > [/graphql readNotification(Many)](./src/schema.gql#L112-L113)
+  > /graphql [readNotification(Many)](./src/schema.gql#L112-L113)
 
 - [x] Liệt kê tất cả thông báo
 
-  > [/graphql listAllNotifications](./src/schema.gql#L140)
+  > /graphql [listAllNotifications](./src/schema.gql#L140)
 
 ### Sự kiện
 
 - [x] Tạo sự kiện
 
-  > [/graphql assignEvent](./src/schema.gql#L105)
+  > /graphql [assignEvent](./src/schema.gql#L105)
 
 - [x] Cập nhật trạng thái sự kiện
 
-  > [/graphql updateEvent](./src/schema.gql#L114)
+  > /graphql [updateEvent](./src/schema.gql#L114)
 
 - [x] Tạo tag
 
-  > [/graphql assignEventTag](./src/schema.gql#L106)
+  > /graphql [assignEventTag](./src/schema.gql#L106)
 
 - [x] Lấy các tag hiện có
 
-  > [/graphql listAllTags](./src/schema.gql#L141)
+  > /graphql [listAllTags](./src/schema.gql#L141)
 
 - [x] Thêm tag cho sự kiện
 
-  > [/graphql attachEventTag](./src/schema.gql#L111)
+  > /graphql [attachEventTag](./src/schema.gql#L111)
 
 - [x] Cho người dùng tham gia sự kiện
 
-  > [/graphql assignParticipator](./src/schema.gql#L108)
+  > /graphql [assignParticipator](./src/schema.gql#L108)
 
 - [x] Cập nhật thông tin người tham gia sự kiện
-  > [/graphql updateParticipator](./src/schema.gql#L116)
+  > /graphql [updateParticipator](./src/schema.gql#L116)
 
 ### Trang admin (quản lý database)
 
 - [ ] Cập nhật, thêm, xóa và hiển thị thực thể
 
----
-
-[^1]: [Kiểu enum EmployeePosition](https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EmployeePosition)
-
-[^2]: [Kiểu enum EventStatus](https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EventStatus)
-
-[^3]: [Kiểu enum EventType](https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EventType)
+[EmployeePosition]: https://524h0003.github.io/Project_W/miscellaneous/enumerations.html#EmployeePosition

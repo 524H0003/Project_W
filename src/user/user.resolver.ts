@@ -1,12 +1,18 @@
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import {
+	BadRequestException,
+	UseGuards,
+	UseInterceptors,
+} from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { RoleGuard, Roles } from 'auth/auth.guard';
 import { isUUID } from 'class-validator';
 import { User } from './user.entity';
 import { UserRole } from './user.model';
 import { UserService } from './user.service';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Resolver(() => User)
+@UseInterceptors(CacheInterceptor)
 @UseGuards(RoleGuard)
 export class UserResolver {
 	constructor(private usrSvc: UserService) {}

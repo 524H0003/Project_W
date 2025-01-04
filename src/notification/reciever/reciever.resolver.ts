@@ -6,13 +6,15 @@ import {
 	RecieverAssign,
 	RecieverAssignMany,
 } from './reciever.entity';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { User } from 'user/user.entity';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Resolver(() => Reciever)
+@UseInterceptors(CacheInterceptor)
 @UseGuards(RoleGuard)
 export class RecieverResolver {
 	/**
