@@ -108,10 +108,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 					);
 				}
 
-				return {
-					store,
-					ttl: (3).s2ms,
-				};
+				return { store, ttl: (3).s2ms };
 			},
 		}),
 	],
