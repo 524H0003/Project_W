@@ -201,6 +201,16 @@ declare global {
 	}
 
 	/**
+	 * disable describe
+	 * @param {string} name - describe name
+	 * @param {() => void | Promise<void>} func - the body of describe
+	 * @return {void}
+	 */
+	function disableDescribe(
+		name: string,
+		func: () => void | Promise<void>,
+	): void;
+	/**
 	 * Return the formatted name of current file
 	 * @param {string} file - the current file's name (must be __filename)
 	 * @param {number} cut - How many chunk should get (default: 2)
@@ -223,6 +233,12 @@ declare global {
 
 // Global functions
 try {
+	global.disableDescribe = (
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		name: string,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		func: () => void | Promise<void>,
+	) => {};
 	global.curFile = (file: string, cut = 2) =>
 		file
 			.split(/\/|\\/)
