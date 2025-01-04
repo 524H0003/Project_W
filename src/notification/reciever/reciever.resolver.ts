@@ -7,7 +7,7 @@ import {
 	RecieverAssignMany,
 } from './reciever.entity';
 import { UseGuards } from '@nestjs/common';
-import { AllowPublic, CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
+import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { User } from 'user/user.entity';
