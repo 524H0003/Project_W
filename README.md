@@ -112,6 +112,9 @@
 - [x] Tạo tag
 > [/graphql assignEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L106)
 
+- [x] Lấy các tag hiện có
+> [/graphql listAllTags](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L140)
+
 - [x] Thêm tag cho sự kiện
 > [/graphql attachEventTag](https://github.com/524H0003/Project_W/blob/master/src/schema.gql#L111)
 
