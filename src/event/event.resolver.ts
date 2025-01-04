@@ -1,18 +1,12 @@
-import {
-	BadRequestException,
-	UseGuards,
-	UseInterceptors,
-} from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { AppService } from 'app/app.service';
 import { User } from 'user/user.entity';
 import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { UserRole } from 'user/user.model';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Event, EventAssign, EventUpdate } from './event.entity';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Resolver(() => Event)
-@UseInterceptors(CacheInterceptor)
 @UseGuards(RoleGuard)
 export class EventResolver {
 	/**

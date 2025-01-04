@@ -7,6 +7,7 @@ import { loadEnv } from './config.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SignService } from 'auth/auth.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Global()
 @Module({
@@ -17,6 +18,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 			sortSchema: true,
 			playground: false,
 		}),
+		CacheModule.register({ isGlobal: true }),
 		JwtModule.register({ global: true }),
 		loadEnv,
 		SqlModule('test'),

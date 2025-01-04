@@ -4,18 +4,12 @@ import {
 	NotificationAssign,
 	NotificationUpdate,
 } from './notification.entity';
-import {
-	BadRequestException,
-	UseGuards,
-	UseInterceptors,
-} from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Resolver(() => Notification)
-@UseInterceptors(CacheInterceptor)
 @UseGuards(RoleGuard)
 export class NotificationResolver {
 	/**
