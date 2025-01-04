@@ -62,14 +62,16 @@ export class RecieverResolver {
 	 * list all notification
 	 */
 	@Query(() => [Reciever])
-	@AllowPublic()
+	@Roles([UserRole.student])
 	async listAllNotifications(
-		@Args('isRead') isRead: boolean = false,
+		@Args('isRead', { nullable: true }) isRead: boolean,
 		@CurrentUser() user: User,
 	) {
-		return this.svc.recie.find({
-			isRead,
-			toUser: { baseUser: { id: user.id } },
-		});
+		if (isRead !== undefined)
+			return this.svc.recie.find({
+				isRead,
+				toUser: { baseUser: { id: user.id } },
+			});
+		return this.svc.recie.find({ toUser: { baseUser: { id: user.id } } });
 	}
 }

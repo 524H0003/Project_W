@@ -8,6 +8,9 @@ import {
 	AssignRecieverManyMutationVariables,
 	AssignRecieverMutation,
 	AssignRecieverMutationVariables,
+	ListAllNotifications,
+	ListAllNotificationsQuery,
+	ListAllNotificationsQueryVariables,
 	ReadNotification,
 	ReadNotificationMany,
 	ReadNotificationManyMutation,
@@ -204,6 +207,66 @@ describe('readNotificationMany', () => {
 									exps: [{ type: 'toEqual', params: [true] }],
 								}),
 						),
+					);
+				},
+			},
+		);
+	});
+});
+
+describe('listAllNotifications', () => {
+	const send = sendGQL<
+			ListAllNotificationsQuery,
+			ListAllNotificationsQueryVariables
+		>(ListAllNotifications),
+		recieversId: string[] = [];
+
+	let userHeaders: object, numRead: number;
+
+	beforeEach(async () => {
+		const tUser = Student.test(fileName),
+			{ headers, student } = await assignStudent(req, svc, tUser, mailerSvc);
+
+		(userHeaders = headers), (numRead = 0);
+
+		for (let i = 0; i < 5; i++) {
+			recieversId.push(
+				(await svc.recie.assign(notification.id, student.user.id)).id,
+			);
+			if ((6).random % 2) {
+				numRead++;
+				await svc.recie.read(recieversId.lastElement);
+			}
+		}
+	});
+
+	it('success', async () => {
+		await execute(
+			async () =>
+				(await send({}, userHeaders['set-cookie'])).listAllNotifications.length,
+			{
+				exps: [{ type: 'toEqual', params: [5] }],
+			},
+		);
+	});
+
+	it('success with isRead filterring', async () => {
+		await execute(
+			async () =>
+				(await send({ isRead: false }, userHeaders['set-cookie']))
+					.listAllNotifications,
+			{
+				exps: [{ type: 'toBeDefined', params: [] }],
+				onFinish: async (result) => {
+					// eslint-disable-next-line @typescript-eslint/require-await
+					await execute(async () => result.length, {
+						exps: [{ type: 'toEqual', params: [5 - numRead] }],
+					});
+
+					await Promise.all(
+						result.map(async ({ id }) => (await svc.recie.id(id)).isRead, {
+							exps: [{ type: 'toEqual', params: [false] }],
+						}),
 					);
 				},
 			},

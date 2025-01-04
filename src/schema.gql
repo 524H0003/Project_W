@@ -137,6 +137,7 @@ input NotificationUpdate {
 }
 
 type Query {
+  listAllNotifications(isRead: Boolean): [Reciever!]!
   listAllTags: [EventTag!]!
   user(id: String!): User!
   userAll: [User!]!
