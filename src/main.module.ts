@@ -13,6 +13,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { Cache, CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
 	imports: [
@@ -45,21 +47,34 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 			errorMessage: 'Invalid_Request',
 		}),
 		// GraphQL and Apollo SandBox
-		GraphQLModule.forRoot<ApolloDriverConfig>({
+		GraphQLModule.forRootAsync<ApolloDriverConfig>({
 			driver: ApolloDriver,
-			// Avoid deprecated
-			subscriptions: {
-				'graphql-ws': true,
-				'subscriptions-transport-ws': false,
+			inject: ['CACHE_MANAGER'],
+			// eslint-disable-next-line @typescript-eslint/require-await
+			useFactory: async (cacheManager: Cache) => {
+				return {
+					// Avoid deprecated
+					subscriptions: {
+						'graphql-ws': true,
+						'subscriptions-transport-ws': false,
+					},
+					// Code first
+					autoSchemaFile: 'src/schema.gql',
+					sortSchema: true,
+					// Init Apollo SandBox
+					playground: false,
+					plugins: [ApolloServerPluginLandingPageLocalDefault()],
+					includeStacktraceInErrorResponses: false,
+					inheritResolversFromInterfaces: false,
+					// Caching
+					cache: {
+						get: (key) => cacheManager.get(key),
+						set: (key, value, options) =>
+							cacheManager.set(key, value, options.ttl.s2ms),
+						delete: (key) => cacheManager.del(key),
+					},
+				};
 			},
-			// Code first
-			autoSchemaFile: 'src/schema.gql',
-			sortSchema: true,
-			// Init Apollo SandBox
-			playground: false,
-			plugins: [ApolloServerPluginLandingPageLocalDefault()],
-			includeStacktraceInErrorResponses: false,
-			inheritResolversFromInterfaces: false,
 		}),
 		// Core modules
 		loadEnv,
@@ -68,6 +83,34 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 		AppModule,
 		// Serving static pages
 		ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'page/dist') }),
+		// Request caching
+		CacheModule.registerAsync({
+			isGlobal: true,
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: async (cfg: ConfigService) => {
+				let store = undefined;
+
+				try {
+					store = await redisStore({
+						socket: {
+							host: cfg.get('REDIS_HOST'),
+							port: cfg.get('REDIS_PORT'),
+						},
+						username: cfg.get('REDIS_USER'),
+						password: cfg.get('REDIS_PASS'),
+					});
+				} catch (error) {
+					console.error(
+						'-'.repeat(30),
+						'\nFailed too implement redis cache\n',
+						'-'.repeat(30),
+					);
+				}
+
+				return { store, ttl: (3).s2ms };
+			},
+		}),
 	],
 	providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

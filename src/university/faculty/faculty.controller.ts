@@ -48,7 +48,7 @@ export class FacultyController extends AppController {
 		@UploadedFile(
 			new ParseFilePipeBuilder()
 				.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-				.addMaxSizeValidator({ maxSize: (0.3).mb })
+				.addMaxSizeValidator({ maxSize: (0.3).mb2b })
 				.build({
 					fileIsRequired: false,
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,

@@ -173,9 +173,15 @@ declare global {
 
 		// file size
 		/**
-		 * byte from megabyte
+		 * megabyte to byte
 		 */
-		readonly mb: number;
+		readonly mb2b: number;
+
+		// time
+		/**
+		 * second to milisecond
+		 */
+		readonly s2ms: number;
 
 		/**
 		 * Get random number
@@ -356,9 +362,16 @@ Object.defineProperty(Number.prototype, 'abs', {
 	enumerable: true,
 	configurable: true,
 });
-Object.defineProperty(Number.prototype, 'mb', {
+Object.defineProperty(Number.prototype, 'mb2b', {
 	get: function () {
 		return this * 1024 * 1024;
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(Number.prototype, 's2ms', {
+	get: function () {
+		return this * 1000;
 	},
 	enumerable: true,
 	configurable: true,
