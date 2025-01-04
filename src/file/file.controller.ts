@@ -1,9 +1,17 @@
-import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	HttpStatus,
+	Param,
+	Res,
+	UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CurrentUser } from 'auth/auth.guard';
 import { Response } from 'express';
 import { FileService } from './file.service';
-import { BaseUser } from 'app/app.entity';
+import { User } from 'user/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 /**
  * File controller
@@ -27,10 +35,11 @@ export class FileController {
 	 * @param {User} user - the current processing user
 	 */
 	@Get(':filename')
+	@UseGuards(AuthGuard('access'))
 	async seeUploadedFile(
 		@Param('filename') filename: string,
 		@Res() res: Response,
-		@CurrentUser() user: BaseUser,
+		@CurrentUser() user: User,
 	) {
 		const file = await this.fileSvc.recieve(filename, user);
 		if (file)

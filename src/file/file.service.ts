@@ -169,10 +169,10 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Recieve file from server
 	 * @param {string} filename - the name of recieving file
-	 * @param {BaseUser} user - the user want to recieve file
+	 * @param {User} user - the user want to recieve file
 	 * @return {Promise<string>} the file name or rejecting request
 	 */
-	async recieve(filename: string, user: BaseUser): Promise<string> {
+	async recieve(filename: string, user: User): Promise<string> {
 		const fileOnline = await this.s3Recieve(filename),
 			filePath = realpathSync(resolve(this.rootDir, filename));
 		if (fileOnline && filePath.startsWith(resolve(this.rootDir))) {
