@@ -17,6 +17,7 @@ export class NotificationResolver {
 	 */
 	constructor(public svc: AppService) {}
 
+	// Mutations
 	/**
 	 * Notification assign
 	 */

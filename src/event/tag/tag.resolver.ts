@@ -1,7 +1,7 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { EventTag, EventTagAssign, EventTagAttach } from './tag.entity';
 import { UseGuards } from '@nestjs/common';
-import { RoleGuard, Roles } from 'auth/auth.guard';
+import { AllowPublic, RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 
@@ -13,6 +13,7 @@ export class EventTagResolver {
 	 */
 	constructor(public svc: AppService) {}
 
+	// Mutations
 	/**
 	 * Tag assign
 	 */
@@ -29,5 +30,15 @@ export class EventTagResolver {
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async attachEventTag(@Args('input') input: EventTagAttach) {
 		return this.svc.eventTag.attach({ name: input.name }, input.eventId);
+	}
+
+	// Queries
+	/**
+	 * list all tags server have
+	 */
+	@Query(() => [EventTag])
+	@AllowPublic()
+	async listAllTags() {
+		return this.svc.eventTag.find({});
 	}
 }

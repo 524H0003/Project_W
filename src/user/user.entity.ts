@@ -167,6 +167,14 @@ export class User extends BaseEntity implements IUserEntity {
 	}
 
 	/**
+	 * Get user's id
+	 * @return {string}
+	 */
+	get id(): string {
+		return this.baseUser.id;
+	}
+
+	/**
 	 * @ignore
 	 */
 	static test(from: string, options?: { email?: string }) {

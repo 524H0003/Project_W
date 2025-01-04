@@ -3,6 +3,7 @@ import {
 	ExecutionContext,
 	Injectable,
 	InternalServerErrorException,
+	UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -31,11 +32,14 @@ function convertForGql(context: ExecutionContext) {
 export const Roles = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),
 	CurrentUser = createParamDecorator(
-		(data: unknown, context: ExecutionContext) => convertForGql(context).user,
-	),
-	CurrentUserId = createParamDecorator(
-		(data: unknown, context: ExecutionContext) =>
-			(convertForGql(context).user as User).baseUser.id,
+		(instance: any = User, context: ExecutionContext) => {
+			const result = convertForGql(context).user;
+
+			if (!result || !(result instanceof instance))
+				throw new UnauthorizedException('Login first to access this endpoint.');
+
+			return new instance(result);
+		},
 	),
 	MetaData = createParamDecorator(
 		(data: unknown, context: ExecutionContext): string =>

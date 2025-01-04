@@ -50,7 +50,7 @@ export class SessionService extends DatabaseRequests<Session> {
 	 */
 	async getTokens(user: User, mtdt: string) {
 		const hashedUserAgent = hash(mtdt),
-			accessToken = this.svc.sign.access(user.baseUser.id),
+			accessToken = this.svc.sign.access(user.id),
 			device = await this.svc.device.assign({
 				owner: await this.svc.user.email(user.baseUser.email),
 				hashedUserAgent: accessToken,
@@ -97,7 +97,7 @@ export class SessionService extends DatabaseRequests<Session> {
 				await this.id(oldSessionId, { deep: 4, relations: ['device'] }),
 			),
 			refreshToken = this.svc.sign.refresh(newSession.id),
-			accessToken = this.svc.sign.access(newSession.device.owner.baseUser.id);
+			accessToken = this.svc.sign.access(newSession.device.owner.id);
 
 		return new UserRecieve({
 			accessToken,
@@ -123,7 +123,7 @@ export class SessionService extends DatabaseRequests<Session> {
 	async rotateToken(sessionId: string) {
 		const session = await this.id(sessionId, { deep: 4 }),
 			refreshToken = this.svc.sign.refresh(session.id),
-			accessToken = this.svc.sign.access(session.device.owner.baseUser.id);
+			accessToken = this.svc.sign.access(session.device.owner.id);
 		return new UserRecieve({
 			refreshToken,
 			accessToken,

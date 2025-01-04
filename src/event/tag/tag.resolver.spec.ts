@@ -16,6 +16,9 @@ import {
 	AttachEventTag,
 	AttachEventTagMutation,
 	AttachEventTagMutationVariables,
+	ListAllTags,
+	ListAllTagsQuery,
+	ListAllTagsQueryVariables,
 } from 'compiled_graphql';
 import { Event } from 'event/event.entity';
 
@@ -106,6 +109,36 @@ describe('attachEventTag', () => {
 					)
 				).attachEventTag.toEvents[0],
 			{ exps: [{ type: 'toHaveProperty', params: ['id', eventId] }] },
+		);
+	});
+});
+
+describe('listAllTags', () => {
+	const send = sendGQL<ListAllTagsQuery, ListAllTagsQueryVariables>(
+		ListAllTags,
+	);
+	let tagId: string;
+
+	beforeEach(async () => {
+		tagId = (
+			await sendGQL<AssignEventTagMutation, AssignEventTagMutationVariables>(
+				AssignEventTag,
+			)({ input: EventTag.test(fileName) }, headers['set-cookie'])
+		).assignEventTag.id;
+	});
+
+	it('success', async () => {
+		await execute(
+			async () => (await send({}, headers['set-cookie'])).listAllTags,
+			{
+				exps: [{ type: 'toBeDefined', params: [] }],
+				onFinish: async (result) => {
+					// eslint-disable-next-line @typescript-eslint/require-await
+					await execute(async () => result.some((i) => i.id === tagId), {
+						exps: [{ type: 'toEqual', params: [true] }],
+					});
+				},
+			},
 		);
 	});
 });

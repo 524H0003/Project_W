@@ -24,7 +24,6 @@ import {
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
-import { BaseUser } from 'app/app.entity';
 
 /**
  * File services
@@ -160,19 +159,16 @@ export class FileService extends DatabaseRequests<File> {
 		writeFileSync(`${this.rootDir}${path}`, input.buffer);
 
 		if (!fileName)
-			return this.save({
-				path,
-				fileCreatedBy: { baseUser: { id: user.baseUser.id } },
-			});
+			return this.save({ path, fileCreatedBy: { baseUser: { id: user.id } } });
 	}
 
 	/**
 	 * Recieve file from server
 	 * @param {string} filename - the name of recieving file
-	 * @param {BaseUser} user - the user want to recieve file
+	 * @param {User} user - the user want to recieve file
 	 * @return {Promise<string>} the file name or rejecting request
 	 */
-	async recieve(filename: string, user: BaseUser): Promise<string> {
+	async recieve(filename: string, user: User): Promise<string> {
 		const fileOnline = await this.s3Recieve(filename),
 			filePath = realpathSync(resolve(this.rootDir, filename));
 		if (fileOnline && filePath.startsWith(resolve(this.rootDir))) {
@@ -185,7 +181,7 @@ export class FileService extends DatabaseRequests<File> {
 
 				const file = await this.path(filename, user?.id, { deep: 2 });
 
-				if (user?.id === file.fileCreatedBy.baseUser.id) return filename;
+				if (user?.id === file.fileCreatedBy.id) return filename;
 				throw new BadRequestException('ForbidenFile');
 			}
 			return null;

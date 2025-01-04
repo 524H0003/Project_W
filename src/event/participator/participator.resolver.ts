@@ -5,9 +5,10 @@ import {
 	EventParticipatorUpdate,
 } from './participator.entity';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { CurrentUserId, RoleGuard, Roles } from 'auth/auth.guard';
+import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
+import { User } from 'user/user.entity';
 
 @Resolver(() => EventParticipator)
 @UseGuards(RoleGuard)
@@ -33,11 +34,11 @@ export class EventParticipatorResolver {
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async updateParticipator(
 		@Args('input') input: EventParticipatorUpdate,
-		@CurrentUserId() userId: string,
+		@CurrentUser() user: User,
 	) {
 		const participator = await this.svc.eventParti.findOne({
 			id: input.id,
-			fromEvent: { eventCreatedBy: { user: { baseUser: { id: userId } } } },
+			fromEvent: { eventCreatedBy: { user: { baseUser: { id: user.id } } } },
 		});
 
 		if (!participator) throw new BadRequestException('Invalid_Participator_Id');
