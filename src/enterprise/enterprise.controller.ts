@@ -20,11 +20,13 @@ import { memoryStorage } from 'multer';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 /**
  * Enterprise controller
  */
 @Controller('enterprise')
+@UseInterceptors(CacheInterceptor)
 export class EnterpriseController extends AppController {
 	/**
 	 * @ignore

@@ -20,12 +20,14 @@ import { Hook } from 'app/hook/hook.entity';
 import { Request, Response } from 'express';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 /**
  * Faculty controller
  */
 @Injectable()
 @Controller('faculty')
+@UseInterceptors(CacheInterceptor)
 export class FacultyController extends AppController {
 	/**
 	 * @ignore

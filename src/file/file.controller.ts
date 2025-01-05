@@ -5,6 +5,7 @@ import {
 	Param,
 	Res,
 	UseGuards,
+	UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CurrentUser } from 'auth/auth.guard';
@@ -12,11 +13,13 @@ import { Response } from 'express';
 import { FileService } from './file.service';
 import { User } from 'user/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 /**
  * File controller
  */
 @Controller('file')
+@UseInterceptors(CacheInterceptor)
 export class FileController {
 	/**
 	 * @ignore
