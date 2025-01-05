@@ -18,7 +18,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 			sortSchema: true,
 			playground: false,
 		}),
-		CacheModule.register({ isGlobal: true }),
+		CacheModule.register({ isGlobal: true, ttl: 0 }),
 		JwtModule.register({ global: true }),
 		loadEnv,
 		SqlModule('test'),
