@@ -2,7 +2,6 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { Device } from 'auth/device/device.entity';
-import { IFile } from 'file/file.model';
 import {
 	IBaseUserInfoKeys,
 	IUserAuthenticationKeys,
@@ -88,7 +87,7 @@ export class User extends BaseEntity implements IUserEntity {
 	 * User uploaded files
 	 */
 	@OneToMany(() => File, (_) => _.fileCreatedBy, { onDelete: 'CASCADE' })
-	uploadFiles: IFile[];
+	uploadFiles: File[];
 
 	/**
 	 * User participated events
