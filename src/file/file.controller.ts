@@ -33,24 +33,23 @@ export class FileController {
 
 	/**
 	 * Get uploaded file
-	 * @param {string} filename - the name of file
+	 * @param {string} fileName - the name of file
 	 * @param {Response} res - the server's response
 	 * @param {User} user - the current processing user
 	 */
 	@Get(':filename')
 	@UseGuards(AuthGuard('access'))
 	async seeUploadedFile(
-		@Param('filename') filename: string,
+		@Param('filename') fileName: string,
 		@Res() res: Response,
 		@CurrentUser() user: User,
 	) {
-		const file = await this.fileSvc.recieve(filename, user);
-		if (file)
-			return res
-				.status(HttpStatus.ACCEPTED)
-				.sendFile(filename, { root: this.rootDir });
 		return res
-			.status(HttpStatus.BAD_REQUEST)
-			.send({ error: 'Invalid request' });
+			.status(HttpStatus.ACCEPTED)
+			.set({
+				'Content-Type': 'application/octet-stream',
+				'Content-Disposition': `attachment; filename="${fileName}"`,
+			})
+			.send(await this.fileSvc.recieve(fileName, user));
 	}
 }

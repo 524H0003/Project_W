@@ -1,12 +1,6 @@
 import { createHash } from 'crypto';
-import {
-	existsSync,
-	readdir,
-	readFileSync,
-	realpathSync,
-	writeFileSync,
-} from 'fs';
-import { extname, join, resolve } from 'path';
+import { readdir, readFileSync } from 'fs';
+import { extname, join } from 'path';
 import { Readable } from 'stream';
 import {
 	GetObjectCommand,
@@ -17,10 +11,7 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-	DatabaseRequests,
-	FindOptionsWithCustom,
-} from 'app/utils/typeorm.utils';
+import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
@@ -45,7 +36,14 @@ export class FileService extends DatabaseRequests<File> {
 			for (const file of files) {
 				const filePath = join(this.rootDir, file);
 
-				await this.s3Send(file, readFileSync(filePath));
+				try {
+					await this.s3Send(file, readFileSync(filePath));
+				} catch (error) {
+					console.error(
+						`\n${'-'.repeat(30)}\nUnable to upload ${filePath}\n${'-'.repeat(30)}\n`,
+						error,
+					);
+				}
 			}
 		});
 	}
@@ -87,8 +85,9 @@ export class FileService extends DatabaseRequests<File> {
 	 * @return {Promise<Buffer>} output
 	 */
 	private async asBuffer(response: GetObjectCommandOutput): Promise<Buffer> {
-		const stream = this.asStream(response);
-		const chunks: Buffer[] = [];
+		const stream = this.asStream(response),
+			chunks: Buffer[] = [];
+
 		return new Promise<Buffer>((resolve, reject) => {
 			stream.on('data', (chunk) => chunks.push(chunk));
 			stream.on('error', (err) => reject(err));
@@ -111,7 +110,12 @@ export class FileService extends DatabaseRequests<File> {
 					Body: input,
 				},
 			}).done();
-		} catch {}
+		} catch (error) {
+			throw new Error(
+				`\n${'-'.repeat(30)}\nFatal_Upload_File\n${'-'.repeat(30)}\n`,
+				error,
+			);
+		}
 	}
 
 	/**
@@ -129,15 +133,18 @@ export class FileService extends DatabaseRequests<File> {
 					}),
 				),
 			);
-		} catch {
-			return null;
+		} catch (error) {
+			throw new Error(
+				`\n${'-'.repeat(30)}\nFatal_Download_File\n${'-'.repeat(30)}\n`,
+				error,
+			);
 		}
 	}
 
 	/**
 	 * Assign file to server
 	 * @param {Express.Multer.File} input - the file to assign
-	 * @param {User} fileCreatedBy - the file's assigner
+	 * @param {User} user - the file's assigner
 	 * @param {object} serverFilesOptions - optional options
 	 * @return {Promise<File>} the assigned file's infomations on database
 	 */
@@ -147,16 +154,15 @@ export class FileService extends DatabaseRequests<File> {
 		serverFilesOptions?: { fileName: string },
 	): Promise<File> {
 		if (!input?.buffer) return null;
-		const { fileName = '' } = serverFilesOptions || {};
 
-		const path = fileName
-			? fileName + `.server.${extname(input.originalname)}`
-			: `${createHash('sha256')
-					.update(input.buffer)
-					.digest('hex')}${extname(input.originalname)}`;
+		const { fileName = '' } = serverFilesOptions || {},
+			path = fileName
+				? fileName + `.server.${extname(input.originalname)}`
+				: `${createHash('sha256')
+						.update(input.buffer)
+						.digest('hex')}${extname(input.originalname)}`;
 
 		await this.s3Send(path, input.buffer);
-		writeFileSync(`${this.rootDir}${path}`, input.buffer);
 
 		if (!fileName)
 			return this.save({ path, fileCreatedBy: { baseUser: { id: user.id } } });
@@ -166,28 +172,20 @@ export class FileService extends DatabaseRequests<File> {
 	 * Recieve file from server
 	 * @param {string} filename - the name of recieving file
 	 * @param {User} user - the user want to recieve file
-	 * @return {Promise<string>} the file name or rejecting request
+	 * @return {Promise<Buffer>} the file buffer
 	 */
-	async recieve(filename: string, user: User): Promise<string> {
-		const fileOnline = await this.s3Recieve(filename),
-			filePath = realpathSync(resolve(this.rootDir, filename));
-		if (fileOnline && filePath.startsWith(resolve(this.rootDir))) {
-			writeFileSync(filePath, fileOnline);
-		}
+	async recieve(filename: string, user: User): Promise<Buffer> {
+		const recievedFile = await this.s3Recieve(filename);
 
-		try {
-			if (filePath.startsWith(resolve(this.rootDir)) && existsSync(filePath)) {
-				if (filename.match(this.serverFilesReg)) return filename;
+		if (!recievedFile) throw new BadRequestException('Fatal_Request_File');
 
-				const file = await this.path(filename, user?.id, { deep: 2 });
+		if (
+			filename.match(this.serverFilesReg) ||
+			(await this.isOwner(filename, user!.id))
+		)
+			return recievedFile;
 
-				if (user?.id === file.fileCreatedBy.id) return filename;
-				throw new BadRequestException('ForbidenFile');
-			}
-			return null;
-		} catch (error) {
-			throw new BadRequestException('InvalidFileRequest');
-		}
+		throw new BadRequestException('ForbidenFile');
 	}
 
 	/**
@@ -200,19 +198,16 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Find file on database
 	 * @param {string} input - the file's name
-	 * @param {string} userId - the id of request's user
-	 * @param {FindOptionsWithCustom<File>} options - the function's option
-	 * @return {Promise<File>}
+	 * @param {string} ownerId - the owner's id
+	 * @return {Promise<boolean>}
 	 */
-	path(
-		input: string,
-		userId: string,
-		options: FindOptionsWithCustom<File>,
-	): Promise<File> {
-		return this.findOne({
-			path: input,
-			...options,
-			fileCreatedBy: { baseUser: { id: userId } },
-		});
+	async isOwner(input: string, ownerId: string): Promise<boolean> {
+		return (
+			(await this.findOne({
+				path: input,
+				fileCreatedBy: { baseUser: { id: ownerId } },
+				deep: 2,
+			})) !== undefined
+		);
 	}
 }
