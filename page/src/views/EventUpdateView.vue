@@ -93,7 +93,7 @@ const input = reactive<IEventInfo>({
     location: '',
     applicationDeadline: new Date(),
     requiredSkills: '',
-    additionalFields: '',
+    additionalFields: {},
   }),
   handleAssign = () => {
     apiErrorHandler(updateEvent({ ...input }))

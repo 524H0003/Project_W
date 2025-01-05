@@ -41,12 +41,12 @@ export interface IEventInfo extends IEntityId {
 	/**
 	 * Event's start date
 	 */
-	startDate: Date | string;
+	startDate: Date;
 
 	/**
 	 * Event's end date
 	 */
-	endDate: Date | string;
+	endDate: Date;
 
 	/**
 	 * Event's type
@@ -76,7 +76,7 @@ export interface IEventInfo extends IEntityId {
 	/**
 	 * Application deadline
 	 */
-	applicationDeadline: Date | string;
+	applicationDeadline: Date;
 
 	/**
 	 * Event's required skills
