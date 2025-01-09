@@ -8,14 +8,7 @@ module.exports = {
 	],
 	root: true,
 	env: { node: true, jest: true },
-	ignorePatterns: [
-		'*.js',
-		'dist/*',
-		'*.d.ts',
-		'*.config.*',
-		'src/types.ts',
-		'src/models.ts',
-	],
+	ignorePatterns: ['*.js', 'dist/*', '*.d.ts', '*.config.*'],
 	rules: {
 		'@typescript-eslint/interface-name-prefix': 'off',
 		'@typescript-eslint/explicit-function-return-type': 'off',
