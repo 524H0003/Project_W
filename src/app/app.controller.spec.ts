@@ -1,35 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { execute } from 'app/utils/test.utils';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { TestModule } from 'app/module/test.module';
-import cookieParser from 'cookie-parser';
-import request from 'supertest';
+import { execute, initJest } from 'app/utils/test.utils';
+import { HttpStatus } from '@nestjs/common';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
-import { AppController } from 'app/app.controller';
-import { AppModule } from 'app/app.module';
 import { AppService } from './app.service';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent,
-	usr: User,
-	app: INestApplication,
-	rfsTms: number,
-	appSvc: AppService;
+let req: TestAgent, usr: User, rfsTms: number, svc: AppService;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [AppModule, TestModule],
-		controllers: [AppController],
-	}).compile();
-	(appSvc = module.get(AppService)), (app = module.createNestApplication());
+	const { appSvc, requester } = await initJest();
 
-	await app.use(cookieParser()).init();
+	(svc = appSvc), (req = requester);
 });
 
 beforeEach(() => {
-	(req = request(app.getHttpServer())), (usr = User.test(fileName));
+	usr = User.test(fileName);
 });
 
 describe('signup', () => {
@@ -49,7 +35,7 @@ describe('signup', () => {
 
 		delete usr.password;
 
-		await execute(() => appSvc.user.email(usr.baseUser.email), {
+		await execute(() => svc.user.email(usr.baseUser.email), {
 			exps: [
 				{ type: 'toBeInstanceOf', params: [User] },
 				{
@@ -102,7 +88,7 @@ describe('login', () => {
 
 		await execute(
 			() =>
-				appSvc.device.find({
+				svc.device.find({
 					owner: { baseUser: { email: usr.baseUser.email.lower } },
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
@@ -149,7 +135,7 @@ describe('logout', () => {
 				onFinish: () =>
 					execute(
 						() =>
-							appSvc.device.find({
+							svc.device.find({
 								owner: { baseUser: { email: usr.baseUser.email.lower } },
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
@@ -247,7 +233,7 @@ describe('change-password', () => {
 
 	it('success', async () => {
 		const rawUser = User.test(fileName);
-		user = await appSvc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null);
+		user = await svc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null);
 
 		await execute(
 			async () =>
@@ -267,7 +253,7 @@ describe('change-password', () => {
 
 	it('failed', async () => {
 		const rawUser = User.test(fileName);
-		user = await appSvc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null);
+		user = await svc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null);
 
 		await execute(
 			async () =>

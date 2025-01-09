@@ -116,4 +116,22 @@ describe('updateParticipator', () => {
 			exps: [{ type: 'toBeDefined', params: [] }],
 		});
 	});
+
+	it('failed due to invalid id', async () => {
+		const interviewNote = (30).string,
+			newId =
+				participatorId.at(-1) !== '0'
+					? participatorId.slice(0, -1) + '0'
+					: participatorId.slice(0, -1) + '1';
+
+		await execute(
+			// eslint-disable-next-line @typescript-eslint/require-await
+			async () => () =>
+				send({ input: { id: newId, interviewNote } }, empHeaders['set-cookie']),
+			{
+				exps: [{ type: 'toThrow', params: ['Invalid_Participator_Id'] }],
+				throwError: true,
+			},
+		);
+	});
 });

@@ -1,26 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
 import { Device } from './device.entity';
-import { execute } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 
 const fileName = curFile(__filename);
 
-let appSvc: AppService;
+let svc: AppService;
 
 beforeEach(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { appSvc } = await initJest();
 
-	appSvc = module.get(AppService);
+	svc = appSvc;
 });
 
 it('assign', async () => {
 	const device = Device.test(fileName);
 
-	await execute(() => appSvc.device.assign(device), {
+	await execute(() => svc.device.assign(device), {
 		exps: [
 			{ type: 'toBeInstanceOf', params: [Device] },
 			{ type: 'toMatchObject', params: [device] },
@@ -30,16 +25,16 @@ it('assign', async () => {
 
 it('modify', async () => {
 	const rawDevice = Device.test(fileName),
-		device = await appSvc.device.assign(rawDevice),
+		device = await svc.device.assign(rawDevice),
 		newMtdt = (5).string + '_' + fileName;
 
-	await execute(() => appSvc.device.modify(device.id, { child: newMtdt }), {
+	await execute(() => svc.device.modify(device.id, { child: newMtdt }), {
 		exps: [
 			{ type: 'toBeInstanceOf', params: [Device] },
 			{ type: 'toMatchObject', params: [{ child: newMtdt }] },
 		],
 	});
-	await execute(() => appSvc.device.findOne(device), {
+	await execute(() => svc.device.findOne(device), {
 		exps: [{ type: 'toBeNull', params: [] }],
 	});
 });
@@ -47,13 +42,13 @@ it('modify', async () => {
 it('remove', async () => {
 	const device = Device.test(fileName);
 
-	await appSvc.device.assign(device);
+	await svc.device.assign(device);
 
 	// eslint-disable-next-line @typescript-eslint/require-await
-	await execute(async () => () => appSvc.device.remove({ id: device.id }), {
+	await execute(async () => () => svc.device.remove({ id: device.id }), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
-	await execute(() => appSvc.device.findOne(device), {
+	await execute(() => svc.device.findOne(device), {
 		exps: [{ type: 'toBeNull', params: [] }],
 	});
 });

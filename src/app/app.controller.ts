@@ -30,11 +30,13 @@ import { compare } from './utils/auth.utils';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 import { Throttle } from '@nestjs/throttler';
 import { BaseController } from './utils/controller.utils';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 /**
  * Application Controller
  */
 @Controller('')
+@UseInterceptors(CacheInterceptor)
 export class AppController extends BaseController {
 	/**
 	 * @ignore
@@ -269,7 +271,7 @@ export class AppController extends BaseController {
 				mtdt,
 				(signature: string) =>
 					this.svc.mail.send(
-						this.svc.config.get('ADMIN_EMAIL'),
+						this.svc.cfg.get('ADMIN_EMAIL'),
 						'Signature request',
 						'sendSignatureAdmin',
 						{ signature },

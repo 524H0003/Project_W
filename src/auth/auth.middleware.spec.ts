@@ -1,12 +1,10 @@
 import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { TestModule } from 'app/module/test.module';
 import { hash } from 'app/utils/auth.utils';
 import { NextFunction, Request, Response } from 'express';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { AuthMiddleware } from './auth.middleware';
 import { AuthService } from './auth.service';
-import { AppModule } from 'app/app.module';
+import { initJest } from 'app/utils/test.utils';
 
 const acsTkn = '..access-token',
 	rfsTkn = '..refresh-token';
@@ -21,10 +19,7 @@ let next: NextFunction,
 	rfsKey: string;
 
 beforeEach(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-		providers: [AuthMiddleware],
-	}).compile();
+	const { module } = await initJest([], [AuthMiddleware]);
 
 	(authMdw = module.get(AuthMiddleware)),
 		(authSvc = module.get(AuthService)),

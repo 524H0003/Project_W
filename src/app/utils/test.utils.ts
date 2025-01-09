@@ -108,14 +108,18 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 /**
  * Init jest test
  */
-export async function initJest() {
+export async function initJest(
+	controllers: Array<any> = [],
+	providers: Array<any> = [],
+) {
 	const module: TestingModule = await Test.createTestingModule({
-		imports: [AppModule, TestModule],
-	}).compile();
+			imports: [AppModule, TestModule],
+			controllers,
+			providers,
+		}).compile(),
+		appSvc = module.get(AppService);
 
-	const appSvc = module.get(AppService);
 	app = module.createNestApplication();
-
 	await app.use(cookieParser()).init();
 	requester = request(app.getHttpServer());
 

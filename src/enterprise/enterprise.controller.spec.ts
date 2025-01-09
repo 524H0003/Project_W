@@ -1,42 +1,28 @@
 import TestAgent from 'supertest/lib/agent';
 import { Enterprise } from './enterprise.entity';
-import { Test, TestingModule } from '@nestjs/testing';
-import { TestModule } from 'app/module/test.module';
-import { EnterpriseController } from './enterprise.controller';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import cookieParser from 'cookie-parser';
-import request from 'supertest';
-import { execute } from 'app/utils/test.utils';
+import { HttpStatus } from '@nestjs/common';
+import { execute, initJest } from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
-import { AppModule } from 'app/app.module';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
+import { EnterpriseController } from './enterprise.controller';
 
 const fileName = curFile(__filename);
 
 let req: TestAgent,
 	enterprise: Enterprise,
 	signature: string,
-	appSvc: AppService,
-	mailerSvc: MailerService,
-	app: INestApplication;
+	svc: AppService,
+	mailerSvc: MailerService;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [AppModule, TestModule],
-		controllers: [EnterpriseController],
-	}).compile();
+	const { appSvc, module, requester } = await initJest([EnterpriseController]);
 
-	app = module.createNestApplication();
-
-	await app.use(cookieParser()).init(),
-		(mailerSvc = module.get(MailerService)),
-		(appSvc = module.get(AppService));
+	(mailerSvc = module.get(MailerService)), (svc = appSvc), (req = requester);
 });
 
 beforeEach(() => {
-	(req = request(app.getHttpServer())),
-		(enterprise = Enterprise.test(fileName));
+	enterprise = Enterprise.test(fileName);
 });
 
 describe('assign', () => {
@@ -68,7 +54,7 @@ describe('assign', () => {
 		);
 		await execute(
 			() =>
-				appSvc.enterprise.findOne({
+				svc.enterprise.findOne({
 					baseUser: { name: enterprise.baseUser.name },
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },

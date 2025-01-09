@@ -24,7 +24,7 @@ export class BaseController {
 	 */
 	get acsKey(): string {
 		if (this._acsKey) return this._acsKey;
-		return (this._acsKey = this.svc.config.get('ACCESS_SECRET'));
+		return (this._acsKey = this.svc.cfg.get('ACCESS_SECRET'));
 	}
 
 	/**
@@ -36,7 +36,7 @@ export class BaseController {
 	 */
 	get rfsKey(): string {
 		if (this._rfsKey) return this._rfsKey;
-		return (this._rfsKey = this.svc.config.get('REFRESH_SECRET'));
+		return (this._rfsKey = this.svc.cfg.get('REFRESH_SECRET'));
 	}
 
 	/**

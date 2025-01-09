@@ -1,20 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
 import { Student } from './student.entity';
-import { execute } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 
 const fileName = curFile(__filename);
 
-let appSvc: AppService, student: Student;
+let svc: AppService, student: Student;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { appSvc } = await initJest();
 
-	appSvc = module.get(AppService);
+	svc = appSvc;
 });
 
 beforeEach(() => {});
@@ -26,7 +21,7 @@ describe('StudentService', () => {
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.student.signUp({
+				svc.student.signUp({
 					...student.user.baseUser,
 					...student.user,
 					...student,
@@ -44,7 +39,7 @@ describe('StudentService', () => {
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.student.signUp({
+				svc.student.signUp({
 					...student.user.baseUser,
 					...student.user,
 					...student,

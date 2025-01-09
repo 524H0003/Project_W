@@ -19,11 +19,13 @@ import { Hook } from 'app/hook/hook.entity';
 import { memoryStorage } from 'multer';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 /**
  * Employee controller
  */
 @Controller('employee')
+@UseInterceptors(CacheInterceptor)
 export class EmployeeController extends AppController {
 	/**
 	 * @ignore

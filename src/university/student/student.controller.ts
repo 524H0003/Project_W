@@ -15,12 +15,14 @@ import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
 import { IStudentSignup } from './student.model';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 /**
  * Student controller
  */
 @Injectable()
 @Controller('student')
+@UseInterceptors(CacheInterceptor)
 export class StudentController extends AppController {
 	/**
 	 * @ignore

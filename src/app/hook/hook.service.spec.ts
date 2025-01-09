@@ -1,21 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
-import { execute } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 import { User, UserRecieve } from 'user/user.entity';
 import { Hook } from './hook.entity';
 
 const fileName = curFile(__filename);
 
-let appSvc: AppService;
+let svc: AppService;
 
 beforeEach(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { appSvc } = await initJest();
 
-	appSvc = module.get(AppService);
+	svc = appSvc;
 });
 
 it('assign', async () => {
@@ -24,7 +19,7 @@ it('assign', async () => {
 
 	await execute(
 		() =>
-			appSvc.hook.assign(
+			svc.hook.assign(
 				mtdt,
 				(s: string) => {
 					signature = s;
@@ -34,11 +29,11 @@ it('assign', async () => {
 		{
 			exps: [{ type: 'toBeInstanceOf', params: [UserRecieve] }],
 			onFinish: async (result: UserRecieve) => {
-				const token: { id: string } = appSvc.sign.verify(result.accessToken, {
+				const token: { id: string } = svc.sign.verify(result.accessToken, {
 					type: 'access',
 				}) as { id: string };
 
-				await execute(() => appSvc.hook.id(token.id), {
+				await execute(() => svc.hook.id(token.id), {
 					exps: [
 						{ type: 'toBeDefined', params: [] },
 						{
@@ -60,11 +55,11 @@ it('assign with user', async () => {
 
 	await execute(
 		() =>
-			appSvc.hook.assign(
+			svc.hook.assign(
 				mtdt,
 				async () => {
 					user = User.test(fileName);
-					return (await appSvc.auth.signUp({ ...user, ...user.baseUser }, null))
+					return (await svc.auth.signUp({ ...user, ...user.baseUser }, null))
 						.baseUser;
 				},
 				'_Email',
@@ -72,11 +67,11 @@ it('assign with user', async () => {
 		{
 			exps: [{ type: 'toBeInstanceOf', params: [UserRecieve] }],
 			onFinish: async (result: UserRecieve) => {
-				const token: { id: string } = appSvc.sign.verify(result.accessToken, {
+				const token: { id: string } = svc.sign.verify(result.accessToken, {
 					type: 'access',
 				}) as { id: string };
 
-				await execute(() => appSvc.hook.id(token.id), {
+				await execute(() => svc.hook.id(token.id), {
 					exps: [
 						{ type: 'toBeDefined', params: [] },
 						{ type: 'toBeInstanceOf', params: [Hook] },
@@ -91,21 +86,21 @@ it('validating', async () => {
 	const mtdt = fileName + '_' + (20).string;
 	let signature: string;
 
-	const userRecieve = await appSvc.hook.assign(
+	const userRecieve = await svc.hook.assign(
 			mtdt,
 			(s: string) => {
 				signature = s;
 			},
 			'_Admin',
 		),
-		token: { id: string } = appSvc.sign.verify(userRecieve.accessToken, {
+		token: { id: string } = svc.sign.verify(userRecieve.accessToken, {
 			type: 'access',
 		}) as { id: string },
-		hook = await appSvc.hook.id(token.id);
+		hook = await svc.hook.id(token.id);
 
 	await execute(
 		// eslint-disable-next-line @typescript-eslint/require-await
-		async () => () => appSvc.hook.validating(signature, mtdt, hook),
+		async () => () => svc.hook.validating(signature, mtdt, hook),
 		{ exps: [{ type: 'toThrow', not: true, params: [] }] },
 	);
 });
@@ -117,7 +112,7 @@ it('validating failed', async () => {
 	await execute(
 		// eslint-disable-next-line @typescript-eslint/require-await
 		async () => () =>
-			appSvc.hook.validating(
+			svc.hook.validating(
 				signature,
 				mtdt,
 				new Hook({

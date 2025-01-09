@@ -1,21 +1,16 @@
 import { AppService } from 'app/app.service';
 import { User } from './user.entity';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from 'app/app.module';
-import { TestModule } from 'app/module/test.module';
-import { execute } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 import { UserRole } from './user.model';
 
 const fileName = curFile(__filename);
 
-let appSvc: AppService, user: User;
+let svc: AppService, user: User;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { appSvc } = await initJest();
 
-	appSvc = module.get(AppService);
+	svc = appSvc;
 });
 
 beforeEach(() => {
@@ -24,13 +19,13 @@ beforeEach(() => {
 });
 
 it('assign', async () => {
-	await execute(() => appSvc.user.assign(user), {
+	await execute(() => svc.user.assign(user), {
 		exps: [{ type: 'toBeInstanceOf', params: [User] }],
 		onFinish: async (result: User) => {
-			await execute(() => appSvc.baseUser.find(result.baseUser), {
+			await execute(() => svc.baseUser.find(result.baseUser), {
 				exps: [{ type: 'toHaveLength', params: [1] }],
 			});
-			await execute(() => appSvc.user.email(result.baseUser.email), {
+			await execute(() => svc.user.email(result.baseUser.email), {
 				exps: [
 					{
 						type: 'toHaveProperty',
@@ -38,7 +33,7 @@ it('assign', async () => {
 					},
 				],
 			});
-			await execute(() => appSvc.user.id(result.id), {
+			await execute(() => svc.user.id(result.id), {
 				exps: [
 					{
 						type: 'toHaveProperty',
@@ -51,11 +46,11 @@ it('assign', async () => {
 });
 
 it('modify', async () => {
-	const dbUser = await appSvc.user.assign(user),
+	const dbUser = await svc.user.assign(user),
 		newName = (20).string;
 
 	await execute(
-		() => appSvc.user.modify(dbUser.id, { baseUser: { name: newName } }),
+		() => svc.user.modify(dbUser.id, { baseUser: { name: newName } }),
 		{
 			exps: [
 				{ type: 'toBeInstanceOf', params: [User] },
@@ -66,21 +61,21 @@ it('modify', async () => {
 });
 
 it('remove', async () => {
-	const dbUser = await appSvc.user.assign(user);
+	const dbUser = await svc.user.assign(user);
 
 	// eslint-disable-next-line @typescript-eslint/require-await
-	await execute(async () => () => appSvc.user.remove(dbUser.id), {
+	await execute(async () => () => svc.user.remove(dbUser.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
-	await execute(() => appSvc.user.id(dbUser.id), {
+	await execute(() => svc.user.id(dbUser.id), {
 		exps: [{ type: 'toBeNull', params: [] }],
 	});
 });
 
 it('updateRole', async () => {
-	const dbUser = await appSvc.user.assign(user);
+	const dbUser = await svc.user.assign(user);
 
-	await execute(() => appSvc.user.updateRole(dbUser.id, UserRole.admin), {
+	await execute(() => svc.user.updateRole(dbUser.id, UserRole.admin), {
 		exps: [
 			{ type: 'toBeInstanceOf', params: [User] },
 			{ type: 'toHaveProperty', params: ['role', UserRole.admin] },

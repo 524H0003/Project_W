@@ -1,29 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { execute } from 'app/utils/test.utils';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { TestModule } from 'app/module/test.module';
-import cookieParser from 'cookie-parser';
-import request from 'supertest';
+import { execute, initJest } from 'app/utils/test.utils';
+import { HttpStatus } from '@nestjs/common';
 import TestAgent from 'supertest/lib/agent';
 import { Student } from './student.entity';
-import { AppModule } from 'app/app.module';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent, stu: Student, app: INestApplication;
+let req: TestAgent, stu: Student;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { requester } = await initJest();
 
-	app = module.createNestApplication();
-
-	await app.use(cookieParser()).init();
+	req = requester;
 });
 
 beforeEach(() => {
-	(req = request(app.getHttpServer())), (stu = Student.test(fileName));
+	stu = Student.test(fileName);
 });
 
 describe('signup', () => {

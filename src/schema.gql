@@ -139,8 +139,6 @@ input NotificationUpdate {
 type Query {
   listAllNotifications(isRead: Boolean): [Reciever!]!
   listAllTags: [EventTag!]!
-  user(id: String!): User!
-  userAll: [User!]!
 }
 
 input ReadNotification {
@@ -165,18 +163,6 @@ input RecieverAssign {
 input RecieverAssignMany {
   notificationId: String!
   usersId: [String!]!
-}
-
-type User {
-  role: UserRole!
-}
-
-enum UserRole {
-  admin
-  enterprise
-  faculty
-  student
-  undefined
 }
 
 enum event_status {

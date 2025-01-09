@@ -192,13 +192,13 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 			location: (30).string,
 			startDate: new Date(
 				`${(10).random + 1}/${(20).random + 2}/20${(90).random + 3}`,
-			).toISOString(),
+			),
 			endDate: new Date(
 				`${(10).random + 1}/${(20).random + 2}/20${(90).random + 3}`,
-			).toISOString(),
+			),
 			applicationDeadline: new Date(
 				`${(10).random + 1}/${(20).random + 2}/20${(90).random + 3}`,
-			).toISOString(),
+			),
 			requiredSkills: '',
 		});
 	}
