@@ -1,20 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
 import { Event } from './event.entity';
-import { execute } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 
 const fileName = curFile(__filename);
 
-let appSvc: AppService, event: Event;
+let svc: AppService, event: Event;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { appSvc } = await initJest();
 
-	appSvc = module.get(AppService);
+	svc = appSvc;
 });
 
 beforeEach(() => {
@@ -22,10 +17,10 @@ beforeEach(() => {
 });
 
 it('assign', async () => {
-	await execute(() => appSvc.event.assign(event), {
+	await execute(() => svc.event.assign(event), {
 		exps: [{ type: 'toBeInstanceOf', params: [Event] }],
 		onFinish: async (result: Event) => {
-			await execute(() => appSvc.event.find({ id: result.id }), {
+			await execute(() => svc.event.find({ id: result.id }), {
 				exps: [{ type: 'toHaveLength', params: [1] }],
 			});
 		},
@@ -33,11 +28,11 @@ it('assign', async () => {
 });
 
 it('modify', async () => {
-	const curEvent = await appSvc.event.assign(event),
+	const curEvent = await svc.event.assign(event),
 		newDescription = (45).string;
 
 	await execute(
-		() => appSvc.event.modify(curEvent.id, { description: newDescription }),
+		() => svc.event.modify(curEvent.id, { description: newDescription }),
 		{
 			exps: [
 				{ type: 'toBeInstanceOf', params: [Event] },
@@ -48,13 +43,13 @@ it('modify', async () => {
 });
 
 it('remove', async () => {
-	const curEvent = await appSvc.event.assign(event);
+	const curEvent = await svc.event.assign(event);
 
 	// eslint-disable-next-line @typescript-eslint/require-await
-	await execute(async () => () => appSvc.event.remove(curEvent.id), {
+	await execute(async () => () => svc.event.remove(curEvent.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
-	await execute(() => appSvc.event.id(curEvent.id), {
+	await execute(() => svc.event.id(curEvent.id), {
 		exps: [{ type: 'toBeNull', params: [] }],
 	});
 });

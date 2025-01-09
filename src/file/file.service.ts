@@ -1,13 +1,19 @@
 import { createHash } from 'crypto';
 import { readdir, readFileSync } from 'fs';
 import { extname, join } from 'path';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	forwardRef,
+	Inject,
+	Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * File services
@@ -19,15 +25,17 @@ export class FileService extends DatabaseRequests<File> {
 	 */
 	constructor(
 		@InjectRepository(File) repo: Repository<File>,
+		@Inject(forwardRef(() => AppService))
 		private svc: AppService,
+		cfg: ConfigService,
 	) {
 		super(repo);
 
-		readdir(this.rootDir, async (error, files) => {
+		readdir(cfg.get('SERVER_PUBLIC'), async (error, files) => {
 			if (error) return;
 
 			for (const file of files) {
-				const filePath = join(this.rootDir, file);
+				const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 
 				try {
 					await this.svc.aws.upload(file, readFileSync(filePath));
@@ -45,10 +53,6 @@ export class FileService extends DatabaseRequests<File> {
 	 * @ignore
 	 */
 	private serverFilesReg = /^.*\.server\.(.*)/g;
-	/**
-	 * @ignore
-	 */
-	private rootDir = this.svc.cfg.get('SERVER_PUBLIC');
 
 	/**
 	 * Assign file to server

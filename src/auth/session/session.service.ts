@@ -31,7 +31,7 @@ export class SessionService extends DatabaseRequests<Session> {
 	 */
 	get use(): number {
 		if (this._use) return this._use;
-		return (this._use = this.svc.config.get('REFRESH_USE'));
+		return (this._use = this.svc.cfg.get('REFRESH_USE'));
 	}
 
 	/**

@@ -1,18 +1,14 @@
 import { ExecutionContext, InternalServerErrorException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { Test, TestingModule } from '@nestjs/testing';
-import { TestModule } from 'app/module/test.module';
 import { UserRole } from 'user/user.model';
 import { RoleGuard } from './auth.guard';
-import { AppModule } from 'app/app.module';
+import { initJest } from 'app/utils/test.utils';
 
 let roleGrd: RoleGuard, rflt: Reflector, ctx: ExecutionContext;
 
 beforeEach(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { module } = await initJest();
 
 	(roleGrd = module.get(RoleGuard)),
 		(rflt = module.get(Reflector)),

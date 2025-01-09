@@ -1,21 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
-import { execute } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 import { Faculty } from './faculty.entity';
 import { User } from 'user/user.entity';
 
 const fileName = curFile(__filename);
 
-let appSvc: AppService, faculty: Faculty;
+let svc: AppService, faculty: Faculty;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { appSvc } = await initJest();
 
-	appSvc = module.get(AppService);
+	svc = appSvc;
 });
 
 beforeEach(() => {});
@@ -26,7 +21,7 @@ describe('FacultyService', () => {
 
 		faculty = Faculty.test(fileName);
 
-		await appSvc.hook.assign(
+		await svc.hook.assign(
 			(20).string,
 			(s: string) => {
 				signature = s;
@@ -36,7 +31,7 @@ describe('FacultyService', () => {
 
 		await execute(
 			() =>
-				appSvc.faculty.assign(
+				svc.faculty.assign(
 					{
 						...faculty.eventCreator.user.baseUser,
 						...faculty.eventCreator.user,
@@ -54,8 +49,8 @@ describe('FacultyService', () => {
 
 		faculty = Faculty.test(fileName);
 
-		await appSvc.baseUser.assign({ ...faculty.eventCreator.user.baseUser });
-		await appSvc.hook.assign(
+		await svc.baseUser.assign({ ...faculty.eventCreator.user.baseUser });
+		await svc.hook.assign(
 			(20).string,
 			(s: string) => {
 				signature = s;
@@ -66,7 +61,7 @@ describe('FacultyService', () => {
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.faculty.assign(
+				svc.faculty.assign(
 					{
 						...faculty.eventCreator.user.baseUser,
 						...faculty.eventCreator.user,

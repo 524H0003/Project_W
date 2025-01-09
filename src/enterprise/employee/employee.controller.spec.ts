@@ -1,43 +1,29 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from 'app/app.module';
+import { HttpStatus } from '@nestjs/common';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
 import TestAgent from 'supertest/lib/agent';
-import { EmployeeController } from './employee.controller';
-import cookieParser from 'cookie-parser';
 import { Employee } from './employee.entity';
-import { execute, status } from 'app/utils/test.utils';
+import { execute, initJest, status } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import request from 'supertest';
-import { MailerService } from '@nestjs-modules/mailer';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
+import { MailerService } from '@nestjs-modules/mailer';
 
 const fileName = curFile(__filename);
 
 let req: TestAgent,
-	app: INestApplication,
-	appSvc: AppService,
+	svc: AppService,
 	mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [AppModule, TestModule],
-		controllers: [EmployeeController],
-	}).compile();
-	(appSvc = module.get(AppService)),
-		(app = module.createNestApplication()),
-		(mailerSvc = module.get(MailerService));
+	const { appSvc, requester, module } = await initJest();
 
-	await app.use(cookieParser()).init();
+	(svc = appSvc), (req = requester), (mailerSvc = module.get(MailerService));
 });
 
 beforeEach(async () => {
-	(req = request(app.getHttpServer())),
-		(employee = Employee.test(fileName)),
+	(employee = Employee.test(fileName)),
 		(enterprise = Enterprise.test(fileName));
 
 	await assignEnterprise(req, enterprise, mailerSvc);
@@ -88,7 +74,7 @@ describe('signup', () => {
 		);
 		await execute(
 			() =>
-				appSvc.employee.findOne({
+				svc.employee.findOne({
 					eventCreator: {
 						user: {
 							baseUser: { name: employee.eventCreator.user.baseUser.name },
@@ -99,7 +85,7 @@ describe('signup', () => {
 		);
 		await execute(
 			() =>
-				appSvc.enterprise.findOne({
+				svc.enterprise.findOne({
 					employees: [
 						{
 							eventCreator: {

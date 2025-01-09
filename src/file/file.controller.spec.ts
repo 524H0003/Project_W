@@ -1,29 +1,19 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from 'app/app.controller';
-import { TestModule } from 'app/module/test.module';
-import { execute } from 'app/utils/test.utils';
-import cookieParser from 'cookie-parser';
+import { execute, initJest } from 'app/utils/test.utils';
 import { FileController } from 'file/file.controller';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
-import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
 
 const fileName = curFile(__filename);
-let rawUsr: User, req: TestAgent, app: INestApplication, appSvc: AppService;
+let rawUsr: User, req: TestAgent, app: INestApplication, svc: AppService;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-		controllers: [FileController, AppController],
-	}).compile();
+	const { appSvc } = await initJest([FileController]);
 
-	(app = module.createNestApplication()), (appSvc = module.get(AppService));
-
-	await app.use(cookieParser()).init();
+	svc = appSvc;
 });
 
 beforeEach(() => {
@@ -40,11 +30,11 @@ describe('seeUploadedFile', () => {
 			.field('name', rawUsr.baseUser.name)
 			.field('email', rawUsr.baseUser.email)
 			.field('password', rawUsr.password);
-		usr = await appSvc.user.email(rawUsr.baseUser.email);
+		usr = await svc.user.email(rawUsr.baseUser.email);
 
 		headers = e.headers;
 
-		await appSvc.user.updateRole(usr.id, UserRole.admin);
+		await svc.user.updateRole(usr.id, UserRole.admin);
 	});
 
 	it('success on server files', async () => {

@@ -271,7 +271,7 @@ export class AppController extends BaseController {
 				mtdt,
 				(signature: string) =>
 					this.svc.mail.send(
-						this.svc.config.get('ADMIN_EMAIL'),
+						this.svc.cfg.get('ADMIN_EMAIL'),
 						'Signature request',
 						'sendSignatureAdmin',
 						{ signature },
