@@ -21,6 +21,7 @@ import { EventTagService } from 'event/tag/tag.service';
 import { NotificationService } from 'notification/notification.service';
 import { RecieverService } from 'notification/reciever/reciever.service';
 import { EventParticipatorService } from 'event/participator/participator.service';
+import { AWSService } from './aws/aws.service';
 
 /**
  * @ignore
@@ -38,7 +39,7 @@ export class AppService {
 		@Inject(forwardRef(() => SessionService))
 		public session: SessionService,
 		@Inject(forwardRef(() => ConfigService))
-		public config: ConfigService,
+		public cfg: ConfigService,
 		@Inject(forwardRef(() => HookService))
 		public hook: HookService,
 		@Inject(forwardRef(() => MailService))
@@ -69,6 +70,8 @@ export class AppService {
 		public recie: RecieverService,
 		@Inject(forwardRef(() => EventParticipatorService))
 		public eventParti: EventParticipatorService,
+		@Inject(forwardRef(() => AWSService))
+		public aws: AWSService,
 	) {
 		this.baseUser = new BaseUserService(baseUserRepo);
 	}
