@@ -8,7 +8,7 @@
 	"scripts": {
 		"buildfile": "ts-node src/build.ts",
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
-		"prebuild": "npm i && npm run buildfile && npm run gqlgen && npm run codegen",
+		"prebuild": "npm i && npm run buildfile",
 		"build": "cd ./mail && npm run build && cd .. && nest build",
 		"format": "replace '{\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace \"\\[\n\" \"[\" . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && prettier --write \"./**/*.ts\" \"./**/*.js*\" \"./**/*.*rc\" --log-level silent",
 		"lint": "eslint --fix  --ext .ts .",
@@ -17,7 +17,7 @@
 		"start:debug": "npm run buildfile && nest start --debug --watch",
 		"start:dev": "nest start --watch",
 		"start:prod": "node dist/src/main",
-		"pretest": "npm run buildfile",
+		"pretest": "npm run buildfile && npm run gqlgen && npm run codegen",
 		"gqlgen": " gqlg --schemaFilePath ./src/schema.gql --destDirPath ./graphql/operations --ext graphql",
 		"test": "jest --config=jest.all.config.ts",
 		"test:controller": "jest --config=jest.controller.config.ts",
