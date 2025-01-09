@@ -17,7 +17,7 @@ export class UserService extends DatabaseRequests<User> {
 	constructor(
 		@InjectRepository(User) repo: Repository<User>,
 		@Inject(forwardRef(() => AppService))
-		private appSvc: AppService,
+		private svc: AppService,
 	) {
 		super(repo);
 	}
@@ -32,7 +32,7 @@ export class UserService extends DatabaseRequests<User> {
 		entity: DeepPartial<User>,
 		options?: SaveOptions,
 	): Promise<User> {
-		const baseUser = await this.appSvc.baseUser.assign(entity.baseUser),
+		const baseUser = await this.svc.baseUser.assign(entity.baseUser),
 			result = await this.save({ ...entity, baseUser }, options);
 		return new User({ ...result, ...result.baseUser });
 	}
@@ -48,7 +48,7 @@ export class UserService extends DatabaseRequests<User> {
 		updatedEntity: DeepPartial<User>,
 	): Promise<User> {
 		const id = (
-			await this.appSvc.baseUser.modify(entityId, updatedEntity.baseUser)
+			await this.svc.baseUser.modify(entityId, updatedEntity.baseUser)
 		).id;
 		await this.update({ baseUser: { id } }, updatedEntity);
 		return this.id(entityId);
@@ -60,7 +60,7 @@ export class UserService extends DatabaseRequests<User> {
 	 */
 	async remove(entityId: string) {
 		await this.delete({ baseUser: { id: entityId } });
-		await this.appSvc.baseUser.remove(entityId);
+		await this.svc.baseUser.remove(entityId);
 	}
 
 	/**
