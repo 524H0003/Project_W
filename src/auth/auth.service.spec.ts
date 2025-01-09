@@ -58,11 +58,7 @@ describe('AuthService', () => {
 			await execute(
 				// eslint-disable-next-line @typescript-eslint/require-await
 				async () => () =>
-					svc.auth.login({
-						...user,
-						...user.baseUser,
-						email: 'lmao@lmao.com',
-					}),
+					svc.auth.login({ ...user, ...user.baseUser, email: 'lmao@lmao.com' }),
 				{
 					throwError: true,
 					exps: [{ type: 'toThrow', params: ['Invalid_Email'] }],
@@ -74,11 +70,7 @@ describe('AuthService', () => {
 			await execute(
 				// eslint-disable-next-line @typescript-eslint/require-await
 				async () => () =>
-					svc.auth.login({
-						...user,
-						...user.baseUser,
-						password: (64).string,
-					}),
+					svc.auth.login({ ...user, ...user.baseUser, password: (64).string }),
 				{
 					throwError: true,
 					exps: [{ type: 'toThrow', params: ['Invalid_Password'] }],
