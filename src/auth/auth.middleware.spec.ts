@@ -19,7 +19,7 @@ let next: NextFunction,
 	rfsKey: string;
 
 beforeEach(async () => {
-	const { module } = await initJest();
+	const { module } = await initJest([], [AuthMiddleware]);
 
 	(authMdw = module.get(AuthMiddleware)),
 		(authSvc = module.get(AuthService)),

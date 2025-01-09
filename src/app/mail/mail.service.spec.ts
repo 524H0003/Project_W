@@ -1,31 +1,25 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
-import { execute } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 
-let appSvc: AppService, mailerSvc: MailerService;
+let svc: AppService, mailerSvc: MailerService;
 
 beforeAll(async () => {
-	const module: TestingModule = await Test.createTestingModule({
-		imports: [TestModule, AppModule],
-	}).compile();
+	const { appSvc, module } = await initJest();
 
-	(appSvc = module.get(AppService)), (mailerSvc = module.get(MailerService));
+	(svc = appSvc), (mailerSvc = module.get(MailerService));
 });
 
 beforeEach(() => {});
 
 describe('send', () => {
 	it('success', async () => {
-		const email = appSvc.config.get('ADMIN_EMAIL'),
+		const email = svc.cfg.get('ADMIN_EMAIL'),
 			subject = (21).string,
 			signature = (22).string;
 
 		await execute(
-			() =>
-				appSvc.mail.send(email, subject, 'sendSignatureAdmin', { signature }),
+			() => svc.mail.send(email, subject, 'sendSignatureAdmin', { signature }),
 			{ exps: [{ type: 'toBeNull', params: [] }] },
 		);
 		expect(mailerSvc.sendMail).toHaveBeenCalledWith({
@@ -44,7 +38,7 @@ describe('send', () => {
 		await execute(
 			// eslint-disable-next-line @typescript-eslint/require-await
 			async () => () =>
-				appSvc.mail.send(email, subject, 'sendSignatureAdmin', { signature }),
+				svc.mail.send(email, subject, 'sendSignatureAdmin', { signature }),
 			{
 				exps: [{ type: 'toThrow', params: ['Invalid_Email'] }],
 				throwError: true,

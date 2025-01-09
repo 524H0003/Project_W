@@ -16,13 +16,18 @@ export class AWSService {
 	/**
 	 * @ignore
 	 */
-	private client: S3Client;
+	constructor(@Inject(forwardRef(() => AppService)) private svc: AppService) {}
 
 	/**
 	 * @ignore
 	 */
-	constructor(@Inject(forwardRef(() => AppService)) private svc: AppService) {
-		this.client = new S3Client({
+	private _client: S3Client;
+	/**
+	 * @ignore
+	 */
+	get client(): S3Client {
+		if (this._client) return this._client;
+		return (this._client = new S3Client({
 			forcePathStyle: true,
 			region: this.svc.cfg.get('AWS_REGION'),
 			endpoint: this.svc.cfg.get('AWS_ENDPOINT'),
@@ -30,7 +35,7 @@ export class AWSService {
 				accessKeyId: this.svc.cfg.get('AWS_ACCESS_KEY_ID'),
 				secretAccessKey: this.svc.cfg.get('AWS_SECRET_ACCESS_KEY'),
 			},
-		});
+		}));
 	}
 
 	/**

@@ -1,7 +1,6 @@
 import TestAgent from 'supertest/lib/agent';
 import { Enterprise } from './enterprise.entity';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import request from 'supertest';
+import { HttpStatus } from '@nestjs/common';
 import { execute, initJest } from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -14,18 +13,16 @@ let req: TestAgent,
 	enterprise: Enterprise,
 	signature: string,
 	svc: AppService,
-	mailerSvc: MailerService,
-	app: INestApplication;
+	mailerSvc: MailerService;
 
 beforeAll(async () => {
-	const { appSvc, module } = await initJest([EnterpriseController]);
+	const { appSvc, module, requester } = await initJest([EnterpriseController]);
 
-	(mailerSvc = module.get(MailerService)), (svc = appSvc);
+	(mailerSvc = module.get(MailerService)), (svc = appSvc), (req = requester);
 });
 
 beforeEach(() => {
-	(req = request(app.getHttpServer())),
-		(enterprise = Enterprise.test(fileName));
+	enterprise = Enterprise.test(fileName);
 });
 
 describe('assign', () => {

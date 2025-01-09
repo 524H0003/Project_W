@@ -1,23 +1,22 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { execute, initJest } from 'app/utils/test.utils';
 import { FileController } from 'file/file.controller';
-import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 
 const fileName = curFile(__filename);
-let rawUsr: User, req: TestAgent, app: INestApplication, svc: AppService;
+let rawUsr: User, req: TestAgent, svc: AppService;
 
 beforeAll(async () => {
-	const { appSvc } = await initJest([FileController]);
+	const { appSvc, requester } = await initJest([FileController]);
 
-	svc = appSvc;
+	(svc = appSvc), (req = requester);
 });
 
 beforeEach(() => {
-	(req = request(app.getHttpServer())), (rawUsr = User.test(fileName));
+	rawUsr = User.test(fileName);
 });
 
 describe('seeUploadedFile', () => {
