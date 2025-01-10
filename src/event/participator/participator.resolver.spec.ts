@@ -125,12 +125,10 @@ describe('updateParticipator', () => {
 					: participatorId.slice(0, -1) + '1';
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => () =>
+			() =>
 				send({ input: { id: newId, interviewNote } }, empHeaders['set-cookie']),
 			{
 				exps: [{ type: 'toThrow', params: ['Invalid_Participator_Id'] }],
-				throwError: true,
 			},
 		);
 	});

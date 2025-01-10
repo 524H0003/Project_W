@@ -19,15 +19,13 @@ describe('StudentService', () => {
 		student = Student.test(fileName);
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => () =>
+			() =>
 				svc.student.signUp({
 					...student.user.baseUser,
 					...student.user,
 					...student,
 				}),
 			{
-				throwError: true,
 				exps: [{ type: 'toThrow', params: ['Request_New_User'] }],
 			},
 		);
@@ -37,15 +35,13 @@ describe('StudentService', () => {
 		student = Student.test(fileName, { email: 'lmao' });
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => () =>
+			() =>
 				svc.student.signUp({
 					...student.user.baseUser,
 					...student.user,
 					...student,
 				}),
 			{
-				throwError: true,
 				exps: [{ type: 'toThrow', params: ['Invalid_Student_Email'] }],
 			},
 		);

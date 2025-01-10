@@ -59,8 +59,7 @@ describe('FacultyService', () => {
 		);
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => () =>
+			() =>
 				svc.faculty.assign(
 					{
 						...faculty.eventCreator.user.baseUser,
@@ -71,7 +70,6 @@ describe('FacultyService', () => {
 					null,
 				),
 			{
-				throwError: true,
 				exps: [{ type: 'toThrow', params: ['Invalid_Email'] }],
 			},
 		);

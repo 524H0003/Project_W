@@ -98,11 +98,9 @@ it('validating', async () => {
 		}) as { id: string },
 		hook = await svc.hook.id(token.id);
 
-	await execute(
-		// eslint-disable-next-line @typescript-eslint/require-await
-		async () => () => svc.hook.validating(signature, mtdt, hook),
-		{ exps: [{ type: 'toThrow', not: true, params: [] }] },
-	);
+	await execute(() => svc.hook.validating(signature, mtdt, hook), {
+		exps: [{ type: 'toThrow', not: true, params: [] }],
+	});
 });
 
 it('validating failed', async () => {
@@ -110,8 +108,7 @@ it('validating failed', async () => {
 		signature = (5).string;
 
 	await execute(
-		// eslint-disable-next-line @typescript-eslint/require-await
-		async () => () =>
+		() =>
 			svc.hook.validating(
 				signature,
 				mtdt,
@@ -123,7 +120,6 @@ it('validating failed', async () => {
 				}),
 			),
 		{
-			throwError: true,
 			exps: [{ type: 'toThrow', params: ['Invalid_Hook_Signature'] }],
 		},
 	);

@@ -99,11 +99,8 @@ describe('updateEvent', () => {
 				: eventId.slice(0, -1) + '1';
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => async () =>
-				await send({ input: { id: newId } }, headers['set-cookie']),
+			async () => await send({ input: { id: newId } }, headers['set-cookie']),
 			{
-				throwError: true,
 				exps: [{ type: 'toThrow', params: ['Invalid_Event_Id'] }],
 			},
 		);

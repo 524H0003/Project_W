@@ -251,7 +251,7 @@ describe('listAllNotifications', () => {
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
-					// eslint-disable-next-line @typescript-eslint/require-await
+					// eslint-disable-next-line tsPlugin/require-await
 					await execute(async () => result.length, {
 						exps: [{ type: 'toEqual', params: [5 - numRead] }],
 					});
