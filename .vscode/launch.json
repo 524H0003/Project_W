@@ -1,7 +1,7 @@
 {
 	"configurations": [
 		{
-			"command": "npm run build",
+			"command": "npm run build:dev",
 			"name": "Debug build",
 			"request": "launch",
 			"type": "node-terminal"
