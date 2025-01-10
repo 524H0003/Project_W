@@ -34,7 +34,7 @@ export const getAdminJS = async (svc: AppService) => {
 		safeParseJSON = (json) => {
 			try {
 				return JSON.parse(json);
-			} catch (e) {
+			} catch {
 				return null;
 			}
 		},
@@ -175,7 +175,6 @@ export const getAdminJS = async (svc: AppService) => {
 				this.properties().forEach((property) => {
 					const param = flat.get(preparedParams, property.path());
 					const key = property.path();
-					// eslint-disable-next-line no-continue
 					if (param === undefined) {
 						return;
 					}

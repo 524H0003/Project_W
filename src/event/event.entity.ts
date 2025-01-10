@@ -18,7 +18,7 @@ import { EventTag } from './tag/tag.entity';
 import { BlackBox } from 'app/utils/model.utils';
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator/creator.entity';
-import { IEventInfoKeys } from 'models';
+import { IEventInfoKeys } from 'build/models';
 import { InterfaceCasting } from 'app/utils/utils';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';

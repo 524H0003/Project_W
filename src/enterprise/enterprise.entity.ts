@@ -6,7 +6,7 @@ import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { BaseUser } from 'app/app.entity';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserInfoKeys, IEnterpriseInfoKeys } from 'models';
+import { IBaseUserInfoKeys, IEnterpriseInfoKeys } from 'build/models';
 
 /**
  * Enterprise entity

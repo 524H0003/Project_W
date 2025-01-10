@@ -3,7 +3,7 @@ import { SensitiveInfomations } from './utils/typeorm.utils';
 import { IBaseUserEntity, IBaseUserInfo } from './app.model';
 import { InterfaceCasting } from './utils/utils';
 import { Hook } from './hook/hook.entity';
-import { IBaseUserInfoKeys } from 'models';
+import { IBaseUserInfoKeys } from 'build/models';
 
 /**
  * Base user

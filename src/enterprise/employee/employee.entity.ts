@@ -10,7 +10,7 @@ import { User } from 'user/user.entity';
 import { IUserAuthentication } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IEmployeeInfoKeys } from 'models';
+import { IEmployeeInfoKeys } from 'build/models';
 
 /**
  * Employee entity

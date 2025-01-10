@@ -3,7 +3,7 @@ import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IUserSignUp } from 'user/user.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserInfoKeys, IUserAuthenticationKeys } from 'models';
+import { IBaseUserInfoKeys, IUserAuthenticationKeys } from 'build/models';
 import { IEventCreatorEntity } from './creator.model';
 
 /**

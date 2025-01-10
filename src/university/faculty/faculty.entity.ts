@@ -6,7 +6,7 @@ import {
 	IBaseUserInfoKeys,
 	IFacultyInfoKeys,
 	IUserAuthenticationKeys,
-} from 'models';
+} from 'build/models';
 import { IsString } from 'class-validator';
 import { IUserSignUp } from 'user/user.model';
 

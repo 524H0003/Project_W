@@ -9,7 +9,7 @@ import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IEventParticipatorInfoKeys } from 'models';
+import { IEventParticipatorInfoKeys } from 'build/models';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
 

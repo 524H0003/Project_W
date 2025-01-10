@@ -50,14 +50,9 @@ describe('assign', () => {
 		eve.positionsAvailable = 0;
 		event = await svc.event.assign(eve);
 
-		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => () => svc.eventParti.assign(student.user.id, event.id),
-			{
-				throwError: true,
-				exps: [{ type: 'toThrow', params: ['Invalid_Event_Request'] }],
-			},
-		);
+		await execute(() => svc.eventParti.assign(student.user.id, event.id), {
+			exps: [{ type: 'toThrow', params: ['Invalid_Event_Request'] }],
+		});
 	});
 });
 

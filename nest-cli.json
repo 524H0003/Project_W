@@ -4,6 +4,7 @@
 	"compilerOptions": {
 		"assets": ["**/*.html"],
 		"deleteOutDir": true,
+		"tsConfigPath": "tsconfig.build.json",
 		"watchAssets": true
 	},
 	"sourceRoot": "src"

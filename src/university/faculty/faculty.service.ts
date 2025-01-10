@@ -9,7 +9,7 @@ import { Faculty } from './faculty.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IFacultyInfoKeys, IUserSignUpKeys } from 'models';
+import { IFacultyInfoKeys, IUserSignUpKeys } from 'build/models';
 import { IFacultyAssign } from './faculty.model';
 import { User } from 'user/user.entity';
 import { validation } from 'app/utils/auth.utils';

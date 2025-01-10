@@ -1,8 +1,7 @@
 {
 	"endOfLine": "lf",
-	"importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
-	"importOrderTypeScriptVersion": "5.0.0",
-	"jsonRecursiveSort": true,
+	"jsonRecursiveSort": false,
+	"jsonSortOrder": "{\"*\": \"lexical\"}",
 	"plugins": ["prettier-plugin-sort-json"],
 	"printWidth": 80,
 	"singleAttributePerLine": false,

@@ -63,8 +63,7 @@ it('modify', async () => {
 it('remove', async () => {
 	const dbUser = await svc.user.assign(user);
 
-	// eslint-disable-next-line @typescript-eslint/require-await
-	await execute(async () => () => svc.user.remove(dbUser.id), {
+	await execute(() => svc.user.remove(dbUser.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
 	await execute(() => svc.user.id(dbUser.id), {

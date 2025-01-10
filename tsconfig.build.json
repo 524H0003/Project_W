@@ -1,14 +1,15 @@
 {
 	"exclude": [
-		"**/*.spec.ts",
+		"**/*.spec*.ts",
 		"**/schema.gql",
 		"*.config.*",
 		"dist",
 		"./*.d.ts",
 		"**/build.ts",
-		"./src/models.ts",
+		"./src/build/models.ts",
 		"./page",
-		"./types"
+		"./types",
+		"./src/app/utils/test.utils.ts"
 	],
 	"extends": "./tsconfig.json"
 }

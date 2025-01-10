@@ -50,8 +50,7 @@ describe('BaseUserService', () => {
 		const { name, email } = BaseUser.test(fileName),
 			usr = await svc.baseUser.assign({ name, email });
 
-		// eslint-disable-next-line @typescript-eslint/require-await
-		await execute(async () => () => svc.baseUser.remove(usr.id), {
+		await execute(() => svc.baseUser.remove(usr.id), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
 		await execute(() => svc.baseUser.findOne({ email, name }), {

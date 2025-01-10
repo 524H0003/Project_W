@@ -8,7 +8,7 @@ import {
 	UpdateParticipator,
 	UpdateParticipatorMutation,
 	UpdateParticipatorMutationVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
@@ -125,13 +125,9 @@ describe('updateParticipator', () => {
 					: participatorId.slice(0, -1) + '1';
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => () =>
+			() =>
 				send({ input: { id: newId, interviewNote } }, empHeaders['set-cookie']),
-			{
-				exps: [{ type: 'toThrow', params: ['Invalid_Participator_Id'] }],
-				throwError: true,
-			},
+			{ exps: [{ type: 'toThrow', params: ['Invalid_Participator_Id'] }] },
 		);
 	});
 });

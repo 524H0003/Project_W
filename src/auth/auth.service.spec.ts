@@ -29,12 +29,8 @@ describe('AuthService', () => {
 			await svc.auth.signUp({ ...user, ...user.baseUser }, null);
 
 			await execute(
-				// eslint-disable-next-line @typescript-eslint/require-await
-				async () => () => svc.auth.signUp({ ...user, ...user.baseUser }, null),
-				{
-					throwError: true,
-					exps: [{ type: 'toThrow', params: ['Exist_User'] }],
-				},
+				() => svc.auth.signUp({ ...user, ...user.baseUser }, null),
+				{ exps: [{ type: 'toThrow', params: ['Exist_User'] }] },
 			);
 		});
 	});
@@ -56,25 +52,17 @@ describe('AuthService', () => {
 
 		it('failed due to invalid email', async () => {
 			await execute(
-				// eslint-disable-next-line @typescript-eslint/require-await
-				async () => () =>
+				() =>
 					svc.auth.login({ ...user, ...user.baseUser, email: 'lmao@lmao.com' }),
-				{
-					throwError: true,
-					exps: [{ type: 'toThrow', params: ['Invalid_Email'] }],
-				},
+				{ exps: [{ type: 'toThrow', params: ['Invalid_Email'] }] },
 			);
 		});
 
 		it('failed due to invalid password', async () => {
 			await execute(
-				// eslint-disable-next-line @typescript-eslint/require-await
-				async () => () =>
+				() =>
 					svc.auth.login({ ...user, ...user.baseUser, password: (64).string }),
-				{
-					throwError: true,
-					exps: [{ type: 'toThrow', params: ['Invalid_Password'] }],
-				},
+				{ exps: [{ type: 'toThrow', params: ['Invalid_Password'] }] },
 			);
 		});
 	});
@@ -104,12 +92,12 @@ describe('SignService', () => {
 	});
 
 	it('refresh', async () => {
-		// eslint-disable-next-line @typescript-eslint/require-await
+		// eslint-disable-next-line tsPlugin/require-await
 		await execute(async () => svc.sign.refresh(id), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 			onFinish: async (result: string) => {
 				await execute(
-					// eslint-disable-next-line @typescript-eslint/require-await
+					// eslint-disable-next-line tsPlugin/require-await
 					async () => svc.sign.verify(result, { type: 'refresh' }),
 					{ exps: [{ type: 'toMatchObject', params: [{ id }] }] },
 				);
@@ -118,12 +106,12 @@ describe('SignService', () => {
 	});
 
 	it('access', async () => {
-		// eslint-disable-next-line @typescript-eslint/require-await
+		// eslint-disable-next-line tsPlugin/require-await
 		await execute(async () => svc.sign.access(id), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 			onFinish: async (result: string) => {
 				await execute(
-					// eslint-disable-next-line @typescript-eslint/require-await
+					// eslint-disable-next-line tsPlugin/require-await
 					async () => svc.sign.verify(result, { type: 'access' }),
 					{ exps: [{ type: 'toMatchObject', params: [{ id }] }] },
 				);

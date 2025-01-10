@@ -36,13 +36,8 @@ describe('send', () => {
 			signature = (22).string;
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => () =>
-				svc.mail.send(email, subject, 'sendSignatureAdmin', { signature }),
-			{
-				exps: [{ type: 'toThrow', params: ['Invalid_Email'] }],
-				throwError: true,
-			},
+			() => svc.mail.send(email, subject, 'sendSignatureAdmin', { signature }),
+			{ exps: [{ type: 'toThrow', params: ['Invalid_Email'] }] },
 		);
 	});
 });

@@ -196,7 +196,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {DeepPartial<T>} updatedEntity - Modified entity
 	 * @return {Promise<T>}
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await
+	// eslint-disable-next-line tsPlugin/no-unused-vars, tsPlugin/require-await
 	async modify(entityId: string, updatedEntity: DeepPartial<T>): Promise<T> {
 		throw new Error("This function didn't implemented!");
 	}

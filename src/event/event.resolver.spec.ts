@@ -10,7 +10,7 @@ import {
 	UpdateEvent,
 	UpdateEventMutation,
 	UpdateEventMutationVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 import { AppService } from 'app/app.service';
 import TestAgent from 'supertest/lib/agent';
 import { assignEmployee } from '../enterprise/employee/employee.controller.spec.utils';
@@ -99,13 +99,8 @@ describe('updateEvent', () => {
 				: eventId.slice(0, -1) + '1';
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => async () =>
-				await send({ input: { id: newId } }, headers['set-cookie']),
-			{
-				throwError: true,
-				exps: [{ type: 'toThrow', params: ['Invalid_Event_Id'] }],
-			},
+			async () => await send({ input: { id: newId } }, headers['set-cookie']),
+			{ exps: [{ type: 'toThrow', params: ['Invalid_Event_Id'] }] },
 		);
 	});
 });

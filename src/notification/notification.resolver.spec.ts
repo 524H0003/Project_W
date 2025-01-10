@@ -13,7 +13,7 @@ import {
 	UpdateNotification,
 	UpdateNotificationMutation,
 	UpdateNotificationMutationVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 
 const fileName = curFile(__filename);
 
@@ -107,15 +107,11 @@ describe('updateNotification', () => {
 				: notificationId.slice(0, -1) + '1';
 
 		await execute(
-			// eslint-disable-next-line @typescript-eslint/require-await
-			async () => async () =>
+			async () =>
 				JSON.stringify(
 					await send({ input: { id: newId } }, headers['set-cookie']),
 				),
-			{
-				throwError: true,
-				exps: [{ type: 'toThrow', params: ['Invalid_Notification_Id'] }],
-			},
+			{ exps: [{ type: 'toThrow', params: ['Invalid_Notification_Id'] }] },
 		);
 	});
 });

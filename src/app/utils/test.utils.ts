@@ -31,11 +31,6 @@ interface Expectation<T, K extends keyof jest.Matchers<T>> {
 	 * Is not?
 	 */
 	not?: boolean;
-
-	/**
-	 * Is debugging?
-	 */
-	debug?: boolean;
 }
 
 /**
@@ -49,27 +44,29 @@ export async function execute<
 >(
 	func: (...args: any[]) => Promise<R>,
 	options: {
-		throwError?: boolean;
 		numOfRun?: number;
 		exps: Expectation<typeof func, K>[];
-		onFinish?: (result: R) => void;
+		onFinish?: (result: R) => void | Promise<void>;
 	},
 ) {
-	let funcResult: R;
-	const { throwError = false, numOfRun = 1, exps, onFinish = null } = options;
+	const { numOfRun = 1, exps, onFinish = null } = options,
+		executed: Promise<R> = func(),
+		l1 = expect(executed);
 
-	if (!throwError && numOfRun - 1) await numOfRun.ra(func);
+	if (numOfRun - 1) await numOfRun.ra(func);
 
-	const result = throwError
-		? expect(await func()).rejects
-		: expect((funcResult = await func()));
-	if (exps.some((i) => i.debug)) console.log(funcResult);
 	for (const exp of exps) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		const l2 =
+			exp.type === 'toThrow'
+				? exp.not
+					? l1.resolves
+					: l1.rejects
+				: l1.resolves;
 		//@ts-expect-error
-		await (exp.not ? result.not : result)[exp.type].apply(null, exp.params);
+		await (exp.not ? l2.not : l2)[exp.type].apply(null, exp.params);
 	}
-	if (onFinish) await onFinish(funcResult);
+
+	if (onFinish) await onFinish(await executed);
 }
 
 /**

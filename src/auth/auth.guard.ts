@@ -9,7 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 import { matching } from 'app/utils/utils';
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 

@@ -17,7 +17,7 @@ import {
 	ReadNotificationManyMutationVariables,
 	ReadNotificationMutation,
 	ReadNotificationMutationVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
@@ -251,7 +251,7 @@ describe('listAllNotifications', () => {
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
-					// eslint-disable-next-line @typescript-eslint/require-await
+					// eslint-disable-next-line tsPlugin/require-await
 					await execute(async () => result.length, {
 						exps: [{ type: 'toEqual', params: [5 - numRead] }],
 					});

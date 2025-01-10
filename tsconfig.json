@@ -26,8 +26,7 @@
 		"./**/*.d.ts",
 		"dist",
 		"*.config.*",
-		"./src/types.ts",
-		"./src/models.ts",
+		"./src/build/models.ts",
 		"./page/*.*",
 		"./types"
 	]

@@ -8,7 +8,7 @@ import {
 	NotificationType,
 } from './notification.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { INotificationInfoKeys } from 'models';
+import { INotificationInfoKeys } from 'build/models';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 /**

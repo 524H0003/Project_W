@@ -12,7 +12,7 @@ import {
 	IBaseUserInfoKeys,
 	IEnterpriseAssignKeys,
 	IEnterpriseKeys,
-} from 'models';
+} from 'build/models';
 import { AppService } from 'app/app.service';
 
 /**
