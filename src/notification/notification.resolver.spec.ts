@@ -13,7 +13,7 @@ import {
 	UpdateNotification,
 	UpdateNotificationMutation,
 	UpdateNotificationMutationVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 
 const fileName = curFile(__filename);
 

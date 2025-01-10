@@ -3,7 +3,7 @@ import {
 	AssignNotification,
 	AssignNotificationMutation,
 	AssignNotificationMutationVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 import { Notification } from './notification.entity';
 
 export async function assignNoti(notification: Notification, headers: object) {

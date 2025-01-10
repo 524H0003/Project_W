@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { IStudentSignup } from './student.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IStudentInfoKeys, IUserSignUpKeys } from 'models';
+import { IStudentInfoKeys, IUserSignUpKeys } from 'build/models';
 import { validation } from 'app/utils/auth.utils';
 import { AppService } from 'app/app.service';
 

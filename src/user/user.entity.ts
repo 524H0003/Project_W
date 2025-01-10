@@ -6,7 +6,7 @@ import {
 	IBaseUserInfoKeys,
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
-} from 'models';
+} from 'build/models';
 import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,

@@ -8,7 +8,11 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, Cryption, validation } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { FileService } from 'file/file.service';
-import { IUserLoginKeys, IUserRelationshipKeys, IUserSignUpKeys } from 'models';
+import {
+	IUserLoginKeys,
+	IUserRelationshipKeys,
+	IUserSignUpKeys,
+} from 'build/models';
 import { User } from 'user/user.entity';
 import { IUserLogin, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';

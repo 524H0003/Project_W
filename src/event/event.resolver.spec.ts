@@ -10,7 +10,7 @@ import {
 	UpdateEvent,
 	UpdateEventMutation,
 	UpdateEventMutationVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 import { AppService } from 'app/app.service';
 import TestAgent from 'supertest/lib/agent';
 import { assignEmployee } from '../enterprise/employee/employee.controller.spec.utils';

@@ -4,7 +4,7 @@ import { BlackBox } from 'app/utils/model.utils';
 import { Event } from 'event/event.entity';
 import { ITagEntity, ITagInfo } from './tag.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { ITagInfoKeys } from 'models';
+import { ITagInfoKeys } from 'build/models';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 /**

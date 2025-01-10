@@ -19,7 +19,7 @@ import {
 	ListAllTags,
 	ListAllTagsQuery,
 	ListAllTagsQueryVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 import { Event } from 'event/event.entity';
 
 const fileName = curFile(__filename);

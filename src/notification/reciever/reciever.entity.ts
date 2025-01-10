@@ -4,7 +4,7 @@ import { User } from 'user/user.entity';
 import { Notification } from 'notification/notification.entity';
 import { IRecieverEntity, IRecieverInfo } from './reciever.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IRecieverInfoKeys } from 'models';
+import { IRecieverInfoKeys } from 'build/models';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 /**

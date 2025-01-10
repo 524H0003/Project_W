@@ -17,7 +17,7 @@ import {
 	ReadNotificationManyMutationVariables,
 	ReadNotificationMutation,
 	ReadNotificationMutationVariables,
-} from 'compiled_graphql';
+} from 'build/compiled_graphql';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';

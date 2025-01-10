@@ -14,7 +14,7 @@ import {
 	IEmployeeHookKeys,
 	IEmployeeInfoKeys,
 	IEmployeeSignupKeys,
-} from 'models';
+} from 'build/models';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 

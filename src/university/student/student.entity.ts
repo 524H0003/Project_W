@@ -7,7 +7,7 @@ import {
 	IBaseUserInfoKeys,
 	IStudentInfoKeys,
 	IUserAuthenticationKeys,
-} from 'models';
+} from 'build/models';
 import { IUserSignUp } from 'user/user.model';
 
 /**
