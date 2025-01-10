@@ -1,3 +1,4 @@
+/* eslint-disable tsPlugin/no-unused-vars */
 /**
  * Casting object to interface
  */
@@ -240,10 +241,8 @@ declare global {
 // Global functions
 try {
 	global.disableDescribe = (
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		name: string,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		func: () => void | Promise<void>,
+		_name: string,
+		_func: () => void | Promise<void>,
 	) => {};
 	global.curFile = (file: string, cut = 2) =>
 		file

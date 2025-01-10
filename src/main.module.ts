@@ -50,8 +50,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 		GraphQLModule.forRootAsync<ApolloDriverConfig>({
 			driver: ApolloDriver,
 			inject: ['CACHE_MANAGER'],
-			// eslint-disable-next-line @typescript-eslint/require-await
-			useFactory: async (cacheManager: Cache) => {
+			useFactory: (cacheManager: Cache) => {
 				return {
 					// Avoid deprecated
 					subscriptions: {
@@ -68,10 +67,10 @@ import { redisStore } from 'cache-manager-redis-yet';
 					inheritResolversFromInterfaces: false,
 					// Caching
 					cache: {
-						get: (key) => cacheManager.get(key),
-						set: (key, value, options) =>
+						get: (key: string) => cacheManager.get(key),
+						set: (key: string, value: unknown, options: { ttl: number }) =>
 							cacheManager.set(key, value, options.ttl.s2ms),
-						delete: (key) => cacheManager.del(key),
+						delete: (key: string) => cacheManager.del(key),
 					},
 				};
 			},
@@ -105,6 +104,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 						'-'.repeat(30),
 						'\nFailed too implement redis cache\n',
 						'-'.repeat(30),
+						error,
 					);
 				}
 

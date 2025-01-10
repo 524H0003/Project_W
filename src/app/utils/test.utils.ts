@@ -65,7 +65,6 @@ export async function execute<
 		: expect((funcResult = await func()));
 	if (exps.some((i) => i.debug)) console.log(funcResult);
 	for (const exp of exps) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		//@ts-expect-error
 		await (exp.not ? result.not : result)[exp.type].apply(null, exp.params);
 	}

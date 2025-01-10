@@ -12,7 +12,7 @@ export default {
       '&:is(.dark *)',
     ],
   ],
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  // eslint-disable-next-line tsPlugin/no-require-imports
   plugins: [require('daisyui'), require('flowbite/plugin')],
   theme: {
     screens: {
