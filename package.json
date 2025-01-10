@@ -21,7 +21,7 @@
 		"gqlgen": " gqlg --schemaFilePath ./src/schema.gql --destDirPath ./graphql/operations --ext graphql",
 		"test": "jest --config=jest.all.config.ts",
 		"test:controller": "npm run buildfile && jest --config=jest.controller.config.ts",
-		"test:resolver": "npm run buildfile && jest --config=jest.resolver.config.ts",
+		"test:resolver": "npm run buildfile && npm run gqlgen && npm run codegen && jest --config=jest.resolver.config.ts",
 		"test:service": "npm run buildfile && jest --config=jest.service.config.ts",
 		"test:debug": "jest --debug",
 		"types": "tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/types.ts",
