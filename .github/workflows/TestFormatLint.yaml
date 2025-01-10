@@ -238,9 +238,9 @@ jobs:
         with:
           title: Controller coverage
           coverage-title: Coverage result
-          coverage-path: ./coverage/controller.txt
+          coverage-path: ./controller/controller.txt
           create-new-comment: true
-          junitxml-path: ./reports/controller.xml
+          junitxml-path: ./controller/controller.xml
 
       - name: Resolver coverage
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
@@ -248,9 +248,9 @@ jobs:
         with:
           title: Resolver coverage
           coverage-title: Coverage result
-          coverage-path: ./coverage/resolver.txt
+          coverage-path: ./resolver/resolver.txt
           create-new-comment: true
-          junitxml-path: ./reports/resolver.xml
+          junitxml-path: ./resolver/resolver.xml
 
       - name: Service coverage
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
@@ -258,6 +258,6 @@ jobs:
         with:
           title: Service coverage
           coverage-title: Coverage result
-          coverage-path: ./coverage/service.txt
+          coverage-path: ./service/service.txt
           create-new-comment: true
-          junitxml-path: ./reports/service.xml
+          junitxml-path: ./service/service.xml
