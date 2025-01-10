@@ -36,6 +36,17 @@ jobs:
               - '**.ts'
               - '**.json'
 
+      - uses: actions/cache@v4
+        with:
+          path: |
+            '**/node_modules'
+            'src/*.ts'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm run build
+
   Test_service:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
@@ -64,24 +75,23 @@ jobs:
         with:
           node-version: 22
 
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         with:
-          path: '**/node_modules'
+          path: |
+            '**/node_modules'
+            'src/*.ts'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - run: npm run test:service
 
-      - name: Service coverage
-        uses: MishaKav/jest-coverage-comment@main
-        id: coverageComment
+      - uses: actions/upload-artifact@v4
         with:
-          title: Service coverage
-          coverage-title: Coverage result
-          coverage-path: ./coverage/service.txt
-          create-new-comment: true
-          junitxml-path: ./reports/service.xml
+          name: service
+          path: |
+            ./reports/service.xml
+            ./coverage/service.txt
 
   Test_resolver:
     needs: changes
@@ -111,24 +121,23 @@ jobs:
         with:
           node-version: 22
 
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         with:
-          path: '**/node_modules'
+          path: |
+            '**/node_modules'
+            'src/*.ts'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - run: npm run test:resolver
 
-      - name: Resolver coverage
-        uses: MishaKav/jest-coverage-comment@main
-        id: coverageCommentE2E
+      - uses: actions/upload-artifact@v4
         with:
-          title: Resolver coverage
-          coverage-title: Coverage result
-          coverage-path: ./coverage/resolver.txt
-          create-new-comment: true
-          junitxml-path: ./reports/resolver.xml
+          name: resolver
+          path: |
+            ./reports/resolver.xml
+            ./coverage/resolver.txt
 
   Test_controller:
     needs: changes
@@ -158,24 +167,23 @@ jobs:
         with:
           node-version: 22
 
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         with:
-          path: '**/node_modules'
+          path: |
+            '**/node_modules'
+            'src/*.ts'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - run: npm run test:controller
 
-      - name: Controller coverage
-        uses: MishaKav/jest-coverage-comment@main
-        id: coverageCommentE2E
+      - uses: actions/upload-artifact@v4
         with:
-          title: Controller coverage
-          coverage-title: Coverage result
-          coverage-path: ./coverage/controller.txt
-          create-new-comment: true
-          junitxml-path: ./reports/controller.xml
+          name: controller
+          path: |
+            ./reports/controller.xml
+            ./coverage/controller.txt
 
   FormatAndLint:
     needs:
@@ -205,9 +213,11 @@ jobs:
         with:
           node-version: 22
 
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         with:
-          path: '**/node_modules'
+          path: |
+            '**/node_modules'
+            'src/*.ts'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -215,5 +225,39 @@ jobs:
       - run: npm run format && npm run lint
 
       - uses: stefanzweifel/git-auto-commit-action@v5
+        id: auto-commit-action
         with:
           skip_dirty_check: false
+
+      - uses: actions/download-artifact@v4
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
+
+      - name: Controller coverage
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          title: Controller coverage
+          coverage-title: Coverage result
+          coverage-path: ./coverage/controller.txt
+          create-new-comment: true
+          junitxml-path: ./reports/controller.xml
+
+      - name: Resolver coverage
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          title: Resolver coverage
+          coverage-title: Coverage result
+          coverage-path: ./coverage/resolver.txt
+          create-new-comment: true
+          junitxml-path: ./reports/resolver.xml
+
+      - name: Service coverage
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          title: Service coverage
+          coverage-title: Coverage result
+          coverage-path: ./coverage/service.txt
+          create-new-comment: true
+          junitxml-path: ./reports/service.xml
