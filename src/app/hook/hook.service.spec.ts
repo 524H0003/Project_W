@@ -119,8 +119,6 @@ it('validating failed', async () => {
 					fromBaseUser: null,
 				}),
 			),
-		{
-			exps: [{ type: 'toThrow', params: ['Invalid_Hook_Signature'] }],
-		},
+		{ exps: [{ type: 'toThrow', params: ['Invalid_Hook_Signature'] }] },
 	);
 });

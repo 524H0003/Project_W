@@ -37,9 +37,7 @@ describe('send', () => {
 
 		await execute(
 			() => svc.mail.send(email, subject, 'sendSignatureAdmin', { signature }),
-			{
-				exps: [{ type: 'toThrow', params: ['Invalid_Email'] }],
-			},
+			{ exps: [{ type: 'toThrow', params: ['Invalid_Email'] }] },
 		);
 	});
 });

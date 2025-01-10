@@ -30,9 +30,7 @@ describe('AuthService', () => {
 
 			await execute(
 				() => svc.auth.signUp({ ...user, ...user.baseUser }, null),
-				{
-					exps: [{ type: 'toThrow', params: ['Exist_User'] }],
-				},
+				{ exps: [{ type: 'toThrow', params: ['Exist_User'] }] },
 			);
 		});
 	});
@@ -56,9 +54,7 @@ describe('AuthService', () => {
 			await execute(
 				() =>
 					svc.auth.login({ ...user, ...user.baseUser, email: 'lmao@lmao.com' }),
-				{
-					exps: [{ type: 'toThrow', params: ['Invalid_Email'] }],
-				},
+				{ exps: [{ type: 'toThrow', params: ['Invalid_Email'] }] },
 			);
 		});
 
@@ -66,9 +62,7 @@ describe('AuthService', () => {
 			await execute(
 				() =>
 					svc.auth.login({ ...user, ...user.baseUser, password: (64).string }),
-				{
-					exps: [{ type: 'toThrow', params: ['Invalid_Password'] }],
-				},
+				{ exps: [{ type: 'toThrow', params: ['Invalid_Password'] }] },
 			);
 		});
 	});

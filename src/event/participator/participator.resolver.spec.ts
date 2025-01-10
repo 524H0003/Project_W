@@ -127,9 +127,7 @@ describe('updateParticipator', () => {
 		await execute(
 			() =>
 				send({ input: { id: newId, interviewNote } }, empHeaders['set-cookie']),
-			{
-				exps: [{ type: 'toThrow', params: ['Invalid_Participator_Id'] }],
-			},
+			{ exps: [{ type: 'toThrow', params: ['Invalid_Participator_Id'] }] },
 		);
 	});
 });

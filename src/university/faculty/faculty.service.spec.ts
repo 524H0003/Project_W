@@ -69,9 +69,7 @@ describe('FacultyService', () => {
 					},
 					null,
 				),
-			{
-				exps: [{ type: 'toThrow', params: ['Invalid_Email'] }],
-			},
+			{ exps: [{ type: 'toThrow', params: ['Invalid_Email'] }] },
 		);
 	});
 });
