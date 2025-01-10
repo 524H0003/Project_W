@@ -10,7 +10,7 @@
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
 		"mail": "cd ./mail && npm run build && cd ..",
 		"page": "cd ./page && npm run build && cd ..",
-		"prebuild:dev": "npm i && npm run buildfile && npm run gqlgen && npm run codegen && npm run mail & npm run page",
+		"prebuild:dev": "(npm i & npm run mail & npm run page) && npm run buildfile && npm run gqlgen && npm run codegen",
 		"build:dev": "nest build",
 		"build": "nest build",
 		"format": "replace '{\\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace '\\[\\n' '[' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && npm run prettier && npm run prettier",
