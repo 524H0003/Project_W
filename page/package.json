@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --fix",
+    "lint": "eslint ./src --fix",
     "format": "prettier --write src/",
     "types": "cd .. && npm run types && cd ./page && npm i ../types"
   },
