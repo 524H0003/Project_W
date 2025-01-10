@@ -40,7 +40,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/build'
+            '**/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -79,7 +79,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/build'
+            '**/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -125,7 +125,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/build'
+            '**/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -171,7 +171,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/build'
+            '**/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -217,7 +217,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/build'
+            '**/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
