@@ -11,7 +11,7 @@
 		"prebuild": "npm i && npm run buildfile && npm run gqlgen && npm run codegen",
 		"build": "cd ./mail && npm run build && cd .. && nest build",
 		"format": "replace '{\\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace '\\[\\n' '[' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && npm run prettier && npm run prettier",
-		"lint": "eslint --fix .",
+		"lint": "eslint --fix ./src",
 		"prettier": "prettier --write \"./**/*.ts\" \"./**/*.js\" \"./**/*.json\" \"./**/*.*rc\" --log-level silent",
 		"start": "nest start",
 		"start:debug": "npm run buildfile && nest start --debug --watch",
