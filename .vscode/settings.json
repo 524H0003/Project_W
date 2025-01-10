@@ -19,9 +19,10 @@
 	"files.eol": "\n",
 	"files.exclude": {
 		"**/.git": true,
-		"**/.hg": true,
 		"**/.svn": true,
+		"**/.hg": true,
 		"**/CVS": true,
+		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
 		"**/dist": true,
 		"**/node_modules": true,
@@ -37,7 +38,8 @@
 		"src/build.ts": true,
 		"src/build": true,
 		"src/types.ts": true,
-		"types": true
+		"types": true,
+		"graphql": true
 	},
 	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {
