@@ -71,7 +71,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run build && npm run test:service
+      - run: npm run test:service
 
       - name: Service coverage
         uses: MishaKav/jest-coverage-comment@main
@@ -118,7 +118,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run build && npm run test:resolver
+      - run: npm run test:resolver
 
       - name: Resolver coverage
         uses: MishaKav/jest-coverage-comment@main
@@ -165,7 +165,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run build && npm run test:controller
+      - run: npm run test:controller
 
       - name: Controller coverage
         uses: MishaKav/jest-coverage-comment@main
