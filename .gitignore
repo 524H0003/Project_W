@@ -5,7 +5,7 @@ types/*
 !types/tsconfig.*
 **/node_modules
 .adminjs
-src/models.ts
+src/build
 src/types.ts
 *.tsbuildinfo
 types/src
@@ -73,4 +73,3 @@ secrets/*.pem
 
 # GraphQL
 graphql/
-src/compiled_graphql.ts

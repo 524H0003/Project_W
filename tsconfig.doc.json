@@ -7,7 +7,7 @@
 		"**/*.d.ts",
 		"**/build.ts",
 		"**/types.ts",
-		"**/models.ts",
+		"**/build/models.ts",
 		"**/main.ts",
 		"page",
 		"types"

@@ -40,8 +40,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/models.ts'
-            'src/compiled_graphql.ts'
+            'src/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -80,8 +79,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/models.ts'
-            'src/compiled_graphql.ts'
+            'src/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -127,8 +125,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/models.ts'
-            'src/compiled_graphql.ts'
+            'src/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -174,8 +171,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/models.ts'
-            'src/compiled_graphql.ts'
+            'src/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -221,8 +217,7 @@ jobs:
         with:
           path: |
             '**/node_modules'
-            'src/models.ts'
-            'src/compiled_graphql.ts'
+            'src/build'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-

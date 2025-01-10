@@ -7,7 +7,7 @@ import {
 
 const IKeysProj = new Project(),
 	IKeysFiles = IKeysProj.addSourceFilesFromTsConfig('tsconfig.json'),
-	IKeysOut = IKeysProj.createSourceFile('./src/models.ts', '', {
+	IKeysOut = IKeysProj.createSourceFile('./src/build/models.ts', '', {
 		overwrite: true,
 	}),
 	IKeysInterfaces = [];

@@ -6,7 +6,7 @@
 		"dist",
 		"./*.d.ts",
 		"**/build.ts",
-		"./src/models.ts",
+		"./src/build/models.ts",
 		"./page",
 		"./types",
 		"./src/app/utils/test.utils.ts"
