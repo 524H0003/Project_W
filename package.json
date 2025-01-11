@@ -23,7 +23,7 @@
 		"prebuild:dev": "npm i && (npm run buildfile & (npm run gqlgen && npm run codegen))",
 		"build:dev": "nest build",
 		"prebuild": "npm i && (npm run mail & (npm run buildfile && npm run types && npm run page) & (npm run gqlgen && npm run codegen))",
-		"build": "nest build",
+		"build": "nest build --include=dev",
 		"test": "jest --config=jest.all.config.ts",
 		"test:controller": "jest --config=jest.controller.config.ts",
 		"test:resolver": "jest --config=jest.resolver.config.ts",
