@@ -7,7 +7,5 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [basicSsl(), vue()],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
-  build: {
-    outDir: '../src/app/page',
-  },
+  build: { outDir: '../src/app/page' },
 })
