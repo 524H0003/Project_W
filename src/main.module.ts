@@ -34,7 +34,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 					},
 					defaults: { from: '"Unreal mail" <secret@student.tdtu.edu.vn>' },
 					template: {
-						dir: join(__dirname, 'app/mail/templates'),
+						dir: join(__dirname, '../app/mail/templates'),
 						adapter: new HandlebarsAdapter(),
 						options: { strict: true },
 					},
