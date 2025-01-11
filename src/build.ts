@@ -59,10 +59,7 @@ for (const file of IKeysFiles) {
 IKeysOut.saveSync();
 
 const modelsProject = new Project(),
-	modelsFiles = modelsProject.addSourceFilesAtPaths([
-		'src/**/*model*.ts',
-		'src/app/utils/utils.ts',
-	]),
+	modelsFiles = modelsProject.addSourceFilesAtPaths(['src/**/*model.ts']),
 	modelsOut = modelsProject.createSourceFile('./src/types.ts', '', {
 		overwrite: true,
 	});
