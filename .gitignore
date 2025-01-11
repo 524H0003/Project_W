@@ -16,6 +16,7 @@ public/*
 **/*.js.map
 documentation/
 src/app/mail/templates
+src/app/page
 
 # Logs
 logs
