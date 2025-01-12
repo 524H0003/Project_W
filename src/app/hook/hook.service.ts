@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Hook } from './hook.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -64,7 +59,7 @@ export class HookService extends DatabaseRequests<Hook> {
 	 */
 	async validating(signature: string, mtdt: string, hook: Hook) {
 		if (hook.mtdt !== mtdt || signature !== hook.signature)
-			throw new BadRequestException('Invalid_Hook_Signature');
+			throw new ServerException('Invalid', 'Hook', '');
 
 		await this.delete({ id: hook.id });
 	}

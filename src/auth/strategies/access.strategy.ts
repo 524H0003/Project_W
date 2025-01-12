@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
@@ -31,6 +31,6 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	async validate(payload: IPayload) {
 		const user = await this.usrSvc.id(payload.id);
 		if (user) return user;
-		throw new UnauthorizedException('Login first to access this endpoint.');
+		throw new ServerException('Forbidden', 'Method', 'Access');
 	}
 }

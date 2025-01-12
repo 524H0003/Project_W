@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IUserSignUp, UserRole } from 'user/user.model';
 import { Student } from './student.entity';
@@ -44,9 +39,9 @@ export class StudentService extends DatabaseRequests<Student> {
 		const user = await this.svc.baseUser.email(input.email),
 			rawStu = new Student(input);
 
-		if (user) throw new BadRequestException('Exist_User');
+		if (user) throw new ServerException('Invalid', 'User', 'SignUp');
 		if (!rawStu.user.baseUser.email.match(this.studentMailRex))
-			throw new BadRequestException('Invalid_Student_Email');
+			throw new ServerException('Invalid', 'Email', '');
 
 		return await validation<void>(rawStu, async () => {
 			const user = await this.svc.auth.signUp(
@@ -65,7 +60,7 @@ export class StudentService extends DatabaseRequests<Student> {
 					...InterfaceCasting.quick(input, IStudentInfoKeys),
 					enrollmentYear: Number('20' + input.email.toString().slice(1, 3)),
 				});
-				throw new Error('Request_New_User');
+				throw new ServerException('Success', 'User', 'SignUp');
 			}
 		});
 	}

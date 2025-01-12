@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	forwardRef,
@@ -198,7 +197,7 @@ export class AppController extends BaseController {
 				async (s: string) => {
 					const user = await this.svc.baseUser.email(body.email);
 
-					if (!user) throw new BadRequestException('Invalid_Email');
+					if (!user) throw new ServerException('Invalid', 'Email', '');
 					return this.svc.mail.send(
 						body.email,
 						'Change password?',

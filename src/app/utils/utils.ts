@@ -243,6 +243,9 @@ declare global {
 	 */
 	function delay(ms: number): Promise<void>;
 
+	/**
+	 * Server exception
+	 */
 	class ServerException extends Error {
 		constructor(
 			type: ErrorType,
@@ -251,11 +254,46 @@ declare global {
 			extend?: any,
 		);
 	}
+
+	/**
+	 * Error code generator
+	 * @param {ErrorType} type - type of error
+	 * @param {ErrorObject} object - object of error
+	 * @param {ErrorAction} action - action to error
+	 * @return {string}
+	 */
+	function err(
+		type: ErrorType,
+		object: ErrorObject,
+		action: ErrorAction,
+	): string;
 }
 
 type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden';
-type ErrorObject = 'User' | 'File' | 'AWS' | 'UserType' | 'Method' | 'FileName' | 'Redis';
-type ErrorAction = '' | 'Implementation' | 'Upload' | 'Download';
+type ErrorObject =
+	| 'User'
+	| 'File'
+	| 'AWS'
+	| 'UserType'
+	| 'Method'
+	| 'FileName'
+	| 'Notification'
+	| 'Redis'
+	| 'Email'
+	| 'Hook'
+	| 'Cookie'
+	| 'Token'
+	| 'Entity'
+	| 'Enterprise'
+	| 'Event'
+	| 'Password';
+type ErrorAction =
+	| ''
+	| 'Implementation'
+	| 'Upload'
+	| 'Download'
+	| 'SignUp'
+	| 'Access';
 
 class ServerException extends Error {
 	constructor(
@@ -278,6 +316,8 @@ class ServerException extends Error {
 // Global functions
 try {
 	(global as any).ServerException = ServerException;
+	global.err = (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
+		type + '_' + object + (action ? '_' : '') + action;
 	global.disableDescribe = (
 		_name: string,
 		_func: () => void | Promise<void>,

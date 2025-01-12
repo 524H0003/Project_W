@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Employee } from './employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,7 +39,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			baseUser: { name: input.enterpriseName },
 		});
 		if (!ent || !input.enterpriseName)
-			throw new BadRequestException('Invalid_Enterprise_Name');
+			throw new ServerException('Invalid', 'Enterprise', '');
 
 		return this.svc.hook.assign(
 			mtdt,
@@ -81,7 +76,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 		);
 		input = InterfaceCasting.quick(input, IEmployeeSignupKeys);
 
-		if (!enterprise) throw new BadRequestException('Invalid_Enterprise_Id');
+		if (!enterprise) throw new ServerException('Invalid', 'Enterprise', '');
 
 		const usr = await this.svc.auth.signUp(input, avatar, {
 				role: UserRole.enterprise,

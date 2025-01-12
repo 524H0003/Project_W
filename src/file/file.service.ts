@@ -1,12 +1,7 @@
 import { createHash } from 'crypto';
 import { readdir, readFileSync } from 'fs';
 import { extname, join } from 'path';
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -94,7 +89,7 @@ export class FileService extends DatabaseRequests<File> {
 		)
 			return recievedFile;
 
-		throw new BadRequestException('Forbiden_File_Access');
+		throw new ServerException('Forbidden', 'File', 'Access');
 	}
 
 	/**

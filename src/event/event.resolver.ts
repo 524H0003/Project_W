@@ -1,4 +1,4 @@
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { AppService } from 'app/app.service';
 import { User } from 'user/user.entity';
 import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
@@ -43,7 +43,7 @@ export class EventResolver {
 			id: input.id,
 		});
 
-		if (!event) throw new BadRequestException('Invalid_Event_Id');
+		if (!event) throw new ServerException('Invalid', 'Event', '');
 
 		return this.svc.event.modify(event.id, input);
 	}

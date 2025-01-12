@@ -4,7 +4,7 @@ import {
 	EventParticipatorAssign,
 	EventParticipatorUpdate,
 } from './participator.entity';
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
@@ -41,7 +41,7 @@ export class EventParticipatorResolver {
 			fromEvent: { eventCreatedBy: { user: { baseUser: { id: user.id } } } },
 		});
 
-		if (!participator) throw new BadRequestException('Invalid_Participator_Id');
+		if (!participator) throw new ServerException('Invalid', 'User', '');
 
 		return this.svc.eventParti.modify(participator.id, input);
 	}
