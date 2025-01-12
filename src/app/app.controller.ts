@@ -229,7 +229,7 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: { password: string },
 		@MetaData() mtdt: string,
-		@CurrentUser(Hook) hook: Hook,
+		@CurrentUser({ instance: Hook }) hook: Hook,
 	): Promise<void> {
 		try {
 			await this.svc.hook.validating(signature, mtdt, hook);

@@ -1,24 +1,13 @@
-import {
-	Controller,
-	Get,
-	HttpStatus,
-	Param,
-	Res,
-	UseGuards,
-	UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { CurrentUser } from 'auth/auth.guard';
 import { Response } from 'express';
 import { User } from 'user/user.entity';
-import { AuthGuard } from '@nestjs/passport';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { AppService } from 'app/app.service';
 
 /**
  * File controller
  */
 @Controller('file')
-@UseInterceptors(CacheInterceptor)
 export class FileController {
 	/**
 	 * @ignore
@@ -32,18 +21,21 @@ export class FileController {
 	 * @param {User} user - the current processing user
 	 */
 	@Get(':filename')
-	@UseGuards(AuthGuard('access'))
 	async seeUploadedFile(
 		@Param('filename') fileName: string,
 		@Res() res: Response,
-		@CurrentUser() user: User,
+		@CurrentUser({ required: false }) user: User,
 	) {
-		return res
-			.status(HttpStatus.ACCEPTED)
-			.set({
-				'Content-Type': 'application/octet-stream',
-				'Content-Disposition': `attachment; filename="${fileName}"`,
-			})
-			.send(await this.svc.file.recieve(fileName, user));
+		const { stream, type, length } = await this.svc.file.recieve(
+			fileName,
+			user,
+		);
+
+		res.set({
+			'Content-Type': type,
+			'Content-Length': length,
+		});
+
+		stream.pipe(res);
 	}
 }
