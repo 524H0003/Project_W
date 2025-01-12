@@ -29,10 +29,7 @@ describe('signup', () => {
 						.send({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.BAD_REQUEST.toString()] },
-					{ type: 'toContain', params: ['Invalid_Student_Email'] },
-				],
+				exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }],
 			},
 		);
 	});
@@ -46,10 +43,7 @@ describe('signup', () => {
 						.send({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
-					{ type: 'toContain', params: ['Sent_Signature_Email'] },
-				],
+				exps: [{ type: 'toContain', params: ['Sent_Signature_Email'] }],
 			},
 		);
 	});

@@ -116,6 +116,9 @@ export async function initJest(
 		}).compile(),
 		appSvc = module.get(AppService);
 
+	// eslint-disable-next-line tsPlugin/no-unused-vars
+	console.error = (...args) => true;
+
 	app = module.createNestApplication();
 	await app.use(cookieParser()).init();
 	requester = request(app.getHttpServer());

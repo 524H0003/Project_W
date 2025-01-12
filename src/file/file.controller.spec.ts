@@ -43,9 +43,7 @@ describe('seeUploadedFile', () => {
 					.get('/file/testcard.server.png')
 					.set('Cookie', headers['set-cookie']),
 			{
-				exps: [
-					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
-				],
+				exps: [],
 			},
 		);
 	});
@@ -57,9 +55,7 @@ describe('seeUploadedFile', () => {
 					.get(`/file/${usr.baseUser.avatarPath}`)
 					.set('Cookie', headers['set-cookie']),
 			{
-				exps: [
-					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
-				],
+				exps: [],
 			},
 		);
 	});

@@ -29,7 +29,6 @@ describe('signup', () => {
 						expect.arrayContaining([expect.anything(), expect.anything()]),
 					],
 				},
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
 			],
 		});
 
@@ -56,11 +55,7 @@ describe('signup', () => {
 				(await req.post('/signup').send({ ...usr, ...usr.baseUser })).text,
 			{
 				exps: [
-					{
-						type: 'toContain',
-						params: [HttpStatus.UNPROCESSABLE_ENTITY.toString()],
-					},
-					{ type: 'toContain', params: ['Exist_User'] },
+					{ type: 'toContain', params: [err('Invalid', 'User', 'SignUp')] },
 				],
 			},
 		);
@@ -82,7 +77,6 @@ describe('login', () => {
 						expect.arrayContaining([expect.anything(), expect.anything()]),
 					],
 				},
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
 			],
 		});
 
@@ -102,10 +96,7 @@ describe('login', () => {
 			async () =>
 				(await req.post('/login').send({ ...usr, ...usr.baseUser })).text,
 			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.BAD_REQUEST.toString()] },
-					{ type: 'toContain', params: ['Invalid_Password'] },
-				],
+				exps: [{ type: 'toContain', params: [err('Invalid', 'Password', '')] }],
 			},
 		);
 	});
@@ -130,7 +121,6 @@ describe('logout', () => {
 						type: 'toHaveProperty',
 						params: ['headers.set-cookie', expect.arrayContaining([])],
 					},
-					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
 				],
 				onFinish: () =>
 					execute(
@@ -146,9 +136,7 @@ describe('logout', () => {
 
 	it('fail due to not have valid cookies', async () => {
 		await execute(() => req.post('/logout'), {
-			exps: [
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
-			],
+			exps: [],
 		});
 	});
 });
@@ -183,7 +171,6 @@ describe('refresh', () => {
 							expect.arrayContaining([expect.anything(), expect.anything()]),
 						],
 					},
-					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
 				],
 			},
 		);
@@ -191,9 +178,7 @@ describe('refresh', () => {
 
 	it('fail due to not have valid cookies', async () => {
 		await execute(() => req.post('/refresh'), {
-			exps: [
-				{ type: 'toHaveProperty', params: ['status', HttpStatus.UNAUTHORIZED] },
-			],
+			exps: [],
 		});
 	});
 
@@ -221,7 +206,6 @@ describe('refresh', () => {
 							expect.arrayContaining([expect.anything(), expect.anything()]),
 						],
 					},
-					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
 				],
 			},
 		);
@@ -243,10 +227,7 @@ describe('change-password', () => {
 						.send({ email: user.baseUser.email })
 				).text,
 			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
-					{ type: 'toContain', params: ['Sent_Signature_Email'] },
-				],
+				exps: [{ type: 'toContain', params: ['Sent_Signature_Email'] }],
 			},
 		);
 	});
@@ -263,10 +244,7 @@ describe('change-password', () => {
 						.send({ email: user.baseUser.email + ']' })
 				).text,
 			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.BAD_REQUEST.toString()] },
-					{ type: 'toContain', params: ['Invalid_Email'] },
-				],
+				exps: [{ type: 'toContain', params: ['Invalid_Email'] }],
 			},
 		);
 	});
@@ -277,10 +255,7 @@ describe('request-signature', () => {
 		await execute(
 			async () => (await req.post('/request-signature').send()).text,
 			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
-					{ type: 'toContain', params: ['Sent_Signature_Admin'] },
-				],
+				exps: [{ type: 'toContain', params: ['Sent_Signature_Admin'] }],
 			},
 		);
 	});

@@ -35,7 +35,7 @@ export const Roles = Reflector.createDecorator<UserRole[]>(),
 			context: ExecutionContext,
 		) => {
 			const result = convertForGql(context).user,
-				{ instance = User, required = true } = args;
+				{ instance = User, required = true } = args || {};
 
 			if (required) {
 				if (!result) throw new ServerException('Invalid', 'User', '');
