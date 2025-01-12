@@ -55,7 +55,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 10
+    timeout-minutes: 3
 
     permissions:
       contents: write
@@ -101,7 +101,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 10
+    timeout-minutes: 3
 
     permissions:
       contents: write
@@ -147,7 +147,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 10
+    timeout-minutes: 3
 
     permissions:
       contents: write
@@ -195,7 +195,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 10
+    timeout-minutes: 3
 
     permissions:
       contents: write
