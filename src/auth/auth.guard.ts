@@ -2,9 +2,6 @@ import {
 	createParamDecorator,
 	ExecutionContext,
 	Injectable,
-	InternalServerErrorException,
-	UnauthorizedException,
-	UnprocessableEntityException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -41,10 +38,10 @@ export const Roles = Reflector.createDecorator<UserRole[]>(),
 				{ instance = User, required = true } = args;
 
 			if (required) {
-				if (!result) throw new UnauthorizedException('Invalid_User');
+				if (!result) throw new ServerException('Invalid', 'User', '');
 
 				if (!(result instanceof instance))
-					throw new UnprocessableEntityException('Invalid_User_Type');
+					throw new ServerException('Invalid', 'UserType', '');
 			}
 
 			return new instance(result);
@@ -94,8 +91,6 @@ export class RoleGuard extends AuthGuard('access') {
 
 			return matching(user.role, roles);
 		}
-		throw new InternalServerErrorException(
-			'Function not defined roles/permissions',
-		);
+		throw new ServerException('Fatal', 'Method', 'Implementation');
 	}
 }

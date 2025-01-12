@@ -41,10 +41,7 @@ export class FileService extends DatabaseRequests<File> {
 				try {
 					await this.svc.aws.upload(file, readFileSync(filePath));
 				} catch (error) {
-					console.error(
-						`\n${'-'.repeat(30)}\nUnable to upload ${filePath}\n${'-'.repeat(30)}\n`,
-						error,
-					);
+					throw new ServerException('Fatal', 'File', 'Upload', error);
 				}
 			}
 		});

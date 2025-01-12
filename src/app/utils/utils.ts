@@ -1,4 +1,7 @@
 /* eslint-disable tsPlugin/no-unused-vars */
+
+import { BadRequestException } from '@nestjs/common';
+
 /**
  * Casting object to interface
  */
@@ -217,6 +220,7 @@ declare global {
 		name: string,
 		func: () => void | Promise<void>,
 	): void;
+
 	/**
 	 * Return the formatted name of current file
 	 * @param {string} file - the current file's name (must be __filename)
@@ -224,6 +228,7 @@ declare global {
 	 * @return {string} formatted file's name
 	 */
 	function curFile(file: string, cut?: number): string;
+
 	/**
 	 * Return an array with length
 	 * @param {number} length - the length of the array
@@ -231,15 +236,48 @@ declare global {
 	 * @return {any[]} the output array with length
 	 */
 	function array(length: number, initValue?: any): any[];
+
 	/**
 	 * Delay function
 	 * @param {number} ms - delay in milisecond
 	 */
 	function delay(ms: number): Promise<void>;
+
+	class ServerException extends Error {
+		constructor(
+			type: ErrorType,
+			object: ErrorObject,
+			action: ErrorAction,
+			extend?: any,
+		);
+	}
+}
+
+type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden';
+type ErrorObject = 'User' | 'File' | 'AWS' | 'UserType' | 'Method' | 'FileName' | 'Redis';
+type ErrorAction = '' | 'Implementation' | 'Upload' | 'Download';
+
+class ServerException extends Error {
+	constructor(
+		type: ErrorType,
+		object: ErrorObject,
+		action: ErrorAction,
+		extend: any,
+	) {
+		super(type + '_' + object + (action ? '_' : '') + action);
+
+		console.error(
+			`\n${'-'.repeat(30)}\n\t${this.message}\n${'-'.repeat(30)}\n`,
+			extend,
+		);
+
+		return new BadRequestException(this.message);
+	}
 }
 
 // Global functions
 try {
+	(global as any).ServerException = ServerException;
 	global.disableDescribe = (
 		_name: string,
 		_func: () => void | Promise<void>,

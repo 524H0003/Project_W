@@ -7,12 +7,7 @@ import {
 	S3ServiceException,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AppService } from 'app/app.service';
 import { lookup } from 'mime-types';
 
@@ -97,10 +92,7 @@ export class AWSService {
 				},
 			}).done();
 		} catch (error) {
-			throw new Error(
-				`\n${'-'.repeat(30)}\nFatal_Upload_AWS\n${'-'.repeat(30)}\n`,
-				error,
-			);
+			throw new ServerException('Fatal', 'AWS', 'Upload', error);
 		}
 	}
 
@@ -127,12 +119,9 @@ export class AWSService {
 				error instanceof NoSuchKey ||
 				(error as S3ServiceException).name == 'SignatureDoesNotMatch'
 			)
-				throw new BadRequestException('Invalid_FileName');
+				throw new ServerException('Invalid', 'FileName', '');
 
-			throw new Error(
-				`\n${'-'.repeat(30)}\nFatal_Download_AWS\n${'-'.repeat(30)}\n`,
-				error,
-			);
+			throw new ServerException('Fatal', 'AWS', 'Download', error);
 		}
 	}
 }
