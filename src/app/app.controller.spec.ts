@@ -1,5 +1,4 @@
 import { execute, initJest } from 'app/utils/test.utils';
-import { HttpStatus } from '@nestjs/common';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { AppService } from './app.service';
@@ -136,7 +135,7 @@ describe('logout', () => {
 
 	it('fail due to not have valid cookies', async () => {
 		await execute(() => req.post('/logout'), {
-			exps: [],
+			exps: [{ type: 'toContain', params: [err('Success', 'User', 'LogOut')] }],
 		});
 	});
 });
@@ -178,7 +177,7 @@ describe('refresh', () => {
 
 	it('fail due to not have valid cookies', async () => {
 		await execute(() => req.post('/refresh'), {
-			exps: [],
+			exps: [{ type: 'toContain', params: [err('Invalid', 'Token', '')] }],
 		});
 	});
 
@@ -227,7 +226,9 @@ describe('change-password', () => {
 						.send({ email: user.baseUser.email })
 				).text,
 			{
-				exps: [{ type: 'toContain', params: ['Sent_Signature_Email'] }],
+				exps: [
+					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },
+				],
 			},
 		);
 	});
@@ -255,7 +256,9 @@ describe('request-signature', () => {
 		await execute(
 			async () => (await req.post('/request-signature').send()).text,
 			{
-				exps: [{ type: 'toContain', params: ['Sent_Signature_Admin'] }],
+				exps: [
+					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },
+				],
 			},
 		);
 	});

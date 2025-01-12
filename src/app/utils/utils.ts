@@ -269,7 +269,7 @@ declare global {
 	): string;
 }
 
-type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden';
+type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
 type ErrorObject =
 	| 'User'
 	| 'File'
@@ -284,15 +284,18 @@ type ErrorObject =
 	| 'Cookie'
 	| 'Token'
 	| 'Entity'
+	| 'Signature'
 	| 'Enterprise'
 	| 'Event'
 	| 'Password';
 type ErrorAction =
 	| ''
+	| 'Sent'
 	| 'Implementation'
 	| 'Upload'
 	| 'Download'
 	| 'SignUp'
+	| 'LogOut'
 	| 'Access';
 
 class ServerException extends Error {

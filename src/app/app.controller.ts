@@ -136,7 +136,7 @@ export class AppController extends BaseController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			new UserRecieve({ response: 'You have been successfully logged out.' }),
+			new UserRecieve({ response: err('Success', 'User', 'LogOut') }),
 		);
 	}
 
@@ -192,21 +192,17 @@ export class AppController extends BaseController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			await this.svc.hook.assign(
-				mtdt,
-				async (s: string) => {
-					const user = await this.svc.baseUser.email(body.email);
+			await this.svc.hook.assign(mtdt, async (s: string) => {
+				const user = await this.svc.baseUser.email(body.email);
 
-					if (!user) throw new ServerException('Invalid', 'Email', '');
-					return this.svc.mail.send(
-						body.email,
-						'Change password?',
-						'forgetPassword',
-						{ name: user.name, url: `${request.hostname}/hook/${s}` },
-					);
-				},
-				'_Email',
-			),
+				if (!user) throw new ServerException('Invalid', 'Email', '');
+				return this.svc.mail.send(
+					body.email,
+					'Change password?',
+					'forgetPassword',
+					{ name: user.name, url: `${request.hostname}/hook/${s}` },
+				);
+			}),
 		);
 	}
 
@@ -266,16 +262,13 @@ export class AppController extends BaseController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			await this.svc.hook.assign(
-				mtdt,
-				(signature: string) =>
-					this.svc.mail.send(
-						this.svc.cfg.get('ADMIN_EMAIL'),
-						'Signature request',
-						'sendSignatureAdmin',
-						{ signature },
-					),
-				'_Admin',
+			await this.svc.hook.assign(mtdt, (signature: string) =>
+				this.svc.mail.send(
+					this.svc.cfg.get('ADMIN_EMAIL'),
+					'Signature request',
+					'sendSignatureAdmin',
+					{ signature },
+				),
 			),
 		);
 	}

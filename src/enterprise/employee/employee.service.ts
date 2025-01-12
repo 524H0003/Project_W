@@ -55,7 +55,6 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 						position: input.position,
 					},
 				),
-			'_Email',
 			{ enterpriseId: ent.id },
 		);
 	}

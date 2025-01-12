@@ -33,7 +33,6 @@ export class HookService extends DatabaseRequests<Hook> {
 	async assign(
 		mtdt: string,
 		func: (signature: string) => Promise<BaseUser> | void,
-		to: '_Email' | '_Admin',
 		addInfo?: object,
 	): Promise<UserRecieve> {
 		const signature = (128).string,
@@ -47,7 +46,7 @@ export class HookService extends DatabaseRequests<Hook> {
 
 		return new UserRecieve({
 			accessToken: this.svc.sign.access(hook.id),
-			response: 'Sent_Signature' + to,
+			response: err('Success', 'Signature', 'Sent'),
 		});
 	}
 

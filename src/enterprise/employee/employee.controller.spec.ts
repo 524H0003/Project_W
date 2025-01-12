@@ -40,7 +40,11 @@ describe('hook', () => {
 						...employee.eventCreator.user.baseUser,
 					} as IEmployeeHook),
 				),
-			{ exps: [{ type: 'toContain', params: ['Sent_Signature_Email'] }] },
+			{
+				exps: [
+					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },
+				],
+			},
 		);
 	});
 });
