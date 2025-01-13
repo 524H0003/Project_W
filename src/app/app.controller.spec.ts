@@ -134,8 +134,10 @@ describe('logout', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(() => req.post('/logout'), {
-			exps: [{ type: 'toContain', params: [err('Success', 'User', 'LogOut')] }],
+		await execute(async () => (await req.post('/logout')).text, {
+			exps: [
+				{ type: 'toContain', params: [err('Unauthorized', 'User', 'Access')] },
+			],
 		});
 	});
 });
@@ -176,8 +178,10 @@ describe('refresh', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(() => req.post('/refresh'), {
-			exps: [{ type: 'toContain', params: [err('Invalid', 'Token', '')] }],
+		await execute(async () => (await req.post('/refresh')).text, {
+			exps: [
+				{ type: 'toContain', params: [err('Unauthorized', 'User', 'Access')] },
+			],
 		});
 	});
 

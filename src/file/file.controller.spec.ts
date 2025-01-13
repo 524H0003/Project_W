@@ -1,4 +1,3 @@
-import { HttpStatus } from '@nestjs/common';
 import { execute, initJest } from 'app/utils/test.utils';
 import { FileController } from 'file/file.controller';
 import TestAgent from 'supertest/lib/agent';

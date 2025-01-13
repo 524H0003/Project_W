@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser';
 import { DocumentNode, print } from 'graphql';
 import TestAgent from 'supertest/lib/agent';
 import request from 'supertest';
+import { HttpAdapterHost } from '@nestjs/core';
+import { AppExceptionFilter } from 'app/app.filter';
 
 /**
  * Exported variables
@@ -70,15 +72,6 @@ export async function execute<
 }
 
 /**
- * Check if response has correct status code
- * @param {number} code - status code
- * @return {string}
- */
-export function status(code: number): string {
-	return ',"status":' + code.toString();
-}
-
-/**
  * sendGQL ouptut type
  */
 export type SendGQLType<T, K> = (variables: K, cookie?: any) => Promise<T>;
@@ -120,7 +113,11 @@ export async function initJest(
 	console.error = (...args) => true;
 
 	app = module.createNestApplication();
-	await app.use(cookieParser()).init();
+	const { httpAdapter } = app.get(HttpAdapterHost);
+	await app
+		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
+		.use(cookieParser())
+		.init();
 	requester = request(app.getHttpServer());
 
 	return { module, appSvc, requester };

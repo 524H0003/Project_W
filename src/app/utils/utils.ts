@@ -1,6 +1,7 @@
 /* eslint-disable tsPlugin/no-unused-vars */
 
-import { BadRequestException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import pc from 'picocolors';
 
 /**
  * Casting object to interface
@@ -246,7 +247,7 @@ declare global {
 	/**
 	 * Server exception
 	 */
-	class ServerException extends Error {
+	class ServerException extends HttpException {
 		constructor(
 			type: ErrorType,
 			object: ErrorObject,
@@ -298,21 +299,25 @@ type ErrorAction =
 	| 'LogOut'
 	| 'Access';
 
-class ServerException extends Error {
+class ServerException extends HttpException {
 	constructor(
 		type: ErrorType,
 		object: ErrorObject,
 		action: ErrorAction,
 		extend: any,
 	) {
-		super(type + '_' + object + (action ? '_' : '') + action);
-
-		console.error(
-			`\n${'-'.repeat(30)}\n\t${this.message}\n${'-'.repeat(30)}\n`,
-			extend,
+		super(
+			type + '_' + object + (action ? '_' : '') + action,
+			HttpStatus.BAD_REQUEST,
 		);
 
-		return new BadRequestException(this.message);
+		const message = `${'-'.repeat(5)}    ${this.message}    ${'-'.repeat(5)}\n`;
+
+		console.error(
+			pc.bgRed(pc.white(message)),
+			pc.yellow(extend + '\n'),
+			extend ? pc.bgRed(pc.white('-'.repeat(message.length))) : undefined,
+		);
 	}
 }
 
