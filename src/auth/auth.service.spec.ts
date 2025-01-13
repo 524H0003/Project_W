@@ -30,7 +30,11 @@ describe('AuthService', () => {
 
 			await execute(
 				() => svc.auth.signUp({ ...user, ...user.baseUser }, null),
-				{ exps: [{ type: 'toThrow', params: ['Exist_User'] }] },
+				{
+					exps: [
+						{ type: 'toThrow', params: [err('Invalid', 'User', 'SignUp')] },
+					],
+				},
 			);
 		});
 	});

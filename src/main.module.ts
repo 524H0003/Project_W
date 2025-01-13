@@ -100,12 +100,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 						password: cfg.get('REDIS_PASS'),
 					});
 				} catch (error) {
-					console.error(
-						'-'.repeat(30),
-						'\nFailed too implement redis cache\n',
-						'-'.repeat(30),
-						error,
-					);
+					throw new ServerException('Fatal', 'Redis', 'Implementation', error);
 				}
 
 				return { store, ttl: (3).s2ms };

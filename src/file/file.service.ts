@@ -1,12 +1,7 @@
 import { createHash } from 'crypto';
 import { readdir, readFileSync } from 'fs';
 import { extname, join } from 'path';
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -14,6 +9,7 @@ import { User } from 'user/user.entity';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
+import { AWSRecieve } from 'app/aws/aws.service';
 
 /**
  * File services
@@ -40,10 +36,7 @@ export class FileService extends DatabaseRequests<File> {
 				try {
 					await this.svc.aws.upload(file, readFileSync(filePath));
 				} catch (error) {
-					console.error(
-						`\n${'-'.repeat(30)}\nUnable to upload ${filePath}\n${'-'.repeat(30)}\n`,
-						error,
-					);
+					throw new ServerException('Fatal', 'File', 'Upload', error);
 				}
 			}
 		});
@@ -85,12 +78,10 @@ export class FileService extends DatabaseRequests<File> {
 	 * Recieve file from server
 	 * @param {string} filename - the name of recieving file
 	 * @param {User} user - the user want to recieve file
-	 * @return {Promise<Buffer>} the file buffer
+	 * @return {Promise<AWSRecieve>}
 	 */
-	async recieve(filename: string, user: User): Promise<Buffer> {
+	async recieve(filename: string, user: User): Promise<AWSRecieve> {
 		const recievedFile = await this.svc.aws.download(filename);
-
-		if (!recievedFile) throw new BadRequestException('Fatal_Request_File');
 
 		if (
 			filename.match(this.serverFilesReg) ||
@@ -98,7 +89,7 @@ export class FileService extends DatabaseRequests<File> {
 		)
 			return recievedFile;
 
-		throw new BadRequestException('ForbidenFile');
+		throw new ServerException('Forbidden', 'File', 'Access');
 	}
 
 	/**

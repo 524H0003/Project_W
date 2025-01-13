@@ -1,4 +1,8 @@
 /* eslint-disable tsPlugin/no-unused-vars */
+
+import { HttpException, HttpStatus } from '@nestjs/common';
+import pc from 'picocolors';
+
 /**
  * Casting object to interface
  */
@@ -217,6 +221,7 @@ declare global {
 		name: string,
 		func: () => void | Promise<void>,
 	): void;
+
 	/**
 	 * Return the formatted name of current file
 	 * @param {string} file - the current file's name (must be __filename)
@@ -224,6 +229,7 @@ declare global {
 	 * @return {string} formatted file's name
 	 */
 	function curFile(file: string, cut?: number): string;
+
 	/**
 	 * Return an array with length
 	 * @param {number} length - the length of the array
@@ -231,15 +237,95 @@ declare global {
 	 * @return {any[]} the output array with length
 	 */
 	function array(length: number, initValue?: any): any[];
+
 	/**
 	 * Delay function
 	 * @param {number} ms - delay in milisecond
 	 */
 	function delay(ms: number): Promise<void>;
+
+	/**
+	 * Server exception
+	 */
+	class ServerException extends HttpException {
+		constructor(
+			type: ErrorType,
+			object: ErrorObject,
+			action: ErrorAction,
+			extend?: any,
+		);
+	}
+
+	/**
+	 * Error code generator
+	 * @param {ErrorType} type - type of error
+	 * @param {ErrorObject} object - object of error
+	 * @param {ErrorAction} action - action to error
+	 * @return {string}
+	 */
+	function err(
+		type: ErrorType,
+		object: ErrorObject,
+		action: ErrorAction,
+	): string;
+}
+
+type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
+type ErrorObject =
+	| 'User'
+	| 'File'
+	| 'AWS'
+	| 'UserType'
+	| 'Method'
+	| 'FileName'
+	| 'Notification'
+	| 'Redis'
+	| 'Email'
+	| 'Hook'
+	| 'Cookie'
+	| 'Token'
+	| 'Entity'
+	| 'Signature'
+	| 'Enterprise'
+	| 'Event'
+	| 'Password';
+type ErrorAction =
+	| ''
+	| 'Sent'
+	| 'Implementation'
+	| 'Upload'
+	| 'Download'
+	| 'SignUp'
+	| 'LogOut'
+	| 'Access';
+
+class ServerException extends HttpException {
+	constructor(
+		type: ErrorType,
+		object: ErrorObject,
+		action: ErrorAction,
+		extend: any,
+	) {
+		super(
+			type + '_' + object + (action ? '_' : '') + action,
+			HttpStatus.BAD_REQUEST,
+		);
+
+		const message = `${'-'.repeat(5)}    ${this.message}    ${'-'.repeat(5)}\n`;
+
+		console.error(
+			pc.bgRed(pc.white(message)),
+			pc.yellow(extend + '\n'),
+			extend ? pc.bgRed(pc.white('-'.repeat(message.length))) : undefined,
+		);
+	}
 }
 
 // Global functions
 try {
+	(global as any).ServerException = ServerException;
+	global.err = (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
+		type + '_' + object + (action ? '_' : '') + action;
 	global.disableDescribe = (
 		_name: string,
 		_func: () => void | Promise<void>,

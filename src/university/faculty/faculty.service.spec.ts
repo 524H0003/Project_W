@@ -21,13 +21,9 @@ describe('FacultyService', () => {
 
 		faculty = Faculty.test(fileName);
 
-		await svc.hook.assign(
-			(20).string,
-			(s: string) => {
-				signature = s;
-			},
-			'_Email',
-		);
+		await svc.hook.assign((20).string, (s: string) => {
+			signature = s;
+		});
 
 		await execute(
 			() =>
@@ -50,13 +46,9 @@ describe('FacultyService', () => {
 		faculty = Faculty.test(fileName);
 
 		await svc.baseUser.assign({ ...faculty.eventCreator.user.baseUser });
-		await svc.hook.assign(
-			(20).string,
-			(s: string) => {
-				signature = s;
-			},
-			'_Email',
-		);
+		await svc.hook.assign((20).string, (s: string) => {
+			signature = s;
+		});
 
 		await execute(
 			() =>

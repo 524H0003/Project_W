@@ -3,7 +3,7 @@ import http from 'http';
 import https from 'https';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { config as awsCfg } from 'aws-sdk';
 import cookieParser from 'cookie-parser';
@@ -19,6 +19,7 @@ import { Notification } from 'notification/notification.entity';
 import { Event } from 'event/event.entity';
 import { getAdminJS } from 'app/utils/adminjs.utils';
 import { EventCreator } from 'event/creator/creator.entity';
+import { AppExceptionFilter } from 'app/app.filter';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
@@ -36,6 +37,7 @@ async function bootstrap() {
 		)
 			.use(cookieParser())
 			.useGlobalPipes(new ValidationPipe()),
+		{ httpAdapter } = app.get(HttpAdapterHost),
 		cfgSvc = app.get(ConfigService),
 		appSvc = app.get(AppService),
 		{
@@ -85,6 +87,7 @@ async function bootstrap() {
 
 	// Init multiple connection type
 	await app
+		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.use(admin.options.rootPath, adminRouter)
 		.setGlobalPrefix('api/v1')
 		.init();

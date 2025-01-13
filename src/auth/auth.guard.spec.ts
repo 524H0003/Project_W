@@ -1,9 +1,9 @@
-import { ExecutionContext, InternalServerErrorException } from '@nestjs/common';
+import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from 'user/user.model';
 import { RoleGuard } from './auth.guard';
-import { initJest } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 
 let roleGrd: RoleGuard, rflt: Reflector, ctx: ExecutionContext;
 
@@ -51,8 +51,10 @@ describe('canActivate', () => {
 	});
 
 	it('fail due to roles are not defined', async () => {
-		await expect(roleGrd.canActivate(ctx)).rejects.toThrow(
-			InternalServerErrorException,
-		);
+		await execute(() => roleGrd.canActivate(ctx), {
+			exps: [
+				{ type: 'toThrow', params: [err('Fatal', 'Method', 'Implementation')] },
+			],
+		});
 	});
 });

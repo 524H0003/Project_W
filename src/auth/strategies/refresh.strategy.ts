@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
@@ -74,6 +74,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 					break;
 			}
 		}
-		throw new UnauthorizedException('Invalid_Refresh_Token');
+		throw new ServerException('Invalid', 'Token', '');
 	}
 }

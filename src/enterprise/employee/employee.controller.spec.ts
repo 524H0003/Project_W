@@ -1,8 +1,7 @@
-import { HttpStatus } from '@nestjs/common';
 import { AppService } from 'app/app.service';
 import TestAgent from 'supertest/lib/agent';
 import { Employee } from './employee.entity';
-import { execute, initJest, status } from 'app/utils/test.utils';
+import { execute, initJest } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
@@ -40,7 +39,11 @@ describe('hook', () => {
 						...employee.eventCreator.user.baseUser,
 					} as IEmployeeHook),
 				),
-			{ exps: [{ type: 'toContain', params: ['Sent_Signature_Email'] }] },
+			{
+				exps: [
+					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },
+				],
+			},
 		);
 	});
 });
@@ -70,7 +73,14 @@ describe('signup', () => {
 							...employee.eventCreator.user.baseUser,
 						} as IEmployeeSignup),
 				),
-			{ exps: [{ type: 'toContain', params: [status(HttpStatus.ACCEPTED)] }] },
+			{
+				exps: [
+					{
+						type: 'toContain',
+						params: [employee.eventCreator.user.baseUser.email],
+					},
+				],
+			},
 		);
 		await execute(
 			() =>

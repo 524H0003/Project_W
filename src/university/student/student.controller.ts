@@ -52,7 +52,7 @@ export class StudentController extends AppController {
 			await this.svc.student.signUp(body);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
-				case 'Request_New_User':
+				case err('Success', 'User', 'SignUp'):
 					return this.resetPasswordViaEmail(request, response, body, mtdt);
 
 				default:

@@ -25,7 +25,9 @@ describe('StudentService', () => {
 					...student.user,
 					...student,
 				}),
-			{ exps: [{ type: 'toThrow', params: ['Request_New_User'] }] },
+			{
+				exps: [{ type: 'toThrow', params: [err('Success', 'User', 'SignUp')] }],
+			},
 		);
 	});
 
@@ -39,7 +41,7 @@ describe('StudentService', () => {
 					...student.user,
 					...student,
 				}),
-			{ exps: [{ type: 'toThrow', params: ['Invalid_Student_Email'] }] },
+			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Email', '')] }] },
 		);
 	});
 });

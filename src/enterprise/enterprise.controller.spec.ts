@@ -1,6 +1,5 @@
 import TestAgent from 'supertest/lib/agent';
 import { Enterprise } from './enterprise.entity';
-import { HttpStatus } from '@nestjs/common';
 import { execute, initJest } from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -46,10 +45,7 @@ describe('assign', () => {
 						} as IEnterpriseAssign),
 				),
 			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
-					{ type: 'toContain', params: ['Success_Assign_Enterprise'] },
-				],
+				exps: [{ type: 'toContain', params: ['Success_Assign_Enterprise'] }],
 			},
 		);
 		await execute(

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
@@ -31,6 +31,6 @@ export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
 	async validate(payload: IPayload) {
 		const hook = await this.hookSvc.id(payload.id, { deep: 2 });
 		if (hook) return hook;
-		throw new BadRequestException('Invalid_Hook_Cookie');
+		throw new ServerException('Invalid', 'Cookie', '');
 	}
 }
