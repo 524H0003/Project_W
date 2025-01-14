@@ -326,11 +326,11 @@ class ServerException extends HttpException {
 		cause: 'user' | 'server',
 		extend: any,
 	) {
-		let errCode: number = cause === 'user' ? 400 : 500;
+		const errCode = (5).numeric;
 
-		super(type + '_' + object + (action ? '_' : '') + action, errCode);
+		super(type + '_' + object + (action ? '_' : '') + action, +errCode);
 
-		const message = `${'-'.repeat(5)}    ${this.message}    ${'-'.repeat(5)}`;
+		const message = `${'-'.repeat(6)}${this.message}-${errCode}${'-'.repeat(6)}`;
 
 		console.error(
 			color({ bg: 'red', msg: message }) +
