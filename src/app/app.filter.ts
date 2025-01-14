@@ -19,10 +19,7 @@ export class AppExceptionFilter extends BaseExceptionFilter {
 			case 401:
 				exception = new ServerException('Unauthorized', 'User', 'Access');
 				break;
-
-			default:
-				super.catch(exception, host);
-				break;
 		}
+		super.catch(exception, host);
 	}
 }
