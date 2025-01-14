@@ -25,9 +25,9 @@
 		"prebuild": "npm i --include=dev && (npm-run-all --parallel mail page codegen)",
 		"build": "nest build",
 		"test": "jest --config=jest.all.config.ts",
-		"test:controller": "jest --config=jest.controller.config.ts --detectOpenHandles",
-		"test:resolver": "jest --config=jest.resolver.config.ts --detectOpenHandles",
-		"test:service": "jest --config=jest.service.config.ts --detectOpenHandles",
+		"test:controller": "jest --config=jest.controller.config.ts",
+		"test:resolver": "jest --config=jest.resolver.config.ts",
+		"test:service": "jest --config=jest.service.config.ts",
 		"test:debug": "jest --debug"
 	},
 	"dependencies": {

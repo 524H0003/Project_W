@@ -42,7 +42,7 @@ describe('seeUploadedFile', () => {
 					.get('/file/testcard.server.png')
 					.set('Cookie', headers['set-cookie']),
 			{
-				exps: [],
+				exps: [{ type: 'toContain', params: ['lmao'] }],
 			},
 		);
 	});
