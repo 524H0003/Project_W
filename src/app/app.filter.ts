@@ -1,11 +1,4 @@
-import {
-	ArgumentsHost,
-	Catch,
-	ContextType,
-	HttpException,
-	HttpServer,
-	HttpStatus,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ContextType, HttpServer } from '@nestjs/common';
 import { AbstractHttpAdapter, BaseExceptionFilter } from '@nestjs/core';
 
 @Catch()
@@ -19,22 +12,17 @@ export class AppExceptionFilter extends BaseExceptionFilter {
 	}
 
 	catch(exception: unknown, host: ArgumentsHost) {
-		const httpStatus =
-			exception instanceof HttpException
-				? exception.getStatus()
-				: HttpStatus.INTERNAL_SERVER_ERROR;
+		if ((host.getType() as ContextType | 'graphql') === 'graphql')
+			return exception;
 
-		switch (httpStatus) {
+		switch (errorStatus(exception)) {
 			case 401:
 				exception = new ServerException('Unauthorized', 'User', 'Access');
 				break;
 
 			default:
+				super.catch(exception, host);
 				break;
 		}
-
-		if ((host.getType() as ContextType | 'graphql') === 'graphql')
-			return exception;
-		super.catch(exception, host);
 	}
 }

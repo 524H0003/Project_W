@@ -2,6 +2,7 @@
 
 import { HttpException, HttpStatus } from '@nestjs/common';
 import pc from 'picocolors';
+import { Colors } from 'picocolors/types';
 
 /**
  * Casting object to interface
@@ -67,7 +68,6 @@ type MethodDecorator = (
 	propertyKey: string,
 	descriptor: PropertyDescriptor,
 ) => PropertyDescriptor;
-
 type MethodPrerun = (target: any, propertyKey: Function, args: any) => void;
 type MethodPostrun = (target: any, propertyKey: Function, result: any) => void;
 
@@ -209,6 +209,10 @@ declare global {
 		 * To lower case
 		 */
 		readonly lower: string;
+		/**
+		 * To capitalize
+		 */
+		readonly capitalize: string;
 	}
 
 	/**
@@ -268,6 +272,20 @@ declare global {
 		object: ErrorObject,
 		action: ErrorAction,
 	): string;
+
+	/**
+	 * Console log with color
+	 * @param {ColorLogOptions} args - functions arguments
+	 * @return {string}
+	 */
+	function color(args: ColorLogOptions): string;
+
+	/**
+	 * Get http exception status code
+	 * @param {any} error - catched error
+	 * @return {number}
+	 */
+	function errorStatus(error: any): number;
 }
 
 type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
@@ -291,6 +309,7 @@ type ErrorObject =
 	| 'Password';
 type ErrorAction =
 	| ''
+	| 'Read'
 	| 'Sent'
 	| 'Implementation'
 	| 'Upload'
@@ -306,24 +325,48 @@ class ServerException extends HttpException {
 		action: ErrorAction,
 		extend: any,
 	) {
-		super(
-			type + '_' + object + (action ? '_' : '') + action,
-			HttpStatus.BAD_REQUEST,
-		);
+		super(type + '_' + object + (action ? '_' : '') + action, 500);
 
-		const message = `${'-'.repeat(5)}    ${this.message}    ${'-'.repeat(5)}\n`;
+		const message = `${'-'.repeat(5)}    ${this.message}    ${'-'.repeat(5)}`;
 
 		console.error(
-			pc.bgRed(pc.white(message)),
-			pc.yellow(extend + '\n'),
-			extend ? pc.bgRed(pc.white('-'.repeat(message.length))) : undefined,
+			color({ bg: 'red', msg: message }) +
+				'\n' +
+				color({ font: 'yellow', msg: extend }) +
+				'\n' +
+				(extend
+					? color({ bg: 'red', msg: '-'.repeat(message.length) })
+					: undefined),
 		);
 	}
+}
+
+type RemoveBgKeys<T> = {
+	[K in keyof T as K extends `bg${infer _}` ? never : K]: T[K];
+};
+type KeepBgKeys<T> = {
+	[K in keyof T as K extends `bg${infer Rest}`
+		? Uncapitalize<Rest>
+		: never]: T[K];
+};
+
+interface ColorLogOptions {
+	msg: string;
+	bg?: keyof KeepBgKeys<Colors> | '';
+	font?: keyof Omit<RemoveBgKeys<Colors>, 'isColorSupported'> | '';
 }
 
 // Global functions
 try {
 	(global as any).ServerException = ServerException;
+	global.color = (args: ColorLogOptions) =>
+		(args.bg ? pc['bg' + args.bg.capitalize] : String)(
+			(args.font ? pc[args.font] : String)(args.msg),
+		);
+	global.errorStatus = (error: any) =>
+		error instanceof HttpException
+			? error.getStatus()
+			: HttpStatus.INTERNAL_SERVER_ERROR;
 	global.err = (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
 		type + '_' + object + (action ? '_' : '') + action;
 	global.disableDescribe = (
@@ -361,6 +404,13 @@ Object.defineProperty(String.prototype, 'randomChar', {
 Object.defineProperty(String.prototype, 'lower', {
 	get: function () {
 		return (this as string).toLowerCase();
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'capitalize', {
+	get: function () {
+		return (this as string).at(0).toUpperCase() + (this as string).slice(1);
 	},
 	enumerable: true,
 	configurable: true,

@@ -28,16 +28,15 @@ export class FileService extends DatabaseRequests<File> {
 		super(repo);
 
 		readdir(cfg.get('SERVER_PUBLIC'), async (error, files) => {
-			if (error) return;
+			if (error) {
+				new ServerException('Fatal', 'File', 'Read');
+				return;
+			}
 
 			for (const file of files) {
 				const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 
-				try {
-					await this.svc.aws.upload(file, readFileSync(filePath));
-				} catch (error) {
-					throw new ServerException('Fatal', 'File', 'Upload', error);
-				}
+				await this.svc.aws.upload(file, readFileSync(filePath));
 			}
 		});
 	}
