@@ -198,7 +198,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 */
 	// eslint-disable-next-line tsPlugin/no-unused-vars, tsPlugin/require-await
 	async modify(entityId: string, updatedEntity: DeepPartial<T>): Promise<T> {
-		throw new ServerException('Fatal', 'Method', 'Implementation');
+		throw new ServerException('Fatal', 'Method', 'Implementation', 'server');
 	}
 
 	/**

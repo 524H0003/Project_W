@@ -38,10 +38,10 @@ export const Roles = Reflector.createDecorator<UserRole[]>(),
 				{ instance = User, required = true } = args || {};
 
 			if (required) {
-				if (!result) throw new ServerException('Invalid', 'User', '');
+				if (!result) throw new ServerException('Invalid', 'User', '', 'user');
 
 				if (!(result instanceof instance))
-					throw new ServerException('Invalid', 'UserType', '');
+					throw new ServerException('Invalid', 'UserType', '', 'user');
 			}
 
 			return new instance(result);
@@ -91,6 +91,6 @@ export class RoleGuard extends AuthGuard('access') {
 
 			return matching(user.role, roles);
 		}
-		throw new ServerException('Fatal', 'Method', 'Implementation');
+		throw new ServerException('Fatal', 'Method', 'Implementation', 'server');
 	}
 }

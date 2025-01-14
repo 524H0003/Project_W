@@ -31,6 +31,6 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	async validate(payload: IPayload) {
 		const user = await this.usrSvc.id(payload.id);
 		if (user) return user;
-		throw new ServerException('Forbidden', 'Method', 'Access');
+		throw new ServerException('Forbidden', 'Method', 'Access', 'user');
 	}
 }

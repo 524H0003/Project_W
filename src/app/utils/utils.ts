@@ -256,6 +256,7 @@ declare global {
 			type: ErrorType,
 			object: ErrorObject,
 			action: ErrorAction,
+			cause: 'user' | 'server',
 			extend?: any,
 		);
 	}
@@ -300,7 +301,6 @@ type ErrorObject =
 	| 'Redis'
 	| 'Email'
 	| 'Hook'
-	| 'Cookie'
 	| 'Token'
 	| 'Entity'
 	| 'Signature'
@@ -323,9 +323,12 @@ class ServerException extends HttpException {
 		type: ErrorType,
 		object: ErrorObject,
 		action: ErrorAction,
+		cause: 'user' | 'server',
 		extend: any,
 	) {
-		super(type + '_' + object + (action ? '_' : '') + action, 500);
+		let errCode: number = cause === 'user' ? 400 : 500;
+
+		super(type + '_' + object + (action ? '_' : '') + action, errCode);
 
 		const message = `${'-'.repeat(5)}    ${this.message}    ${'-'.repeat(5)}`;
 

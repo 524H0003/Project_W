@@ -37,7 +37,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		const existedUser = await this.svc.baseUser.email(input.email),
 			rawFaculty = new Faculty(input);
 
-		if (existedUser) throw new ServerException('Invalid', 'Email', '');
+		if (existedUser) throw new ServerException('Invalid', 'Email', '', 'user');
 
 		return validation<User>(rawFaculty, async () => {
 			const eventCreator = await this.svc.eventcreator.assign(

@@ -39,7 +39,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			baseUser: { name: input.enterpriseName },
 		});
 		if (!ent || !input.enterpriseName)
-			throw new ServerException('Invalid', 'Enterprise', '');
+			throw new ServerException('Invalid', 'Enterprise', '', 'user');
 
 		return this.svc.hook.assign(
 			mtdt,
@@ -75,7 +75,8 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 		);
 		input = InterfaceCasting.quick(input, IEmployeeSignupKeys);
 
-		if (!enterprise) throw new ServerException('Invalid', 'Enterprise', '');
+		if (!enterprise)
+			throw new ServerException('Invalid', 'Enterprise', '', 'user');
 
 		const usr = await this.svc.auth.signUp(input, avatar, {
 				role: UserRole.enterprise,

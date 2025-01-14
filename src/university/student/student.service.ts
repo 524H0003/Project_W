@@ -39,9 +39,9 @@ export class StudentService extends DatabaseRequests<Student> {
 		const user = await this.svc.baseUser.email(input.email),
 			rawStu = new Student(input);
 
-		if (user) throw new ServerException('Invalid', 'User', 'SignUp');
+		if (user) throw new ServerException('Invalid', 'User', 'SignUp', 'user');
 		if (!rawStu.user.baseUser.email.match(this.studentMailRex))
-			throw new ServerException('Invalid', 'Email', '');
+			throw new ServerException('Invalid', 'Email', '', 'user');
 
 		return await validation<void>(rawStu, async () => {
 			const user = await this.svc.auth.signUp(
@@ -60,7 +60,7 @@ export class StudentService extends DatabaseRequests<Student> {
 					...InterfaceCasting.quick(input, IStudentInfoKeys),
 					enrollmentYear: Number('20' + input.email.toString().slice(1, 3)),
 				});
-				throw new ServerException('Success', 'User', 'SignUp');
+				throw new ServerException('Success', 'User', 'SignUp', 'user');
 			}
 		});
 	}

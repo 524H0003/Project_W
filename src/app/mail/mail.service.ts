@@ -35,7 +35,7 @@ export class MailService {
 		const baseUser = await this.svc.baseUser.email(email);
 
 		if (!baseUser && email !== this.svc.cfg.get('ADMIN_EMAIL'))
-			throw new ServerException('Invalid', 'Email', '');
+			throw new ServerException('Invalid', 'Email', '', 'user');
 
 		await this.mailerService.sendMail({
 			to: baseUser?.email || email,

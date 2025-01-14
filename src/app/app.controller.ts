@@ -195,7 +195,7 @@ export class AppController extends BaseController {
 			await this.svc.hook.assign(mtdt, async (s: string) => {
 				const user = await this.svc.baseUser.email(body.email);
 
-				if (!user) throw new ServerException('Invalid', 'Email', '');
+				if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
 				return this.svc.mail.send(
 					body.email,
 					'Change password?',

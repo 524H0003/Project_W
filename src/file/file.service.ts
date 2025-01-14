@@ -29,7 +29,7 @@ export class FileService extends DatabaseRequests<File> {
 
 		readdir(cfg.get('SERVER_PUBLIC'), async (error, files) => {
 			if (error) {
-				new ServerException('Fatal', 'File', 'Read');
+				new ServerException('Fatal', 'File', 'Read', 'server');
 				return;
 			}
 
@@ -88,7 +88,7 @@ export class FileService extends DatabaseRequests<File> {
 		)
 			return recievedFile;
 
-		throw new ServerException('Forbidden', 'File', 'Access');
+		throw new ServerException('Forbidden', 'File', 'Access', 'user');
 	}
 
 	/**

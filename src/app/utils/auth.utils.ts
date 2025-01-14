@@ -19,7 +19,13 @@ export async function validation<T>(
 
 	if (!Object.keys(errors).length) return then();
 	else
-		throw new ServerException('Invalid', 'Entity', '', JSON.stringify(errors));
+		throw new ServerException(
+			'Invalid',
+			'Entity',
+			'',
+			'user',
+			JSON.stringify(errors),
+		);
 }
 
 /**

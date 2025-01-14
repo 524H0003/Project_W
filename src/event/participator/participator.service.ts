@@ -34,7 +34,7 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 		const event = await this.svc.event.findOne({ id: eventId });
 
 		if (!event.positionsAvailable)
-			throw new ServerException('Invalid', 'Event', 'Access');
+			throw new ServerException('Invalid', 'Event', 'Access', 'user');
 
 		await this.svc.event.modify(eventId, {
 			positionsAvailable: event.positionsAvailable - 1,
