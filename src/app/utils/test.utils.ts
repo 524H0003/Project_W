@@ -56,6 +56,8 @@ export async function execute<
 		l1 = expect(executed);
 
 	if (numOfRun - 1) await numOfRun.ra(func);
+	if (!exps.length)
+		throw new ServerException('Fatal', 'Method', 'Implementation', 'server');
 
 	for (const exp of exps) {
 		const l2 =
