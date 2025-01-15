@@ -326,7 +326,7 @@ class ServerException extends HttpException {
 		cause: 'user' | 'server',
 		extend: any,
 	) {
-		const errCode = cause === 'user' ? '400' : '500';
+		const errCode = '6' + (2).string;
 
 		super(type + '_' + object + (action ? '_' : '') + action, +errCode);
 

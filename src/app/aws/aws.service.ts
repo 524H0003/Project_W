@@ -1,7 +1,6 @@
 import { Readable } from 'stream';
 import {
 	GetObjectCommand,
-	GetObjectCommandOutput,
 	NoSuchKey,
 	S3Client,
 	S3ServiceException,
@@ -48,31 +47,6 @@ export class AWSService {
 				secretAccessKey: this.svc.cfg.get('AWS_SECRET_ACCESS_KEY'),
 			},
 		}));
-	}
-
-	/**
-	 * Convert to stream
-	 * @param {GetObjectCommandOutput} response - input
-	 * @return {Readable} output
-	 */
-	private asStream(response: GetObjectCommandOutput): Readable {
-		return response.Body as Readable;
-	}
-
-	/**
-	 * Convert to buffer
-	 * @param {GetObjectCommandOutput} response - input
-	 * @return {Promise<Buffer>} output
-	 */
-	private async asBuffer(response: GetObjectCommandOutput): Promise<Buffer> {
-		const stream = this.asStream(response),
-			chunks: Buffer[] = [];
-
-		return new Promise<Buffer>((resolve, reject) => {
-			stream.on('data', (chunk) => chunks.push(chunk));
-			stream.on('error', (err) => reject(err));
-			stream.on('end', () => resolve(Buffer.concat(chunks)));
-		});
 	}
 
 	/**
