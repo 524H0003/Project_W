@@ -44,9 +44,7 @@ describe('assign', () => {
 							...enterprise.baseUser,
 						} as IEnterpriseAssign),
 				),
-			{
-				exps: [{ type: 'toContain', params: ['Success_Assign_Enterprise'] }],
-			},
+			{ exps: [{ type: 'toContain', params: ['Success_Assign_Enterprise'] }] },
 		);
 		await execute(
 			() =>

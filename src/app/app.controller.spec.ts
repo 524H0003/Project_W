@@ -248,9 +248,7 @@ describe('change-password', () => {
 						.post('/change-password')
 						.send({ email: user.baseUser.email + ']' })
 				).text,
-			{
-				exps: [{ type: 'toContain', params: ['Invalid_Email'] }],
-			},
+			{ exps: [{ type: 'toContain', params: ['Invalid_Email'] }] },
 		);
 	});
 });

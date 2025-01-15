@@ -27,9 +27,7 @@ describe('signup', () => {
 						.post('/student/signup')
 						.send({ ...stu.user, ...stu.user.baseUser }),
 				),
-			{
-				exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }],
-			},
+			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
 	});
 
