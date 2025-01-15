@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { EventParticipator } from './participator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -39,7 +34,7 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 		const event = await this.svc.event.findOne({ id: eventId });
 
 		if (!event.positionsAvailable)
-			throw new BadRequestException('Invalid_Event_Request');
+			throw new ServerException('Invalid', 'Event', 'Access', 'user');
 
 		await this.svc.event.modify(eventId, {
 			positionsAvailable: event.positionsAvailable - 1,

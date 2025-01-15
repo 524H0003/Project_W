@@ -2,8 +2,6 @@ import {
 	createParamDecorator,
 	ExecutionContext,
 	Injectable,
-	InternalServerErrorException,
-	UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -32,11 +30,19 @@ function convertForGql(context: ExecutionContext) {
 export const Roles = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),
 	CurrentUser = createParamDecorator(
-		(instance: any = User, context: ExecutionContext) => {
-			const result = convertForGql(context).user;
+		(
+			args: { instance?: any; required?: boolean },
+			context: ExecutionContext,
+		) => {
+			const result = convertForGql(context).user,
+				{ instance = User, required = true } = args || {};
 
-			if (!result || !(result instanceof instance))
-				throw new UnauthorizedException('Login first to access this endpoint.');
+			if (required) {
+				if (!result) throw new ServerException('Invalid', 'User', '', 'user');
+
+				if (!(result instanceof instance))
+					throw new ServerException('Invalid', 'UserType', '', 'user');
+			}
 
 			return new instance(result);
 		},
@@ -85,8 +91,6 @@ export class RoleGuard extends AuthGuard('access') {
 
 			return matching(user.role, roles);
 		}
-		throw new InternalServerErrorException(
-			'Function not defined roles/permissions',
-		);
+		throw new ServerException('Fatal', 'Method', 'Implementation', 'server');
 	}
 }

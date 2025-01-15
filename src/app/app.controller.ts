@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	forwardRef,
@@ -68,7 +67,7 @@ export class AppController extends BaseController {
 			await this.svc.student.signUp(body);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
-				case 'Exist_User':
+				case err('Invalid', 'User', 'SignUp'):
 					return this.responseWithUser(
 						request,
 						response,
@@ -76,7 +75,7 @@ export class AppController extends BaseController {
 						mtdt,
 					);
 
-				case 'Request_New_User':
+				case err('Success', 'User', 'SignUp'):
 					return this.resetPasswordViaEmail(request, response, body, mtdt);
 			}
 		}
@@ -137,7 +136,7 @@ export class AppController extends BaseController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			new UserRecieve({ response: 'You have been successfully logged out.' }),
+			new UserRecieve({ response: err('Success', 'User', 'LogOut') }),
 		);
 	}
 
@@ -193,21 +192,17 @@ export class AppController extends BaseController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			await this.svc.hook.assign(
-				mtdt,
-				async (s: string) => {
-					const user = await this.svc.baseUser.email(body.email);
+			await this.svc.hook.assign(mtdt, async (s: string) => {
+				const user = await this.svc.baseUser.email(body.email);
 
-					if (!user) throw new BadRequestException('Invalid_Email');
-					return this.svc.mail.send(
-						body.email,
-						'Change password?',
-						'forgetPassword',
-						{ name: user.name, url: `${request.hostname}/hook/${s}` },
-					);
-				},
-				'_Email',
-			),
+				if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
+				return this.svc.mail.send(
+					body.email,
+					'Change password?',
+					'forgetPassword',
+					{ name: user.name, url: `${request.hostname}/hook/${s}` },
+				);
+			}),
 		);
 	}
 
@@ -229,7 +224,7 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: { password: string },
 		@MetaData() mtdt: string,
-		@CurrentUser(Hook) hook: Hook,
+		@CurrentUser({ instance: Hook }) hook: Hook,
 	): Promise<void> {
 		try {
 			await this.svc.hook.validating(signature, mtdt, hook);
@@ -267,16 +262,13 @@ export class AppController extends BaseController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			await this.svc.hook.assign(
-				mtdt,
-				(signature: string) =>
-					this.svc.mail.send(
-						this.svc.cfg.get('ADMIN_EMAIL'),
-						'Signature request',
-						'sendSignatureAdmin',
-						{ signature },
-					),
-				'_Admin',
+			await this.svc.hook.assign(mtdt, (signature: string) =>
+				this.svc.mail.send(
+					this.svc.cfg.get('ADMIN_EMAIL'),
+					'Signature request',
+					'sendSignatureAdmin',
+					{ signature },
+				),
 			),
 		);
 	}

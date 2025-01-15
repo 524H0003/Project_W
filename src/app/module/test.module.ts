@@ -9,12 +9,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { SignService } from 'auth/auth.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MailerService } from '@nestjs-modules/mailer';
-import { AWSService } from 'app/aws/aws.service';
+import { AWSRecieve, AWSService } from 'app/aws/aws.service';
+import { createReadStream, statSync, writeFileSync } from 'fs';
+import { lookup } from 'mime-types';
 
-/**
- * @ignore
- */
-const virtual_aws = new Map<string, Buffer>();
+export const rootPublic = 'public/';
 
 @Global()
 @Module({
@@ -37,9 +36,14 @@ const virtual_aws = new Map<string, Buffer>();
 			provide: AWSService,
 			useValue: {
 				upload: jest.fn(async (name: string, input: Buffer) =>
-					virtual_aws.set(name, input),
+					writeFileSync(rootPublic + name, input),
 				),
-				download: jest.fn(async (name: string) => virtual_aws.get(name)),
+				download: jest.fn(async (name: string): Promise<AWSRecieve> => {
+					const stream = createReadStream(rootPublic + name),
+						length = statSync(rootPublic + name).size;
+
+					return { stream, length, type: lookup(name) as string };
+				}),
 			},
 		},
 	],

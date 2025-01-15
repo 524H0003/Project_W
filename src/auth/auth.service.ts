@@ -1,8 +1,4 @@
-import {
-	BadRequestException,
-	Injectable,
-	UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, Cryption, validation } from 'app/utils/auth.utils';
@@ -52,7 +48,7 @@ export class AuthService extends Cryption {
 			{ role = UserRole.undefined } = options || {},
 			rawUser = new User({ ...input, email: input.email.lower });
 
-		if (user) throw new UnprocessableEntityException('Exist_User');
+		if (user) throw new ServerException('Invalid', 'User', 'SignUp', 'user');
 
 		try {
 			return validation(rawUser, async () => {
@@ -68,7 +64,11 @@ export class AuthService extends Cryption {
 		} catch (error) {
 			switch ((error as { name: string }).name) {
 				case 'BadRequestException':
-					throw new BadRequestException(
+					throw new ServerException(
+						'Invalid',
+						'Entity',
+						'SignUp',
+						'user',
 						JSON.parse((error as { message: string }).message),
 					);
 
@@ -89,8 +89,8 @@ export class AuthService extends Cryption {
 		const user = await this.usrSvc.email(input.email);
 
 		if (user && compare(input.password, user.hashedPassword)) return user;
-		if (!user) throw new BadRequestException('Invalid_Email');
-		throw new BadRequestException('Invalid_Password');
+		if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
+		throw new ServerException('Invalid', 'Password', '', 'user');
 	}
 
 	/**

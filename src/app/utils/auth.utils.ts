@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcrypt';
 import { validate } from 'class-validator';
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
@@ -17,8 +16,16 @@ export async function validation<T>(
 		{},
 		...(await validate(input)).map((i) => i.constraints),
 	) as Object;
+
 	if (!Object.keys(errors).length) return then();
-	else throw new BadRequestException(JSON.stringify(errors));
+	else
+		throw new ServerException(
+			'Invalid',
+			'Entity',
+			'',
+			'user',
+			JSON.stringify(errors),
+		);
 }
 
 /**

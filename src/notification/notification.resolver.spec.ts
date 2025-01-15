@@ -111,7 +111,11 @@ describe('updateNotification', () => {
 				JSON.stringify(
 					await send({ input: { id: newId } }, headers['set-cookie']),
 				),
-			{ exps: [{ type: 'toThrow', params: ['Invalid_Notification_Id'] }] },
+			{
+				exps: [
+					{ type: 'toThrow', params: [err('Invalid', 'Notification', '')] },
+				],
+			},
 		);
 	});
 });

@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser';
 import { DocumentNode, print } from 'graphql';
 import TestAgent from 'supertest/lib/agent';
 import request from 'supertest';
+import { HttpAdapterHost } from '@nestjs/core';
+import { AppExceptionFilter } from 'app/app.filter';
 
 /**
  * Exported variables
@@ -54,6 +56,8 @@ export async function execute<
 		l1 = expect(executed);
 
 	if (numOfRun - 1) await numOfRun.ra(func);
+	if (!exps.length)
+		throw new ServerException('Fatal', 'Method', 'Implementation', 'server');
 
 	for (const exp of exps) {
 		const l2 =
@@ -67,15 +71,6 @@ export async function execute<
 	}
 
 	if (onFinish) await onFinish(await executed);
-}
-
-/**
- * Check if response has correct status code
- * @param {number} code - status code
- * @return {string}
- */
-export function status(code: number): string {
-	return ',"status":' + code.toString();
 }
 
 /**
@@ -116,8 +111,15 @@ export async function initJest(
 		}).compile(),
 		appSvc = module.get(AppService);
 
+	// eslint-disable-next-line tsPlugin/no-unused-vars
+	console.error = (...args) => true;
+
 	app = module.createNestApplication();
-	await app.use(cookieParser()).init();
+	const { httpAdapter } = app.get(HttpAdapterHost);
+	await app
+		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
+		.use(cookieParser())
+		.init();
 	requester = request(app.getHttpServer());
 
 	return { module, appSvc, requester };

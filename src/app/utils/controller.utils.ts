@@ -1,7 +1,6 @@
 import { AppService } from 'app/app.service';
 import { CookieOptions, Request, Response } from 'express';
 import { compare, hash } from './auth.utils';
-import { HttpStatus } from '@nestjs/common';
 import { IUserRecieve } from 'user/user.model';
 import { User } from 'user/user.entity';
 
@@ -80,7 +79,6 @@ export class BaseController {
 		this.clearCookies(request, response);
 
 		response
-			.status(HttpStatus.ACCEPTED)
 			.cookie(
 				hash(this.acsKey),
 				this.svc.auth.encrypt(
@@ -95,7 +93,6 @@ export class BaseController {
 				this.ckiOpt,
 			)
 			.json({
-				statusCode: HttpStatus.ACCEPTED,
 				session: {
 					access_token: usrRcv.accessToken,
 					refresh_token: usrRcv.refreshToken,

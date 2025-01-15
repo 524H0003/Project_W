@@ -1,12 +1,23 @@
 import { Readable } from 'stream';
 import {
 	GetObjectCommand,
-	GetObjectCommandOutput,
+	NoSuchKey,
 	S3Client,
+	S3ServiceException,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AppService } from 'app/app.service';
+import { lookup } from 'mime-types';
+
+/**
+ * AWS recieve object
+ */
+export interface AWSRecieve {
+	stream: Readable;
+	length: number;
+	type: string;
+}
 
 /**
  * AWS service
@@ -39,31 +50,6 @@ export class AWSService {
 	}
 
 	/**
-	 * Convert to stream
-	 * @param {GetObjectCommandOutput} response - input
-	 * @return {Readable} output
-	 */
-	private asStream(response: GetObjectCommandOutput): Readable {
-		return response.Body as Readable;
-	}
-
-	/**
-	 * Convert to buffer
-	 * @param {GetObjectCommandOutput} response - input
-	 * @return {Promise<Buffer>} output
-	 */
-	private async asBuffer(response: GetObjectCommandOutput): Promise<Buffer> {
-		const stream = this.asStream(response),
-			chunks: Buffer[] = [];
-
-		return new Promise<Buffer>((resolve, reject) => {
-			stream.on('data', (chunk) => chunks.push(chunk));
-			stream.on('error', (err) => reject(err));
-			stream.on('end', () => resolve(Buffer.concat(chunks)));
-		});
-	}
-
-	/**
 	 * Send file to s3 server
 	 * @param {string} fileName - the name of sending file
 	 * @param {Buffer} input - file's buffer to send
@@ -76,36 +62,40 @@ export class AWSService {
 					Bucket: this.svc.cfg.get('AWS_BUCKET'),
 					Key: fileName,
 					Body: input,
+					ContentType: lookup(fileName) as string,
 				},
 			}).done();
 		} catch (error) {
-			throw new Error(
-				`\n${'-'.repeat(30)}\nFatal_Upload_AWS\n${'-'.repeat(30)}\n`,
-				error,
-			);
+			throw new ServerException('Fatal', 'AWS', 'Upload', 'server', error);
 		}
 	}
 
 	/**
 	 * Recieve file from s3 server
 	 * @param {string} filename - the name of recieving file
-	 * @return {Promise<Buffer>} the recieved file's buffer
+	 * @return {Promise<AWSRecieve>}
 	 */
-	async download(filename: string): Promise<Buffer> {
+	async download(filename: string): Promise<AWSRecieve> {
 		try {
-			return this.asBuffer(
-				await this.client.send(
+			const result = await this.client.send(
 					new GetObjectCommand({
 						Bucket: this.svc.cfg.get('AWS_BUCKET'),
 						Key: filename,
 					}),
 				),
-			);
+				stream = result.Body! as Readable,
+				length = result.ContentLength!,
+				type = result.ContentType!;
+
+			return { stream, length, type };
 		} catch (error) {
-			throw new Error(
-				`\n${'-'.repeat(30)}\nFatal_Download_AWS\n${'-'.repeat(30)}\n`,
-				error,
-			);
+			if (
+				error instanceof NoSuchKey ||
+				(error as S3ServiceException).name == 'SignatureDoesNotMatch'
+			)
+				throw new ServerException('Invalid', 'FileName', '', 'user');
+
+			throw new ServerException('Fatal', 'AWS', 'Download', 'server', error);
 		}
 	}
 }

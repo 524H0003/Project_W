@@ -100,7 +100,7 @@ describe('updateEvent', () => {
 
 		await execute(
 			async () => await send({ input: { id: newId } }, headers['set-cookie']),
-			{ exps: [{ type: 'toThrow', params: ['Invalid_Event_Id'] }] },
+			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Event', '')] }] },
 		);
 	});
 });

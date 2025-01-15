@@ -1,4 +1,9 @@
 /* eslint-disable tsPlugin/no-unused-vars */
+
+import { HttpException, HttpStatus } from '@nestjs/common';
+import pc from 'picocolors';
+import { Colors } from 'picocolors/types';
+
 /**
  * Casting object to interface
  */
@@ -63,7 +68,6 @@ type MethodDecorator = (
 	propertyKey: string,
 	descriptor: PropertyDescriptor,
 ) => PropertyDescriptor;
-
 type MethodPrerun = (target: any, propertyKey: Function, args: any) => void;
 type MethodPostrun = (target: any, propertyKey: Function, result: any) => void;
 
@@ -205,6 +209,10 @@ declare global {
 		 * To lower case
 		 */
 		readonly lower: string;
+		/**
+		 * To capitalize
+		 */
+		readonly capitalize: string;
 	}
 
 	/**
@@ -217,6 +225,7 @@ declare global {
 		name: string,
 		func: () => void | Promise<void>,
 	): void;
+
 	/**
 	 * Return the formatted name of current file
 	 * @param {string} file - the current file's name (must be __filename)
@@ -224,6 +233,7 @@ declare global {
 	 * @return {string} formatted file's name
 	 */
 	function curFile(file: string, cut?: number): string;
+
 	/**
 	 * Return an array with length
 	 * @param {number} length - the length of the array
@@ -231,15 +241,137 @@ declare global {
 	 * @return {any[]} the output array with length
 	 */
 	function array(length: number, initValue?: any): any[];
+
 	/**
 	 * Delay function
 	 * @param {number} ms - delay in milisecond
 	 */
 	function delay(ms: number): Promise<void>;
+
+	/**
+	 * Server exception
+	 */
+	class ServerException extends HttpException {
+		constructor(
+			type: ErrorType,
+			object: ErrorObject,
+			action: ErrorAction,
+			cause: 'user' | 'server',
+			extend?: any,
+		);
+	}
+
+	/**
+	 * Error code generator
+	 * @param {ErrorType} type - type of error
+	 * @param {ErrorObject} object - object of error
+	 * @param {ErrorAction} action - action to error
+	 * @return {string}
+	 */
+	function err(
+		type: ErrorType,
+		object: ErrorObject,
+		action: ErrorAction,
+	): string;
+
+	/**
+	 * Console log with color
+	 * @param {ColorLogOptions} args - functions arguments
+	 * @return {string}
+	 */
+	function color(args: ColorLogOptions): string;
+
+	/**
+	 * Get http exception status code
+	 * @param {any} error - catched error
+	 * @return {number}
+	 */
+	function errorStatus(error: any): number;
+}
+
+type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
+type ErrorObject =
+	| 'User'
+	| 'File'
+	| 'AWS'
+	| 'UserType'
+	| 'Method'
+	| 'FileName'
+	| 'Notification'
+	| 'Redis'
+	| 'Email'
+	| 'Hook'
+	| 'Token'
+	| 'Entity'
+	| 'Signature'
+	| 'Enterprise'
+	| 'Event'
+	| 'Password';
+type ErrorAction =
+	| ''
+	| 'Read'
+	| 'Sent'
+	| 'Implementation'
+	| 'Upload'
+	| 'Download'
+	| 'SignUp'
+	| 'LogOut'
+	| 'Access';
+
+class ServerException extends HttpException {
+	constructor(
+		type: ErrorType,
+		object: ErrorObject,
+		action: ErrorAction,
+		cause: 'user' | 'server',
+		extend: any,
+	) {
+		const errCode = '6' + (2).string;
+
+		super(type + '_' + object + (action ? '_' : '') + action, +errCode);
+
+		const message = `${'-'.repeat(6)}${this.message}-${errCode}${'-'.repeat(6)}`;
+
+		console.error(
+			color({ bg: 'red', msg: message }) +
+				'\n' +
+				color({ font: 'yellow', msg: extend }) +
+				'\n' +
+				(extend
+					? color({ bg: 'red', msg: '-'.repeat(message.length) })
+					: undefined),
+		);
+	}
+}
+
+type RemoveBgKeys<T> = {
+	[K in keyof T as K extends `bg${infer _}` ? never : K]: T[K];
+};
+type KeepBgKeys<T> = {
+	[K in keyof T as K extends `bg${infer Rest}`
+		? Uncapitalize<Rest>
+		: never]: T[K];
+};
+
+interface ColorLogOptions {
+	msg: string;
+	bg?: keyof KeepBgKeys<Colors> | '';
+	font?: keyof Omit<RemoveBgKeys<Colors>, 'isColorSupported'> | '';
 }
 
 // Global functions
 try {
+	(global as any).ServerException = ServerException;
+	global.color = (args: ColorLogOptions) =>
+		(args.bg ? pc['bg' + args.bg.capitalize] : String)(
+			(args.font ? pc[args.font] : String)(args.msg),
+		);
+	global.errorStatus = (error: any) =>
+		error instanceof HttpException
+			? error.getStatus()
+			: HttpStatus.INTERNAL_SERVER_ERROR;
+	global.err = (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
+		type + '_' + object + (action ? '_' : '') + action;
 	global.disableDescribe = (
 		_name: string,
 		_func: () => void | Promise<void>,
@@ -275,6 +407,13 @@ Object.defineProperty(String.prototype, 'randomChar', {
 Object.defineProperty(String.prototype, 'lower', {
 	get: function () {
 		return (this as string).toLowerCase();
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'capitalize', {
+	get: function () {
+		return (this as string).at(0).toUpperCase() + (this as string).slice(1);
 	},
 	enumerable: true,
 	configurable: true,

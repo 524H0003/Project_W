@@ -1,10 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BaseUser } from 'app/app.entity';
 import { AppService } from 'app/app.service';
 
@@ -40,7 +35,7 @@ export class MailService {
 		const baseUser = await this.svc.baseUser.email(email);
 
 		if (!baseUser && email !== this.svc.cfg.get('ADMIN_EMAIL'))
-			throw new BadRequestException('Invalid_Email');
+			throw new ServerException('Invalid', 'Email', '', 'user');
 
 		await this.mailerService.sendMail({
 			to: baseUser?.email || email,

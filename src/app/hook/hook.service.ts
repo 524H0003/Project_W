@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	forwardRef,
-	Inject,
-	Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Hook } from './hook.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,7 +33,6 @@ export class HookService extends DatabaseRequests<Hook> {
 	async assign(
 		mtdt: string,
 		func: (signature: string) => Promise<BaseUser> | void,
-		to: '_Email' | '_Admin',
 		addInfo?: object,
 	): Promise<UserRecieve> {
 		const signature = (128).string,
@@ -52,7 +46,7 @@ export class HookService extends DatabaseRequests<Hook> {
 
 		return new UserRecieve({
 			accessToken: this.svc.sign.access(hook.id),
-			response: 'Sent_Signature' + to,
+			response: err('Success', 'Signature', 'Sent'),
 		});
 	}
 
@@ -64,7 +58,7 @@ export class HookService extends DatabaseRequests<Hook> {
 	 */
 	async validating(signature: string, mtdt: string, hook: Hook) {
 		if (hook.mtdt !== mtdt || signature !== hook.signature)
-			throw new BadRequestException('Invalid_Hook_Signature');
+			throw new ServerException('Invalid', 'Hook', '', 'user');
 
 		await this.delete({ id: hook.id });
 	}

@@ -19,13 +19,9 @@ it('assign', async () => {
 
 	await execute(
 		() =>
-			svc.hook.assign(
-				mtdt,
-				(s: string) => {
-					signature = s;
-				},
-				'_Email',
-			),
+			svc.hook.assign(mtdt, (s: string) => {
+				signature = s;
+			}),
 		{
 			exps: [{ type: 'toBeInstanceOf', params: [UserRecieve] }],
 			onFinish: async (result: UserRecieve) => {
@@ -55,15 +51,11 @@ it('assign with user', async () => {
 
 	await execute(
 		() =>
-			svc.hook.assign(
-				mtdt,
-				async () => {
-					user = User.test(fileName);
-					return (await svc.auth.signUp({ ...user, ...user.baseUser }, null))
-						.baseUser;
-				},
-				'_Email',
-			),
+			svc.hook.assign(mtdt, async () => {
+				user = User.test(fileName);
+				return (await svc.auth.signUp({ ...user, ...user.baseUser }, null))
+					.baseUser;
+			}),
 		{
 			exps: [{ type: 'toBeInstanceOf', params: [UserRecieve] }],
 			onFinish: async (result: UserRecieve) => {
@@ -86,13 +78,9 @@ it('validating', async () => {
 	const mtdt = fileName + '_' + (20).string;
 	let signature: string;
 
-	const userRecieve = await svc.hook.assign(
-			mtdt,
-			(s: string) => {
-				signature = s;
-			},
-			'_Admin',
-		),
+	const userRecieve = await svc.hook.assign(mtdt, (s: string) => {
+			signature = s;
+		}),
 		token: { id: string } = svc.sign.verify(userRecieve.accessToken, {
 			type: 'access',
 		}) as { id: string },
@@ -119,6 +107,6 @@ it('validating failed', async () => {
 					fromBaseUser: null,
 				}),
 			),
-		{ exps: [{ type: 'toThrow', params: ['Invalid_Hook_Signature'] }] },
+		{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Hook', '')] }] },
 	);
 });

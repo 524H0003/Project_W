@@ -1,10 +1,11 @@
-import { HttpStatus } from '@nestjs/common';
 import { execute, initJest } from 'app/utils/test.utils';
 import { FileController } from 'file/file.controller';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
+import { readFileSync } from 'fs';
+import { rootPublic } from 'app/module/test.module';
 
 const fileName = curFile(__filename);
 let rawUsr: User, req: TestAgent, svc: AppService;
@@ -25,7 +26,7 @@ describe('seeUploadedFile', () => {
 	beforeEach(async () => {
 		const e = await req
 			.post('/signup')
-			.attach('avatar', Buffer.from('test', 'base64'), 'avatar.png')
+			.attach('avatar', Buffer.from((40).string, 'base64'), 'avatar.png')
 			.field('name', rawUsr.baseUser.name)
 			.field('email', rawUsr.baseUser.email)
 			.field('password', rawUsr.password);
@@ -37,14 +38,29 @@ describe('seeUploadedFile', () => {
 	});
 
 	it('success on server files', async () => {
+		const serverFile = 'defaultUser.server.jpg';
+
 		await execute(
 			() =>
 				req
-					.get('/file/testcard.server.png')
-					.set('Cookie', headers['set-cookie']),
+					.get('/file/' + serverFile)
+					.buffer()
+					.parse((res, callback) => {
+						res.text = '';
+						res
+							.setEncoding('base64')
+							.on('data', (chunk) => (res.text += chunk))
+							.on('end', () => callback(null, Buffer.from(res.text, 'base64')));
+					}),
 			{
 				exps: [
-					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
+					{
+						type: 'toHaveProperty',
+						params: [
+							'text',
+							readFileSync(rootPublic + serverFile, { encoding: 'base64' }),
+						],
+					},
 				],
 			},
 		);
@@ -55,10 +71,27 @@ describe('seeUploadedFile', () => {
 			() =>
 				req
 					.get(`/file/${usr.baseUser.avatarPath}`)
-					.set('Cookie', headers['set-cookie']),
+					.set('Cookie', headers['set-cookie'])
+					.buffer()
+					.parse((res, callback) => {
+						res.text = '';
+						res
+							.setEncoding('base64')
+							.on('data', (chunk) => (res.text += chunk))
+							.on('end', () => callback(null, Buffer.from(res.text, 'base64')));
+					}),
+
 			{
 				exps: [
-					{ type: 'toHaveProperty', params: ['status', HttpStatus.ACCEPTED] },
+					{
+						type: 'toHaveProperty',
+						params: [
+							'text',
+							readFileSync(rootPublic + usr.baseUser.avatarPath, {
+								encoding: 'base64',
+							}),
+						],
+					},
 				],
 			},
 		);

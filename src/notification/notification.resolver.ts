@@ -4,7 +4,7 @@ import {
 	NotificationAssign,
 	NotificationUpdate,
 } from './notification.entity';
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
@@ -35,7 +35,8 @@ export class NotificationResolver {
 	async updateNotification(@Args('input') input: NotificationUpdate) {
 		const notification = await this.svc.noti.findOne({ id: input.id });
 
-		if (!notification) throw new BadRequestException('Invalid_Notification_Id');
+		if (!notification)
+			throw new ServerException('Invalid', 'Notification', '', 'user');
 
 		return this.svc.noti.modify(notification.id, input);
 	}

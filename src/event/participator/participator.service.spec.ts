@@ -51,7 +51,7 @@ describe('assign', () => {
 		event = await svc.event.assign(eve);
 
 		await execute(() => svc.eventParti.assign(student.user.id, event.id), {
-			exps: [{ type: 'toThrow', params: ['Invalid_Event_Request'] }],
+			exps: [{ type: 'toThrow', params: [err('Invalid', 'Event', 'Access')] }],
 		});
 	});
 });

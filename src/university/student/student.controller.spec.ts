@@ -1,5 +1,4 @@
 import { execute, initJest } from 'app/utils/test.utils';
-import { HttpStatus } from '@nestjs/common';
 import TestAgent from 'supertest/lib/agent';
 import { Student } from './student.entity';
 
@@ -28,12 +27,7 @@ describe('signup', () => {
 						.post('/student/signup')
 						.send({ ...stu.user, ...stu.user.baseUser }),
 				),
-			{
-				exps: [
-					{ type: 'toContain', params: [HttpStatus.BAD_REQUEST.toString()] },
-					{ type: 'toContain', params: ['Invalid_Student_Email'] },
-				],
-			},
+			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
 	});
 
@@ -47,8 +41,7 @@ describe('signup', () => {
 				),
 			{
 				exps: [
-					{ type: 'toContain', params: [HttpStatus.ACCEPTED.toString()] },
-					{ type: 'toContain', params: ['Sent_Signature_Email'] },
+					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },
 				],
 			},
 		);
