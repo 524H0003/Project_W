@@ -21,6 +21,7 @@ import { NotificationService } from 'notification/notification.service';
 import { RecieverService } from 'notification/reciever/reciever.service';
 import { EventParticipatorService } from 'event/participator/participator.service';
 import { AWSService } from './aws/aws.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AppService {
@@ -66,6 +67,7 @@ export class AppService {
 		public eventParti: EventParticipatorService,
 		@Inject(forwardRef(() => AWSService))
 		public aws: AWSService,
+		public cfg: ConfigService,
 	) {
 		this.baseUser = new BaseUserService(baseUserRepo);
 	}
