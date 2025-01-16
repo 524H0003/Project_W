@@ -6,11 +6,11 @@ import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { User } from 'user/user.entity';
 import {
-	RecieverAssign,
-	RecieverAssignMany,
 	ReadNotification,
 	ReadNotificationMany,
-} from 'build/compiled_graphql';
+	RecieverAssign,
+	RecieverAssignMany,
+} from './reciever.graphql';
 
 @Resolver(() => Reciever)
 @UseGuards(RoleGuard)

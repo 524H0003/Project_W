@@ -4,6 +4,7 @@ import {
 	EventParticipatorStatus,
 	IEventParticipatorInfo,
 } from './participator.model';
+import JSON from 'graphql-type-json';
 
 @InputType()
 export class EventParticipatorAssign {
