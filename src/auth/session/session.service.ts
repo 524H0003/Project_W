@@ -6,29 +6,33 @@ import { DeepPartial, Repository } from 'typeorm';
 import { Session } from './session.entity';
 import { User, UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Session service
  */
 @Injectable()
 export class SessionService extends DatabaseRequests<Session> {
+	/**
+	 * Refresh token use time
+	 */
+	private use: number;
+
+	/**
+	 * Initiate service
+	 * @param {Repository<Session>} repo - Session repository
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
+	 */
 	constructor(
 		@InjectRepository(Session) repo: Repository<Session>,
 		@Inject(forwardRef(() => AppService))
 		private svc: AppService,
+		private cfg: ConfigService,
 	) {
 		super(repo);
-	}
-	/**
-	 * @ignore
-	 */
-	private _use: number;
-	/**
-	 * @ignore
-	 */
-	get use(): number {
-		if (this._use) return this._use;
-		return (this._use = this.svc.cfg.get('REFRESH_USE'));
+
+		this.use = this.cfg.get('REFRESH_USE');
 	}
 
 	/**

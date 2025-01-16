@@ -6,7 +6,6 @@ import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { AuthService, SignService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
-import { ConfigService } from '@nestjs/config';
 import { HookService } from './hook/hook.service';
 import { MailService } from './mail/mail.service';
 import { StudentService } from 'university/student/student.service';

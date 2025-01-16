@@ -3,10 +3,14 @@ import { CookieOptions, Request, Response } from 'express';
 import { compare, hash } from './auth.utils';
 import { IUserRecieve } from 'user/user.model';
 import { User } from 'user/user.entity';
+import { ConfigService } from '@nestjs/config';
 
+/**
+ * Base controller
+ */
 export class BaseController {
 	/**
-	 * @ignore
+	 * Global cookie options
 	 */
 	private readonly ckiOpt: CookieOptions = {
 		httpOnly: true,
@@ -15,30 +19,27 @@ export class BaseController {
 	};
 
 	/**
-	 * @ignore
+	 * Access token secret
 	 */
-	private _acsKey: string;
-	/**
-	 * @ignore
-	 */
-	get acsKey(): string {
-		if (this._acsKey) return this._acsKey;
-		return (this._acsKey = this.svc.cfg.get('ACCESS_SECRET'));
-	}
+	private acsKey: string;
 
 	/**
-	 * @ignore
+	 * Refresh token secret
 	 */
-	private _rfsKey: string;
-	/**
-	 * @ignore
-	 */
-	get rfsKey(): string {
-		if (this._rfsKey) return this._rfsKey;
-		return (this._rfsKey = this.svc.cfg.get('REFRESH_SECRET'));
-	}
+	private rfsKey: string;
 
-	constructor(public svc: AppService) {}
+	/**
+	 * Initiate controller
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
+	 */
+	constructor(
+		protected svc: AppService,
+		protected cfg: ConfigService,
+	) {
+		this.acsKey = this.cfg.get('ACCESS_SECRET');
+		this.rfsKey = this.cfg.get('REFRESH_SECRET');
+	}
 
 	/**
 	 * Clear client's cookies

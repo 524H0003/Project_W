@@ -30,6 +30,7 @@ import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 import { Throttle } from '@nestjs/throttler';
 import { BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Application Controller
@@ -37,11 +38,17 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('')
 @UseInterceptors(CacheInterceptor)
 export class AppController extends BaseController {
+	/**
+	 * Initiate controller
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
+	 */
 	constructor(
 		@Inject(forwardRef(() => AppService))
-		public svc: AppService,
+		svc: AppService,
+		cfg: ConfigService,
 	) {
-		super(svc);
+		super(svc, cfg);
 	}
 
 	/**
@@ -261,7 +268,7 @@ export class AppController extends BaseController {
 			response,
 			await this.svc.hook.assign(mtdt, (signature: string) =>
 				this.svc.mail.send(
-					this.svc.cfg.get('ADMIN_EMAIL'),
+					this.cfg.get('ADMIN_EMAIL'),
 					'Signature request',
 					'sendSignatureAdmin',
 					{ signature },
