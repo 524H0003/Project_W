@@ -21,6 +21,7 @@ import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Enterprise controller
@@ -28,8 +29,16 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('enterprise')
 @UseInterceptors(CacheInterceptor)
 export class EnterpriseController extends AppController {
-	constructor(public svc: AppService) {
-		super(svc);
+	/**
+	 * Initiate controller
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
+	 */
+	constructor(
+		protected svc: AppService,
+		protected cfg: ConfigService,
+	) {
+		super(svc, cfg);
 	}
 
 	/**

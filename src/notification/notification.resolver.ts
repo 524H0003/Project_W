@@ -12,7 +12,7 @@ import { UserRole } from 'user/user.model';
 @Resolver(() => Notification)
 @UseGuards(RoleGuard)
 export class NotificationResolver {
-	constructor(public svc: AppService) {}
+	constructor(private svc: AppService) {}
 
 	// Mutations
 	/**

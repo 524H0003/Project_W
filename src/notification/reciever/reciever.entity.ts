@@ -5,7 +5,7 @@ import { Notification } from 'notification/notification.entity';
 import { IRecieverEntity, IRecieverInfo } from './reciever.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IRecieverInfoKeys } from 'build/models';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 /**
  * Reciever entity
@@ -13,12 +13,15 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Entity({ name: 'UserNotification' })
 export class Reciever extends SensitiveInfomations implements IRecieverEntity {
-	constructor(payload: IRecieverInfo) {
+	/**
+	 * Initiate reciever
+	 * @param {IRecieverInfo} input - entity input
+	 */
+	constructor(input: IRecieverInfo) {
 		super();
 
-		if (payload) {
-			Object.assign(this, InterfaceCasting.quick(payload, IRecieverInfoKeys));
-		}
+		if (input)
+			Object.assign(this, InterfaceCasting.quick(input, IRecieverInfoKeys));
 	}
 
 	// Relationships
@@ -55,26 +58,4 @@ export class Reciever extends SensitiveInfomations implements IRecieverEntity {
 		default: null,
 	})
 	readAt: Date;
-}
-
-@InputType()
-export class RecieverAssign {
-	@Field() notificationId: string;
-	@Field() userId: string;
-}
-
-@InputType()
-export class RecieverAssignMany {
-	@Field() notificationId: string;
-	@Field(() => [String]) usersId: string[];
-}
-
-@InputType()
-export class ReadNotification {
-	@Field() recieverId: string;
-}
-
-@InputType()
-export class ReadNotificationMany {
-	@Field(() => [String]) recieversId: string[];
 }

@@ -45,8 +45,8 @@ export class AppController extends BaseController {
 	 */
 	constructor(
 		@Inject(forwardRef(() => AppService))
-		svc: AppService,
-		cfg: ConfigService,
+		protected svc: AppService,
+		protected cfg: ConfigService,
 	) {
 		super(svc, cfg);
 	}

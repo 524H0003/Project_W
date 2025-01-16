@@ -14,7 +14,7 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 	constructor(
 		@InjectRepository(EventTag) repo: Repository<EventTag>,
 		@Inject(forwardRef(() => AppService))
-		public svc: AppService,
+		private svc: AppService,
 	) {
 		super(repo);
 	}

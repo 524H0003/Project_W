@@ -21,6 +21,7 @@ import { Request, Response } from 'express';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Faculty controller
@@ -29,8 +30,16 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('faculty')
 @UseInterceptors(CacheInterceptor)
 export class FacultyController extends AppController {
-	constructor(public svc: AppService) {
-		super(svc);
+	/**
+	 * Initiate controller
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
+	 */
+	constructor(
+		protected svc: AppService,
+		protected cfg: ConfigService,
+	) {
+		super(svc, cfg);
 	}
 
 	/**

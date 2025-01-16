@@ -16,6 +16,7 @@ import { IStudentSignup } from './student.model';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Student controller
@@ -24,8 +25,16 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('student')
 @UseInterceptors(CacheInterceptor)
 export class StudentController extends AppController {
-	constructor(public svc: AppService) {
-		super(svc);
+	/**
+	 * Initiate controller
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
+	 */
+	constructor(
+		protected svc: AppService,
+		protected cfg: ConfigService,
+	) {
+		super(svc, cfg);
 	}
 
 	/**
