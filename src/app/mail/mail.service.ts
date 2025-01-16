@@ -8,9 +8,6 @@ import { AppService } from 'app/app.service';
  */
 @Injectable()
 export class MailService {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		@Inject(forwardRef(() => MailerService))
 		private mailerService: MailerService,

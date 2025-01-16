@@ -11,9 +11,6 @@ import { ITagInfo } from './tag.model';
  */
 @Injectable()
 export class EventTagService extends DatabaseRequests<EventTag> {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		@InjectRepository(EventTag) repo: Repository<EventTag>,
 		@Inject(forwardRef(() => AppService))

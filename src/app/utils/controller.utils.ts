@@ -38,9 +38,6 @@ export class BaseController {
 		return (this._rfsKey = this.svc.cfg.get('REFRESH_SECRET'));
 	}
 
-	/**
-	 * @ignore
-	 */
 	constructor(public svc: AppService) {}
 
 	/**

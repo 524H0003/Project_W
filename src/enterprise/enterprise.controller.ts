@@ -28,9 +28,6 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('enterprise')
 @UseInterceptors(CacheInterceptor)
 export class EnterpriseController extends AppController {
-	/**
-	 * @ignore
-	 */
 	constructor(public svc: AppService) {
 		super(svc);
 	}

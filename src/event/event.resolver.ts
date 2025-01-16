@@ -9,9 +9,6 @@ import { Event, EventAssign, EventUpdate } from './event.entity';
 @Resolver(() => Event)
 @UseGuards(RoleGuard)
 export class EventResolver {
-	/**
-	 * @ignore
-	 */
 	constructor(public svc: AppService) {}
 
 	/**

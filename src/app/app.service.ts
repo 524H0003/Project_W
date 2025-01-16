@@ -23,9 +23,6 @@ import { RecieverService } from 'notification/reciever/reciever.service';
 import { EventParticipatorService } from 'event/participator/participator.service';
 import { AWSService } from './aws/aws.service';
 
-/**
- * @ignore
- */
 @Injectable()
 export class AppService {
 	public baseUser: BaseUserService;
@@ -38,8 +35,6 @@ export class AppService {
 		public device: DeviceService,
 		@Inject(forwardRef(() => SessionService))
 		public session: SessionService,
-		@Inject(forwardRef(() => ConfigService))
-		public cfg: ConfigService,
 		@Inject(forwardRef(() => HookService))
 		public hook: HookService,
 		@Inject(forwardRef(() => MailService))
@@ -81,9 +76,6 @@ export class AppService {
  * Base user service
  */
 class BaseUserService extends DatabaseRequests<BaseUser> {
-	/**
-	 * @ignore
-	 */
 	constructor(repo: Repository<BaseUser>) {
 		super(repo);
 	}

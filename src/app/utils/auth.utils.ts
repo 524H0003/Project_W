@@ -51,9 +51,6 @@ export function compare(origin: string, input: string): boolean {
  * Cryption class
  */
 export class Cryption {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		private algorithm: string,
 		private svrScr: string,

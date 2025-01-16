@@ -22,9 +22,6 @@ export class EventParticipator
 	extends SensitiveInfomations
 	implements IEventParticipatorEntiy
 {
-	/**
-	 * @ignore
-	 */
 	constructor(payload: IEventParticipatorInfo) {
 		super();
 

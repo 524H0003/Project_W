@@ -7,9 +7,6 @@ import { AppService } from 'app/app.service';
 
 @Injectable()
 export class RecieverService extends DatabaseRequests<Reciever> {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		@InjectRepository(Reciever) repo: Repository<Reciever>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,

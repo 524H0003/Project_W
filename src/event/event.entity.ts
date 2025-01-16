@@ -29,9 +29,6 @@ import JSON from 'graphql-type-json';
 @ObjectType()
 @Entity({ name: 'Event' })
 export class Event extends SensitiveInfomations implements IEventEntity {
-	/**
-	 * @ignore
-	 */
 	constructor(payload: IEventInfo) {
 		super();
 

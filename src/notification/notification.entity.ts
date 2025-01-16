@@ -20,9 +20,6 @@ export class Notification
 	extends SensitiveInfomations
 	implements INotificationEntity
 {
-	/**
-	 * @ignore
-	 */
 	constructor(payload: INotificationInfo) {
 		super();
 

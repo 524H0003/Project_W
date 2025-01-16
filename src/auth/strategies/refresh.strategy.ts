@@ -31,9 +31,6 @@ export interface IRefreshResult {
  */
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		cfgSvc: ConfigService,
 		private sesSvc: SessionService,

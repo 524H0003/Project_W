@@ -10,9 +10,6 @@ import { AppService } from 'app/app.service';
  */
 @Injectable()
 export class EventService extends DatabaseRequests<Event> {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		@InjectRepository(Event) repo: Repository<Event>,
 		@Inject(forwardRef(() => AppService))

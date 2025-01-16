@@ -9,9 +9,6 @@ import { AppService } from 'app/app.service';
  */
 @Controller('file')
 export class FileController {
-	/**
-	 * @ignore
-	 */
 	constructor(private svc: AppService) {}
 
 	/**

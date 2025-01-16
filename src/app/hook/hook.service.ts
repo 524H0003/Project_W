@@ -12,9 +12,6 @@ import { AppService } from 'app/app.service';
  */
 @Injectable()
 export class HookService extends DatabaseRequests<Hook> {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		@InjectRepository(Hook) repo: Repository<Hook>,
 		@Inject(forwardRef(() => AppService))

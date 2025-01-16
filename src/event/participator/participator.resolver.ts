@@ -13,9 +13,6 @@ import { User } from 'user/user.entity';
 @Resolver(() => EventParticipator)
 @UseGuards(RoleGuard)
 export class EventParticipatorResolver {
-	/**
-	 * @ignore
-	 */
 	constructor(public svc: AppService) {}
 
 	/**

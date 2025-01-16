@@ -12,9 +12,6 @@ import { UserRole } from 'user/user.model';
 @Resolver(() => Notification)
 @UseGuards(RoleGuard)
 export class NotificationResolver {
-	/**
-	 * @ignore
-	 */
 	constructor(public svc: AppService) {}
 
 	// Mutations

@@ -25,9 +25,6 @@ export type NonArray<T> = T extends (infer U)[] ? U : T;
  */
 @ObjectType()
 export class SensitiveInfomations extends BaseEntity {
-	/**
-	 * @ignore
-	 */
 	constructor() {
 		super();
 	}
@@ -50,9 +47,6 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 */
 	private relations: string[];
 
-	/**
-	 * @ignore
-	 */
 	constructor(protected repo: Repository<T>) {
 		this.relations = [].concat(
 			...this.repo.metadata.relations.map((i) => this.exploreEntityMetadata(i)),

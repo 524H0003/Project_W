@@ -8,9 +8,6 @@ import { UserRole } from 'user/user.model';
 @Resolver(() => EventTag)
 @UseGuards(RoleGuard)
 export class EventTagResolver {
-	/**
-	 * @ignore
-	 */
 	constructor(public svc: AppService) {}
 
 	// Mutations

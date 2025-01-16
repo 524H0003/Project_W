@@ -15,9 +15,6 @@ import { User } from 'user/user.entity';
 @Resolver(() => Reciever)
 @UseGuards(RoleGuard)
 export class RecieverResolver {
-	/**
-	 * @ignore
-	 */
 	constructor(public svc: AppService) {}
 
 	// Mutations

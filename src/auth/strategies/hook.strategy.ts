@@ -10,9 +10,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
  */
 @Injectable()
 export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		cfgSvc: ConfigService,
 		private hookSvc: HookService,

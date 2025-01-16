@@ -13,9 +13,6 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Entity({ name: 'UserNotification' })
 export class Reciever extends SensitiveInfomations implements IRecieverEntity {
-	/**
-	 * @ignore
-	 */
 	constructor(payload: IRecieverInfo) {
 		super();
 
