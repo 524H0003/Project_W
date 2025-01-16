@@ -1,14 +1,14 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import {
-	EventParticipator,
-	EventParticipatorAssign,
-	EventParticipatorUpdate,
-} from './participator.entity';
+import { EventParticipator } from './participator.entity';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { User } from 'user/user.entity';
+import {
+	EventParticipatorAssign,
+	EventParticipatorUpdate,
+} from './participator.graphql';
 
 @Resolver(() => EventParticipator)
 @UseGuards(RoleGuard)

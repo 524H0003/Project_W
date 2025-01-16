@@ -1,9 +1,10 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { EventTag, EventTagAssign, EventTagAttach } from './tag.entity';
+import { EventTag } from './tag.entity';
 import { UseGuards } from '@nestjs/common';
 import { AllowPublic, RoleGuard, Roles } from 'auth/auth.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
+import { EventTagAssign, EventTagAttach } from './tag.graphql';
 
 @Resolver(() => EventTag)
 @UseGuards(RoleGuard)

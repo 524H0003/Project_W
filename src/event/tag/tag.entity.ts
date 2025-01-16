@@ -5,7 +5,7 @@ import { Event } from 'event/event.entity';
 import { ITagEntity, ITagInfo } from './tag.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { ITagInfoKeys } from 'build/models';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 /**
  * Tag entity
@@ -49,15 +49,4 @@ export class EventTag extends SensitiveInfomations implements ITagEntity {
 	static test(from: string) {
 		return new EventTag({ name: from + (5).string });
 	}
-}
-
-@InputType()
-export class EventTagAssign implements ITagInfo {
-	@Field() name: string;
-}
-
-@InputType()
-export class EventTagAttach implements ITagInfo {
-	@Field() name: string;
-	@Field() eventId: string;
 }

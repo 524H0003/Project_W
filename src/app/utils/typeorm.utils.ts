@@ -43,7 +43,7 @@ export class SensitiveInfomations extends BaseEntity {
  */
 export class DatabaseRequests<T extends BaseEntity> {
 	/**
-	 * @ignore
+	 * Entity relationships
 	 */
 	private relations: string[];
 
