@@ -17,6 +17,7 @@ public/*
 documentation/
 src/app/mail/templates
 src/app/page
+!src/app/admin/package.json
 
 # Logs
 logs

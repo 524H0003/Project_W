@@ -46,6 +46,7 @@ async function bootstrap() {
 			getCustomResource,
 			Database,
 			generalDisplay,
+			componentLoader,
 		} = await getAdminJS(appSvc);
 
 	AdminJS.registerAdapter({ Resource: getCustomResource(), Database });
@@ -61,6 +62,7 @@ async function bootstrap() {
 				Notification,
 				EventCreator,
 			].map((i) => generalDisplay(i)),
+			componentLoader,
 		}),
 		adminRouter = buildAuthenticatedRouter(
 			admin,
@@ -85,7 +87,6 @@ async function bootstrap() {
 		region: cfgSvc.get('AWS_REGION'),
 	});
 
-	// Init multiple connection type
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.use(admin.options.rootPath, adminRouter)
