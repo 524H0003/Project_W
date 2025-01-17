@@ -20,7 +20,8 @@
 		"strictFunctionTypes": true,
 		"strictNullChecks": false,
 		"target": "ESNext",
-		"useDefineForClassFields": false
+		"useDefineForClassFields": false,
+		"jsx": "react"
 	},
 	"exclude": [
 		"./**/*.d.ts",
