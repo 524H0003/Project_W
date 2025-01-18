@@ -7,6 +7,7 @@ import {
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
 } from 'build/models';
+import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
 import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
@@ -229,3 +230,11 @@ export class UserRecieve implements IUserRecieve {
 		});
 	}
 }
+
+export const AvatarFileUpload = new ParseFilePipeBuilder()
+	.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+	.addMaxSizeValidator({ maxSize: (0.3).mb2b })
+	.build({
+		fileIsRequired: false,
+		errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+	});
