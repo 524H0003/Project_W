@@ -52,9 +52,9 @@ export class AWSService {
 	/**
 	 * Send file to s3 server
 	 * @param {string} fileName - the name of sending file
-	 * @param {Buffer} input - file's buffer to send
+	 * @param {Readable} input - file's buffer to send
 	 */
-	async upload(fileName: string, input: Buffer) {
+	async upload(fileName: string, input: Readable) {
 		try {
 			await new Upload({
 				client: this.client,
