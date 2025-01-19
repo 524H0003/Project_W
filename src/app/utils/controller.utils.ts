@@ -18,12 +18,12 @@ export class BaseController {
 	/**
 	 * Server access token secret
 	 */
-	private acsKey: string = this.svc.cfg.get('ACCESS_SECRET');
+	private acsKey: string = this.cfg.get('ACCESS_SECRET');
 
 	/**
 	 * Server refresh token secret
 	 */
-	private rfsKey: string = this.svc.cfg.get('REFRESH_SECRET');
+	private rfsKey: string = this.cfg.get('REFRESH_SECRET');
 
 	/**
 	 * Initiate base controller

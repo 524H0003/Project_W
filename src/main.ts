@@ -20,6 +20,7 @@ import { Event } from 'event/event.entity';
 import { getAdminJS } from 'app/utils/adminjs.utils';
 import { EventCreator } from 'event/creator/creator.entity';
 import { AppExceptionFilter } from 'app/app.filter';
+import { graphqlUploadExpress } from 'graphql-upload-ts';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
@@ -90,6 +91,7 @@ async function bootstrap() {
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.use(admin.options.rootPath, adminRouter)
+		.use(graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.setGlobalPrefix('api/v1')
 		.init();
 	http

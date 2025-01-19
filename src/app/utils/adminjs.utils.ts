@@ -11,7 +11,7 @@ import {
 export const getAdminJS = async (svc: AppService) => {
 	type ResourceWithOptions = { resource: any; options: any };
 
-	const { componentLoader } = await import('../admin/components.mjs'),
+	const { componentLoader } = await import('app/admin/components.mjs'),
 		{ AdminJS, BaseRecord, flat } = await import('adminjs'),
 		uuidRegex =
 			/^[0-9A-F]{8}-[0-9A-F]{4}-[5|4|3|2|1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,

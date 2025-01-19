@@ -10,6 +10,7 @@ src/types.ts
 *.tsbuildinfo
 types/src
 src/**/*.js*
+!src/**/*.json
 **/*.d.ts
 public/*
 !public/*.server.*
@@ -17,7 +18,6 @@ public/*
 documentation/
 src/app/mail/templates
 src/app/page
-!src/app/admin/package.json
 
 # Logs
 logs
@@ -75,3 +75,4 @@ secrets/*.pem
 
 # GraphQL
 graphql/
+!src/app/graphql/

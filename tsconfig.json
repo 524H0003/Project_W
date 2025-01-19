@@ -12,7 +12,11 @@
 		"noFallthroughCasesInSwitch": false,
 		"noImplicitAny": false,
 		"outDir": "dist",
-		"paths": { "*": ["./src/*"] },
+		"paths": {
+			"*": [
+				"./src/*"
+			]
+		},
 		"removeComments": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
@@ -21,7 +25,9 @@
 		"strictNullChecks": false,
 		"target": "ESNext",
 		"useDefineForClassFields": false,
-		"jsx": "react"
+		"jsx": "react",
+		"allowJs": true,
+		"maxNodeModuleJsDepth": 10
 	},
 	"exclude": [
 		"./**/*.d.ts",
