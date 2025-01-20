@@ -26,8 +26,6 @@
 		"target": "ESNext",
 		"useDefineForClassFields": false,
 		"jsx": "react",
-		"allowJs": true,
-		"maxNodeModuleJsDepth": 10
 	},
 	"exclude": [
 		"./**/*.d.ts",
