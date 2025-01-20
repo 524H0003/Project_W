@@ -66,7 +66,7 @@ export class AppController extends BaseController {
 		try {
 			await this.svc.student.signUp(body);
 		} catch (error) {
-			switch ((error as { message: string }).message) {
+			switch ((error as ServerException).message) {
 				case err('Invalid', 'User', 'SignUp'):
 					return this.responseWithUser(
 						request,
@@ -77,6 +77,9 @@ export class AppController extends BaseController {
 
 				case err('Success', 'User', 'SignUp'):
 					return this.resetPasswordViaEmail(request, response, body, mtdt);
+
+				default:
+					throw error;
 			}
 		}
 	}
