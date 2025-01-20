@@ -9,6 +9,7 @@ import TestAgent from 'supertest/lib/agent';
 import request from 'supertest';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
+import supertest from 'supertest';
 
 /**
  * Exported variables
@@ -81,14 +82,19 @@ export type SendGQLType<T, K> = (variables: K, cookie?: any) => Promise<T>;
 /**
  * GraphQL query runner
  * @param {DocumentNode} astQuery - the graphql query
+ * @param {supertest.Test} req - custom request (optional)
  * @return {T}
  */
-export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
+export function sendGQL<T, K>(
+	astQuery: DocumentNode,
+	req?: supertest.Test,
+): SendGQLType<T, K> {
 	const query = print(astQuery);
 
 	return async (variables: K, cookie?: any): Promise<T> => {
-		const result = await requester
-			.post('/graphql')
+		if (!req) req = requester.post('/graphql');
+
+		const result = await req
 			.set('Cookie', cookie)
 			.set('Content-Type', 'application/json')
 			.send(JSON.stringify({ query, variables }));

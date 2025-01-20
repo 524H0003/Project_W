@@ -1,5 +1,10 @@
 import { AppService } from 'app/app.service';
-import { initJest } from 'app/utils/test.utils';
+import { execute, initJest, sendGQL } from 'app/utils/test.utils';
+import {
+	UploadFile,
+	UploadFileMutation,
+	UploadFileMutationVariables,
+} from 'build/compiled_graphql';
 import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
@@ -13,5 +18,12 @@ beforeAll(async () => {
 });
 
 describe('uploadFile', () => {
-	
+	const send = sendGQL<UploadFileMutation, UploadFileMutationVariables>(
+		UploadFile,
+		req.post('/graphql'),
+	);
+
+	it('success', async () => {
+		await execute(async () => await send({ file: '$file' }));
+	});
 });
