@@ -1,19 +1,25 @@
 {
 	"debug.javascript.autoAttachFilter": "disabled",
-	"editor.codeActionsOnSave": { "source.fixAll": "explicit" },
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
 	"editor.formatOnSave": true,
 	"editor.insertSpaces": false,
 	"editor.tabSize": 2,
-	"editor.tokenColorCustomizations": { "comments": "", "textMateRules": [] },
+	"editor.tokenColorCustomizations": {
+		"comments": "",
+		"textMateRules": []
+	},
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.patterns": {
 		"*.entity.ts": "$(capture).model.ts",
 		"*.ts": "$(capture).spec.ts, $(capture).spec.utils.ts",
-		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, jest*.config.ts, README.MD, nest-cli.json, procfile, .gitignore, codegen.ts",
-		"tsconfig.json": "tsconfig.*.json, env.d.ts"
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, README.MD, nest-cli.json, procfile, .gitignore, codegen.ts, .env*",
+		"tsconfig.json": "tsconfig.*.json",
+		"jest.all.config.ts": "jest.*.config.ts",
 	},
 	"explorerExclude.backup": {},
 	"files.eol": "\n",
@@ -41,7 +47,9 @@
 		"types": true,
 		"graphql": true
 	},
-	"jest.outputConfig": { "clearOnRun": "terminal" },
+	"jest.outputConfig": {
+		"clearOnRun": "terminal"
+	},
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,
