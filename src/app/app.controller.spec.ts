@@ -99,6 +99,16 @@ describe('login', () => {
 			},
 		);
 	});
+
+	it('fail due to invalid email', async () => {
+		usr = new User({ ...usr, ...usr.baseUser, email: (20).string });
+
+		await execute(
+			async () =>
+				(await req.post('/login').send({ ...usr, ...usr.baseUser })).text,
+			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
+		);
+	});
 });
 
 describe('logout', () => {
