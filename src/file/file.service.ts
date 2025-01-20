@@ -148,6 +148,6 @@ export class FileService extends DatabaseRequests<File> {
 			uploadFile.stream.on('error', reject);
 		});
 
-		return uploadFile
+		return uploadFile;
 	}
 }

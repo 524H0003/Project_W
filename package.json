@@ -68,6 +68,7 @@
 		"graphql": "^16.10.0",
 		"graphql-tag": "^2.12.6",
 		"graphql-type-json": "^0.3.2",
+		"graphql-upload-ts": "^2.1.2",
 		"handlebars": "^4.7.8",
 		"http": "^0.0.1-security",
 		"https": "^1.0.0",
