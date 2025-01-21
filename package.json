@@ -52,7 +52,7 @@
 		"@nestjs/jwt": "^10.2.0",
 		"@nestjs/passport": "^10.0.3",
 		"@nestjs/platform-express": "^10.4.15",
-		"@nestjs/serve-static": "^4.0.2",
+		"@nestjs/serve-static": "^5.0.1",
 		"@nestjs/throttler": "^6.3.0",
 		"@nestjs/typeorm": "^10.0.2",
 		"adminjs": "^7.8.13",
