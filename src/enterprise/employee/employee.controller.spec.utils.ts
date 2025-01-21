@@ -19,13 +19,11 @@ export async function assignEmployee(
 	await assignEnterprise(req, enterprise, mailerSvc);
 
 	const empHeaders = (
-			await req
-				.post('/employee/hook')
-				.send({
-					enterpriseName: enterprise.baseUser.name,
-					...empInp,
-					...empInp.eventCreator.user.baseUser,
-				} as IEmployeeHook)
+			await req.post('/employee/hook').send({
+				enterpriseName: enterprise.baseUser.name,
+				...empInp,
+				...empInp.eventCreator.user.baseUser,
+			} as IEmployeeHook)
 		).headers,
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0']['context'][
 			'signature'

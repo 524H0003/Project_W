@@ -34,4 +34,4 @@ export default {
       'aw-xl': { raw: '(max-width:1279px)' },
     },
   },
-}
+};

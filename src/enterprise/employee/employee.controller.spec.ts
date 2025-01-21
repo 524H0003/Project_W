@@ -33,13 +33,11 @@ describe('hook', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req
-						.post('/employee/hook')
-						.send({
-							enterpriseName: enterprise.baseUser.name,
-							...employee,
-							...employee.eventCreator.user.baseUser,
-						} as IEmployeeHook),
+					await req.post('/employee/hook').send({
+						enterpriseName: enterprise.baseUser.name,
+						...employee,
+						...employee.eventCreator.user.baseUser,
+					} as IEmployeeHook),
 				),
 			{
 				exps: [
@@ -52,13 +50,11 @@ describe('hook', () => {
 
 describe('signup', () => {
 	it('success', async () => {
-		const { headers } = await req
-				.post('/employee/hook')
-				.send({
-					enterpriseName: enterprise.baseUser.name,
-					...employee,
-					...employee.eventCreator.user.baseUser,
-				} as IEmployeeHook),
+		const { headers } = await req.post('/employee/hook').send({
+				enterpriseName: enterprise.baseUser.name,
+				...employee,
+				...employee.eventCreator.user.baseUser,
+			} as IEmployeeHook),
 			signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0'][
 				'context'
 			]['signature'];
