@@ -34,11 +34,11 @@ export class AWSService {
 	 */
 	private client: S3Client = new S3Client({
 		forcePathStyle: true,
-		region: this.cfg.get('AWS_REGION'),
-		endpoint: this.cfg.get('AWS_ENDPOINT'),
+		region: this.svc.cfg.get('AWS_REGION'),
+		endpoint: this.svc.cfg.get('AWS_ENDPOINT'),
 		credentials: {
-			accessKeyId: this.cfg.get('AWS_ACCESS_KEY_ID'),
-			secretAccessKey: this.cfg.get('AWS_SECRET_ACCESS_KEY'),
+			accessKeyId: this.svc.cfg.get('AWS_ACCESS_KEY_ID'),
+			secretAccessKey: this.svc.cfg.get('AWS_SECRET_ACCESS_KEY'),
 		},
 	});
 
@@ -52,7 +52,7 @@ export class AWSService {
 			await new Upload({
 				client: this.client,
 				params: {
-					Bucket: this.cfg.get('AWS_BUCKET'),
+					Bucket: this.svc.cfg.get('AWS_BUCKET'),
 					Key: fileName,
 					Body: input,
 					ContentType: lookup(fileName) as string,
@@ -72,7 +72,7 @@ export class AWSService {
 		try {
 			const result = await this.client.send(
 					new GetObjectCommand({
-						Bucket: this.cfg.get('AWS_BUCKET'),
+						Bucket: this.svc.cfg.get('AWS_BUCKET'),
 						Key: filename,
 					}),
 				),
