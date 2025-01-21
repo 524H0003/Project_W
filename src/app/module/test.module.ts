@@ -10,21 +10,16 @@ import { SignService } from 'auth/auth.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AWSRecieve, AWSService } from 'app/aws/aws.service';
-import { createReadStream, statSync, writeFileSync } from 'fs';
+import {
+	createReadStream,
+	createWriteStream,
+	statSync,
+	writeFileSync,
+} from 'fs';
 import { lookup } from 'mime-types';
 import { Readable } from 'stream';
 
 export const rootPublic = 'public/';
-
-function stream2buffer(stream: Readable) {
-	return new Promise<Buffer>((resolve, reject) => {
-		const _buf = [];
-
-		stream.on('data', (chunk) => _buf.push(chunk));
-		stream.on('end', () => resolve(Buffer.concat(_buf)));
-		stream.on('error', (err) => reject(err));
-	});
-}
 
 @Global()
 @Module({
@@ -46,12 +41,12 @@ function stream2buffer(stream: Readable) {
 		{
 			provide: AWSService,
 			useValue: {
-				upload: jest.fn(async (name: string, input: Readable | Buffer) =>
-					writeFileSync(
-						rootPublic + name,
-						input instanceof Readable ? await stream2buffer(input) : input,
-					),
-				),
+				upload: jest.fn(async (name: string, input: Readable | Buffer) => {
+					if (input instanceof Readable) {
+						const writableStream = createWriteStream(rootPublic + name);
+						input.pipe(writableStream);
+					} else writeFileSync(rootPublic + name, input);
+				}),
 				download: jest.fn(async (name: string): Promise<AWSRecieve> => {
 					const stream = createReadStream(rootPublic + name),
 						length = statSync(rootPublic + name).size;

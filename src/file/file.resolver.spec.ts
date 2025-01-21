@@ -37,6 +37,9 @@ describe('uploadFile', () => {
 	);
 
 	it('success', async () => {
+		const content = Buffer.from((40).string, 'base64'),
+			name = fileName + (5).string + '.png';
+
 		await execute(
 			async () =>
 				(
@@ -45,16 +48,12 @@ describe('uploadFile', () => {
 						{
 							cookie: headers['set-cookie'],
 							map: { file: ['variables.file'] },
-							attach: [
-								'file',
-								Buffer.from((40).string, 'base64'),
-								fileName + (5).string + '.png',
-							],
+							attach: ['file', content, name],
 						},
 					)
 				).uploadFile,
 			{
-				exps: [{ type: 'toBeDefined', params: [] }],
+				exps: [{ type: 'toHaveProperty', params: ['title', name] }],
 			},
 		);
 	});

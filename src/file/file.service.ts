@@ -61,17 +61,22 @@ export class FileService extends DatabaseRequests<File> {
 	): Promise<File> {
 		if (!input?.buffer) return null;
 
-		const { fileName = '' } = serverFilesOptions || {},
+		const title = input.originalname || input.filename,
+			{ fileName = '' } = serverFilesOptions || {},
 			path = fileName
-				? fileName + `.server.${extname(input.originalname || input.filename)}`
+				? fileName + `.server.${extname(title)}`
 				: `${createHash('sha256')
 						.update(input.buffer)
-						.digest('hex')}${extname(input.originalname || input.filename)}`;
+						.digest('hex')}${extname(title)}`;
 
 		await this.svc.aws.upload(path, input.stream || input.buffer);
 
 		if (!fileName)
-			return this.save({ path, fileCreatedBy: { baseUser: { id: user.id } } });
+			return this.save({
+				path,
+				title,
+				fileCreatedBy: { baseUser: { id: user.id } },
+			});
 	}
 
 	/**
