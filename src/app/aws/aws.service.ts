@@ -6,7 +6,7 @@ import {
 	S3ServiceException,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { lookup } from 'mime-types';
 import { ConfigService } from '@nestjs/config';
 
@@ -27,7 +27,10 @@ export class AWSService {
 	/**
 	 * Initiate aws service
 	 */
-	constructor(private cfg: ConfigService) {}
+	constructor(
+		@Inject(ConfigService)
+		private cfg: ConfigService,
+	) {}
 
 	/**
 	 * Aws client
