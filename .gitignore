@@ -75,4 +75,3 @@ secrets/*.pem
 
 # GraphQL
 graphql/
-!src/app/graphql/
