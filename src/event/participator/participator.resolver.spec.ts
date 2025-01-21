@@ -65,7 +65,7 @@ describe('assignParticipator', () => {
 				(
 					await send(
 						{ input: { userId: student.user.id, eventId: event.id } },
-						stuHeaders['set-cookie'],
+						{ cookie: stuHeaders['set-cookie'] },
 					)
 				).assignParticipator,
 			{ exps: [{ type: 'toBeDefined', params: [] }] },

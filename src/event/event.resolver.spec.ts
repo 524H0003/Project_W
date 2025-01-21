@@ -48,7 +48,8 @@ describe('assignEvent', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({ input: event }, headers['set-cookie'])).assignEvent,
+				(await send({ input: event }, { cookie: headers['set-cookie'] }))
+					.assignEvent,
 			{ exps: [{ type: 'toHaveProperty', params: ['title', event.title] }] },
 		);
 		await execute(() => svc.event.find({ title: event.title }), {
@@ -67,7 +68,7 @@ describe('updateEvent', () => {
 		eventId = (
 			await sendGQL<AssignEventMutation, AssignEventMutationVariables>(
 				AssignEvent,
-			)({ input: event }, headers['set-cookie'])
+			)({ input: event }, { cookie: headers['set-cookie'] })
 		).assignEvent.id;
 	});
 
@@ -79,7 +80,7 @@ describe('updateEvent', () => {
 				(
 					await send(
 						{ input: { id: eventId, title: newTitle } },
-						headers['set-cookie'],
+						{ cookie: headers['set-cookie'] },
 					)
 				).updateEvent,
 			{ exps: [{ type: 'toHaveProperty', params: ['title', newTitle] }] },

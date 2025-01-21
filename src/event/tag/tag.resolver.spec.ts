@@ -55,7 +55,8 @@ describe('assignEventTag', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({ input: tag }, headers['set-cookie'])).assignEventTag,
+				(await send({ input: tag }, { cookie: headers['set-cookie'] }))
+					.assignEventTag,
 			{
 				exps: [{ type: 'toHaveProperty', params: ['name', tag.name] }],
 				onFinish: async (result) => {
@@ -68,11 +69,12 @@ describe('assignEventTag', () => {
 	});
 
 	it('success when already assigned', async () => {
-		await send({ input: tag }, headers['set-cookie']);
+		await send({ input: tag }, { cookie: headers['set-cookie'] });
 
 		await execute(
 			async () =>
-				(await send({ input: tag }, headers['set-cookie'])).assignEventTag,
+				(await send({ input: tag }, { cookie: headers['set-cookie'] }))
+					.assignEventTag,
 			{
 				exps: [{ type: 'toHaveProperty', params: ['name', tag.name] }],
 				onFinish: async (result) => {
@@ -95,7 +97,7 @@ describe('attachEventTag', () => {
 		eventId = (
 			await sendGQL<AssignEventMutation, AssignEventMutationVariables>(
 				AssignEvent,
-			)({ input: Event.test(fileName) }, headers['set-cookie'])
+			)({ input: Event.test(fileName) }, { cookie: headers['set-cookie'] })
 		).assignEvent.id;
 	});
 
@@ -105,7 +107,7 @@ describe('attachEventTag', () => {
 				(
 					await send(
 						{ input: { eventId, name: tag.name } },
-						headers['set-cookie'],
+						{ cookie: headers['set-cookie'] },
 					)
 				).attachEventTag.toEvents[0],
 			{ exps: [{ type: 'toHaveProperty', params: ['id', eventId] }] },
@@ -123,13 +125,14 @@ describe('listAllTags', () => {
 		tagId = (
 			await sendGQL<AssignEventTagMutation, AssignEventTagMutationVariables>(
 				AssignEventTag,
-			)({ input: EventTag.test(fileName) }, headers['set-cookie'])
+			)({ input: EventTag.test(fileName) }, { cookie: headers['set-cookie'] })
 		).assignEventTag.id;
 	});
 
 	it('success', async () => {
 		await execute(
-			async () => (await send({}, headers['set-cookie'])).listAllTags,
+			async () =>
+				(await send({}, { cookie: headers['set-cookie'] })).listAllTags,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
