@@ -1,8 +1,6 @@
 import {
 	Body,
 	Controller,
-	HttpStatus,
-	ParseFilePipeBuilder,
 	Post,
 	Req,
 	Res,
@@ -20,6 +18,8 @@ import { memoryStorage } from 'multer';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
+import { AvatarFileUpload } from 'app/utils/controller.utils';
 
 /**
  * Employee controller
@@ -30,8 +30,11 @@ export class EmployeeController extends AppController {
 	/**
 	 * @ignore
 	 */
-	constructor(public svc: AppService) {
-		super(svc);
+	constructor(
+		protected svc: AppService,
+		protected cfg: ConfigService,
+	) {
+		super(svc, cfg);
 	}
 
 	/**
@@ -63,15 +66,7 @@ export class EmployeeController extends AppController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IEmployeeSignup,
 		@MetaData() mtdt: string,
-		@UploadedFile(
-			new ParseFilePipeBuilder()
-				.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-				.addMaxSizeValidator({ maxSize: (0.3).mb2b })
-				.build({
-					fileIsRequired: false,
-					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-				}),
-		)
+		@UploadedFile(AvatarFileUpload)
 		avatar: Express.Multer.File,
 	): Promise<void> {
 		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
