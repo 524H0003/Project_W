@@ -6,9 +6,9 @@ import {
 	S3ServiceException,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { AppService } from 'app/app.service';
+import { Injectable } from '@nestjs/common';
 import { lookup } from 'mime-types';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * AWS recieve object
@@ -25,41 +25,34 @@ export interface AWSRecieve {
 @Injectable()
 export class AWSService {
 	/**
-	 * @ignore
+	 * Initiate aws service
 	 */
-	constructor(@Inject(forwardRef(() => AppService)) private svc: AppService) {}
+	constructor(protected cfg: ConfigService) {}
 
 	/**
-	 * @ignore
+	 * Aws client
 	 */
-	private _client: S3Client;
-	/**
-	 * @ignore
-	 */
-	get client(): S3Client {
-		if (this._client) return this._client;
-		return (this._client = new S3Client({
-			forcePathStyle: true,
-			region: this.svc.cfg.get('AWS_REGION'),
-			endpoint: this.svc.cfg.get('AWS_ENDPOINT'),
-			credentials: {
-				accessKeyId: this.svc.cfg.get('AWS_ACCESS_KEY_ID'),
-				secretAccessKey: this.svc.cfg.get('AWS_SECRET_ACCESS_KEY'),
-			},
-		}));
-	}
+	private client: S3Client = new S3Client({
+		forcePathStyle: true,
+		region: this.cfg.get('AWS_REGION'),
+		endpoint: this.cfg.get('AWS_ENDPOINT'),
+		credentials: {
+			accessKeyId: this.cfg.get('AWS_ACCESS_KEY_ID'),
+			secretAccessKey: this.cfg.get('AWS_SECRET_ACCESS_KEY'),
+		},
+	});
 
 	/**
 	 * Send file to s3 server
 	 * @param {string} fileName - the name of sending file
-	 * @param {Buffer} input - file's buffer to send
+	 * @param {Readable} input - file's buffer to send
 	 */
-	async upload(fileName: string, input: Buffer) {
+	async upload(fileName: string, input: Readable) {
 		try {
 			await new Upload({
 				client: this.client,
 				params: {
-					Bucket: this.svc.cfg.get('AWS_BUCKET'),
+					Bucket: this.cfg.get('AWS_BUCKET'),
 					Key: fileName,
 					Body: input,
 					ContentType: lookup(fileName) as string,
@@ -79,7 +72,7 @@ export class AWSService {
 		try {
 			const result = await this.client.send(
 					new GetObjectCommand({
-						Bucket: this.svc.cfg.get('AWS_BUCKET'),
+						Bucket: this.cfg.get('AWS_BUCKET'),
 						Key: filename,
 					}),
 				),
