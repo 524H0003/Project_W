@@ -12,8 +12,19 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { AWSRecieve, AWSService } from 'app/aws/aws.service';
 import { createReadStream, statSync, writeFileSync } from 'fs';
 import { lookup } from 'mime-types';
+import { Readable } from 'stream';
 
 export const rootPublic = 'public/';
+
+function stream2buffer(stream: Readable) {
+	return new Promise<Buffer>((resolve, reject) => {
+		const _buf = [];
+
+		stream.on('data', (chunk) => _buf.push(chunk));
+		stream.on('end', () => resolve(Buffer.concat(_buf)));
+		stream.on('error', (err) => reject(err));
+	});
+}
 
 @Global()
 @Module({
@@ -35,8 +46,8 @@ export const rootPublic = 'public/';
 		{
 			provide: AWSService,
 			useValue: {
-				upload: jest.fn(async (name: string, input: Buffer) =>
-					writeFileSync(rootPublic + name, input),
+				upload: jest.fn(async (name: string, input: Readable) =>
+					writeFileSync(rootPublic + name, await stream2buffer(input)),
 				),
 				download: jest.fn(async (name: string): Promise<AWSRecieve> => {
 					const stream = createReadStream(rootPublic + name),
