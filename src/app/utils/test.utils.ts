@@ -106,13 +106,7 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 				.set({ 'apollo-require-preflight': 'true' }),
 			l1 = cookie ? l0.set('Cookie', cookie) : l0,
 			l2 = l1
-				.field(
-					'operations',
-					JSON.stringify({
-						query,
-						variables,
-					}),
-				)
+				.field('operations', JSON.stringify({ query, variables }))
 				.field('map', JSON.stringify(map) || '{}'),
 			l3 = attach ? l2.attach(...attach) : l2,
 			result = await l3;

@@ -52,9 +52,7 @@ describe('uploadFile', () => {
 						},
 					)
 				).uploadFile,
-			{
-				exps: [{ type: 'toHaveProperty', params: ['title', name] }],
-			},
+			{ exps: [{ type: 'toHaveProperty', params: ['title', name] }] },
 		);
 	});
 });
