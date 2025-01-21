@@ -25,7 +25,7 @@ export class FileResolver {
 		file: FileUpload,
 		@CurrentUser() user: User,
 	) {
-		await this.svc.file.assign(
+		return this.svc.file.assign(
 			await this.svc.file.GQLUploadToMulterFile(file),
 			user,
 		);

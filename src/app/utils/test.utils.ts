@@ -10,6 +10,7 @@ import request from 'supertest';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
+import supertest from 'supertest';
 
 /**
  * Exported variables
@@ -79,7 +80,15 @@ export async function execute<
  */
 export type SendGQLType<T, K> = (
 	variables: K,
-	{ cookie, map }: { cookie?: any; map?: object },
+	{
+		cookie,
+		map,
+		attach,
+	}?: {
+		cookie?: any;
+		map?: object;
+		attach?: Parameters<supertest.Test['attach']>;
+	},
 ) => Promise<T>;
 
 /**
@@ -90,20 +99,23 @@ export type SendGQLType<T, K> = (
 export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
-	return async (variables: K, { cookie, map } = {}): Promise<T> => {
-		const result = await requester
-			.post('/graphql')
-			.set('Cookie', cookie)
-			.set('Content-Type', 'multipart/form-data')
-			.set({ 'apollo-require-preflight': 'true' })
-			.field(
-				'operations',
-				JSON.stringify({
-					query,
-					variables,
-				}),
-			)
-			.field('map', JSON.stringify(map) || '{}');
+	return async (variables: K, { cookie, map, attach } = {}): Promise<T> => {
+		const l0 = requester
+				.post('/graphql')
+				.set('Content-Type', 'multipart/form-data')
+				.set({ 'apollo-require-preflight': 'true' }),
+			l1 = cookie ? l0.set('Cookie', cookie) : l0,
+			l2 = l1
+				.field(
+					'operations',
+					JSON.stringify({
+						query,
+						variables,
+					}),
+				)
+				.field('map', JSON.stringify(map) || '{}'),
+			l3 = attach ? l2.attach(...attach) : l2,
+			result = await l3;
 		if (result.body.data) return result.body.data;
 		throw new Error(result.body.errors[0].message);
 	};
