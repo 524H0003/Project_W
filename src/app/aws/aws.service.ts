@@ -6,9 +6,9 @@ import {
 	S3ServiceException,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { lookup } from 'mime-types';
-import { ConfigService } from '@nestjs/config';
+import { AppService } from 'app/app.service';
 
 /**
  * AWS recieve object
@@ -27,20 +27,27 @@ export class AWSService {
 	/**
 	 * Initiate aws service
 	 */
-	constructor(protected cfg: ConfigService) {}
+	constructor(@Inject(forwardRef(() => AppService)) private svc: AppService) {}
 
 	/**
 	 * Aws client
 	 */
-	private client: S3Client = new S3Client({
-		forcePathStyle: true,
-		region: this.cfg.get('AWS_REGION'),
-		endpoint: this.cfg.get('AWS_ENDPOINT'),
-		credentials: {
-			accessKeyId: this.cfg.get('AWS_ACCESS_KEY_ID'),
-			secretAccessKey: this.cfg.get('AWS_SECRET_ACCESS_KEY'),
-		},
-	});
+	private _client: S3Client;
+	/**
+	 * @ignore
+	 */
+	get client(): S3Client {
+		if (this._client) return this._client;
+		return (this._client = new S3Client({
+			forcePathStyle: true,
+			region: this.svc.cfg.get('AWS_REGION'),
+			endpoint: this.svc.cfg.get('AWS_ENDPOINT'),
+			credentials: {
+				accessKeyId: this.svc.cfg.get('AWS_ACCESS_KEY_ID'),
+				secretAccessKey: this.svc.cfg.get('AWS_SECRET_ACCESS_KEY'),
+			},
+		}));
+	}
 
 	/**
 	 * Send file to s3 server
@@ -52,7 +59,7 @@ export class AWSService {
 			await new Upload({
 				client: this.client,
 				params: {
-					Bucket: this.cfg.get('AWS_BUCKET'),
+					Bucket: this.svc.cfg.get('AWS_BUCKET'),
 					Key: fileName,
 					Body: input,
 					ContentType: lookup(fileName) as string,
@@ -72,7 +79,7 @@ export class AWSService {
 		try {
 			const result = await this.client.send(
 					new GetObjectCommand({
-						Bucket: this.cfg.get('AWS_BUCKET'),
+						Bucket: this.svc.cfg.get('AWS_BUCKET'),
 						Key: filename,
 					}),
 				),
