@@ -27,7 +27,7 @@ export class AWSService {
 	/**
 	 * Initiate aws service
 	 */
-	constructor(protected cfg: ConfigService) {}
+	constructor(@Inject(forwardRef(() => AppService)) private svc: AppService) {}
 
 	/**
 	 * Aws client
