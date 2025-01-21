@@ -3,6 +3,8 @@ import { CookieOptions, Request, Response } from 'express';
 import { compare, hash } from './auth.utils';
 import { IUserRecieve } from 'user/user.model';
 import { User } from 'user/user.entity';
+import { ConfigService } from '@nestjs/config';
+import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
 
 export class BaseController {
 	/**
@@ -15,33 +17,22 @@ export class BaseController {
 	};
 
 	/**
-	 * @ignore
+	 * Server access token secret
 	 */
-	private _acsKey: string;
-	/**
-	 * @ignore
-	 */
-	get acsKey(): string {
-		if (this._acsKey) return this._acsKey;
-		return (this._acsKey = this.svc.cfg.get('ACCESS_SECRET'));
-	}
+	private acsKey: string = this.cfg.get('ACCESS_SECRET');
 
 	/**
-	 * @ignore
+	 * Server refresh token secret
 	 */
-	private _rfsKey: string;
-	/**
-	 * @ignore
-	 */
-	get rfsKey(): string {
-		if (this._rfsKey) return this._rfsKey;
-		return (this._rfsKey = this.svc.cfg.get('REFRESH_SECRET'));
-	}
+	private rfsKey: string = this.cfg.get('REFRESH_SECRET');
 
 	/**
-	 * @ignore
+	 * Initiate base controller
 	 */
-	constructor(public svc: AppService) {}
+	constructor(
+		protected svc: AppService,
+		protected cfg: ConfigService,
+	) {}
 
 	/**
 	 * Clear client's cookies
@@ -124,3 +115,11 @@ export class BaseController {
 		);
 	}
 }
+
+export const AvatarFileUpload = new ParseFilePipeBuilder()
+	.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+	.addMaxSizeValidator({ maxSize: (0.3).mb2b })
+	.build({
+		fileIsRequired: false,
+		errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+	});

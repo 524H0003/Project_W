@@ -2,10 +2,8 @@ import {
 	Body,
 	Controller,
 	forwardRef,
-	HttpStatus,
 	Inject,
 	Param,
-	ParseFilePipeBuilder,
 	Post,
 	Req,
 	Res,
@@ -28,8 +26,9 @@ import { UserRecieve } from 'user/user.entity';
 import { compare } from './utils/auth.utils';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 import { Throttle } from '@nestjs/throttler';
-import { BaseController } from './utils/controller.utils';
+import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Application Controller
@@ -42,9 +41,10 @@ export class AppController extends BaseController {
 	 */
 	constructor(
 		@Inject(forwardRef(() => AppService))
-		public svc: AppService,
+		protected svc: AppService,
+		protected cfg: ConfigService,
 	) {
-		super(svc);
+		super(svc, cfg);
 	}
 
 	/**
@@ -101,15 +101,7 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IUserSignUp,
 		@MetaData() mtdt: string,
-		@UploadedFile(
-			new ParseFilePipeBuilder()
-				.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-				.addMaxSizeValidator({ maxSize: (0.3).mb2b })
-				.build({
-					fileIsRequired: false,
-					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-				}),
-		)
+		@UploadedFile(AvatarFileUpload)
 		avatar: Express.Multer.File,
 	): Promise<void> {
 		return this.responseWithUser(
