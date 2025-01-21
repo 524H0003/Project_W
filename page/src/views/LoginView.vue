@@ -29,11 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { apiErrorHandler, authRequest, alert } from '@/auth.service'
-import FormContainerComp from '@/components/FormContainerComp.vue'
-import FormTextInputComp from '@/components/FormTextInputComp.vue'
-import { IBaseUserEmail, IUserAuthentication } from 'project-w-backend'
-import { reactive } from 'vue'
+import { apiErrorHandler, authRequest, alert } from '@/auth.service';
+import FormContainerComp from '@/components/FormContainerComp.vue';
+import FormTextInputComp from '@/components/FormTextInputComp.vue';
+import { IBaseUserEmail, IUserAuthentication } from 'project-w-backend';
+import { reactive } from 'vue';
 
 const input = reactive<IUserAuthentication & IBaseUserEmail>({
     email: '',
@@ -41,5 +41,5 @@ const input = reactive<IUserAuthentication & IBaseUserEmail>({
   }),
   handleLogin = () => apiErrorHandler(authRequest('login', input)),
   forgetPasswordClick = () =>
-    apiErrorHandler(authRequest('change-password', input))
+    apiErrorHandler(authRequest('change-password', input));
 </script>

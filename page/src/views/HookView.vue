@@ -26,12 +26,12 @@
 </template>
 
 <script setup lang="ts">
-import { apiErrorHandler, hookRequest, alert } from '@/auth.service'
-import FormContainerComp from '@/components/FormContainerComp.vue'
-import FormTextInputComp from '@/components/FormTextInputComp.vue'
-import { IUserAuthentication } from 'project-w-backend'
-import { reactive } from 'vue'
-import { useRoute } from 'vue-router'
+import { apiErrorHandler, hookRequest, alert } from '@/auth.service';
+import FormContainerComp from '@/components/FormContainerComp.vue';
+import FormTextInputComp from '@/components/FormTextInputComp.vue';
+import { IUserAuthentication } from 'project-w-backend';
+import { reactive } from 'vue';
+import { useRoute } from 'vue-router';
 
 const route = useRoute(),
   input = reactive<IUserAuthentication>({
@@ -40,5 +40,5 @@ const route = useRoute(),
   handleHook = () =>
     apiErrorHandler(
       hookRequest(route.params.signature as string, input.password),
-    )
+    );
 </script>

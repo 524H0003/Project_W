@@ -39,18 +39,18 @@
 </template>
 
 <script setup lang="ts">
-import type { IAlert, IObject } from '@/auth.service'
-import IconComp from '@/components/IconComp.vue'
+import type { IAlert, IObject } from '@/auth.service';
+import IconComp from '@/components/IconComp.vue';
 
-const model = defineModel()
+const model = defineModel();
 defineProps<{
-  name: string
-  type: 'password' | 'text'
-  subBtnClick?: () => void
-  object?: IObject
-  alert?: IAlert
-  icon?: string
-  placeholder?: string
-  disable?: boolean
-}>()
+  name: string;
+  type: 'password' | 'text';
+  subBtnClick?: () => void;
+  object?: IObject;
+  alert?: IAlert;
+  icon?: string;
+  placeholder?: string;
+  disable?: boolean;
+}>();
 </script>

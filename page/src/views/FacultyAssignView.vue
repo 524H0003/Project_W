@@ -55,11 +55,11 @@ import {
   apiErrorHandler,
   assignFaculty,
   requestConsole,
-} from '@/auth.service'
-import FormContainerComp from '@/components/FormContainerComp.vue'
-import FormTextInputComp from '@/components/FormTextInputComp.vue'
-import { IFacultyAssign } from 'project-w-backend'
-import { reactive } from 'vue'
+} from '@/auth.service';
+import FormContainerComp from '@/components/FormContainerComp.vue';
+import FormTextInputComp from '@/components/FormTextInputComp.vue';
+import { IFacultyAssign } from 'project-w-backend';
+import { reactive } from 'vue';
 
 const input = reactive<IFacultyAssign>({
     signature: '',
@@ -69,5 +69,5 @@ const input = reactive<IFacultyAssign>({
     email: '',
   }),
   handleAssign = () => apiErrorHandler(assignFaculty(input)),
-  request = () => apiErrorHandler(requestConsole())
+  request = () => apiErrorHandler(requestConsole());
 </script>

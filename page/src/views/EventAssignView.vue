@@ -57,13 +57,13 @@
 </template>
 
 <script setup lang="ts">
-import { alert, apiErrorHandler, assignEvent } from '@/auth.service'
-import FormContainerComp from '@/components/FormContainerComp.vue'
-import FormDateInputComp from '@/components/FormDateInputComp.vue'
-import FormSelectInputComp from '@/components/FormSelectInputComp.vue'
-import FormTextInputComp from '@/components/FormTextInputComp.vue'
-import { EventStatus, EventType, IEventInfo } from 'project-w-backend'
-import { reactive } from 'vue'
+import { alert, apiErrorHandler, assignEvent } from '@/auth.service';
+import FormContainerComp from '@/components/FormContainerComp.vue';
+import FormDateInputComp from '@/components/FormDateInputComp.vue';
+import FormSelectInputComp from '@/components/FormSelectInputComp.vue';
+import FormTextInputComp from '@/components/FormTextInputComp.vue';
+import { EventStatus, EventType, IEventInfo } from 'project-w-backend';
+import { reactive } from 'vue';
 
 const input = reactive<IEventInfo>({
     title: '',
@@ -85,6 +85,6 @@ const input = reactive<IEventInfo>({
         ...input,
         positionsAvailable: input.maxParticipants,
       }),
-    )
-  }
+    );
+  };
 </script>
