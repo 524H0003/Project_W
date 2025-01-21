@@ -31,8 +31,7 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 	/**
 	 * @ignore
 	 */
-	@Column(() => User, { prefix: false })
-	user: User;
+	@Column(() => User, { prefix: false }) user: User;
 
 	// Relationships
 	/**

@@ -33,8 +33,7 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	/**
 	 * @ignore
 	 */
-	@Column(() => EventCreator, { prefix: false })
-	eventCreator: EventCreator;
+	@Column(() => EventCreator, { prefix: false }) eventCreator: EventCreator;
 
 	// Relationships
 	/**

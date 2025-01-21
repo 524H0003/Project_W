@@ -49,7 +49,7 @@ describe('assignNotification', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({ input: notification }, headers['set-cookie']))
+				(await send({ input: notification }, { cookie: headers['set-cookie'] }))
 					.assignNotification,
 			{
 				exps: [
@@ -75,7 +75,10 @@ describe('updateNotification', () => {
 			await sendGQL<
 				AssignNotificationMutation,
 				AssignNotificationMutationVariables
-			>(AssignNotification)({ input: notification }, headers['set-cookie'])
+			>(AssignNotification)(
+				{ input: notification },
+				{ cookie: headers['set-cookie'] },
+			)
 		).assignNotification.id;
 	});
 
@@ -87,7 +90,7 @@ describe('updateNotification', () => {
 				(
 					await send(
 						{ input: { id: notificationId, content: newContent } },
-						headers['set-cookie'],
+						{ cookie: headers['set-cookie'] },
 					)
 				).updateNotification,
 			{ exps: [{ type: 'toHaveProperty', params: ['content', newContent] }] },
@@ -109,7 +112,10 @@ describe('updateNotification', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await send({ input: { id: newId } }, headers['set-cookie']),
+					await send(
+						{ input: { id: newId } },
+						{ cookie: headers['set-cookie'] },
+					),
 				),
 			{
 				exps: [

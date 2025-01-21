@@ -14,8 +14,7 @@ export class MailService {
 	constructor(
 		@Inject(forwardRef(() => MailerService))
 		private mailerService: MailerService,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {}
 
 	/**

@@ -17,8 +17,7 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 	constructor(
 		@InjectRepository(EventCreator) repo: Repository<EventCreator>,
 
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
 		super(repo);
 	}

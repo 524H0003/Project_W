@@ -50,8 +50,7 @@ export class FacultyController extends AppController {
 		@Res() response: Response,
 		@Body() body: IFacultyAssign,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload)
-		avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
 	) {
 		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
 		return this.responseWithUser(

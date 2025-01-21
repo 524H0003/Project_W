@@ -17,8 +17,7 @@ export class SessionService extends DatabaseRequests<Session> {
 	 */
 	constructor(
 		@InjectRepository(Session) repo: Repository<Session>,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
 		super(repo);
 	}

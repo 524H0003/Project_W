@@ -73,7 +73,7 @@ describe('assignReciever', () => {
 				(
 					await send(
 						{ input: { notificationId: notification.id, userId: user.id } },
-						headers['set-cookie'],
+						{ cookie: headers['set-cookie'] },
 					)
 				).assignReciever,
 			{
@@ -109,7 +109,7 @@ describe('assignRecieverMany', () => {
 				(
 					await send(
 						{ input: { notificationId: notification.id, usersId } },
-						headers['set-cookie'],
+						{ cookie: headers['set-cookie'] },
 					)
 				).assignRecieverMany,
 			{
@@ -150,7 +150,7 @@ describe('readNotification', () => {
 				(
 					await send(
 						{ input: { recieverId: reciever.id } },
-						userHeaders['set-cookie'],
+						{ cookie: userHeaders['set-cookie'] },
 					)
 				).readNotification,
 			{
@@ -190,8 +190,12 @@ describe('readNotificationMany', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({ input: { recieversId } }, userHeaders['set-cookie']))
-					.readNotificationMany,
+				(
+					await send(
+						{ input: { recieversId } },
+						{ cookie: userHeaders['set-cookie'] },
+					)
+				).readNotificationMany,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
@@ -238,7 +242,8 @@ describe('listAllNotifications', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({}, userHeaders['set-cookie'])).listAllNotifications.length,
+				(await send({}, { cookie: userHeaders['set-cookie'] }))
+					.listAllNotifications.length,
 			{ exps: [{ type: 'toEqual', params: [5] }] },
 		);
 	});
@@ -246,7 +251,7 @@ describe('listAllNotifications', () => {
 	it('success with isRead filterring', async () => {
 		await execute(
 			async () =>
-				(await send({ isRead: false }, userHeaders['set-cookie']))
+				(await send({ isRead: false }, { cookie: userHeaders['set-cookie'] }))
 					.listAllNotifications,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],

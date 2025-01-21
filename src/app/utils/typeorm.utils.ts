@@ -36,9 +36,7 @@ export class SensitiveInfomations extends BaseEntity {
 	/**
 	 * Unique identifier
 	 */
-	@Field()
-	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	@Field() @PrimaryGeneratedColumn('uuid') id: string;
 }
 
 /**

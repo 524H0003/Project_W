@@ -49,8 +49,7 @@ export class EnterpriseController extends AppController {
 		@Res() response: Response,
 		@Body() body: IEnterpriseAssign,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload)
-		avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
 	): Promise<void> {
 		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
 		await this.svc.enterprise.assign(body, avatar || null);

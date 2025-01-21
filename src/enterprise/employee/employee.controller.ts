@@ -40,9 +40,7 @@ export class EmployeeController extends AppController {
 	/**
 	 * Employee request hook
 	 */
-	@Post('hook')
-	@UseInterceptors(NoFilesInterceptor())
-	async employeeHook(
+	@Post('hook') @UseInterceptors(NoFilesInterceptor()) async employeeHook(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IEmployeeHook,
@@ -66,8 +64,7 @@ export class EmployeeController extends AppController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IEmployeeSignup,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload)
-		avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
 	): Promise<void> {
 		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
 		return this.responseWithUser(

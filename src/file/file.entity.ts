@@ -3,10 +3,12 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { FileType, IFile } from './file.model';
 import { Event } from 'event/event.entity';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 /**
  * File entity
  */
+@ObjectType()
 @Entity({ name: 'Document' })
 export class File extends SensitiveInfomations implements IFile {
 	/**
@@ -37,18 +39,19 @@ export class File extends SensitiveInfomations implements IFile {
 	/**
 	 * File's path
 	 */
-	@Column({ name: 'file_path', type: 'text' })
-	path: string;
+	@Field() @Column({ name: 'file_path', type: 'text' }) path: string;
 
 	/**
 	 * File's title
 	 */
+	@Field()
 	@Column({ name: 'title', type: 'text', default: 'user_file' })
 	title: string;
 
 	/**
 	 * File's type
 	 */
+	@Field(() => FileType)
 	@Column({
 		name: 'document_type',
 		type: 'enum',
@@ -61,6 +64,7 @@ export class File extends SensitiveInfomations implements IFile {
 	/**
 	 * File's upload time
 	 */
+	@Field()
 	@Column({
 		name: 'uploaded_at',
 		type: 'timestamp with time zone',

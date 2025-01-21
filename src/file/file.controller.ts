@@ -20,8 +20,7 @@ export class FileController {
 	 * @param {Response} res - the server's response
 	 * @param {User} user - the current processing user
 	 */
-	@Get(':filename')
-	async seeUploadedFile(
+	@Get(':filename') async seeUploadedFile(
 		@Param('filename') fileName: string,
 		@Res() res: Response,
 		@CurrentUser({ required: false }) user: User,

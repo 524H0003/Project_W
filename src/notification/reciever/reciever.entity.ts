@@ -43,9 +43,7 @@ export class Reciever extends SensitiveInfomations implements IRecieverEntity {
 	/**
 	 * Notification status
 	 */
-	@Field()
-	@Column({ name: 'is_read', default: false })
-	isRead: boolean;
+	@Field() @Column({ name: 'is_read', default: false }) isRead: boolean;
 
 	/**
 	 * Notification time record

@@ -54,11 +54,11 @@ import {
   apiErrorHandler,
   assignEnterprise,
   requestConsole,
-} from '@/auth.service'
-import FormContainerComp from '@/components/FormContainerComp.vue'
-import FormTextInputComp from '@/components/FormTextInputComp.vue'
-import { reactive } from 'vue'
-import { IEnterpriseAssign } from 'project-w-backend'
+} from '@/auth.service';
+import FormContainerComp from '@/components/FormContainerComp.vue';
+import FormTextInputComp from '@/components/FormTextInputComp.vue';
+import { reactive } from 'vue';
+import { IEnterpriseAssign } from 'project-w-backend';
 
 const input = reactive<IEnterpriseAssign>({
     signature: '',
@@ -68,5 +68,5 @@ const input = reactive<IEnterpriseAssign>({
     email: '',
   }),
   handleAssign = () => apiErrorHandler(assignEnterprise(input)),
-  request = () => apiErrorHandler(requestConsole())
+  request = () => apiErrorHandler(requestConsole());
 </script>

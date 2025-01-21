@@ -10,6 +10,7 @@ import { File } from './file.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
 import { AWSRecieve } from 'app/aws/aws.service';
+import { FileUpload } from 'graphql-upload-ts';
 
 /**
  * File services
@@ -21,8 +22,7 @@ export class FileService extends DatabaseRequests<File> {
 	 */
 	constructor(
 		@InjectRepository(File) repo: Repository<File>,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 		cfg: ConfigService,
 	) {
 		super(repo);
@@ -60,17 +60,20 @@ export class FileService extends DatabaseRequests<File> {
 	): Promise<File> {
 		if (!input?.buffer) return null;
 
-		const { fileName = '' } = serverFilesOptions || {},
+		const title = input.originalname || input.filename,
+			{ fileName = '' } = serverFilesOptions || {},
 			path = fileName
-				? fileName + `.server.${extname(input.originalname || input.filename)}`
-				: `${createHash('sha256')
-						.update(input.buffer)
-						.digest('hex')}${extname(input.originalname || input.filename)}`;
+				? fileName + `.server.${extname(title)}`
+				: `${createHash('sha256').update(input.buffer).digest('hex')}${extname(title)}`;
 
 		await this.svc.aws.upload(path, input.stream || input.buffer);
 
 		if (!fileName)
-			return this.save({ path, fileCreatedBy: { baseUser: { id: user.id } } });
+			return this.save({
+				path,
+				title,
+				fileCreatedBy: { baseUser: { id: user.id } },
+			});
 	}
 
 	/**
@@ -112,5 +115,41 @@ export class FileService extends DatabaseRequests<File> {
 				deep: 2,
 			})) !== undefined
 		);
+	}
+
+	/**
+	 * Convert graphql upload to Express.Multer.File
+	 * @param {FileUpload} input - graphql upload
+	 * @return {Promise<Express.Multer.File>}
+	 */
+	async GQLUploadToMulterFile(input: FileUpload): Promise<Express.Multer.File> {
+		const { createReadStream, filename, fieldName, mimetype, encoding } = input,
+			uploadFile: Express.Multer.File = {
+				fieldname: fieldName,
+				encoding: encoding,
+				mimetype: mimetype,
+				stream: createReadStream(),
+				filename: filename,
+				buffer: null,
+				originalname: undefined,
+				size: undefined,
+				destination: undefined,
+				path: undefined,
+			};
+
+		uploadFile.buffer = await new Promise((resolve, reject) => {
+			const chunks = [];
+			uploadFile.stream.on('data', (data) => {
+				if (typeof data === 'string') chunks.push(Buffer.from(data, 'utf-8'));
+				else if (data instanceof Buffer) chunks.push(data);
+				else chunks.push(Buffer.from(JSON.stringify(data), 'utf-8'));
+			});
+			uploadFile.stream.on('end', () => {
+				resolve(Buffer.concat(chunks));
+			});
+			uploadFile.stream.on('error', reject);
+		});
+
+		return uploadFile;
 	}
 }

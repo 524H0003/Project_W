@@ -45,6 +45,5 @@ export class Hook extends SensitiveInfomations implements IHook {
 	/**
 	 * @ignore
 	 */
-	@Column(() => BlackBox, { prefix: false })
-	blackBox: BlackBox;
+	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 }

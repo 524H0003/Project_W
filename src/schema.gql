@@ -96,6 +96,21 @@ input EventUpdate {
   type: String
 }
 
+type File {
+  id: String!
+  path: String!
+  title: String!
+  type: FileType!
+  uploadedAt: DateTime!
+}
+
+enum FileType {
+  certificate
+  other
+  report
+  resume
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -114,6 +129,7 @@ type Mutation {
   updateEvent(input: EventUpdate!): Event!
   updateNotification(input: NotificationUpdate!): Notification!
   updateParticipator(input: EventParticipatorUpdate!): EventParticipator!
+  uploadFile(file: Upload!): File!
 }
 
 type Notification {
@@ -164,6 +180,9 @@ input RecieverAssignMany {
   notificationId: String!
   usersId: [String!]!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 enum event_status {
   Cancelled
