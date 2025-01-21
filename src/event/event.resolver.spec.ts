@@ -100,7 +100,8 @@ describe('updateEvent', () => {
 				: eventId.slice(0, -1) + '1';
 
 		await execute(
-			async () => await send({ input: { id: newId } }, headers['set-cookie']),
+			async () =>
+				await send({ input: { id: newId } }, { cookie: headers['set-cookie'] }),
 			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Event', '')] }] },
 		);
 	});
