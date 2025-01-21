@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import { readdir, readFileSync } from 'fs';
+import { createReadStream, readdir } from 'fs';
 import { extname, join } from 'path';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -36,7 +36,7 @@ export class FileService extends DatabaseRequests<File> {
 			for (const file of files) {
 				const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 
-				await this.svc.aws.upload(file, readFileSync(filePath));
+				await this.svc.aws.upload(file, createReadStream(filePath));
 			}
 		});
 	}
@@ -62,12 +62,12 @@ export class FileService extends DatabaseRequests<File> {
 
 		const { fileName = '' } = serverFilesOptions || {},
 			path = fileName
-				? fileName + `.server.${extname(input.originalname)}`
+				? fileName + `.server.${extname(input.originalname || input.filename)}`
 				: `${createHash('sha256')
 						.update(input.buffer)
-						.digest('hex')}${extname(input.originalname)}`;
+						.digest('hex')}${extname(input.originalname || input.filename)}`;
 
-		await this.svc.aws.upload(path, input.buffer);
+		await this.svc.aws.upload(path, input.stream || input.buffer);
 
 		if (!fileName)
 			return this.save({ path, fileCreatedBy: { baseUser: { id: user.id } } });

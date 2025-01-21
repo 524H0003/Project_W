@@ -7,8 +7,8 @@ import {
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { AppService } from 'app/app.service';
 import { lookup } from 'mime-types';
+import { AppService } from 'app/app.service';
 
 /**
  * AWS recieve object
@@ -25,12 +25,12 @@ export interface AWSRecieve {
 @Injectable()
 export class AWSService {
 	/**
-	 * @ignore
+	 * Initiate aws service
 	 */
 	constructor(@Inject(forwardRef(() => AppService)) private svc: AppService) {}
 
 	/**
-	 * @ignore
+	 * Aws client
 	 */
 	private _client: S3Client;
 	/**
@@ -52,9 +52,9 @@ export class AWSService {
 	/**
 	 * Send file to s3 server
 	 * @param {string} fileName - the name of sending file
-	 * @param {Buffer} input - file's buffer to send
+	 * @param {Readable | Buffer} input - file's buffer to send
 	 */
-	async upload(fileName: string, input: Buffer) {
+	async upload(fileName: string, input: Readable | Buffer) {
 		try {
 			await new Upload({
 				client: this.client,
