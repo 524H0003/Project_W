@@ -91,7 +91,7 @@ async function bootstrap() {
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.use(admin.options.rootPath, adminRouter)
-		.use(graphqlUploadExpress({ maxFileSize: (50).mb2b }))
+		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.setGlobalPrefix('api/v1')
 		.init();
 	http

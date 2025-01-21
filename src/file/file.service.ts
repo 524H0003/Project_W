@@ -63,10 +63,10 @@ export class FileService extends DatabaseRequests<File> {
 
 		const { fileName = '' } = serverFilesOptions || {},
 			path = fileName
-				? fileName + `.server.${extname(input.filename)}`
+				? fileName + `.server.${extname(input.originalname || input.filename)}`
 				: `${createHash('sha256')
 						.update(input.buffer)
-						.digest('hex')}${extname(input.filename)}`;
+						.digest('hex')}${extname(input.originalname || input.filename)}`;
 
 		await this.svc.aws.upload(path, input.stream);
 

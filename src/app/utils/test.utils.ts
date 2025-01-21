@@ -143,7 +143,7 @@ export async function initJest(
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.use(cookieParser())
-		.use(graphqlUploadExpress({ maxFileSize: (50).mb2b }))
+		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.init();
 	requester = request(app.getHttpServer());
 
