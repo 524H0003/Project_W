@@ -55,9 +55,7 @@ export class EventParticipator
 	/**
 	 * If participator attended
 	 */
-	@Field()
-	@Column({ name: 'attendance', default: false })
-	isAttended: boolean;
+	@Field() @Column({ name: 'attendance', default: false }) isAttended: boolean;
 
 	/**
 	 * Participator register time record

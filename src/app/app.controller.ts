@@ -40,8 +40,7 @@ export class AppController extends BaseController {
 	 * @ignore
 	 */
 	constructor(
-		@Inject(forwardRef(() => AppService))
-		protected svc: AppService,
+		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 		protected cfg: ConfigService,
 	) {
 		super(svc, cfg);
@@ -55,9 +54,7 @@ export class AppController extends BaseController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('login')
-	@UseInterceptors(NoFilesInterceptor())
-	async login(
+	@Post('login') @UseInterceptors(NoFilesInterceptor()) async login(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IStudentSignup,
@@ -101,8 +98,7 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IUserSignUp,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload)
-		avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
 	): Promise<void> {
 		return this.responseWithUser(
 			request,
@@ -118,9 +114,7 @@ export class AppController extends BaseController {
 	 * @param {Response} response - server's response
 	 * @return {Promise<void>}
 	 */
-	@Post('logout')
-	@UseGuards(AuthGuard('refresh'))
-	async logout(
+	@Post('logout') @UseGuards(AuthGuard('refresh')) async logout(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 	): Promise<void> {
@@ -142,9 +136,7 @@ export class AppController extends BaseController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('refresh')
-	@UseGuards(AuthGuard('refresh'))
-	async refresh(
+	@Post('refresh') @UseGuards(AuthGuard('refresh')) async refresh(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@MetaData() mtdt: string,

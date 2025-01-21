@@ -25,8 +25,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	 */
 	constructor(
 		@InjectRepository(Enterprise) repo: Repository<Enterprise>,
-		@Inject(forwardRef(() => AppService))
-		public svc: AppService,
+		@Inject(forwardRef(() => AppService)) public svc: AppService,
 	) {
 		super(repo);
 	}

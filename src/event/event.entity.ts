@@ -83,9 +83,7 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	/**
 	 * Event's title
 	 */
-	@Field()
-	@Column({ name: 'title', type: 'text' })
-	title: string;
+	@Field() @Column({ name: 'title', type: 'text' }) title: string;
 
 	/**
 	 * Event's maximum participator
@@ -130,9 +128,7 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	/**
 	 * Event's location
 	 */
-	@Field()
-	@Column({ name: 'location', type: 'text' })
-	location: string;
+	@Field() @Column({ name: 'location', type: 'text' }) location: string;
 
 	/**
 	 * Event's start date
@@ -177,8 +173,7 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	/**
 	 * @ignore
 	 */
-	@Column(() => BlackBox, { prefix: false })
-	blackBox: BlackBox;
+	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 
 	// Methods
 	static test(from: string) {
@@ -233,12 +228,9 @@ export class EventUpdate implements IEventInfo {
 	@Field({ nullable: true }) maxParticipants: number;
 	@Field({ nullable: true }) location: string;
 	@Field({ nullable: true }) description: string;
-	@Field({ nullable: true })
-	type: EventType;
-	@Field({ nullable: true })
-	status: EventStatus;
-	@Field(() => JSON, { nullable: true })
-	additionalFields: object;
+	@Field({ nullable: true }) type: EventType;
+	@Field({ nullable: true }) status: EventStatus;
+	@Field(() => JSON, { nullable: true }) additionalFields: object;
 	@Field({ nullable: true }) requiredSkills: string;
 	@Field({ nullable: false }) id: string;
 }

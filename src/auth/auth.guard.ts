@@ -25,7 +25,7 @@ function convertForGql(context: ExecutionContext) {
  * @ignore
  * Decorators
  * ! WARNING: it's must be (data: unknown, context: ExecutionContext) => {}
- * ! to void error [ExceptionsHandler] Cannot read properties of undefined (reading 'getType')
+ * ! to void error [ExceptionsHandler] Cannot read properties of undefined (reading 'getType').
  */
 export const Roles = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),

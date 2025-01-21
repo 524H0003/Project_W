@@ -22,8 +22,7 @@ export class FileService extends DatabaseRequests<File> {
 	 */
 	constructor(
 		@InjectRepository(File) repo: Repository<File>,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 		cfg: ConfigService,
 	) {
 		super(repo);
@@ -65,9 +64,7 @@ export class FileService extends DatabaseRequests<File> {
 			{ fileName = '' } = serverFilesOptions || {},
 			path = fileName
 				? fileName + `.server.${extname(title)}`
-				: `${createHash('sha256')
-						.update(input.buffer)
-						.digest('hex')}${extname(title)}`;
+				: `${createHash('sha256').update(input.buffer).digest('hex')}${extname(title)}`;
 
 		await this.svc.aws.upload(path, input.stream || input.buffer);
 

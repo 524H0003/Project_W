@@ -18,11 +18,8 @@ export class FileResolver {
 	/**
 	 * Upload file
 	 */
-	@Mutation(() => File)
-	@Roles([UserRole.admin])
-	async uploadFile(
-		@Args({ name: 'file', type: () => GraphQLUpload })
-		file: FileUpload,
+	@Mutation(() => File) @Roles([UserRole.admin]) async uploadFile(
+		@Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload,
 		@CurrentUser() user: User,
 	) {
 		return this.svc.file.assign(

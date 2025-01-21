@@ -36,9 +36,7 @@ export class EventTagResolver {
 	/**
 	 * list all tags server have
 	 */
-	@Query(() => [EventTag])
-	@AllowPublic()
-	async listAllTags() {
+	@Query(() => [EventTag]) @AllowPublic() async listAllTags() {
 		return this.svc.eventTag.find({});
 	}
 }

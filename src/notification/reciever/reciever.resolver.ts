@@ -42,9 +42,9 @@ export class RecieverResolver {
 	/**
 	 * Read notification
 	 */
-	@Mutation(() => Reciever)
-	@Roles([UserRole.student])
-	async readNotification(@Args('input') input: ReadNotification) {
+	@Mutation(() => Reciever) @Roles([UserRole.student]) async readNotification(
+		@Args('input') input: ReadNotification,
+	) {
 		return this.svc.recie.read(input.recieverId);
 	}
 

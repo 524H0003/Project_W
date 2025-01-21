@@ -193,8 +193,7 @@ declare global {
 		 */
 		readonly random: number;
 		/**
-		 * range() # like Python's range()
-		 */
+		 * range() # like Python's range()		 */
 		ra(input: () => Promise<any>): Promise<void>;
 	}
 	/**
@@ -228,9 +227,7 @@ declare global {
 
 	/**
 	 * Return the formatted name of current file
-	 * @param {string} file - the current file's name (must be __filename)
-	 * @param {number} cut - How many chunk should get (default: 2)
-	 * @return {string} formatted file's name
+	 * @param {string} file - the current file's name (must be __filename)	 * @param {number} cut - How many chunk should get (default: 2)	 * @return {string} formatted file's name
 	 */
 	function curFile(file: string, cut?: number): string;
 

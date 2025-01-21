@@ -23,5 +23,4 @@ const router = createRouter({
     { path: '/:pathMatch(.*)*', component: NotFoundView },
   ],
 })
-
 export default router

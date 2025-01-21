@@ -23,8 +23,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	 */
 	constructor(
 		@InjectRepository(Employee) repo: Repository<Employee>,
-		@Inject(forwardRef(() => AppService))
-		public svc: AppService,
+		@Inject(forwardRef(() => AppService)) public svc: AppService,
 	) {
 		super(repo);
 	}

@@ -33,8 +33,7 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 	}
 
 	// Core Entity
-	@Column(() => BaseUser, { prefix: false })
-	baseUser: BaseUser;
+	@Column(() => BaseUser, { prefix: false }) baseUser: BaseUser;
 
 	// Relationships
 	/**
@@ -60,16 +59,13 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 	/**
 	 * Enterprise's industry
 	 */
-	@Field()
-	@Column({ name: 'industry', type: 'text' })
-	industry: string;
+	@Field() @Column({ name: 'industry', type: 'text' }) industry: string;
 
 	// Embedded Entity
 	/**
 	 * @ignore
 	 */
-	@Column(() => BlackBox, { prefix: false })
-	blackBox: BlackBox;
+	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 
 	// Methods
 	/**

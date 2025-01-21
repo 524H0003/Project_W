@@ -49,8 +49,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * The hashed password
 	 */
-	@Column({ name: 'password_hash' })
-	private _hashedPassword: string;
+	@Column({ name: 'password_hash' }) private _hashedPassword: string;
 
 	/**
 	 * @ignore
@@ -73,8 +72,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * Base user
 	 */
-	@Column(() => BaseUser, { prefix: false })
-	baseUser: BaseUser;
+	@Column(() => BaseUser, { prefix: false }) baseUser: BaseUser;
 
 	// Relationships
 	/**
@@ -129,7 +127,6 @@ export class User extends BaseEntity implements IUserEntity {
 	// minNumbers: 1,
 	// minSymbols: 1,
 	// })
-
 	/**
 	 * User last login
 	 */
@@ -143,15 +140,13 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * User active status
 	 */
-	@Column({ name: 'is_active', default: false })
-	isActive: boolean;
+	@Column({ name: 'is_active', default: false }) isActive: boolean;
 
 	// Embedded Entity
 	/**
 	 * @ignore
 	 */
-	@Column(() => BlackBox, { prefix: false })
-	blackBox: BlackBox;
+	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 
 	// Methods
 	/**

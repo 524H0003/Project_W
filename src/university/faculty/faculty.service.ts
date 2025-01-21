@@ -21,8 +21,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 	 */
 	constructor(
 		@InjectRepository(Faculty) repo: Repository<Faculty>,
-		@Inject(forwardRef(() => AppService))
-		public svc: AppService,
+		@Inject(forwardRef(() => AppService)) public svc: AppService,
 	) {
 		super(repo);
 	}

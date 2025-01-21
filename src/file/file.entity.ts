@@ -39,9 +39,7 @@ export class File extends SensitiveInfomations implements IFile {
 	/**
 	 * File's path
 	 */
-	@Field()
-	@Column({ name: 'file_path', type: 'text' })
-	path: string;
+	@Field() @Column({ name: 'file_path', type: 'text' }) path: string;
 
 	/**
 	 * File's title
