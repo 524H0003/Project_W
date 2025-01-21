@@ -46,8 +46,11 @@ function stream2buffer(stream: Readable) {
 		{
 			provide: AWSService,
 			useValue: {
-				upload: jest.fn(async (name: string, input: Readable) =>
-					writeFileSync(rootPublic + name, await stream2buffer(input)),
+				upload: jest.fn(async (name: string, input: Readable | Buffer) =>
+					writeFileSync(
+						rootPublic + name,
+						input instanceof Readable ? await stream2buffer(input) : input,
+					),
 				),
 				download: jest.fn(async (name: string): Promise<AWSRecieve> => {
 					const stream = createReadStream(rootPublic + name),
