@@ -32,15 +32,22 @@ export class AWSService {
 	/**
 	 * Aws client
 	 */
-	private client: S3Client = new S3Client({
-		forcePathStyle: true,
-		region: this.svc.cfg.get('AWS_REGION'),
-		endpoint: this.svc.cfg.get('AWS_ENDPOINT'),
-		credentials: {
-			accessKeyId: this.svc.cfg.get('AWS_ACCESS_KEY_ID'),
-			secretAccessKey: this.svc.cfg.get('AWS_SECRET_ACCESS_KEY'),
-		},
-	});
+	private _client: S3Client;
+	/**
+	 * @ignore
+	 */
+	get client(): S3Client {
+		if (this._client) return this._client;
+		return (this._client = new S3Client({
+			forcePathStyle: true,
+			region: this.svc.cfg.get('AWS_REGION'),
+			endpoint: this.svc.cfg.get('AWS_ENDPOINT'),
+			credentials: {
+				accessKeyId: this.svc.cfg.get('AWS_ACCESS_KEY_ID'),
+				secretAccessKey: this.svc.cfg.get('AWS_SECRET_ACCESS_KEY'),
+			},
+		}));
+	}
 
 	/**
 	 * Send file to s3 server
