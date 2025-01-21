@@ -136,7 +136,7 @@ export async function initJest(
 		appSvc = module.get(AppService);
 
 	// eslint-disable-next-line tsPlugin/no-unused-vars
-	console.error = (..._args: any) => true;
+	console.error = (...args: any) => true;
 
 	app = module.createNestApplication();
 	const { httpAdapter } = app.get(HttpAdapterHost);
