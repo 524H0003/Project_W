@@ -68,7 +68,7 @@ export class FileService extends DatabaseRequests<File> {
 						.update(input.buffer)
 						.digest('hex')}${extname(input.originalname || input.filename)}`;
 
-		await this.svc.aws.upload(path, input.stream);
+		await this.svc.aws.upload(path, input.stream || input.buffer);
 
 		if (!fileName)
 			return this.save({ path, fileCreatedBy: { baseUser: { id: user.id } } });

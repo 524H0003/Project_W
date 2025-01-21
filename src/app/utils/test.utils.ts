@@ -129,7 +129,7 @@ export async function initJest(
 	providers: Array<any> = [],
 ) {
 	const module: TestingModule = await Test.createTestingModule({
-			imports: [AppModule, TestModule],
+			imports: [TestModule, AppModule],
 			controllers,
 			providers,
 		}).compile(),
