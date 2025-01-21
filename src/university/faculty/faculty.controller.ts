@@ -19,8 +19,8 @@ import { Request, Response } from 'express';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { AvatarFileUpload } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { AvatarFileUpload } from 'app/utils/controller.utils';
 
 /**
  * Faculty controller

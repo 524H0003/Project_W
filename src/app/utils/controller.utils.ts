@@ -4,6 +4,7 @@ import { compare, hash } from './auth.utils';
 import { IUserRecieve } from 'user/user.model';
 import { User } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
 
 export class BaseController {
 	/**
@@ -114,3 +115,11 @@ export class BaseController {
 		);
 	}
 }
+
+export const AvatarFileUpload = new ParseFilePipeBuilder()
+	.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+	.addMaxSizeValidator({ maxSize: (0.3).mb2b })
+	.build({
+		fileIsRequired: false,
+		errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+	});

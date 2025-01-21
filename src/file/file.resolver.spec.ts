@@ -11,9 +11,9 @@ const fileName = curFile(__filename);
 let req: TestAgent;
 
 beforeAll(async () => {
-	const { appSvc, requester } = await initJest();
+	const { requester } = await initJest();
 
-	(svc = appSvc), (req = requester);
+	req = requester;
 });
 
 describe('uploadFile', () => {

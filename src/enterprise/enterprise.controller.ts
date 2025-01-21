@@ -15,11 +15,12 @@ import { IEnterpriseAssign } from './enterprise.model';
 import { MetaData } from 'auth/auth.guard';
 import { Hook } from 'app/hook/hook.entity';
 import { memoryStorage } from 'multer';
-import { AvatarFileUpload, UserRecieve } from 'user/user.entity';
+import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
+import { AvatarFileUpload } from 'app/utils/controller.utils';
 
 /**
  * Enterprise controller

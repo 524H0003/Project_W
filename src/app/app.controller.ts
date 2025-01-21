@@ -22,11 +22,11 @@ import { IStudentSignup } from 'university/student/student.model';
 import { IUserSignUp } from 'user/user.model';
 import { IBaseUserEmail } from './app.model';
 import { AppService } from './app.service';
-import { AvatarFileUpload, UserRecieve } from 'user/user.entity';
+import { UserRecieve } from 'user/user.entity';
 import { compare } from './utils/auth.utils';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 import { Throttle } from '@nestjs/throttler';
-import { BaseController } from './utils/controller.utils';
+import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 
