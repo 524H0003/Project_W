@@ -9,7 +9,10 @@ import { AppService } from 'app/app.service';
  */
 @Controller('file')
 export class FileController {
-	constructor(private svc: AppService) {}
+	/**
+	 * Initiate file controller
+	 */
+	constructor(protected svc: AppService) {}
 
 	/**
 	 * Get uploaded file

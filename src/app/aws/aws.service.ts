@@ -62,7 +62,7 @@ export class AWSService {
 			await new Upload({
 				client: this.client,
 				params: {
-					Bucket: this.cfg.get('AWS_BUCKET'),
+					Bucket: this.svc.cfg.get('AWS_BUCKET'),
 					Key: fileName,
 					Body: input,
 					ContentType: lookup(fileName) as string,
@@ -82,7 +82,7 @@ export class AWSService {
 		try {
 			const result = await this.client.send(
 					new GetObjectCommand({
-						Bucket: this.cfg.get('AWS_BUCKET'),
+						Bucket: this.svc.cfg.get('AWS_BUCKET'),
 						Key: filename,
 					}),
 				),

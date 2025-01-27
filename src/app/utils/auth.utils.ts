@@ -51,6 +51,9 @@ export function compare(origin: string, input: string): boolean {
  * Cryption class
  */
 export class Cryption {
+	/**
+	 * Initiate server cryption
+	 */
 	constructor(
 		private algorithm: string,
 		private svrScr: string,

@@ -13,12 +13,14 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Entity({ name: 'Tag' })
 export class EventTag extends SensitiveInfomations implements ITagEntity {
-	constructor(payload: ITagInfo) {
+	/**
+	 * Initiate event tag
+	 * @param {ITagInfo} input - entity input
+	 */
+	constructor(input: ITagInfo) {
 		super();
 
-		if (payload) {
-			Object.assign(this, InterfaceCasting.quick(payload, ITagInfoKeys));
-		}
+		if (input) Object.assign(this, InterfaceCasting.quick(input, ITagInfoKeys));
 	}
 
 	// Relationships

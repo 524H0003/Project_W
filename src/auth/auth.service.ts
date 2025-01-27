@@ -19,6 +19,9 @@ import { IAuthSignUpOption } from './auth.model';
  */
 @Injectable()
 export class AuthService extends Cryption {
+	/**
+	 * Initiate auth service
+	 */
 	constructor(
 		cfgSvc: ConfigService,
 		private usrSvc: UserService,

@@ -10,6 +10,9 @@ import { UserService } from 'user/user.service';
  */
 @Injectable()
 export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
+	/**
+	 * Initiate access strategy
+	 */
 	constructor(
 		cfgSvc: ConfigService,
 		private usrSvc: UserService,

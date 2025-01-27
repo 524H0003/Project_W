@@ -9,7 +9,10 @@ import { NotificationAssign, NotificationUpdate } from './notification.graphql';
 @Resolver(() => Notification)
 @UseGuards(RoleGuard)
 export class NotificationResolver {
-	constructor(private svc: AppService) {}
+	/**
+	 * Initiate notification resolver
+	 */
+	constructor(protected svc: AppService) {}
 
 	// Mutations
 	/**

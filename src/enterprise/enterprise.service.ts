@@ -20,6 +20,9 @@ import { AppService } from 'app/app.service';
  */
 @Injectable()
 export class EnterpriseService extends DatabaseRequests<Enterprise> {
+	/**
+	 * Initiate enterprise service
+	 */
 	constructor(
 		@InjectRepository(Enterprise) repo: Repository<Enterprise>,
 		@Inject(forwardRef(() => AppService)) public svc: AppService,

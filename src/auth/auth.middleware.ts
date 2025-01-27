@@ -9,6 +9,9 @@ import { SignService } from './auth.service';
  */
 @Injectable()
 export class AuthMiddleware extends Cryption implements NestMiddleware {
+	/**
+	 * Initiate auth middleware
+	 */
 	constructor(
 		private cfgSvc: ConfigService,
 		private signSvc: SignService,

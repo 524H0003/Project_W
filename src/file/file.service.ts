@@ -17,6 +17,9 @@ import { FileUpload } from 'graphql-upload-ts';
  */
 @Injectable()
 export class FileService extends DatabaseRequests<File> {
+	/**
+	 * Initiate file service
+	 */
 	constructor(
 		@InjectRepository(File) repo: Repository<File>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,

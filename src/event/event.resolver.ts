@@ -9,7 +9,10 @@ import { Event, EventAssign, EventUpdate } from './event.entity';
 @Resolver(() => Event)
 @UseGuards(RoleGuard)
 export class EventResolver {
-	constructor(private svc: AppService) {}
+	/**
+	 * Initiate event resolver
+	 */
+	constructor(protected svc: AppService) {}
 
 	/**
 	 * Event assign

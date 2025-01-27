@@ -15,6 +15,9 @@ import { IUserSignUp } from 'user/user.model';
  */
 @Entity({ name: 'FacultyUser' })
 export class Faculty extends BaseEntity implements IFacultyEntity {
+	/**
+	 * Initiate faculty object
+	 */
 	constructor(payload: IFacultyInfo & IUserSignUp) {
 		super();
 

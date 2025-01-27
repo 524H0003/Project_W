@@ -9,7 +9,10 @@ import { EventTagAssign, EventTagAttach } from './tag.graphql';
 @Resolver(() => EventTag)
 @UseGuards(RoleGuard)
 export class EventTagResolver {
-	constructor(private svc: AppService) {}
+	/**
+	 * Initiate event tag resolver
+	 */
+	constructor(protected svc: AppService) {}
 
 	// Mutations
 	/**

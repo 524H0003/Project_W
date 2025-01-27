@@ -7,6 +7,9 @@ import { AppService } from 'app/app.service';
 
 @Injectable()
 export class NotificationService extends DatabaseRequests<Notification> {
+	/**
+	 * Initiate notification service
+	 */
 	constructor(
 		@InjectRepository(Notification) repo: Repository<Notification>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,

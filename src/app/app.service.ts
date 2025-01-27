@@ -23,6 +23,9 @@ import { EventParticipatorService } from 'event/participator/participator.servic
 import { AWSService } from './aws/aws.service';
 import { ConfigService } from '@nestjs/config';
 
+/**
+ * Server services
+ */
 @Injectable()
 export class AppService {
 	public baseUser: BaseUserService;
@@ -62,6 +65,9 @@ export class AppService {
  * Base user service
  */
 class BaseUserService extends DatabaseRequests<BaseUser> {
+	/**
+	 * Initiate base user service
+	 */
 	constructor(repo: Repository<BaseUser>) {
 		super(repo);
 	}

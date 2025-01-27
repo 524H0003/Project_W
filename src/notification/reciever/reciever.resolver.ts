@@ -15,7 +15,10 @@ import {
 @Resolver(() => Reciever)
 @UseGuards(RoleGuard)
 export class RecieverResolver {
-	constructor(private svc: AppService) {}
+	/**
+	 * Initiate notification reciever resolve
+	 */
+	constructor(protected svc: AppService) {}
 
 	// Mutations
 	/**

@@ -8,6 +8,10 @@ import { ISession } from './session.model';
  */
 @Entity({ name: 'auth_session' })
 export class Session extends SensitiveInfomations implements ISession {
+	/**
+	 * Initiate session entity
+	 * @param {ISession} input - entity input
+	 */
 	constructor(input: ISession) {
 		super();
 		Object.assign(this, input);

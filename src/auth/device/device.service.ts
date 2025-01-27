@@ -14,6 +14,9 @@ import { Device } from './device.entity';
  */
 @Injectable()
 export class DeviceService extends DatabaseRequests<Device> {
+	/**
+	 * Initiate device service
+	 */
 	constructor(@InjectRepository(Device) repo: Repository<Device>) {
 		super(repo);
 	}

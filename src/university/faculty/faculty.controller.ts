@@ -31,8 +31,6 @@ import { AvatarFileUpload } from 'app/utils/controller.utils';
 export class FacultyController extends AppController {
 	/**
 	 * Initiate controller
-	 * @param {AppService} svc - general app service
-	 * @param {ConfigService} cfg - general app config
 	 */
 	constructor(
 		protected svc: AppService,

@@ -22,15 +22,15 @@ export class Notification
 {
 	/**
 	 * Initiate notification entity
-	 * @param {INotificationInfo} input - description
+	 * @param {INotificationInfo} input - entity input
 	 */
-	constructor(payload: INotificationInfo) {
+	constructor(input: INotificationInfo) {
 		super();
 
-		if (payload) {
+		if (input) {
 			Object.assign(
 				this,
-				InterfaceCasting.quick(payload, INotificationInfoKeys),
+				InterfaceCasting.quick(input, INotificationInfoKeys),
 			);
 		}
 	}

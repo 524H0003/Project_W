@@ -22,15 +22,18 @@ export class EventParticipator
 	extends SensitiveInfomations
 	implements IEventParticipatorEntiy
 {
-	constructor(payload: IEventParticipatorInfo) {
+	/**
+	 * Initiate event participator entity
+	 * @param {IEventParticipatorInfo} input - entity input
+	 */
+	constructor(input: IEventParticipatorInfo) {
 		super();
 
-		if (payload) {
+		if (input)
 			Object.assign(
 				this,
-				InterfaceCasting.quick(payload, IEventParticipatorInfoKeys),
+				InterfaceCasting.quick(input, IEventParticipatorInfoKeys),
 			);
-		}
 	}
 
 	// Relationships

@@ -15,9 +15,12 @@ import { AppService } from 'app/app.service';
  */
 @Injectable()
 export class StudentService extends DatabaseRequests<Student> {
+	/**
+	 * Initiate student service
+	 */
 	constructor(
 		@InjectRepository(Student) repo: Repository<Student>,
-		@Inject(forwardRef(() => AppService)) private svc: AppService,
+		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 	) {
 		super(repo);
 	}
