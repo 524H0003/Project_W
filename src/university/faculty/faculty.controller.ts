@@ -1,9 +1,7 @@
 import {
 	Body,
 	Controller,
-	HttpStatus,
 	Injectable,
-	ParseFilePipeBuilder,
 	Post,
 	Req,
 	Res,
@@ -22,6 +20,7 @@ import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
+import { AvatarFileUpload } from 'app/utils/controller.utils';
 
 /**
  * Faculty controller
@@ -53,16 +52,7 @@ export class FacultyController extends AppController {
 		@Res() response: Response,
 		@Body() body: IFacultyAssign,
 		@MetaData() mtdt: string,
-		@UploadedFile(
-			new ParseFilePipeBuilder()
-				.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-				.addMaxSizeValidator({ maxSize: (0.3).mb2b })
-				.build({
-					fileIsRequired: false,
-					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-				}),
-		)
-		avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
 	) {
 		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
 		return this.responseWithUser(

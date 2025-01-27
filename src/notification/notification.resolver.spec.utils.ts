@@ -10,5 +10,8 @@ export async function assignNoti(notification: Notification, headers: object) {
 	return await sendGQL<
 		AssignNotificationMutation,
 		AssignNotificationMutationVariables
-	>(AssignNotification)({ input: notification }, headers['set-cookie']);
+	>(AssignNotification)(
+		{ input: notification },
+		{ cookie: headers['set-cookie'] },
+	);
 }

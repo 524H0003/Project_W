@@ -26,9 +26,7 @@ import { ConfigService } from '@nestjs/config';
 @UseInterceptors(CacheInterceptor)
 export class StudentController extends AppController {
 	/**
-	 * Initiate controller
-	 * @param {AppService} svc - general app service
-	 * @param {ConfigService} cfg - general app config
+	 * Initiate student controller
 	 */
 	constructor(
 		protected svc: AppService,

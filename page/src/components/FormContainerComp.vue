@@ -39,12 +39,12 @@
 </template>
 
 <script setup lang="ts">
-import type { IAlert } from '@/auth.service'
+import type { IAlert } from '@/auth.service';
 
 defineProps<{
-  name: string
-  btnLabel: string
-  alert: IAlert
-  btnHandle: () => void
-}>()
+  name: string;
+  btnLabel: string;
+  alert: IAlert;
+  btnHandle: () => void;
+}>();
 </script>

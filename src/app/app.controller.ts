@@ -2,10 +2,8 @@ import {
 	Body,
 	Controller,
 	forwardRef,
-	HttpStatus,
 	Inject,
 	Param,
-	ParseFilePipeBuilder,
 	Post,
 	Req,
 	Res,
@@ -28,7 +26,7 @@ import { UserRecieve } from 'user/user.entity';
 import { compare } from './utils/auth.utils';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 import { Throttle } from '@nestjs/throttler';
-import { BaseController } from './utils/controller.utils';
+import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 
@@ -44,8 +42,7 @@ export class AppController extends BaseController {
 	 * @param {ConfigService} cfg - general app config
 	 */
 	constructor(
-		@Inject(forwardRef(() => AppService))
-		protected svc: AppService,
+		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 		protected cfg: ConfigService,
 	) {
 		super(svc, cfg);
@@ -59,9 +56,7 @@ export class AppController extends BaseController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('login')
-	@UseInterceptors(NoFilesInterceptor())
-	async login(
+	@Post('login') @UseInterceptors(NoFilesInterceptor()) async login(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IStudentSignup,
@@ -70,7 +65,7 @@ export class AppController extends BaseController {
 		try {
 			await this.svc.student.signUp(body);
 		} catch (error) {
-			switch ((error as { message: string }).message) {
+			switch ((error as ServerException).message) {
 				case err('Invalid', 'User', 'SignUp'):
 					return this.responseWithUser(
 						request,
@@ -81,6 +76,9 @@ export class AppController extends BaseController {
 
 				case err('Success', 'User', 'SignUp'):
 					return this.resetPasswordViaEmail(request, response, body, mtdt);
+
+				default:
+					throw error;
 			}
 		}
 	}
@@ -102,16 +100,7 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: Response,
 		@Body() body: IUserSignUp,
 		@MetaData() mtdt: string,
-		@UploadedFile(
-			new ParseFilePipeBuilder()
-				.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-				.addMaxSizeValidator({ maxSize: (0.3).mb2b })
-				.build({
-					fileIsRequired: false,
-					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-				}),
-		)
-		avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
 	): Promise<void> {
 		return this.responseWithUser(
 			request,
@@ -127,9 +116,7 @@ export class AppController extends BaseController {
 	 * @param {Response} response - server's response
 	 * @return {Promise<void>}
 	 */
-	@Post('logout')
-	@UseGuards(AuthGuard('refresh'))
-	async logout(
+	@Post('logout') @UseGuards(AuthGuard('refresh')) async logout(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 	): Promise<void> {
@@ -151,9 +138,7 @@ export class AppController extends BaseController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('refresh')
-	@UseGuards(AuthGuard('refresh'))
-	async refresh(
+	@Post('refresh') @UseGuards(AuthGuard('refresh')) async refresh(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
 		@MetaData() mtdt: string,
@@ -253,6 +238,7 @@ export class AppController extends BaseController {
 	 * Change password via console
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
+	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
@@ -261,19 +247,22 @@ export class AppController extends BaseController {
 	protected async requestSignatureViaConsole(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
+		@Body() body: { email: string },
 		@MetaData() mtdt: string,
 	): Promise<void> {
-		return this.responseWithUserRecieve(
-			request,
-			response,
-			await this.svc.hook.assign(mtdt, (signature: string) =>
-				this.svc.mail.send(
-					this.cfg.get('ADMIN_EMAIL'),
-					'Signature request',
-					'sendSignatureAdmin',
-					{ signature },
+		if (body.email == this.cfg.get('ADMIN_EMAIL'))
+			return this.responseWithUserRecieve(
+				request,
+				response,
+				await this.svc.hook.assign(mtdt, (signature: string) =>
+					this.svc.mail.send(
+						this.svc.cfg.get('ADMIN_EMAIL'),
+						'Signature request',
+						'sendSignatureAdmin',
+						{ signature },
+					),
 				),
-			),
-		);
+			);
+		throw new ServerException('Invalid', 'Email', '', 'user');
 	}
 }

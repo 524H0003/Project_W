@@ -10,17 +10,12 @@ import { AppService } from 'app/app.service';
 @Injectable()
 export class MailService {
 	/**
-	 * Initiate service
-	 * @param {MailerService} mailerService - mailer service
-	 * @param {AppService} svc - general app service
-	 * @param {ConfigService} cfg - general app config
+	 * Initiate mail service
 	 */
 	constructor(
 		@Inject(forwardRef(() => MailerService))
 		private mailerService: MailerService,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
-		private cfg: ConfigService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {}
 
 	/**
@@ -39,7 +34,7 @@ export class MailService {
 	): Promise<BaseUser> {
 		const baseUser = await this.svc.baseUser.email(email);
 
-		if (!baseUser && email !== this.cfg.get('ADMIN_EMAIL'))
+		if (!baseUser && email !== this.svc.cfg.get('ADMIN_EMAIL'))
 			throw new ServerException('Invalid', 'Email', '', 'user');
 
 		await this.mailerService.sendMail({

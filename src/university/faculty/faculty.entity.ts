@@ -33,16 +33,13 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 	/**
 	 * Base event creator
 	 */
-	@Column(() => EventCreator, { prefix: false })
-	eventCreator: EventCreator;
+	@Column(() => EventCreator, { prefix: false }) eventCreator: EventCreator;
 
 	// Infomations
 	/**
 	 * Department name
 	 */
-	@Column()
-	@IsString()
-	department: string;
+	@Column() @IsString() department: string;
 
 	// Methods
 	static test(from: string, options?: { department?: string }) {

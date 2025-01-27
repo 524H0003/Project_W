@@ -34,16 +34,13 @@ export class EventTag extends SensitiveInfomations implements ITagEntity {
 	/**
 	 * Tag's name
 	 */
-	@Field()
-	@Column({ name: 'name', type: 'text' })
-	name: string;
+	@Field() @Column({ name: 'name', type: 'text' }) name: string;
 
 	// Embedded Entity
 	/**
 	 * @ignore
 	 */
-	@Column(() => BlackBox, { prefix: false })
-	blackBox: BlackBox;
+	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 
 	// Methods
 	static test(from: string) {

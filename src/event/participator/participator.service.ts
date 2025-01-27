@@ -12,8 +12,7 @@ import { AppService } from 'app/app.service';
 export class EventParticipatorService extends DatabaseRequests<EventParticipator> {
 	constructor(
 		@InjectRepository(EventParticipator) repo: Repository<EventParticipator>,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
 		super(repo);
 	}

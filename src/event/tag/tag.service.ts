@@ -13,8 +13,7 @@ import { ITagInfo } from './tag.model';
 export class EventTagService extends DatabaseRequests<EventTag> {
 	constructor(
 		@InjectRepository(EventTag) repo: Repository<EventTag>,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
 		super(repo);
 	}

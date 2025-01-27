@@ -9,8 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import { apiErrorHandler, authRequest, alert } from '@/auth.service'
-import FormContainerComp from '@/components/FormContainerComp.vue'
+import { apiErrorHandler, authRequest, alert } from '@/auth.service';
+import FormContainerComp from '@/components/FormContainerComp.vue';
 
-const handleLogin = () => apiErrorHandler(authRequest('request-signature'))
+const handleLogin = () => apiErrorHandler(authRequest('request-signature'));
 </script>

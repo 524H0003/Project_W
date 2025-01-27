@@ -14,8 +14,7 @@ import { AppService } from 'app/app.service';
 export class HookService extends DatabaseRequests<Hook> {
 	constructor(
 		@InjectRepository(Hook) repo: Repository<Hook>,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
 		super(repo);
 	}

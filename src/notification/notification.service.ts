@@ -9,8 +9,7 @@ import { AppService } from 'app/app.service';
 export class NotificationService extends DatabaseRequests<Notification> {
 	constructor(
 		@InjectRepository(Notification) repo: Repository<Notification>,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
 		super(repo);
 	}

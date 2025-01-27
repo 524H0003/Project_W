@@ -65,7 +65,7 @@ describe('assignParticipator', () => {
 				(
 					await send(
 						{ input: { userId: student.user.id, eventId: event.id } },
-						stuHeaders['set-cookie'],
+						{ cookie: stuHeaders['set-cookie'] },
 					)
 				).assignParticipator,
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
@@ -95,7 +95,7 @@ describe('updateParticipator', () => {
 				AssignParticipatorMutationVariables
 			>(AssignParticipator)(
 				{ input: { userId: student.user.id, eventId: event.id } },
-				stuHeaders['set-cookie'],
+				{ cookie: stuHeaders['set-cookie'] },
 			)
 		).assignParticipator.id;
 	});
@@ -107,7 +107,7 @@ describe('updateParticipator', () => {
 			() =>
 				send(
 					{ input: { id: participatorId, interviewNote } },
-					empHeaders['set-cookie'],
+					{ cookie: empHeaders['set-cookie'] },
 				),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
@@ -126,7 +126,10 @@ describe('updateParticipator', () => {
 
 		await execute(
 			() =>
-				send({ input: { id: newId, interviewNote } }, empHeaders['set-cookie']),
+				send(
+					{ input: { id: newId, interviewNote } },
+					{ cookie: empHeaders['set-cookie'] },
+				),
 			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'User', '')] }] },
 		);
 	});

@@ -25,7 +25,12 @@ beforeEach(async () => {
 	(employee = Employee.test(fileName)),
 		(enterprise = Enterprise.test(fileName));
 
-	await assignEnterprise(req, enterprise, mailerSvc);
+	await assignEnterprise(
+		req,
+		enterprise,
+		mailerSvc,
+		svc.cfg.get('ADMIN_EMAIL'),
+	);
 });
 
 describe('hook', () => {

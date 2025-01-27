@@ -29,45 +29,30 @@ export class AppService {
 
 	constructor(
 		@InjectRepository(BaseUser) baseUserRepo: Repository<BaseUser>,
-		@Inject(forwardRef(() => AuthService))
-		public auth: AuthService,
-		@Inject(forwardRef(() => DeviceService))
-		public device: DeviceService,
-		@Inject(forwardRef(() => SessionService))
-		public session: SessionService,
-		@Inject(forwardRef(() => HookService))
-		public hook: HookService,
-		@Inject(forwardRef(() => MailService))
-		public mail: MailService,
-		@Inject(forwardRef(() => StudentService))
-		public student: StudentService,
+		@Inject(forwardRef(() => AuthService)) public auth: AuthService,
+		@Inject(forwardRef(() => DeviceService)) public device: DeviceService,
+		@Inject(forwardRef(() => SessionService)) public session: SessionService,
+		@Inject(forwardRef(() => ConfigService)) public cfg: ConfigService,
+		@Inject(forwardRef(() => HookService)) public hook: HookService,
+		@Inject(forwardRef(() => MailService)) public mail: MailService,
+		@Inject(forwardRef(() => StudentService)) public student: StudentService,
 		@Inject(forwardRef(() => EnterpriseService))
 		public enterprise: EnterpriseService,
-		@Inject(forwardRef(() => EmployeeService))
-		public employee: EmployeeService,
-		@Inject(forwardRef(() => FacultyService))
-		public faculty: FacultyService,
-		@Inject(forwardRef(() => FileService))
-		public file: FileService,
+		@Inject(forwardRef(() => EmployeeService)) public employee: EmployeeService,
+		@Inject(forwardRef(() => FacultyService)) public faculty: FacultyService,
+		@Inject(forwardRef(() => FileService)) public file: FileService,
 		@Inject(forwardRef(() => EventCreatorService))
 		public eventcreator: EventCreatorService,
-		@Inject(forwardRef(() => UserService))
-		public user: UserService,
-		@Inject(forwardRef(() => SignService))
-		public sign: SignService,
-		@Inject(forwardRef(() => EventService))
-		public event: EventService,
-		@Inject(forwardRef(() => EventTagService))
-		public eventTag: EventTagService,
+		@Inject(forwardRef(() => UserService)) public user: UserService,
+		@Inject(forwardRef(() => SignService)) public sign: SignService,
+		@Inject(forwardRef(() => EventService)) public event: EventService,
+		@Inject(forwardRef(() => EventTagService)) public eventTag: EventTagService,
 		@Inject(forwardRef(() => NotificationService))
 		public noti: NotificationService,
-		@Inject(forwardRef(() => RecieverService))
-		public recie: RecieverService,
+		@Inject(forwardRef(() => RecieverService)) public recie: RecieverService,
 		@Inject(forwardRef(() => EventParticipatorService))
 		public eventParti: EventParticipatorService,
-		@Inject(forwardRef(() => AWSService))
-		public aws: AWSService,
-		public cfg: ConfigService,
+		@Inject(forwardRef(() => AWSService)) public aws: AWSService,
 	) {
 		this.baseUser = new BaseUserService(baseUserRepo);
 	}

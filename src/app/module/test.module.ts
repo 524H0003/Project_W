@@ -10,8 +10,14 @@ import { SignService } from 'auth/auth.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AWSRecieve, AWSService } from 'app/aws/aws.service';
-import { createReadStream, statSync, writeFileSync } from 'fs';
+import {
+	createReadStream,
+	createWriteStream,
+	statSync,
+	writeFileSync,
+} from 'fs';
 import { lookup } from 'mime-types';
+import { Readable } from 'stream';
 
 export const rootPublic = 'public/';
 
@@ -35,9 +41,12 @@ export const rootPublic = 'public/';
 		{
 			provide: AWSService,
 			useValue: {
-				upload: jest.fn(async (name: string, input: Buffer) =>
-					writeFileSync(rootPublic + name, input),
-				),
+				upload: jest.fn(async (name: string, input: Readable | Buffer) => {
+					if (input instanceof Readable) {
+						const writableStream = createWriteStream(rootPublic + name);
+						input.pipe(writableStream);
+					} else writeFileSync(rootPublic + name, input);
+				}),
 				download: jest.fn(async (name: string): Promise<AWSRecieve> => {
 					const stream = createReadStream(rootPublic + name),
 						length = statSync(rootPublic + name).size;

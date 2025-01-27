@@ -48,16 +48,12 @@ export class Notification
 	/**
 	 * Notification title
 	 */
-	@Column({ name: 'title', type: 'text' })
-	@Field()
-	title: string;
+	@Column({ name: 'title', type: 'text' }) @Field() title: string;
 
 	/**
 	 * Notification content
 	 */
-	@Column({ name: 'content', type: 'text' })
-	@Field()
-	content: string;
+	@Column({ name: 'content', type: 'text' }) @Field() content: string;
 
 	/**
 	 * Notification type
@@ -75,8 +71,7 @@ export class Notification
 	/**
 	 * @ignore
 	 */
-	@Column(() => BlackBox, { prefix: false })
-	blackBox: BlackBox;
+	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 
 	// Methods
 	static test(from: string) {

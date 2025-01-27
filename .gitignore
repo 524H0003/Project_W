@@ -10,6 +10,7 @@ src/types.ts
 *.tsbuildinfo
 types/src
 src/**/*.js*
+!src/**/*.json
 **/*.d.ts
 public/*
 !public/*.server.*

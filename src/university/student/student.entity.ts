@@ -36,8 +36,7 @@ export class Student extends BaseEntity implements IStudentEntity {
 	/**
 	 * @ignore
 	 */
-	@Column(() => User, { prefix: false })
-	user: User;
+	@Column(() => User, { prefix: false }) user: User;
 
 	// Relationships
 	/**
@@ -51,26 +50,22 @@ export class Student extends BaseEntity implements IStudentEntity {
 	/**
 	 * Student's major
 	 */
-	@Column({ name: 'major', default: '' })
-	major: string;
+	@Column({ name: 'major', default: '' }) major: string;
 
 	/**
 	 * Student's skills
 	 */
-	@Column({ name: 'skills', type: 'text', default: '' })
-	skills: string;
+	@Column({ name: 'skills', type: 'text', default: '' }) skills: string;
 
 	/**
 	 * Student graduation year
 	 */
-	@Column({ name: 'graduation_year', nullable: true })
-	graduationYear: number;
+	@Column({ name: 'graduation_year', nullable: true }) graduationYear: number;
 
 	/**
 	 * Student enrollment year
 	 */
-	@Column({ name: 'enrollment_year' })
-	enrollmentYear: number;
+	@Column({ name: 'enrollment_year' }) enrollmentYear: number;
 
 	/**
 	 * @ignore

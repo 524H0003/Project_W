@@ -13,7 +13,10 @@ import {
 @Resolver(() => EventParticipator)
 @UseGuards(RoleGuard)
 export class EventParticipatorResolver {
-	constructor(private svc: AppService) {}
+	/**
+	 * Initiate event participator resolver
+	 */
+	constructor(protected svc: AppService) {}
 
 	/**
 	 * Participator assign

@@ -6,9 +6,9 @@ import {
 	S3ServiceException,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { lookup } from 'mime-types';
-import { ConfigService } from '@nestjs/config';
+import { AppService } from 'app/app.service';
 
 /**
  * AWS recieve object
@@ -25,16 +25,23 @@ export interface AWSRecieve {
 @Injectable()
 export class AWSService {
 	/**
-	 * AWS client
+	 * Initiate aws service
 	 */
-	client: S3Client;
+	constructor(@Inject(forwardRef(() => AppService)) private svc: AppService) {}
 
 	/**
-	 * Initiate service
-	 * @param {ConfigService} cfg - general app config
+	 * Aws client
 	 */
-	constructor(private cfg: ConfigService) {
-		this.client = new S3Client({
+	private _client: S3Client;
+	/**
+	 * @ignore
+	 */
+	get client(): S3Client {
+		if (this._client) return this._client;
+
+		const { cfg } = this.svc;
+
+		return (this._client = new S3Client({
 			forcePathStyle: true,
 			region: cfg.get('AWS_REGION'),
 			endpoint: cfg.get('AWS_ENDPOINT'),
@@ -42,15 +49,15 @@ export class AWSService {
 				accessKeyId: cfg.get('AWS_ACCESS_KEY_ID'),
 				secretAccessKey: cfg.get('AWS_SECRET_ACCESS_KEY'),
 			},
-		});
+		}));
 	}
 
 	/**
 	 * Send file to s3 server
 	 * @param {string} fileName - the name of sending file
-	 * @param {Buffer} input - file's buffer to send
+	 * @param {Readable | Buffer} input - file's buffer to send
 	 */
-	async upload(fileName: string, input: Buffer) {
+	async upload(fileName: string, input: Readable | Buffer) {
 		try {
 			await new Upload({
 				client: this.client,

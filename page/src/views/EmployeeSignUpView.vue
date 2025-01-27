@@ -66,16 +66,16 @@ import {
   apiErrorHandler,
   assignEnterpriseUser,
   requestFromEmployee,
-} from '@/auth.service'
-import FormContainerComp from '@/components/FormContainerComp.vue'
-import FormSelectInputComp from '@/components/FormSelectInputComp.vue'
-import FormTextInputComp from '@/components/FormTextInputComp.vue'
+} from '@/auth.service';
+import FormContainerComp from '@/components/FormContainerComp.vue';
+import FormSelectInputComp from '@/components/FormSelectInputComp.vue';
+import FormTextInputComp from '@/components/FormTextInputComp.vue';
 import {
   EmployeePosition,
   IEmployeeHook,
   IEmployeeSignup,
-} from 'project-w-backend'
-import { reactive } from 'vue'
+} from 'project-w-backend';
+import { reactive } from 'vue';
 
 const input = reactive<IEmployeeSignup>({
     signature: '',
@@ -99,5 +99,5 @@ const input = reactive<IEmployeeSignup>({
         name: input.name,
         position: input.position,
       }),
-    )
+    );
 </script>

@@ -35,14 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import type { IAlert, IObject } from '@/auth.service'
+import type { IAlert, IObject } from '@/auth.service';
 
-const model = defineModel()
+const model = defineModel();
 defineProps<{
-  name: string
-  subBtnClick?: () => void
-  object?: IObject
-  alert?: IAlert
-  list: Map<string, string>
-}>()
+  name: string;
+  subBtnClick?: () => void;
+  object?: IObject;
+  alert?: IAlert;
+  list: Map<string, string>;
+}>();
 </script>

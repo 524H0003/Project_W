@@ -22,8 +22,7 @@ import { AppService } from 'app/app.service';
 export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	constructor(
 		@InjectRepository(Enterprise) repo: Repository<Enterprise>,
-		@Inject(forwardRef(() => AppService))
-		private svc: AppService,
+		@Inject(forwardRef(() => AppService)) public svc: AppService,
 	) {
 		super(repo);
 	}

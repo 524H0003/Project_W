@@ -4,6 +4,7 @@ import { compare, hash } from './auth.utils';
 import { IUserRecieve } from 'user/user.model';
 import { User } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
 
 /**
  * Base controller
@@ -19,27 +20,22 @@ export class BaseController {
 	};
 
 	/**
-	 * Access token secret
+	 * Server access token secret
 	 */
-	private acsKey: string;
+	private acsKey: string = this.cfg.get('ACCESS_SECRET');
 
 	/**
-	 * Refresh token secret
+	 * Server refresh token secret
 	 */
-	private rfsKey: string;
+	private rfsKey: string = this.cfg.get('REFRESH_SECRET');
 
 	/**
-	 * Initiate controller
-	 * @param {AppService} svc - general app service
-	 * @param {ConfigService} cfg - general app config
+	 * Initiate base controller
 	 */
 	constructor(
 		protected svc: AppService,
 		protected cfg: ConfigService,
-	) {
-		this.acsKey = this.cfg.get('ACCESS_SECRET');
-		this.rfsKey = this.cfg.get('REFRESH_SECRET');
-	}
+	) {}
 
 	/**
 	 * Clear client's cookies
@@ -122,3 +118,11 @@ export class BaseController {
 		);
 	}
 }
+
+export const AvatarFileUpload = new ParseFilePipeBuilder()
+	.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+	.addMaxSizeValidator({ maxSize: (0.3).mb2b })
+	.build({
+		fileIsRequired: false,
+		errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+	});

@@ -17,9 +17,9 @@ import { Employee } from 'enterprise/employee/employee.entity';
 import { EventTag } from 'event/tag/tag.entity';
 import { Notification } from 'notification/notification.entity';
 import { Event } from 'event/event.entity';
-import { getAdminJS } from 'app/utils/adminjs.utils';
 import { EventCreator } from 'event/creator/creator.entity';
 import { AppExceptionFilter } from 'app/app.filter';
+import { graphqlUploadExpress } from 'graphql-upload-ts';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
@@ -46,9 +46,10 @@ async function bootstrap() {
 			getCustomResource,
 			Database,
 			generalDisplay,
-		} = await getAdminJS(appSvc);
+			componentLoader,
+		} = await import('./app/admin/index.mjs');
 
-	AdminJS.registerAdapter({ Resource: getCustomResource(), Database });
+	AdminJS.registerAdapter({ Resource: getCustomResource(appSvc), Database });
 	mkdirSync(cfgSvc.get('SERVER_PUBLIC'), { recursive: true });
 	const admin = new AdminJS({
 			resources: [
@@ -61,6 +62,7 @@ async function bootstrap() {
 				Notification,
 				EventCreator,
 			].map((i) => generalDisplay(i)),
+			componentLoader,
 		}),
 		adminRouter = buildAuthenticatedRouter(
 			admin,
@@ -85,10 +87,10 @@ async function bootstrap() {
 		region: cfgSvc.get('AWS_REGION'),
 	});
 
-	// Init multiple connection type
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.use(admin.options.rootPath, adminRouter)
+		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.setGlobalPrefix('api/v1')
 		.init();
 	http
