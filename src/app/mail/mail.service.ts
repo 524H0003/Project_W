@@ -1,6 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { BaseUser } from 'app/app.entity';
 import { AppService } from 'app/app.service';
 
