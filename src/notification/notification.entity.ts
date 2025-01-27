@@ -28,10 +28,7 @@ export class Notification
 		super();
 
 		if (input) {
-			Object.assign(
-				this,
-				InterfaceCasting.quick(input, INotificationInfoKeys),
-			);
+			Object.assign(this, InterfaceCasting.quick(input, INotificationInfoKeys));
 		}
 	}
 

@@ -37,8 +37,8 @@ export class FileService extends DatabaseRequests<File> {
 				if (file.match(this.serverFilesReg)) {
 					const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 
-				await this.svc.aws.upload(file, createReadStream(filePath));
-			}
+					await this.svc.aws.upload(file, createReadStream(filePath));
+				}
 		});
 	}
 
