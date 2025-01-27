@@ -16,7 +16,12 @@ export async function assignEmployee(
 	empInp: Employee,
 	mailerSvc: MailerService,
 ) {
-	await assignEnterprise(req, enterprise, mailerSvc);
+	await assignEnterprise(
+		req,
+		enterprise,
+		mailerSvc,
+		svc.cfg.get('ADMIN_EMAIL'),
+	);
 
 	const empHeaders = (
 			await req.post('/employee/hook').send({
