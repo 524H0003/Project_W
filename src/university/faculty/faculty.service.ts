@@ -17,11 +17,11 @@ import { AppService } from 'app/app.service';
 @Injectable()
 export class FacultyService extends DatabaseRequests<Faculty> {
 	/**
-	 * @ignore
+	 * Initiate faculty service
 	 */
 	constructor(
 		@InjectRepository(Faculty) repo: Repository<Faculty>,
-		@Inject(forwardRef(() => AppService)) public svc: AppService,
+		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 	) {
 		super(repo);
 	}

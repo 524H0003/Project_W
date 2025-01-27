@@ -12,7 +12,7 @@ import { AppService } from 'app/app.service';
 @Injectable()
 export class EventCreatorService extends DatabaseRequests<EventCreator> {
 	/**
-	 * @ignore
+	 * Initiate event creator service
 	 */
 	constructor(
 		@InjectRepository(EventCreator) repo: Repository<EventCreator>,

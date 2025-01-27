@@ -30,14 +30,14 @@ import JSON from 'graphql-type-json';
 @Entity({ name: 'Event' })
 export class Event extends SensitiveInfomations implements IEventEntity {
 	/**
-	 * @ignore
+	 * Initiate event entity
+	 * @param {IEventInfo} input - entity input
 	 */
-	constructor(payload: IEventInfo) {
+	constructor(input: IEventInfo) {
 		super();
 
-		if (payload) {
-			Object.assign(this, InterfaceCasting.quick(payload, IEventInfoKeys));
-		}
+		if (input)
+			Object.assign(this, InterfaceCasting.quick(input, IEventInfoKeys));
 	}
 
 	// Relationships

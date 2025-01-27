@@ -9,7 +9,7 @@ import {
 } from './notification.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { INotificationInfoKeys } from 'build/models';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 /**
  * Notification entity
@@ -21,16 +21,14 @@ export class Notification
 	implements INotificationEntity
 {
 	/**
-	 * @ignore
+	 * Initiate notification entity
+	 * @param {INotificationInfo} input - entity input
 	 */
-	constructor(payload: INotificationInfo) {
+	constructor(input: INotificationInfo) {
 		super();
 
-		if (payload) {
-			Object.assign(
-				this,
-				InterfaceCasting.quick(payload, INotificationInfoKeys),
-			);
+		if (input) {
+			Object.assign(this, InterfaceCasting.quick(input, INotificationInfoKeys));
 		}
 	}
 
@@ -80,19 +78,4 @@ export class Notification
 			type: NotificationType.participation,
 		});
 	}
-}
-
-@InputType()
-export class NotificationAssign implements INotificationInfo {
-	@Field() title: string;
-	@Field() content: string;
-	@Field() type: NotificationType;
-}
-
-@InputType()
-export class NotificationUpdate implements INotificationInfo {
-	@Field({ nullable: true }) title: string;
-	@Field({ nullable: true }) content: string;
-	@Field({ nullable: true }) type: NotificationType;
-	@Field() id: string;
 }

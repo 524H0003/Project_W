@@ -20,7 +20,7 @@ import { IAuthSignUpOption } from './auth.model';
 @Injectable()
 export class AuthService extends Cryption {
 	/**
-	 * @ignore
+	 * Initiate auth service
 	 */
 	constructor(
 		cfgSvc: ConfigService,
@@ -116,9 +116,6 @@ export class AuthService extends Cryption {
  */
 @Injectable()
 export class SignService {
-	/**
-	 * @ignore
-	 */
 	constructor(
 		private jwtSvc: JwtService,
 		private cfgSvc: ConfigService,

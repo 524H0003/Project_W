@@ -147,7 +147,7 @@ export class User extends BaseEntity implements IUserEntity {
 
 	// Embedded Entity
 	/**
-	 * @ignore
+	 * Entity black box
 	 */
 	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 
@@ -172,7 +172,7 @@ export class User extends BaseEntity implements IUserEntity {
 	}
 
 	/**
-	 * @ignore
+	 * Test entity
 	 */
 	static test(from: string, options?: { email?: string }) {
 		const baseUser = BaseUser.test(
@@ -218,7 +218,7 @@ export class UserRecieve implements IUserRecieve {
 	}
 
 	/**
-	 * @ignore
+	 * Test entity
 	 */
 	static get test() {
 		return new UserRecieve({

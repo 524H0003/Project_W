@@ -12,7 +12,7 @@ import { AppService } from 'app/app.service';
 @Injectable()
 export class UserService extends DatabaseRequests<User> {
 	/**
-	 * @ignore
+	 * Initiate user service
 	 */
 	constructor(
 		@InjectRepository(User) repo: Repository<User>,

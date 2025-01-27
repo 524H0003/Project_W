@@ -32,12 +32,12 @@ export interface IRefreshResult {
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	/**
-	 * @ignore
+	 * Initiate refresh strategy
 	 */
 	constructor(
-		cfgSvc: ConfigService,
-		private sesSvc: SessionService,
-		private dvcSvc: DeviceService,
+		protected cfgSvc: ConfigService,
+		protected sesSvc: SessionService,
+		protected dvcSvc: DeviceService,
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

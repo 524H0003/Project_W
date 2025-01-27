@@ -55,7 +55,7 @@ export interface IUserSensitive {
 }
 
 /**
- * @ignore
+ * User entity relationships
  */
 export interface IUserRelationship {
 	baseUser: IBaseUserEntity;

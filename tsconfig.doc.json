@@ -1,6 +1,7 @@
 {
 	"exclude": [
-		"**/*.spec.ts",
+		"**/*.spec.*",
+		"**/*.graphql.ts",
 		"**/schema.gql",
 		"*.config.*",
 		"dist",
@@ -10,7 +11,8 @@
 		"**/build/models.ts",
 		"**/main.ts",
 		"page",
-		"types"
+		"types",
+		"**/build/*.*"
 	],
 	"extends": "./tsconfig.json"
 }

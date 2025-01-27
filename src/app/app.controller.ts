@@ -37,7 +37,9 @@ import { ConfigService } from '@nestjs/config';
 @UseInterceptors(CacheInterceptor)
 export class AppController extends BaseController {
 	/**
-	 * @ignore
+	 * Initiate controller
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
 	 */
 	constructor(
 		@Inject(forwardRef(() => AppService)) protected svc: AppService,
@@ -236,6 +238,7 @@ export class AppController extends BaseController {
 	 * Change password via console
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
+	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
@@ -244,19 +247,22 @@ export class AppController extends BaseController {
 	protected async requestSignatureViaConsole(
 		@Req() request: Request,
 		@Res({ passthrough: true }) response: Response,
+		@Body() body: { email: string },
 		@MetaData() mtdt: string,
 	): Promise<void> {
-		return this.responseWithUserRecieve(
-			request,
-			response,
-			await this.svc.hook.assign(mtdt, (signature: string) =>
-				this.svc.mail.send(
-					this.svc.cfg.get('ADMIN_EMAIL'),
-					'Signature request',
-					'sendSignatureAdmin',
-					{ signature },
+		if (body.email == this.cfg.get('ADMIN_EMAIL'))
+			return this.responseWithUserRecieve(
+				request,
+				response,
+				await this.svc.hook.assign(mtdt, (signature: string) =>
+					this.svc.mail.send(
+						this.svc.cfg.get('ADMIN_EMAIL'),
+						'Signature request',
+						'sendSignatureAdmin',
+						{ signature },
+					),
 				),
-			),
-		);
+			);
+		throw new ServerException('Invalid', 'Email', '', 'user');
 	}
 }

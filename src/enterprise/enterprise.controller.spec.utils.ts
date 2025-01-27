@@ -7,8 +7,11 @@ export async function assignEnterprise(
 	req: TestAgent,
 	enterprise: Enterprise,
 	mailerSvc: MailerService,
+	adminEmail: string,
 ) {
-	const { headers } = await req.post('/request-signature').send(),
+	const { headers } = await req
+			.post('/request-signature')
+			.send({ email: adminEmail }),
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0]['context'][
 			'signature'
 		];

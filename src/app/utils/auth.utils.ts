@@ -52,7 +52,7 @@ export function compare(origin: string, input: string): boolean {
  */
 export class Cryption {
 	/**
-	 * @ignore
+	 * Initiate server cryption
 	 */
 	constructor(
 		private algorithm: string,

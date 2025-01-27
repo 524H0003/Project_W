@@ -3,7 +3,7 @@ import { IUserSignUp } from 'user/user.model';
 
 // Interfaces
 /**
- * @ignore
+ * Faculty relationships
  */
 export interface IFacultyRelationship {
 	eventCreator: IEventCreatorEntity;
@@ -20,7 +20,7 @@ export interface IFacultyInfo {
 }
 
 /**
- * @ignore
+ * Faculty entity
  */
 export interface IFacultyEntity extends IFacultyRelationship, IFacultyInfo {}
 
