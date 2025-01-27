@@ -69,7 +69,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 					cache: {
 						get: (key: string) => cacheManager.get(key),
 						set: (key: string, value: unknown, options: { ttl: number }) =>
-							cacheManager.set(key, value, options.ttl.s2ms),
+							cacheManager.set(key, value, options.ttl.s2ms) as Promise<void>,
 						delete: (key: string) => cacheManager.del(key),
 					},
 				};
