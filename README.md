@@ -91,52 +91,52 @@
 
 - [x] Tạo thông báo
 
-  > /graphql [assignNotification](./src/schema.gql#L107)
+  > /graphql [assignNotification](./src/schema.gql#L122)
 
 - [x] Cập nhật thông báo
 
-  > /graphql [updateNotification](./src/schema.gql#L115)
+  > /graphql [updateNotification](./src/schema.gql#L130)
 
 - [x] Gửi thông báo cho người dùng
 
-  > /graphql [assignReciever(Many)](./src/schema.gql#L109-L110)
+  > /graphql [assignReciever(Many)](./src/schema.gql#L124-L125)
 
 - [x] Đánh dấu đã xem thông báo
 
-  > /graphql [readNotification(Many)](./src/schema.gql#L112-L113)
+  > /graphql [readNotification(Many)](./src/schema.gql#L127-L128)
 
 - [x] Liệt kê tất cả thông báo
 
-  > /graphql [listAllNotifications](./src/schema.gql#L140)
+  > /graphql [listAllNotifications](./src/schema.gql#L156)
 
 ### Sự kiện
 
 - [x] Tạo sự kiện
 
-  > /graphql [assignEvent](./src/schema.gql#L105)
+  > /graphql [assignEvent](./src/schema.gql#L120)
 
 - [x] Cập nhật trạng thái sự kiện
 
-  > /graphql [updateEvent](./src/schema.gql#L114)
+  > /graphql [updateEvent](./src/schema.gql#L129)
 
 - [x] Tạo tag
 
-  > /graphql [assignEventTag](./src/schema.gql#L106)
+  > /graphql [assignEventTag](./src/schema.gql#L121)
 
 - [x] Lấy các tag hiện có
 
-  > /graphql [listAllTags](./src/schema.gql#L141)
+  > /graphql [listAllTags](./src/schema.gql#L157)
 
 - [x] Thêm tag cho sự kiện
 
-  > /graphql [attachEventTag](./src/schema.gql#L111)
+  > /graphql [attachEventTag](./src/schema.gql#L126)
 
 - [x] Cho người dùng tham gia sự kiện
 
-  > /graphql [assignParticipator](./src/schema.gql#L108)
+  > /graphql [assignParticipator](./src/schema.gql#L123)
 
 - [x] Cập nhật thông tin người tham gia sự kiện
-  > /graphql [updateParticipator](./src/schema.gql#L116)
+  > /graphql [updateParticipator](./src/schema.gql#L131)
 
 ### Trang admin (quản lý database)
 

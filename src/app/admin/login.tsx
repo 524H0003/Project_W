@@ -8,6 +8,8 @@ import {
 	Illustration,
 	Input,
 	Label,
+	Link,
+	LinkProps,
 	MadeWithLove,
 	MessageBox,
 	Text,
@@ -17,6 +19,8 @@ import { ReduxState, useTranslation } from 'adminjs';
 
 import React from 'react';
 import { useSelector } from 'react-redux';
+
+let email: string;
 
 const Wrapper = styled(Box)<BoxProps>`
 		align-items: center;
@@ -45,14 +49,22 @@ const Wrapper = styled(Box)<BoxProps>`
 		justify-content: space-between;
 		align-content: center;
 	`,
+	StyledLink = styled(Link)<LinkProps>`
+		display: flex;
+		height: 100%;
+		align-items: center;
+	`,
 	TextNoTopMargin = styled(Text)<BoxProps>`
 		margin-top: 0;
 	`,
-	handleRequest = async () =>
+	handleRequest = () =>
 		fetch('../api/v1/request-signature', {
 			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ email }),
 		});
-
 export type LoginProps = {
 	message?: string;
 	action: string;
@@ -132,6 +144,7 @@ export const Login: React.FC = () => {
 						</Label>
 						<Input
 							name="email"
+							onChange={(evt) => (email = evt.target.value)}
 							placeholder={translateComponent('Login.properties.email')}
 						/>
 					</FormGroup>
@@ -148,12 +161,12 @@ export const Login: React.FC = () => {
 					</FormGroup>
 					<ButtonWrapper>
 						<TextNoTopMargin mt="xl" textAlign="center">
-							<Button variant="contained" onClick={handleRequest}>
+							<StyledLink variant="contained" onClick={handleRequest}>
 								{'Request password'}
-							</Button>
+							</StyledLink>
 						</TextNoTopMargin>
 						<TextNoTopMargin mt="xl" textAlign="center">
-							<Button variant="contained">
+							<Button variant="contained" type="submit">
 								{translateComponent('Login.loginButton')}
 							</Button>
 						</TextNoTopMargin>

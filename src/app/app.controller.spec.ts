@@ -266,7 +266,12 @@ describe('change-password', () => {
 describe('request-signature', () => {
 	it('success', async () => {
 		await execute(
-			async () => (await req.post('/request-signature').send()).text,
+			async () =>
+				(
+					await req
+						.post('/request-signature')
+						.send({ email: svc.cfg.get('ADMIN_EMAIL') })
+				).text,
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },

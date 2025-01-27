@@ -26,7 +26,9 @@ beforeEach(() => {
 
 describe('assign', () => {
 	it('success', async () => {
-		const { headers } = await req.post('/request-signature').send();
+		const { headers } = await req
+			.post('/request-signature')
+			.send({ email: svc.cfg.get('ADMIN_EMAIL') });
 
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0]['context'][
 			'signature'
