@@ -21,7 +21,7 @@ import { AppService } from 'app/app.service';
 @Injectable()
 export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	/**
-	 * @ignore
+	 * Initiate enterprise service
 	 */
 	constructor(
 		@InjectRepository(Enterprise) repo: Repository<Enterprise>,

@@ -30,7 +30,7 @@ import { AvatarFileUpload } from 'app/utils/controller.utils';
 @UseInterceptors(CacheInterceptor)
 export class FacultyController extends AppController {
 	/**
-	 * @ignore
+	 * Initiate controller
 	 */
 	constructor(
 		protected svc: AppService,

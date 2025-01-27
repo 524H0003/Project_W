@@ -16,7 +16,7 @@ import { IUserSignUp } from 'user/user.model';
 @Entity({ name: 'FacultyUser' })
 export class Faculty extends BaseEntity implements IFacultyEntity {
 	/**
-	 * @ignore
+	 * Initiate faculty object
 	 */
 	constructor(payload: IFacultyInfo & IUserSignUp) {
 		super();
@@ -34,7 +34,7 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 
 	// Core Entity
 	/**
-	 * @ignore
+	 * Base event creator
 	 */
 	@Column(() => EventCreator, { prefix: false }) eventCreator: EventCreator;
 

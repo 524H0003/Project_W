@@ -13,7 +13,7 @@ import { AppService } from 'app/app.service';
 @Injectable()
 export class HookService extends DatabaseRequests<Hook> {
 	/**
-	 * @ignore
+	 * Initiate hook service
 	 */
 	constructor(
 		@InjectRepository(Hook) repo: Repository<Hook>,

@@ -62,7 +62,7 @@ export const Roles = Reflector.createDecorator<UserRole[]>(),
 @Injectable()
 export class RoleGuard extends AuthGuard('access') {
 	/**
-	 * @ignore
+	 * Initiate role guard
 	 */
 	constructor(private reflector: Reflector) {
 		super();

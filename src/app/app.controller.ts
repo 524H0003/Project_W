@@ -37,7 +37,9 @@ import { ConfigService } from '@nestjs/config';
 @UseInterceptors(CacheInterceptor)
 export class AppController extends BaseController {
 	/**
-	 * @ignore
+	 * Initiate controller
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
 	 */
 	constructor(
 		@Inject(forwardRef(() => AppService)) protected svc: AppService,

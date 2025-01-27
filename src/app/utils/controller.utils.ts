@@ -6,9 +6,12 @@ import { User } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
 
+/**
+ * Base controller
+ */
 export class BaseController {
 	/**
-	 * @ignore
+	 * Global cookie options
 	 */
 	private readonly ckiOpt: CookieOptions = {
 		httpOnly: true,

@@ -8,7 +8,7 @@ import { AppService } from 'app/app.service';
 @Injectable()
 export class RecieverService extends DatabaseRequests<Reciever> {
 	/**
-	 * @ignore
+	 * Initiate notification reciever
 	 */
 	constructor(
 		@InjectRepository(Reciever) repo: Repository<Reciever>,

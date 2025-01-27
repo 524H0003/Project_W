@@ -11,7 +11,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 @Injectable()
 export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
 	/**
-	 * @ignore
+	 * Initiate hook strategy
 	 */
 	constructor(
 		cfgSvc: ConfigService,

@@ -6,7 +6,6 @@ import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { AuthService, SignService } from 'auth/auth.service';
 import { DeviceService } from 'auth/device/device.service';
 import { SessionService } from 'auth/session/session.service';
-import { ConfigService } from '@nestjs/config';
 import { HookService } from './hook/hook.service';
 import { MailService } from './mail/mail.service';
 import { StudentService } from 'university/student/student.service';
@@ -22,9 +21,10 @@ import { NotificationService } from 'notification/notification.service';
 import { RecieverService } from 'notification/reciever/reciever.service';
 import { EventParticipatorService } from 'event/participator/participator.service';
 import { AWSService } from './aws/aws.service';
+import { ConfigService } from '@nestjs/config';
 
 /**
- * @ignore
+ * Server services
  */
 @Injectable()
 export class AppService {
@@ -66,7 +66,7 @@ export class AppService {
  */
 class BaseUserService extends DatabaseRequests<BaseUser> {
 	/**
-	 * @ignore
+	 * Initiate base user service
 	 */
 	constructor(repo: Repository<BaseUser>) {
 		super(repo);

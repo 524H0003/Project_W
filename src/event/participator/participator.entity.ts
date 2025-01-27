@@ -10,7 +10,7 @@ import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEventParticipatorInfoKeys } from 'build/models';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
 
 /**
@@ -23,17 +23,17 @@ export class EventParticipator
 	implements IEventParticipatorEntiy
 {
 	/**
-	 * @ignore
+	 * Initiate event participator entity
+	 * @param {IEventParticipatorInfo} input - entity input
 	 */
-	constructor(payload: IEventParticipatorInfo) {
+	constructor(input: IEventParticipatorInfo) {
 		super();
 
-		if (payload) {
+		if (input)
 			Object.assign(
 				this,
-				InterfaceCasting.quick(payload, IEventParticipatorInfoKeys),
+				InterfaceCasting.quick(input, IEventParticipatorInfoKeys),
 			);
-		}
 	}
 
 	// Relationships
@@ -114,23 +114,4 @@ export class EventParticipator
 		default: EventParticipatorRole.attendee,
 	})
 	role: EventParticipatorRole;
-}
-
-@InputType()
-export class EventParticipatorAssign {
-	@Field() userId: string;
-	@Field() eventId: string;
-}
-
-@InputType()
-export class EventParticipatorUpdate implements IEventParticipatorInfo {
-	@Field({ nullable: true }) role: EventParticipatorRole;
-	@Field({ nullable: true }) status: EventParticipatorStatus;
-	@Field({ nullable: true }) isAttended: boolean;
-	@Field({ nullable: true }) registeredAt: Date;
-	@Field({ nullable: true }) interviewAt: Date;
-	@Field({ nullable: true }) interviewNote: string;
-	@Field(() => JSON, { nullable: true, defaultValue: '' })
-	additionalData: object;
-	@Field() id: string;
 }

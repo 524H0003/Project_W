@@ -18,7 +18,7 @@ import { FileUpload } from 'graphql-upload-ts';
 @Injectable()
 export class FileService extends DatabaseRequests<File> {
 	/**
-	 * @ignore
+	 * Initiate file service
 	 */
 	constructor(
 		@InjectRepository(File) repo: Repository<File>,
@@ -29,15 +29,16 @@ export class FileService extends DatabaseRequests<File> {
 
 		readdir(cfg.get('SERVER_PUBLIC'), async (error, files) => {
 			if (error) {
-				new ServerException('Fatal', 'File', 'Read', 'server');
+				new ServerException('Fatal', 'File', 'Read', 'server', error);
 				return;
 			}
 
-			for (const file of files) {
-				const filePath = join(cfg.get('SERVER_PUBLIC'), file);
+			for (const file of files)
+				if (file.match(this.serverFilesReg)) {
+					const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 
-				await this.svc.aws.upload(file, createReadStream(filePath));
-			}
+					await this.svc.aws.upload(file, createReadStream(filePath));
+				}
 		});
 	}
 

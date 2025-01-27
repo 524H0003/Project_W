@@ -29,7 +29,7 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 
 	// Core Entity
 	/**
-	 * @ignore
+	 * Base user
 	 */
 	@Column(() => User, { prefix: false }) user: User;
 

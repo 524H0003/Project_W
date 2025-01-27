@@ -12,7 +12,7 @@ export interface IStudentEntity extends ISutdentRelationship, IStudentInfo {}
  */
 export interface ISutdentRelationship {
 	/**
-	 * @ignore
+	 * Base user
 	 */
 	user: IUserEntity;
 

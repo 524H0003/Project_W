@@ -28,7 +28,9 @@ import { AvatarFileUpload } from 'app/utils/controller.utils';
 @UseInterceptors(CacheInterceptor)
 export class EmployeeController extends AppController {
 	/**
-	 * @ignore
+	 * Initiate employee controller
+	 * @param {AppService} svc - general app service
+	 * @param {ConfigService} cfg - general app config
 	 */
 	constructor(
 		protected svc: AppService,

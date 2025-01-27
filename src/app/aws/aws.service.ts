@@ -38,13 +38,16 @@ export class AWSService {
 	 */
 	get client(): S3Client {
 		if (this._client) return this._client;
+
+		const { cfg } = this.svc;
+
 		return (this._client = new S3Client({
 			forcePathStyle: true,
-			region: this.svc.cfg.get('AWS_REGION'),
-			endpoint: this.svc.cfg.get('AWS_ENDPOINT'),
+			region: cfg.get('AWS_REGION'),
+			endpoint: cfg.get('AWS_ENDPOINT'),
 			credentials: {
-				accessKeyId: this.svc.cfg.get('AWS_ACCESS_KEY_ID'),
-				secretAccessKey: this.svc.cfg.get('AWS_SECRET_ACCESS_KEY'),
+				accessKeyId: cfg.get('AWS_ACCESS_KEY_ID'),
+				secretAccessKey: cfg.get('AWS_SECRET_ACCESS_KEY'),
 			},
 		}));
 	}

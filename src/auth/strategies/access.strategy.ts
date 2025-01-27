@@ -11,7 +11,7 @@ import { UserService } from 'user/user.service';
 @Injectable()
 export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	/**
-	 * @ignore
+	 * Initiate access strategy
 	 */
 	constructor(
 		cfgSvc: ConfigService,
