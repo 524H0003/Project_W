@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import { createReadStream, readdir } from 'fs';
 import { extname, join } from 'path';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
@@ -11,6 +10,7 @@ import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
 import { AWSRecieve } from 'app/aws/aws.service';
 import { FileUpload } from 'graphql-upload-ts';
+import { createHmac } from 'node:crypto';
 
 /**
  * File services
@@ -23,7 +23,7 @@ export class FileService extends DatabaseRequests<File> {
 	constructor(
 		@InjectRepository(File) repo: Repository<File>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
-		cfg: ConfigService,
+		protected cfg: ConfigService,
 	) {
 		super(repo);
 
@@ -65,7 +65,7 @@ export class FileService extends DatabaseRequests<File> {
 			{ fileName = '' } = serverFilesOptions || {},
 			path = fileName
 				? fileName + `.server.${extname(title)}`
-				: `${createHash('sha256').update(input.buffer).digest('hex')}${extname(title)}`;
+				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(input.buffer).digest('hex')}${extname(title)}`;
 
 		await this.svc.aws.upload(path, input.stream || input.buffer);
 

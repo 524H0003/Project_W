@@ -1,6 +1,6 @@
 import { compareSync, hashSync } from 'bcrypt';
 import { validate } from 'class-validator';
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 
 /**
  * Validator for class
