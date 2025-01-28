@@ -31,6 +31,7 @@
 		"test:debug": "jest --debug"
 	},
 	"dependencies": {
+		"@adminjs/design-system": "github:524H0003/adminjs-design-system#package",
 		"@adminjs/express": "^6.1.1",
 		"@adminjs/typeorm": "^5.0.1",
 		"@apollo/server": "^4.11.3",
