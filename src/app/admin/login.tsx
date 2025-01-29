@@ -4,18 +4,16 @@ import {
 	Button,
 	FormGroup,
 	H2,
-	H5,
 	Illustration,
 	Input,
 	Label,
 	Link,
 	LinkProps,
-	MadeWithLove,
 	MessageBox,
 	Text,
 } from '@adminjs/design-system';
 import { styled } from '@adminjs/design-system/styled-components';
-import { ReduxState, useTranslation } from 'adminjs';
+import { useTranslation } from 'adminjs';
 
 import React from 'react';
 
