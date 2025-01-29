@@ -72,7 +72,7 @@ describe('assignParticipator', () => {
 		);
 		await execute(
 			() =>
-				svc.eventParti.findOne({
+				svc.eventParticipator.findOne({
 					participatedBy: { baseUser: { id: student.user.id } },
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
@@ -112,9 +112,12 @@ describe('updateParticipator', () => {
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 
-		await execute(async () => svc.eventParti.findOne({ interviewNote }), {
-			exps: [{ type: 'toBeDefined', params: [] }],
-		});
+		await execute(
+			async () => svc.eventParticipator.findOne({ interviewNote }),
+			{
+				exps: [{ type: 'toBeDefined', params: [] }],
+			},
+		);
 	});
 
 	it('failed due to invalid id', async () => {

@@ -57,7 +57,7 @@ describe('assignNotification', () => {
 				],
 			},
 		);
-		await execute(() => svc.noti.find({ title: notification.title }), {
+		await execute(() => svc.notification.find({ title: notification.title }), {
 			exps: [{ type: 'toHaveLength', params: [1] }],
 		});
 	});
@@ -95,12 +95,15 @@ describe('updateNotification', () => {
 				).updateNotification,
 			{ exps: [{ type: 'toHaveProperty', params: ['content', newContent] }] },
 		);
-		await execute(() => svc.noti.find({ content: newContent }), {
+		await execute(() => svc.notification.find({ content: newContent }), {
 			exps: [{ type: 'toHaveLength', params: [1] }],
 		});
-		await execute(() => svc.noti.find({ content: notification.content }), {
-			exps: [{ type: 'toHaveLength', params: [0] }],
-		});
+		await execute(
+			() => svc.notification.find({ content: notification.content }),
+			{
+				exps: [{ type: 'toHaveLength', params: [0] }],
+			},
+		);
 	});
 
 	it('failed due to invalid id', async () => {

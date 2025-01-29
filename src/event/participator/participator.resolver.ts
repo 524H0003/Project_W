@@ -24,7 +24,7 @@ export class EventParticipatorResolver {
 	@Mutation(() => EventParticipator)
 	@Roles([UserRole.student])
 	async assignParticipator(@Args('input') input: EventParticipatorAssign) {
-		return this.svc.eventParti.assign(input.userId, input.eventId);
+		return this.svc.eventParticipator.assign(input.userId, input.eventId);
 	}
 
 	/**
@@ -36,13 +36,13 @@ export class EventParticipatorResolver {
 		@Args('input') input: EventParticipatorUpdate,
 		@CurrentUser() user: User,
 	) {
-		const participator = await this.svc.eventParti.findOne({
+		const participator = await this.svc.eventParticipator.findOne({
 			id: input.id,
 			fromEvent: { eventCreatedBy: { user: { baseUser: { id: user.id } } } },
 		});
 
 		if (!participator) throw new ServerException('Invalid', 'User', '', 'user');
 
-		return this.svc.eventParti.modify(participator.id, input);
+		return this.svc.eventParticipator.modify(participator.id, input);
 	}
 }

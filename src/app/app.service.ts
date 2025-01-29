@@ -54,7 +54,7 @@ export class AppService {
 		public notification: NotificationService,
 		@Inject(forwardRef(() => RecieverService)) public recie: RecieverService,
 		@Inject(forwardRef(() => EventParticipatorService))
-		public eventParti: EventParticipatorService,
+		public eventParticipator: EventParticipatorService,
 		@Inject(forwardRef(() => AWSService)) public aws: AWSService,
 	) {
 		this.baseUser = new BaseUserService(baseUserRepo);

@@ -30,19 +30,22 @@ beforeEach(async () => {
 
 describe('assign', () => {
 	it('success', async () => {
-		await execute(() => svc.eventParti.assign(student.user.id, event.id), {
-			exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
-			onFinish: async (result: EventParticipator) => {
-				await execute(
-					() => svc.event.findOne({ participators: [{ id: result.id }] }),
-					{ exps: [{ type: 'toBeDefined', params: [] }] },
-				);
-				await execute(
-					() => svc.user.findOne({ participatedEvents: [{ id: result.id }] }),
-					{ exps: [{ type: 'toBeDefined', params: [] }] },
-				);
+		await execute(
+			() => svc.eventParticipator.assign(student.user.id, event.id),
+			{
+				exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
+				onFinish: async (result: EventParticipator) => {
+					await execute(
+						() => svc.event.findOne({ participators: [{ id: result.id }] }),
+						{ exps: [{ type: 'toBeDefined', params: [] }] },
+					);
+					await execute(
+						() => svc.user.findOne({ participatedEvents: [{ id: result.id }] }),
+						{ exps: [{ type: 'toBeDefined', params: [] }] },
+					);
+				},
 			},
-		});
+		);
 	});
 
 	it('failed due to not have any position left', async () => {
@@ -50,9 +53,14 @@ describe('assign', () => {
 		eve.positionsAvailable = 0;
 		event = await svc.event.assign(eve);
 
-		await execute(() => svc.eventParti.assign(student.user.id, event.id), {
-			exps: [{ type: 'toThrow', params: [err('Invalid', 'Event', 'Access')] }],
-		});
+		await execute(
+			() => svc.eventParticipator.assign(student.user.id, event.id),
+			{
+				exps: [
+					{ type: 'toThrow', params: [err('Invalid', 'Event', 'Access')] },
+				],
+			},
+		);
 	});
 });
 
@@ -60,10 +68,13 @@ describe('modify', () => {
 	it('success', async () => {
 		const interviewNote = (30).string;
 
-		await execute(() => svc.eventParti.modify(event.id, { interviewNote }), {
-			exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
-		});
-		await execute(() => svc.eventParti.findOne({ interviewNote }), {
+		await execute(
+			() => svc.eventParticipator.modify(event.id, { interviewNote }),
+			{
+				exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
+			},
+		);
+		await execute(() => svc.eventParticipator.findOne({ interviewNote }), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 		});
 	});

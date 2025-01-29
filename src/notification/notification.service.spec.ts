@@ -18,10 +18,10 @@ beforeEach(() => {
 
 describe('assign', () => {
 	it('success', async () => {
-		await execute(() => svc.noti.assign(notification), {
+		await execute(() => svc.notification.assign(notification), {
 			exps: [{ type: 'toBeInstanceOf', params: [Notification] }],
 			onFinish: async (result) => {
-				await execute(() => svc.noti.find({ id: result.id }), {
+				await execute(() => svc.notification.find({ id: result.id }), {
 					exps: [{ type: 'toHaveLength', params: [1] }],
 				});
 			},
@@ -32,13 +32,16 @@ describe('assign', () => {
 describe('modify', () => {
 	it('success', async () => {
 		const newContent = 'Edited' + (30).string,
-			rawNoti = await svc.noti.assign(notification);
+			rawNoti = await svc.notification.assign(notification);
 
-		await execute(() => svc.noti.modify(rawNoti.id, { content: newContent }), {
-			exps: [
-				{ type: 'toBeInstanceOf', params: [Notification] },
-				{ type: 'toHaveProperty', params: ['content', newContent] },
-			],
-		});
+		await execute(
+			() => svc.notification.modify(rawNoti.id, { content: newContent }),
+			{
+				exps: [
+					{ type: 'toBeInstanceOf', params: [Notification] },
+					{ type: 'toHaveProperty', params: ['content', newContent] },
+				],
+			},
+		);
 	});
 });
