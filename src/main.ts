@@ -47,6 +47,7 @@ async function bootstrap() {
 			Database,
 			generalDisplay,
 			componentLoader,
+			Components,
 		} = await import('./app/admin/index.mjs');
 
 	AdminJS.registerAdapter({ Resource: getCustomResource(appSvc), Database });
@@ -62,6 +63,9 @@ async function bootstrap() {
 				Notification,
 				EventCreator,
 			].map((i) => generalDisplay(i)),
+			dashboard: {
+				component: Components.Dashboard,
+			},
 			componentLoader,
 		}),
 		adminRouter = buildAuthenticatedRouter(
@@ -70,7 +74,7 @@ async function bootstrap() {
 				authenticate: async (email, password) => {
 					const hook = await appSvc.hook.findOne({ signature: password });
 
-					// if (!hook || email !== cfgSvc.get('ADMIN_EMAIL')) return null;
+					if (!hook || email !== cfgSvc.get('ADMIN_EMAIL')) return null;
 
 					return { email, password };
 				},

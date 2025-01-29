@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { buildAuthenticatedRouter } from '@adminjs/express';
 import { Database, Resource } from '@adminjs/typeorm';
-import { componentLoader } from './components.mjs';
+import { componentLoader, Components } from './components.mjs';
 
 type ResourceWithOptions = { resource: any; options: any };
 
@@ -264,5 +264,6 @@ export {
 	buildAuthenticatedRouter,
 	Database,
 	generalDisplay,
+	Components,
 	componentLoader,
 };
