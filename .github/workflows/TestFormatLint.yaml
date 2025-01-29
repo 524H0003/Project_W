@@ -37,8 +37,6 @@ jobs:
               - '**.json'
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/cache@v4
         with:
@@ -76,8 +74,6 @@ jobs:
       - uses: ikalnytskyi/action-setup-postgres@v6
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/cache/restore@v4
         with:
@@ -122,8 +118,6 @@ jobs:
       - uses: ikalnytskyi/action-setup-postgres@v6
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/cache/restore@v4
         with:
@@ -151,7 +145,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes:  2
+    timeout-minutes: 2
 
     permissions:
       contents: write
@@ -168,8 +162,6 @@ jobs:
       - uses: ikalnytskyi/action-setup-postgres@v6
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/cache/restore@v4
         with:
@@ -214,8 +206,6 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/cache@v4
         with:
