@@ -22,7 +22,7 @@
 		"start:prod": "node dist/src/main",
 		"prebuild:dev": "pnpm i && (npm run buildfile & (npm run gqlgen && npm run codegen))",
 		"build:dev": "nest build",
-		"prebuild": "pnpm i --include=dev && (npm-run-all --parallel mail page codegen)",
+		"prebuild": "pnpm i && (npm-run-all --parallel mail page codegen)",
 		"build": "nest build",
 		"test": "jest --config=jest.all.config.ts",
 		"test:controller": "jest --config=jest.controller.config.ts",
