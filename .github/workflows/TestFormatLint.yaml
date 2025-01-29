@@ -43,7 +43,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -80,7 +80,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -124,7 +124,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -168,7 +168,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -212,7 +212,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
