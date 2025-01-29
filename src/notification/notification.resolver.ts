@@ -21,7 +21,7 @@ export class NotificationResolver {
 	@Mutation(() => Notification)
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async assignNotification(@Args('input') input: NotificationAssign) {
-		return this.svc.noti.assign({ ...input });
+		return this.svc.notification.assign({ ...input });
 	}
 
 	/**
@@ -30,11 +30,11 @@ export class NotificationResolver {
 	@Mutation(() => Notification)
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async updateNotification(@Args('input') input: NotificationUpdate) {
-		const notification = await this.svc.noti.findOne({ id: input.id });
+		const notification = await this.svc.notification.findOne({ id: input.id });
 
 		if (!notification)
 			throw new ServerException('Invalid', 'Notification', '', 'user');
 
-		return this.svc.noti.modify(notification.id, input);
+		return this.svc.notification.modify(notification.id, input);
 	}
 }

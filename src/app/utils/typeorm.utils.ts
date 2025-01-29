@@ -97,22 +97,24 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 */
 	find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
 		const {
-			deep = 1,
-			relations = [''],
-			take = 50,
-			skip = 0,
-			order = undefined,
-			...newOptions
-		} = options || {};
+				deep = 1,
+				relations = [''],
+				take = 50,
+				skip = 0,
+				order = undefined,
+				...newOptions
+			} = options || {},
+			findRelations = this.relations
+				.map((i) => i.split('.').slice(0, deep).join('.'))
+				.filter((i) => relations.some((j) => i.includes(j)))
+				.filter((value, index, self) => self.indexOf(value) === index);
+
 		return this.repo.find({
 			where: <FindOptionsWhere<T>>newOptions,
 			take,
 			skip,
 			order,
-			relations: this.relations
-				.map((i) => i.split('.').slice(0, deep).join('.'))
-				.filter((i) => relations.some((j) => i.includes(j)))
-				.filter((value, index, self) => self.indexOf(value) === index),
+			relations: findRelations,
 		});
 	}
 

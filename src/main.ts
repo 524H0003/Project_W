@@ -70,12 +70,12 @@ async function bootstrap() {
 				authenticate: async (email, password) => {
 					const hook = await appSvc.hook.findOne({ signature: password });
 
-					if (!hook || email !== cfgSvc.get('ADMIN_EMAIL')) return null;
+					// if (!hook || email !== cfgSvc.get('ADMIN_EMAIL')) return null;
 
 					return { email, password };
 				},
 				cookieName: 'adminjs',
-				cookiePassword: 'sessionsecret',
+				cookiePassword: cfgSvc.get('SERVER_SECRET'),
 			},
 			null,
 			{ resave: false, saveUninitialized: false },

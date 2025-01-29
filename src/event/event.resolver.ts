@@ -25,7 +25,7 @@ export class EventResolver {
 	) {
 		return this.svc.event.assign({
 			...input,
-			eventCreatedBy: await this.svc.eventcreator.id(user.id),
+			eventCreatedBy: await this.svc.eventCreator.id(user.id),
 		});
 	}
 

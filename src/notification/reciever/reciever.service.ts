@@ -27,7 +27,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 		notificationId: string,
 		recievedUserId: string,
 	): Promise<Reciever> {
-		const fromNotification = await this.svc.noti.id(notificationId),
+		const fromNotification = await this.svc.notification.id(notificationId),
 			toUser = await this.svc.user.id(recievedUserId);
 
 		return new Reciever(await this.save({ fromNotification, toUser }));

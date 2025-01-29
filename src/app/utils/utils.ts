@@ -212,6 +212,10 @@ declare global {
 		 * To capitalize
 		 */
 		readonly capitalize: string;
+		/**
+		 * To uncapitalize
+		 */
+		readonly uncapitalize: string;
 	}
 
 	/**
@@ -411,6 +415,13 @@ Object.defineProperty(String.prototype, 'lower', {
 Object.defineProperty(String.prototype, 'capitalize', {
 	get: function () {
 		return (this as string).at(0).toUpperCase() + (this as string).slice(1);
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'uncapitalize', {
+	get: function () {
+		return (this as string).at(0).toLowerCase() + (this as string).slice(1);
 	},
 	enumerable: true,
 	configurable: true,

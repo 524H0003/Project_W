@@ -155,7 +155,7 @@ const getCustomResource = (svc: AppService): typeof Resource =>
 		constructor(model: typeof BaseEntity) {
 			super(model);
 
-			this.resourceName = model.name.toLowerCase();
+			this.resourceName = model.name.uncapitalize;
 		}
 
 		isNumeric(value: any) {

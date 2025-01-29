@@ -39,7 +39,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		if (existedUser) throw new ServerException('Invalid', 'Email', '', 'user');
 
 		return validation<User>(rawFaculty, async () => {
-			const eventCreator = await this.svc.eventcreator.assign(
+			const eventCreator = await this.svc.eventCreator.assign(
 				await this.svc.auth.signUp(
 					InterfaceCasting.quick(input, IUserSignUpKeys),
 					avatar,
