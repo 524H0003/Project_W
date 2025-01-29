@@ -100,9 +100,7 @@ describe('updateNotification', () => {
 		});
 		await execute(
 			() => svc.notification.find({ content: notification.content }),
-			{
-				exps: [{ type: 'toHaveLength', params: [0] }],
-			},
+			{ exps: [{ type: 'toHaveLength', params: [0] }] },
 		);
 	});
 

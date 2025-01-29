@@ -70,9 +70,7 @@ describe('modify', () => {
 
 		await execute(
 			() => svc.eventParticipator.modify(event.id, { interviewNote }),
-			{
-				exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
-			},
+			{ exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }] },
 		);
 		await execute(() => svc.eventParticipator.findOne({ interviewNote }), {
 			exps: [{ type: 'toBeDefined', params: [] }],

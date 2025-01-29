@@ -114,9 +114,7 @@ describe('updateParticipator', () => {
 
 		await execute(
 			async () => svc.eventParticipator.findOne({ interviewNote }),
-			{
-				exps: [{ type: 'toBeDefined', params: [] }],
-			},
+			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 	});
 

@@ -63,9 +63,7 @@ async function bootstrap() {
 				Notification,
 				EventCreator,
 			].map((i) => generalDisplay(i)),
-			dashboard: {
-				component: Components.Dashboard,
-			},
+			dashboard: { component: Components.Dashboard },
 			componentLoader,
 		}),
 		adminRouter = buildAuthenticatedRouter(
