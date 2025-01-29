@@ -1,25 +1,14 @@
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
-import { configs as tsConfig } from 'typescript-eslint';
-import prettierConfig from 'prettier';
-import globals from 'globals';
 
 export default [
 	{
 		name: 'Main',
 		files: ['src/**/*.ts'],
-		ignores: [
-			'**/*.js',
-			'src/types.ts',
-			'**/*.d.ts',
-		],
+		ignores: ['**/*.js', 'src/types.ts', '**/*.d.ts'],
 		languageOptions: {
 			parser: tsParser,
 			parserOptions: { project: 'tsconfig.json', sourceType: 'commonjs' },
-			globals: {
-				...globals.jest,
-				...globals.node,
-			},
 		},
 		plugins: { tsPlugin },
 		rules: {
