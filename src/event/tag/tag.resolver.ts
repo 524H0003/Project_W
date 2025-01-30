@@ -20,7 +20,7 @@ export class EventTagResolver {
 	 */
 	@Mutation(() => EventTag)
 	@Roles([UserRole.faculty, UserRole.enterprise])
-	async assignEventTag(@Args('input') input: EventTagAssign) {
+	assignEventTag(@Args('input') input: EventTagAssign) {
 		return this.svc.eventTag.assign(input);
 	}
 
@@ -29,7 +29,7 @@ export class EventTagResolver {
 	 */
 	@Mutation(() => EventTag)
 	@Roles([UserRole.faculty, UserRole.enterprise])
-	async attachEventTag(@Args('input') input: EventTagAttach) {
+	attachEventTag(@Args('input') input: EventTagAttach) {
 		return this.svc.eventTag.attach({ name: input.name }, input.eventId);
 	}
 
@@ -37,7 +37,7 @@ export class EventTagResolver {
 	/**
 	 * list all tags server have
 	 */
-	@Query(() => [EventTag]) @AllowPublic() async listAllTags() {
+	@Query(() => [EventTag]) @AllowPublic() listAllTags() {
 		return this.svc.eventTag.find({});
 	}
 }

@@ -1,25 +1,25 @@
-import tsParser from '@typescript-eslint/parser';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
 
-export default [
+export default tseslint.config(
+	eslint.configs.recommended,
+	tseslint.configs.strict,
 	{
-		name: 'Main',
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+				tsconfigRootDir: import.meta.dirname,
+				project: 'tsconfig.json',
+				sourceType: 'commonjs',
+			},
+		},
+		rules: {
+			'@typescript-eslint/no-floating-promises': 'error',
+			'@typescript-eslint/no-unused-vars': 'error',
+			'@typescript-eslint/no-extraneous-class': 'off',
+			'require-await': 'error',
+		},
 		files: ['src/**/*.ts'],
 		ignores: ['**/*.js', 'src/types.ts', '**/*.d.ts'],
-		languageOptions: {
-			parser: tsParser,
-			parserOptions: { project: 'tsconfig.json', sourceType: 'commonjs' },
-		},
-		plugins: { tsPlugin },
-		rules: {
-			'tsPlugin/interface-name-prefix': 'off',
-			'tsPlugin/explicit-function-return-type': 'off',
-			'tsPlugin/explicit-module-boundary-types': 'off',
-			'tsPlugin/no-explicit-any': 'off',
-			'tsPlugin/no-floating-promises': 'error',
-			'tsPlugin/require-await': 'error',
-			'tsPlugin/no-unused-vars': 'error',
-			'tsPlugin/ban-types': 'off',
-		},
 	},
-];
+);

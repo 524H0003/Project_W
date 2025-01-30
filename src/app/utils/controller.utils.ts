@@ -63,18 +63,18 @@ export class BaseController {
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
 	 * @param {IUserRecieve} usrRcv - user's recieve infomations
-	 * @return {void}
+	 * @return {Promise<void>}
 	 */
-	protected responseWithUserRecieve(
+	protected async responseWithUserRecieve(
 		request: Request,
 		response: Response,
 		usrRcv: IUserRecieve,
-	): void {
+	): Promise<void> {
 		this.clearCookies(request, response);
 
 		response
 			.cookie(
-				hash(this.acsKey),
+				await hash(this.acsKey),
 				this.svc.auth.encrypt(
 					usrRcv.accessToken,
 					usrRcv.refreshToken.split('.')[2],
@@ -82,7 +82,7 @@ export class BaseController {
 				this.ckiOpt,
 			)
 			.cookie(
-				hash(this.rfsKey),
+				await hash(this.rfsKey),
 				this.svc.auth.encrypt(usrRcv.refreshToken),
 				this.ckiOpt,
 			)

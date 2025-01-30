@@ -16,7 +16,7 @@ beforeAll(async () => {
 
 beforeAll(async () => {
 	const rawUser = User.test(fileName);
-	if (rawUser.hashedPassword) true;
+	await rawUser.hashingPassword();
 
 	(notification = await svc.notification.assign(Notification.test(fileName))),
 		(user = await svc.user.assign(rawUser));
@@ -54,7 +54,7 @@ describe('assignMany', () => {
 	beforeEach(async () => {
 		for (let i = 0; i < 5; i++) {
 			const tUser = User.test(fileName);
-			if (tUser.hashedPassword) true;
+			await tUser.hashingPassword();
 			usersId.push((await svc.user.assign(tUser)).id);
 		}
 	});

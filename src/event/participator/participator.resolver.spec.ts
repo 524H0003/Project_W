@@ -42,7 +42,7 @@ beforeEach(async () => {
 			Employee.test(fileName),
 			mailerSvc,
 		),
-		stu = await assignStudent(req, svc, Student.test(fileName), mailerSvc);
+		stu = await assignStudent(req, svc, await Student.test(fileName), mailerSvc);
 
 	(student = stu.student),
 		(stuHeaders = stu.headers),
@@ -112,10 +112,9 @@ describe('updateParticipator', () => {
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 
-		await execute(
-			async () => svc.eventParticipator.findOne({ interviewNote }),
-			{ exps: [{ type: 'toBeDefined', params: [] }] },
-		);
+		await execute(() => svc.eventParticipator.findOne({ interviewNote }), {
+			exps: [{ type: 'toBeDefined', params: [] }],
+		});
 	});
 
 	it('failed due to invalid id', async () => {

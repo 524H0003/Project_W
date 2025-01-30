@@ -13,9 +13,9 @@ beforeAll(async () => {
 	svc = appSvc;
 });
 
-beforeEach(() => {
+beforeEach(async () => {
 	user = User.test(fileName);
-	if (user.hashedPassword) true;
+	await user.hashingPassword();
 });
 
 it('assign', async () => {

@@ -44,8 +44,7 @@ it('remove', async () => {
 
 	await svc.device.assign(device);
 
-	// eslint-disable-next-line tsPlugin/require-await
-	await execute(async () => () => svc.device.remove({ id: device.id }), {
+	await execute(() => () => svc.device.remove({ id: device.id }), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
 	await execute(() => svc.device.findOne(device), {

@@ -194,7 +194,7 @@ declare global {
 		readonly random: number;
 		/**
 		 * range() # like Python's range()		 */
-		ra(input: () => Promise<any>): Promise<void>;
+		ra(input: () => Promise<any> | any): Promise<void>;
 	}
 	/**
 	 * String interface
@@ -445,7 +445,7 @@ Object.defineProperty(Array.prototype, 'lastElement', {
 	configurable: true,
 });
 // Number.prototype
-Number.prototype.ra = async function (input: () => Promise<any>) {
+Number.prototype.ra = async function (input: () => Promise<any> | any) {
 	await Array.from({ length: Number(this) }, (_, i) => i).reduce(async (i) => {
 		await i;
 		return input();

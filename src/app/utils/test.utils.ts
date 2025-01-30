@@ -46,7 +46,7 @@ export async function execute<
 	R,
 	K extends keyof jest.Matchers<(...args: any[]) => Promise<R>>,
 >(
-	func: (...args: any[]) => Promise<R>,
+	func: (...args: any[]) => Promise<R> | R,
 	options: {
 		numOfRun?: number;
 		exps: Expectation<typeof func, K>[];
@@ -54,7 +54,7 @@ export async function execute<
 	},
 ) {
 	const { numOfRun = 1, exps, onFinish = null } = options,
-		executed: Promise<R> = func(),
+		executed: Promise<R> | R = func(),
 		l1 = expect(executed);
 
 	if (numOfRun - 1) await numOfRun.ra(func);

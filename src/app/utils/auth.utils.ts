@@ -1,4 +1,4 @@
-import { compareSync, hashSync } from 'bcrypt';
+import { hash as sHash, verify } from 'argon2';
 import { validate } from 'class-validator';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 
@@ -15,7 +15,7 @@ export async function validation<T>(
 	const errors = Object.assign(
 		{},
 		...(await validate(input)).map((i) => i.constraints),
-	) as Object;
+	) as object;
 
 	if (!Object.keys(errors).length) return then();
 	else
@@ -33,8 +33,8 @@ export async function validation<T>(
  * @param {string} input - The string need to hash
  * @return {string} Hashed string
  */
-export function hash(input: string): string {
-	return hashSync(input, (8).random + 4).replaceAll('/', '*');
+export async function hash(input: string): Promise<string> {
+	return await sHash(input);
 }
 
 /**
@@ -43,8 +43,8 @@ export function hash(input: string): string {
  * @param {string} input - hashed string
  * @return {boolean}
  */
-export function compare(origin: string, input: string): boolean {
-	return compareSync(origin, input.replaceAll('*', '/'));
+export function compare(origin: string, input: string): Promise<boolean> {
+	return verify(origin, input);
 }
 
 /**

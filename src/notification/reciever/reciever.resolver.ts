@@ -26,7 +26,7 @@ export class RecieverResolver {
 	 */
 	@Mutation(() => Reciever)
 	@Roles([UserRole.faculty, UserRole.enterprise])
-	async assignReciever(@Args('input') input: RecieverAssign) {
+	assignReciever(@Args('input') input: RecieverAssign) {
 		return this.svc.recie.assign(input.notificationId, input.userId);
 	}
 
@@ -35,14 +35,14 @@ export class RecieverResolver {
 	 */
 	@Mutation(() => [Reciever])
 	@Roles([UserRole.faculty, UserRole.enterprise])
-	async assignRecieverMany(@Args('input') input: RecieverAssignMany) {
+	assignRecieverMany(@Args('input') input: RecieverAssignMany) {
 		return this.svc.recie.assignMany(input.notificationId, input.usersId);
 	}
 
 	/**
 	 * Read notification
 	 */
-	@Mutation(() => Reciever) @Roles([UserRole.student]) async readNotification(
+	@Mutation(() => Reciever) @Roles([UserRole.student]) readNotification(
 		@Args('input') input: ReadNotification,
 	) {
 		return this.svc.recie.read(input.recieverId);
@@ -53,7 +53,7 @@ export class RecieverResolver {
 	 */
 	@Mutation(() => [Reciever])
 	@Roles([UserRole.student])
-	async readNotificationMany(@Args('input') input: ReadNotificationMany) {
+	readNotificationMany(@Args('input') input: ReadNotificationMany) {
 		return this.svc.recie.readMany(input.recieversId);
 	}
 
@@ -63,7 +63,7 @@ export class RecieverResolver {
 	 */
 	@Query(() => [Reciever])
 	@Roles([UserRole.student])
-	async listAllNotifications(
+	listAllNotifications(
 		@Args('isRead', { nullable: true }) isRead: boolean,
 		@CurrentUser() user: User,
 	) {

@@ -98,7 +98,7 @@ describe('assignRecieverMany', () => {
 	beforeEach(async () => {
 		for (let i = 0; i < 5; i++) {
 			const tUser = User.test(fileName);
-			if (tUser.hashedPassword) true;
+			await tUser.hashingPassword();
 			usersId.push((await svc.user.assign(tUser)).id);
 		}
 	});
@@ -139,7 +139,7 @@ describe('readNotification', () => {
 	let reciever: Reciever, userHeaders: object;
 
 	beforeEach(async () => {
-		const tUser = Student.test(fileName);
+		const tUser = await Student.test(fileName);
 		userHeaders = (await assignStudent(req, svc, tUser, mailerSvc)).headers;
 		reciever = await svc.recie.assign(notification.id, tUser.user.id);
 	});
@@ -256,8 +256,7 @@ describe('listAllNotifications', () => {
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
-					// eslint-disable-next-line tsPlugin/require-await
-					await execute(async () => result.length, {
+					await execute(() => result.length, {
 						exps: [{ type: 'toEqual', params: [5 - numRead] }],
 					});
 

@@ -47,7 +47,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 				),
 			);
 
-			if (eventCreator.user.hashedPassword) {
+			if (await eventCreator.user.hashingPassword()) {
 				return (
 					await this.save({
 						eventCreator,
@@ -63,7 +63,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 	 * @param {string} id - faculty id
 	 * @return {Promise<Faculty>}
 	 */
-	async id(id: string): Promise<Faculty> {
+	id(id: string): Promise<Faculty> {
 		return this.findOne({ eventCreator: { user: { baseUser: { id } } } });
 	}
 }

@@ -33,23 +33,23 @@ beforeEach(async () => {
 });
 
 describe('use', () => {
-	beforeEach(() => {
-		req.cookies[`${hash(rfsKey)}`] = authSvc.encrypt(rfsTkn);
-		req.cookies[`${hash(acsKey)}`] = authSvc.encrypt(
+	beforeEach(async () => {
+		req.cookies[`${await hash(rfsKey)}`] = authSvc.encrypt(rfsTkn);
+		req.cookies[`${await hash(acsKey)}`] = authSvc.encrypt(
 			acsTkn,
 			rfsTkn.split('.')[2],
 		);
 	});
 
-	it('refresh', async () => {
+	it('refresh', () => {
 		req.url = '/refresh';
-		await authMdw.use(req, res, next),
+		authMdw.use(req, res, next),
 			expect(req.headers.authorization).toBe(`Bearer ${rfsTkn}`),
 			expect(next).toHaveBeenCalled();
 	});
 
-	it('access', async () => {
-		await authMdw.use(req, res, next),
+	it('access', () => {
+		authMdw.use(req, res, next),
 			expect(req.headers.authorization).toBe(`Bearer ${acsTkn}`),
 			expect(next).toHaveBeenCalled();
 	});

@@ -135,9 +135,9 @@ const uuidRegex =
 			properties: Object.assign(
 				{},
 				...[
-					'_hashedPassword',
-					'eventCreator.user._hashedPassword',
-					'user._hashedPassword',
+					'hashedPassword',
+					'eventCreator.user.hashedPassword',
+					'user.hashedPassword',
 					'user.blackBox.createdAt',
 					'user.baseUser.avatarPath',
 					'user.blackBox.updatedAt',
@@ -250,7 +250,7 @@ const getCustomResource = (svc: AppService): typeof Resource =>
 			params = {};
 			Object.keys(unflattenedParams).forEach((i) => {
 				let name = i.split('.').at(-1);
-				if (name === '_hashedPassword') name = 'password';
+				if (name === 'hashedPassword') name = 'password';
 				if (unflattenedParams[i]) params[name] = unflattenedParams[i];
 			});
 

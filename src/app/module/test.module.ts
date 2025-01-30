@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 /* eslint-disable tsPlugin/require-await */
 import { ApolloDriver } from '@nestjs/apollo';
 import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
