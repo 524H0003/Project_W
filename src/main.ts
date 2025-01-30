@@ -4,9 +4,11 @@ import https from 'https';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { ExpressAdapter } from '@nestjs/platform-express';
+import {
+	FastifyAdapter,
+	NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import cookieParser from 'cookie-parser';
-import express from 'express';
 import { MainModule } from './main.module';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Faculty } from 'university/faculty/faculty.entity';
@@ -19,24 +21,13 @@ import { Event } from 'event/event.entity';
 import { EventCreator } from 'event/creator/creator.entity';
 import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
-import helmet from 'helmet';
+import helmet from '@fastify/helmet';
 
 async function bootstrap() {
-	const httpsPemFolder = './secrets',
-		server = express(),
-		app = (
-			await NestFactory.create(MainModule, new ExpressAdapter(server), {
-				cors: {
-					// origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
-					origin: '*',
-					// /^(https:\/\/){1}(((.*)(anhvietnguyen.id.vn){1}){1}|(localhost){1}:([0-9]){1,4})/,
-					methods: '*',
-					credentials: true,
-				},
-			})
-		)
-			.use(cookieParser())
-			.useGlobalPipes(new ValidationPipe()),
+	const app = await NestFactory.create<NestFastifyApplication>(
+			MainModule,
+			new FastifyAdapter(),
+		),
 		{ httpAdapter } = app.get(HttpAdapterHost),
 		cfgSvc = app.get(ConfigService),
 		appSvc = app.get(AppService),
@@ -84,50 +75,42 @@ async function bootstrap() {
 		);
 
 	await app
-		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
-		.use(
-			helmet({
-				crossOriginEmbedderPolicy: false,
-				contentSecurityPolicy: {
-					directives: {
-						imgSrc: [
-							`'self'`,
-							'data:',
-							'apollo-server-landing-page.cdn.apollographql.com',
-						],
-						scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
-						manifestSrc: [
-							`'self'`,
-							'apollo-server-landing-page.cdn.apollographql.com',
-						],
-						frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
-					},
-				},
-			}),
-		)
+		.use(cookieParser())
 		.use(admin.options.rootPath, adminRouter)
 		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.setGlobalPrefix('api/v1')
-		.init();
-	http
-		.createServer(server)
-		.listen(process.env.PORT || cfgSvc.get('SERVER_PORT'));
-
-	try {
-		if (existsSync(httpsPemFolder)) {
-			https
-				.createServer(
-					{
-						key: readFileSync(`${httpsPemFolder}/key.pem`),
-						cert: readFileSync(`${httpsPemFolder}/cert.pem`),
-					},
-					server,
-				)
-				.listen(2053);
-		}
-	} catch {
-		console.warn('Https connection not initialize');
-	}
+		.useGlobalPipes(new ValidationPipe())
+		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
+		.listen(cfgSvc.get('SERVER_PORT'));
+	await app.register(helmet, {
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: [`'self'`, 'unpkg.com'],
+				styleSrc: [
+					`'self'`,
+					`'unsafe-inline'`,
+					'cdn.jsdelivr.net',
+					'fonts.googleapis.com',
+					'unpkg.com',
+				],
+				fontSrc: [`'self'`, 'fonts.gstatic.com', 'data:'],
+				imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net'],
+				scriptSrc: [
+					`'self'`,
+					`https: 'unsafe-inline'`,
+					`cdn.jsdelivr.net`,
+					`'unsafe-eval'`,
+				],
+			},
+		},
+	});
+	app.enableCors({
+		// origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
+		origin: '*',
+		// /^(https:\/\/){1}(((.*)(anhvietnguyen.id.vn){1}){1}|(localhost){1}:([0-9]){1,4})/,
+		methods: '*',
+		credentials: true,
+	});
 }
 
 void bootstrap();

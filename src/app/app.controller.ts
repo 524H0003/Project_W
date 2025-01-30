@@ -12,11 +12,9 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, MetaData } from 'auth/auth.guard';
 import { Hook } from 'app/hook/hook.entity';
 import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
-import { Request, Response } from 'express';
 import { memoryStorage } from 'multer';
 import { IStudentSignup } from 'university/student/student.model';
 import { IUserSignUp } from 'user/user.model';
