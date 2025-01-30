@@ -2,6 +2,7 @@ import { execute, initJest } from 'app/utils/test.utils';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { AppService } from './app.service';
+import { expect } from '@jest/globals';
 
 const fileName = curFile(__filename);
 

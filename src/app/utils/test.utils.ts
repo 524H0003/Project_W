@@ -11,6 +11,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import supertest from 'supertest';
+import { expect } from '@jest/globals';
 
 /**
  * Exported variables
