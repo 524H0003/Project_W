@@ -81,16 +81,13 @@
 		"pg": "^8.13.1",
 		"picocolors": "^1.1.1",
 		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
 		"typeorm": "^0.3.20",
 		"typeorm-extension": "^3.6.3",
 		"typescript": "^5.7.3",
-		"typescript-eslint": "^8.21.0",
 		"ua-parser-js": "^2.0.0"
 	},
 	"devDependencies": {
 		"@compodoc/compodoc": "^1.1.26",
-		"@eslint/js": "^9.19.0",
 		"@nestjs/schematics": "^10.2.3",
 		"@nestjs/testing": "^10.4.15",
 		"@swc/cli": "^0.6.0",
@@ -106,7 +103,6 @@
 		"@types/supertest": "^6.0.2",
 		"@types/ua-parser-js": "^0.7.39",
 		"@typescript-eslint/eslint-plugin": "^8.22.0",
-		"@typescript-eslint/eslint-plugin-tslint": "^7.0.2",
 		"@typescript-eslint/parser": "^8.22.0",
 		"dts-bundle-generator": "^9.5.1",
 		"eslint": "^9.19.0",
@@ -125,7 +121,8 @@
 		"ts-loader": "^9.5.2",
 		"ts-morph": "^25.0.0",
 		"ts-node": "^10.9.2",
-		"tsconfig-paths": "^4.2.0"
+		"tsconfig-paths": "^4.2.0",
+		"typescript-eslint": "^8.22.0"
 	},
 	"optionalDependencies": {
 		"@css-inline/css-inline-win32-x64-msvc": "^0.14.3",

@@ -88,7 +88,7 @@ export class AuthService extends Cryption {
 
 		const user = await this.usrSvc.email(input.email);
 
-		if (user && compare(input.password, await user.hashingPassword()))
+		if (user && await compare(input.password, await user.hashingPassword()))
 			return user;
 		if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
 		throw new ServerException('Invalid', 'Password', '', 'user');

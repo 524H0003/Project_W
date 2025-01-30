@@ -44,7 +44,7 @@ it('remove', async () => {
 
 	await svc.device.assign(device);
 
-	await execute(() => () => svc.device.remove({ id: device.id }), {
+	await execute(() => svc.device.remove({ id: device.id }), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
 	await execute(() => svc.device.findOne(device), {

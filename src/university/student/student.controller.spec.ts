@@ -12,13 +12,13 @@ beforeAll(async () => {
 	req = requester;
 });
 
-beforeEach(() => {
-	stu = Student.test(fileName);
+beforeEach(async () => {
+	stu = await Student.test(fileName);
 });
 
 describe('signup', () => {
 	it('fail due to wrong email format', async () => {
-		stu = Student.test(fileName, { email: 'aa' });
+		stu = await Student.test(fileName, { email: 'aa' });
 
 		await execute(
 			async () =>

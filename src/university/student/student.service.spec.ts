@@ -16,7 +16,7 @@ beforeEach(() => {});
 
 describe('StudentService', () => {
 	it('signUp for student', async () => {
-		student = Student.test(fileName);
+		student = await Student.test(fileName);
 
 		await execute(
 			() =>
@@ -32,7 +32,7 @@ describe('StudentService', () => {
 	});
 
 	it('signUp for stranger', async () => {
-		student = Student.test(fileName, { email: 'lmao' });
+		student = await Student.test(fileName, { email: 'lmao' });
 
 		await execute(
 			() =>

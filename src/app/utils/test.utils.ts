@@ -54,8 +54,10 @@ export async function execute<
 	},
 ) {
 	const { numOfRun = 1, exps, onFinish = null } = options,
-		executed: Promise<R> | R = func(),
-		l1 = expect(executed);
+		executed = func(),
+		l1 = expect(
+			executed instanceof Promise ? executed : (async () => await executed)(),
+		);
 
 	if (numOfRun - 1) await numOfRun.ra(func);
 	if (!exps.length)

@@ -41,15 +41,15 @@ describe('use', () => {
 		);
 	});
 
-	it('refresh', () => {
+	it('refresh', async () => {
 		req.url = '/refresh';
-		authMdw.use(req, res, next),
+		await authMdw.use(req, res, next),
 			expect(req.headers.authorization).toBe(`Bearer ${rfsTkn}`),
 			expect(next).toHaveBeenCalled();
 	});
 
-	it('access', () => {
-		authMdw.use(req, res, next),
+	it('access', async () => {
+		await authMdw.use(req, res, next),
 			expect(req.headers.authorization).toBe(`Bearer ${acsTkn}`),
 			expect(next).toHaveBeenCalled();
 	});

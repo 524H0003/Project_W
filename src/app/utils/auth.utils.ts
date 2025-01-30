@@ -34,7 +34,7 @@ export async function validation<T>(
  * @return {string} Hashed string
  */
 export async function hash(input: string): Promise<string> {
-	return await sHash(input);
+	return Buffer.from(await sHash(input), 'utf-8').toString('base64url');
 }
 
 /**
@@ -43,8 +43,12 @@ export async function hash(input: string): Promise<string> {
  * @param {string} input - hashed string
  * @return {boolean}
  */
-export function compare(origin: string, input: string): Promise<boolean> {
-	return verify(origin, input);
+export async function compare(origin: string, input: string): Promise<boolean> {
+	try {
+		return await verify(Buffer.from(input, 'base64url').toString('utf-8'), origin);
+	} catch {
+		return false;
+	}
 }
 
 /**

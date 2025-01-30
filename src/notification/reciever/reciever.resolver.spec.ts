@@ -175,7 +175,7 @@ describe('readNotificationMany', () => {
 	let userHeaders: object;
 
 	beforeEach(async () => {
-		const tUser = Student.test(fileName),
+		const tUser = await Student.test(fileName),
 			{ headers, student } = await assignStudent(req, svc, tUser, mailerSvc);
 
 		userHeaders = headers;
@@ -223,7 +223,7 @@ describe('listAllNotifications', () => {
 	let userHeaders: object, numRead: number;
 
 	beforeEach(async () => {
-		const tUser = Student.test(fileName),
+		const tUser = await Student.test(fileName),
 			{ headers, student } = await assignStudent(req, svc, tUser, mailerSvc);
 
 		(userHeaders = headers), (numRead = 0);

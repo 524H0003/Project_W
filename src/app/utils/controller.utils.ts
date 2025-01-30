@@ -44,7 +44,7 @@ export class BaseController {
 	 * @param {boolean} acs - if clear access token
 	 * @param {boolean} rfs - if clear refresh token
 	 */
-	private clearCookies(
+	private async clearCookies(
 		request: Request,
 		response: Response,
 		acs: boolean = true,
@@ -52,8 +52,8 @@ export class BaseController {
 	) {
 		for (const cki in request.cookies)
 			if (
-				(compare(this.acsKey, cki) && acs) ||
-				(compare(this.rfsKey, cki) && rfs)
+				((await compare(this.acsKey, cki)) && acs) ||
+				((await compare(this.rfsKey, cki)) && rfs)
 			)
 				response.clearCookie(cki, this.ckiOpt);
 	}
@@ -70,7 +70,7 @@ export class BaseController {
 		response: Response,
 		usrRcv: IUserRecieve,
 	): Promise<void> {
-		this.clearCookies(request, response);
+		await this.clearCookies(request, response);
 
 		response
 			.cookie(
