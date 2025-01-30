@@ -43,7 +43,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run build:dev
 
@@ -78,7 +78,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:service
 
@@ -120,7 +120,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:resolver
 
@@ -162,7 +162,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:controller
 
@@ -204,7 +204,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run start:ci
 
@@ -240,7 +240,7 @@ jobs:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run format && npm run lint
 
