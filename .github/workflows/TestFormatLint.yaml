@@ -173,11 +173,47 @@ jobs:
             ./reports/controller.xml
             ./coverage/controller.txt
 
+  Test_web:
+    needs: changes
+    if: ${{ needs.changes.outputs.project == 'true' }}
+
+    name: 'Test web'
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 2
+
+    permissions:
+      contents: write
+      actions: write
+      checks: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: ikalnytskyi/action-setup-postgres@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            **/node_modules
+            **/build
+          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.json') }}
+
+      - run: npm run start:ci
+
   FormatAndLint:
     needs:
       - Test_service
       - Test_resolver
       - Test_controller
+      - Test_web
 
     name: 'Format & Lint'
 
