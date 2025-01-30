@@ -42,7 +42,7 @@ export class StudentService extends DatabaseRequests<Student> {
 		if (!rawStu.user.baseUser.email.match(this.studentMailRex))
 			throw new ServerException('Invalid', 'Email', '', 'user');
 
-		return await validation<void>(rawStu, async () => {
+		return await validation(rawStu, async () => {
 			const user = await this.svc.auth.signUp(
 				{
 					...InterfaceCasting.quick(input, IUserSignUpKeys),
@@ -53,7 +53,7 @@ export class StudentService extends DatabaseRequests<Student> {
 				{ role: UserRole.student },
 			);
 
-			if (user.hashedPassword) {
+			if (await user.hashingPassword()) {
 				await this.save({
 					user,
 					...InterfaceCasting.quick(input, IStudentInfoKeys),

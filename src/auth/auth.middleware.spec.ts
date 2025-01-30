@@ -5,6 +5,7 @@ import { createRequest, createResponse } from 'node-mocks-http';
 import { AuthMiddleware } from './auth.middleware';
 import { AuthService } from './auth.service';
 import { initJest } from 'app/utils/test.utils';
+import { expect } from '@jest/globals';
 
 const acsTkn = '..access-token',
 	rfsTkn = '..refresh-token';
@@ -33,9 +34,9 @@ beforeEach(async () => {
 });
 
 describe('use', () => {
-	beforeEach(() => {
-		req.cookies[`${hash(rfsKey)}`] = authSvc.encrypt(rfsTkn);
-		req.cookies[`${hash(acsKey)}`] = authSvc.encrypt(
+	beforeEach(async () => {
+		req.cookies[`${await hash(rfsKey)}`] = authSvc.encrypt(rfsTkn);
+		req.cookies[`${await hash(acsKey)}`] = authSvc.encrypt(
 			acsTkn,
 			rfsTkn.split('.')[2],
 		);

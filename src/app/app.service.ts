@@ -45,16 +45,16 @@ export class AppService {
 		@Inject(forwardRef(() => FacultyService)) public faculty: FacultyService,
 		@Inject(forwardRef(() => FileService)) public file: FileService,
 		@Inject(forwardRef(() => EventCreatorService))
-		public eventcreator: EventCreatorService,
+		public eventCreator: EventCreatorService,
 		@Inject(forwardRef(() => UserService)) public user: UserService,
 		@Inject(forwardRef(() => SignService)) public sign: SignService,
 		@Inject(forwardRef(() => EventService)) public event: EventService,
 		@Inject(forwardRef(() => EventTagService)) public eventTag: EventTagService,
 		@Inject(forwardRef(() => NotificationService))
-		public noti: NotificationService,
+		public notification: NotificationService,
 		@Inject(forwardRef(() => RecieverService)) public recie: RecieverService,
 		@Inject(forwardRef(() => EventParticipatorService))
-		public eventParti: EventParticipatorService,
+		public eventParticipator: EventParticipatorService,
 		@Inject(forwardRef(() => AWSService)) public aws: AWSService,
 	) {
 		this.baseUser = new BaseUserService(baseUserRepo);

@@ -1,3 +1,4 @@
+import { expect } from '@jest/globals';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
 import { execute, initJest } from 'app/utils/test.utils';

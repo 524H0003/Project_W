@@ -56,7 +56,7 @@ beforeEach(async () => {
 	await req.post('/signup').send({ ...user, ...user.baseUser });
 	user = await svc.user.findOne({ baseUser: { name: user.baseUser.name } });
 
-	notification = await svc.noti.findOne({
+	notification = await svc.notification.findOne({
 		id: (await assignNoti(Notification.test(fileName), headers))
 			.assignNotification.id,
 	});
@@ -98,7 +98,7 @@ describe('assignRecieverMany', () => {
 	beforeEach(async () => {
 		for (let i = 0; i < 5; i++) {
 			const tUser = User.test(fileName);
-			if (tUser.hashedPassword) true;
+			await tUser.hashingPassword();
 			usersId.push((await svc.user.assign(tUser)).id);
 		}
 	});
@@ -120,7 +120,7 @@ describe('assignRecieverMany', () => {
 							() => svc.user.findOne({ recievedNotifications: [{ id }] }),
 							{ exps: [{ type: 'toBeDefined', params: [] }] },
 						);
-						await execute(() => svc.noti.findOne({ sent: [{ id }] }), {
+						await execute(() => svc.notification.findOne({ sent: [{ id }] }), {
 							exps: [{ type: 'toBeDefined', params: [] }],
 						});
 					}
@@ -139,7 +139,7 @@ describe('readNotification', () => {
 	let reciever: Reciever, userHeaders: object;
 
 	beforeEach(async () => {
-		const tUser = Student.test(fileName);
+		const tUser = await Student.test(fileName);
 		userHeaders = (await assignStudent(req, svc, tUser, mailerSvc)).headers;
 		reciever = await svc.recie.assign(notification.id, tUser.user.id);
 	});
@@ -175,7 +175,7 @@ describe('readNotificationMany', () => {
 	let userHeaders: object;
 
 	beforeEach(async () => {
-		const tUser = Student.test(fileName),
+		const tUser = await Student.test(fileName),
 			{ headers, student } = await assignStudent(req, svc, tUser, mailerSvc);
 
 		userHeaders = headers;
@@ -223,7 +223,7 @@ describe('listAllNotifications', () => {
 	let userHeaders: object, numRead: number;
 
 	beforeEach(async () => {
-		const tUser = Student.test(fileName),
+		const tUser = await Student.test(fileName),
 			{ headers, student } = await assignStudent(req, svc, tUser, mailerSvc);
 
 		(userHeaders = headers), (numRead = 0);
@@ -256,8 +256,7 @@ describe('listAllNotifications', () => {
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
-					// eslint-disable-next-line tsPlugin/require-await
-					await execute(async () => result.length, {
+					await execute(() => result.length, {
 						exps: [{ type: 'toEqual', params: [5 - numRead] }],
 					});
 

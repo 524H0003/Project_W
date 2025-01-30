@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from 'user/user.model';
 import { RoleGuard } from './auth.guard';
 import { execute, initJest } from 'app/utils/test.utils';
+import { expect } from '@jest/globals';
 
 let roleGrd: RoleGuard, rflt: Reflector, ctx: ExecutionContext;
 

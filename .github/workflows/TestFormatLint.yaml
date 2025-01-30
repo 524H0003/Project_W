@@ -36,16 +36,18 @@ jobs:
               - '**.ts'
               - '**.json'
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/cache@v4
         with:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run build:dev
+      - run: npm run prebuild:dev
 
   Test_service:
     needs: changes
@@ -71,16 +73,14 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/cache/restore@v4
         with:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:service
 
@@ -115,16 +115,14 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/cache/restore@v4
         with:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:resolver
 
@@ -143,7 +141,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes:  2
+    timeout-minutes: 2
 
     permissions:
       contents: write
@@ -159,16 +157,14 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/cache/restore@v4
         with:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:controller
 
@@ -179,11 +175,51 @@ jobs:
             ./reports/controller.xml
             ./coverage/controller.txt
 
+  Test_web:
+    needs: changes
+    if: ${{ needs.changes.outputs.project == 'true' }}
+
+    name: 'Test web'
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 2
+
+    permissions:
+      contents: write
+      actions: write
+      checks: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: supercharge/redis-github-action@1.8.0
+        with:
+          redis-password: ''
+
+      - uses: ikalnytskyi/action-setup-postgres@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            **/node_modules
+            **/build
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
+
+      - run: npm run start:ci
+
   FormatAndLint:
     needs:
       - Test_service
       - Test_resolver
       - Test_controller
+      - Test_web
 
     name: 'Format & Lint'
 
@@ -203,16 +239,14 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/cache@v4
         with:
           path: |
             **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run format && npm run lint
 

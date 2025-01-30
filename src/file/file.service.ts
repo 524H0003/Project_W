@@ -36,8 +36,9 @@ export class FileService extends DatabaseRequests<File> {
 			for (const file of files)
 				if (file.match(this.serverFilesReg)) {
 					const filePath = join(cfg.get('SERVER_PUBLIC'), file);
-
-					await this.svc.aws.upload(file, createReadStream(filePath));
+					try {
+						await this.svc.aws.upload(file, createReadStream(filePath));
+					} catch {}
 				}
 		});
 	}
@@ -88,7 +89,7 @@ export class FileService extends DatabaseRequests<File> {
 
 		if (
 			filename.match(this.serverFilesReg) ||
-			(await this.isOwner(filename, user!.id))
+			(await this.isOwner(filename, user.id))
 		)
 			return recievedFile;
 

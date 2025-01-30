@@ -4,21 +4,18 @@ import {
 	Button,
 	FormGroup,
 	H2,
-	H5,
 	Illustration,
 	Input,
 	Label,
 	Link,
 	LinkProps,
-	MadeWithLove,
 	MessageBox,
 	Text,
 } from '@adminjs/design-system';
 import { styled } from '@adminjs/design-system/styled-components';
-import { ReduxState, useTranslation } from 'adminjs';
+import { useTranslation } from 'adminjs';
 
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 let email: string;
 
@@ -74,7 +71,6 @@ export const Login: React.FC = () => {
 	const props = (window as any).__APP_STATE__;
 	const { action, errorMessage: message } = props;
 	const { translateComponent, translateMessage } = useTranslation();
-	const branding = useSelector((state: ReduxState) => state.branding);
 
 	return (
 		<Wrapper flex variant="grey" className="login__Wrapper">
@@ -120,13 +116,6 @@ export const Login: React.FC = () => {
 					flexGrow={1}
 					width={['100%', '100%', '480px']}
 				>
-					<H5 marginBottom="xxl">
-						{branding.logo ? (
-							<StyledLogo src={branding.logo} alt={branding.companyName} />
-						) : (
-							branding.companyName
-						)}
-					</H5>
 					{message && (
 						<MessageBox
 							my="lg"
@@ -173,11 +162,6 @@ export const Login: React.FC = () => {
 					</ButtonWrapper>
 				</Box>
 			</Box>
-			{branding.withMadeWithLove ? (
-				<Box mt="xxl">
-					<MadeWithLove />
-				</Box>
-			) : null}
 		</Wrapper>
 	);
 };

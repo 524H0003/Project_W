@@ -70,10 +70,13 @@ export class Student extends BaseEntity implements IStudentEntity {
 	/**
 	 * @ignore
 	 */
-	static test(from: string, options?: { email?: string; password?: string }) {
+	static async test(
+		from: string,
+		options?: { email?: string; password?: string },
+	) {
 		const { email = `5${(7).numeric}@student.tdtu.edu.vn` } = options || {},
 			user = User.test(from, { email });
-		if (user.hashedPassword)
+		if (await user.hashingPassword())
 			return new Student({
 				major: (3).string,
 				graduationYear: (20).random,

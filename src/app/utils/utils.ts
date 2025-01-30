@@ -1,4 +1,4 @@
-/* eslint-disable tsPlugin/no-unused-vars */
+/* eslint-disable tsEslint/no-unused-vars */
 
 import { HttpException, HttpStatus } from '@nestjs/common';
 import pc from 'picocolors';
@@ -194,7 +194,7 @@ declare global {
 		readonly random: number;
 		/**
 		 * range() # like Python's range()		 */
-		ra(input: () => Promise<any>): Promise<void>;
+		ra(input: () => Promise<any> | any): Promise<void>;
 	}
 	/**
 	 * String interface
@@ -212,6 +212,10 @@ declare global {
 		 * To capitalize
 		 */
 		readonly capitalize: string;
+		/**
+		 * To uncapitalize
+		 */
+		readonly uncapitalize: string;
 	}
 
 	/**
@@ -415,6 +419,13 @@ Object.defineProperty(String.prototype, 'capitalize', {
 	enumerable: true,
 	configurable: true,
 });
+Object.defineProperty(String.prototype, 'uncapitalize', {
+	get: function () {
+		return (this as string).at(0).toLowerCase() + (this as string).slice(1);
+	},
+	enumerable: true,
+	configurable: true,
+});
 // Array.prototype
 Array.prototype.get = function (subString: string) {
 	return this.filter((i: string) => i.includes(subString));
@@ -434,7 +445,7 @@ Object.defineProperty(Array.prototype, 'lastElement', {
 	configurable: true,
 });
 // Number.prototype
-Number.prototype.ra = async function (input: () => Promise<any>) {
+Number.prototype.ra = async function (input: () => Promise<any> | any) {
 	await Array.from({ length: Number(this) }, (_, i) => i).reduce(async (i) => {
 		await i;
 		return input();

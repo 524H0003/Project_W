@@ -16,9 +16,9 @@ beforeAll(async () => {
 
 beforeAll(async () => {
 	const rawUser = User.test(fileName);
-	if (rawUser.hashedPassword) true;
+	await rawUser.hashingPassword();
 
-	(notification = await svc.noti.assign(Notification.test(fileName))),
+	(notification = await svc.notification.assign(Notification.test(fileName))),
 		(user = await svc.user.assign(rawUser));
 });
 
@@ -37,7 +37,7 @@ describe('assign', () => {
 				);
 				await execute(
 					() =>
-						svc.noti.findOne({
+						svc.notification.findOne({
 							sent: [{ id: result.id }],
 							id: notification.id,
 						}),
@@ -54,7 +54,7 @@ describe('assignMany', () => {
 	beforeEach(async () => {
 		for (let i = 0; i < 5; i++) {
 			const tUser = User.test(fileName);
-			if (tUser.hashedPassword) true;
+			await tUser.hashingPassword();
 			usersId.push((await svc.user.assign(tUser)).id);
 		}
 	});
@@ -68,7 +68,7 @@ describe('assignMany', () => {
 						() => svc.user.findOne({ recievedNotifications: [{ id }] }),
 						{ exps: [{ type: 'toBeDefined', params: [] }] },
 					);
-					await execute(() => svc.noti.findOne({ sent: [{ id }] }), {
+					await execute(() => svc.notification.findOne({ sent: [{ id }] }), {
 						exps: [{ type: 'toBeDefined', params: [] }],
 					});
 				}
@@ -108,7 +108,7 @@ describe('readMany', () => {
 				(
 					await svc.recie.assign(
 						(
-							await svc.noti.assign(
+							await svc.notification.assign(
 								Notification.test(fileName + '_' + (5).string),
 							)
 						).id,

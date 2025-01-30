@@ -45,8 +45,7 @@ it('modify', async () => {
 it('remove', async () => {
 	const curEvent = await svc.event.assign(event);
 
-	// eslint-disable-next-line tsPlugin/require-await
-	await execute(async () => () => svc.event.remove(curEvent.id), {
+	await execute(() => svc.event.remove(curEvent.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
 	await execute(() => svc.event.id(curEvent.id), {

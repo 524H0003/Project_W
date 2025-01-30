@@ -44,7 +44,7 @@ export class BaseController {
 	 * @param {boolean} acs - if clear access token
 	 * @param {boolean} rfs - if clear refresh token
 	 */
-	private clearCookies(
+	private async clearCookies(
 		request: Request,
 		response: Response,
 		acs: boolean = true,
@@ -52,8 +52,8 @@ export class BaseController {
 	) {
 		for (const cki in request.cookies)
 			if (
-				(compare(this.acsKey, cki) && acs) ||
-				(compare(this.rfsKey, cki) && rfs)
+				((await compare(this.acsKey, cki)) && acs) ||
+				((await compare(this.rfsKey, cki)) && rfs)
 			)
 				response.clearCookie(cki, this.ckiOpt);
 	}
@@ -63,18 +63,18 @@ export class BaseController {
 	 * @param {Request} request - client's request
 	 * @param {Response} response - server's response
 	 * @param {IUserRecieve} usrRcv - user's recieve infomations
-	 * @return {void}
+	 * @return {Promise<void>}
 	 */
-	protected responseWithUserRecieve(
+	protected async responseWithUserRecieve(
 		request: Request,
 		response: Response,
 		usrRcv: IUserRecieve,
-	): void {
-		this.clearCookies(request, response);
+	): Promise<void> {
+		await this.clearCookies(request, response);
 
 		response
 			.cookie(
-				hash(this.acsKey),
+				await hash(this.acsKey),
 				this.svc.auth.encrypt(
 					usrRcv.accessToken,
 					usrRcv.refreshToken.split('.')[2],
@@ -82,7 +82,7 @@ export class BaseController {
 				this.ckiOpt,
 			)
 			.cookie(
-				hash(this.rfsKey),
+				await hash(this.rfsKey),
 				this.svc.auth.encrypt(usrRcv.refreshToken),
 				this.ckiOpt,
 			)

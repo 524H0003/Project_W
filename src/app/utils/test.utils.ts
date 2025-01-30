@@ -11,6 +11,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import supertest from 'supertest';
+import { expect } from '@jest/globals';
 
 /**
  * Exported variables
@@ -46,7 +47,7 @@ export async function execute<
 	R,
 	K extends keyof jest.Matchers<(...args: any[]) => Promise<R>>,
 >(
-	func: (...args: any[]) => Promise<R>,
+	func: (...args: any[]) => Promise<R> | R,
 	options: {
 		numOfRun?: number;
 		exps: Expectation<typeof func, K>[];
@@ -54,8 +55,10 @@ export async function execute<
 	},
 ) {
 	const { numOfRun = 1, exps, onFinish = null } = options,
-		executed: Promise<R> = func(),
-		l1 = expect(executed);
+		executed = func(),
+		l1 = expect(
+			executed instanceof Promise ? executed : (async () => await executed)(),
+		);
 
 	if (numOfRun - 1) await numOfRun.ra(func);
 	if (!exps.length)
@@ -129,7 +132,7 @@ export async function initJest(
 		}).compile(),
 		appSvc = module.get(AppService);
 
-	// eslint-disable-next-line tsPlugin/no-unused-vars
+	// eslint-disable-next-line tsEslint/no-unused-vars
 	console.error = (...args: any) => true;
 
 	app = module.createNestApplication();

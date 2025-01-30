@@ -17,7 +17,7 @@ export async function assignStudent(
 		token = (
 			(mailerSvc.sendMail as jest.Mock).mock.lastCall['0']['context'][
 				'url'
-			] as String
+			] as string
 		)
 			.split('/')
 			.at(-1),

@@ -40,7 +40,6 @@ export class AWSService {
 		if (this._client) return this._client;
 
 		const { cfg } = this.svc;
-
 		return (this._client = new S3Client({
 			forcePathStyle: true,
 			region: cfg.get('AWS_REGION'),

@@ -38,11 +38,11 @@ export class User extends BaseEntity implements IUserEntity {
 
 		if (payload) {
 			this.baseUser = new BaseUser(
-				InterfaceCasting.quick(payload!, IBaseUserInfoKeys),
+				InterfaceCasting.quick(payload, IBaseUserInfoKeys),
 			);
 			Object.assign(
 				this,
-				InterfaceCasting.quick(payload!, IUserAuthenticationKeys),
+				InterfaceCasting.quick(payload, IUserAuthenticationKeys),
 			);
 		}
 	}
@@ -50,24 +50,20 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * The hashed password
 	 */
-	@Column({ name: 'password_hash' }) private _hashedPassword: string;
+	@Column({ name: 'password_hash' }) private hashedPassword: string;
 
 	/**
-	 * @ignore
+	 * Hash the current password
+	 * @return {Promise<string>}
 	 */
-	get hashedPassword() {
+	async hashingPassword(): Promise<string> {
 		if (this.password) {
-			this._hashedPassword = hash(this.password);
+			this.hashedPassword = await hash(this.password);
 			delete this.password;
-			return this._hashedPassword;
+			return this.hashedPassword;
 		}
-		return this._hashedPassword;
+		return this.hashedPassword;
 	}
-
-	/**
-	 * @ignore
-	 */
-	set hashedPassword(i: any) {}
 
 	// Core Entity
 	/**

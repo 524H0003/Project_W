@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { buildAuthenticatedRouter } from '@adminjs/express';
 import { Database, Resource } from '@adminjs/typeorm';
-import { componentLoader } from './components.mjs';
+import { componentLoader, Components } from './components.mjs';
 
 type ResourceWithOptions = { resource: any; options: any };
 
@@ -135,9 +135,9 @@ const uuidRegex =
 			properties: Object.assign(
 				{},
 				...[
-					'_hashedPassword',
-					'eventCreator.user._hashedPassword',
-					'user._hashedPassword',
+					'hashedPassword',
+					'eventCreator.user.hashedPassword',
+					'user.hashedPassword',
 					'user.blackBox.createdAt',
 					'user.baseUser.avatarPath',
 					'user.blackBox.updatedAt',
@@ -155,7 +155,7 @@ const getCustomResource = (svc: AppService): typeof Resource =>
 		constructor(model: typeof BaseEntity) {
 			super(model);
 
-			this.resourceName = model.name.toLowerCase();
+			this.resourceName = model.name.uncapitalize;
 		}
 
 		isNumeric(value: any) {
@@ -250,7 +250,7 @@ const getCustomResource = (svc: AppService): typeof Resource =>
 			params = {};
 			Object.keys(unflattenedParams).forEach((i) => {
 				let name = i.split('.').at(-1);
-				if (name === '_hashedPassword') name = 'password';
+				if (name === 'hashedPassword') name = 'password';
 				if (unflattenedParams[i]) params[name] = unflattenedParams[i];
 			});
 
@@ -264,5 +264,6 @@ export {
 	buildAuthenticatedRouter,
 	Database,
 	generalDisplay,
+	Components,
 	componentLoader,
 };

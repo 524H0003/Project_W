@@ -86,7 +86,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @param {UserRole} updateRole - the role update to the user
 	 * @return {Promise<User>} the user's infomations
 	 */
-	async updateRole(id: string, updateRole: UserRole): Promise<User> {
+	updateRole(id: string, updateRole: UserRole): Promise<User> {
 		return this.modify(id, { role: updateRole });
 	}
 }

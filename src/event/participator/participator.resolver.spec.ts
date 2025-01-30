@@ -42,7 +42,12 @@ beforeEach(async () => {
 			Employee.test(fileName),
 			mailerSvc,
 		),
-		stu = await assignStudent(req, svc, Student.test(fileName), mailerSvc);
+		stu = await assignStudent(
+			req,
+			svc,
+			await Student.test(fileName),
+			mailerSvc,
+		);
 
 	(student = stu.student),
 		(stuHeaders = stu.headers),
@@ -72,7 +77,7 @@ describe('assignParticipator', () => {
 		);
 		await execute(
 			() =>
-				svc.eventParti.findOne({
+				svc.eventParticipator.findOne({
 					participatedBy: { baseUser: { id: student.user.id } },
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
@@ -112,7 +117,7 @@ describe('updateParticipator', () => {
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 
-		await execute(async () => svc.eventParti.findOne({ interviewNote }), {
+		await execute(() => svc.eventParticipator.findOne({ interviewNote }), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 		});
 	});

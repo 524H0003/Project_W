@@ -1,4 +1,4 @@
-/* eslint-disable tsPlugin/require-await */
+/* eslint-disable tsEslint/require-await */
 import { ApolloDriver } from '@nestjs/apollo';
 import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';

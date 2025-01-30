@@ -136,8 +136,7 @@ describe('listAllTags', () => {
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
-					// eslint-disable-next-line tsPlugin/require-await
-					await execute(async () => result.some((i) => i.id === tagId), {
+					await execute(() => result.some((i) => i.id === tagId), {
 						exps: [{ type: 'toEqual', params: [true] }],
 					});
 				},

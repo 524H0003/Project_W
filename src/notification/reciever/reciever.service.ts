@@ -27,7 +27,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 		notificationId: string,
 		recievedUserId: string,
 	): Promise<Reciever> {
-		const fromNotification = await this.svc.noti.id(notificationId),
+		const fromNotification = await this.svc.notification.id(notificationId),
 			toUser = await this.svc.user.id(recievedUserId);
 
 		return new Reciever(await this.save({ fromNotification, toUser }));
@@ -39,7 +39,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 * @param {string[]} recievedUsersId - the recieved users' id
 	 * @return {Promise<Reciever[]>}
 	 */
-	async assignMany(
+	assignMany(
 		notificationId: string,
 		recievedUsersId: string[],
 	): Promise<Reciever[]> {
@@ -53,7 +53,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 * @param {string} recieverId - the reciever's id
 	 * @return {Promise<Reciever>}
 	 */
-	async read(recieverId: string): Promise<Reciever> {
+	read(recieverId: string): Promise<Reciever> {
 		return this.modify(recieverId, { isRead: true, readAt: new Date() });
 	}
 
@@ -62,7 +62,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 * @param {string[]} notificationsId - the notification's id
 	 * @return {Promise<Reciever[]>}
 	 */
-	async readMany(notificationsId: string[]): Promise<Reciever[]> {
+	readMany(notificationsId: string[]): Promise<Reciever[]> {
 		return Promise.all(notificationsId.map((id) => this.read(id)));
 	}
 

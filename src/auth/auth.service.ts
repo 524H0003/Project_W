@@ -52,14 +52,13 @@ export class AuthService extends Cryption {
 
 		try {
 			return validation(rawUser, async () => {
-				if (rawUser.hashedPassword) {
-					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
-						avatarFile = await this.fileSvc.assign(avatar, newUser);
-					return await this.usrSvc.modify(
-						newUser.id,
-						avatarFile ? { baseUser: { avatarPath: avatarFile.path } } : {},
-					);
-				}
+				await rawUser.hashingPassword();
+				const newUser = await this.usrSvc.assign({ ...rawUser, role }),
+					avatarFile = await this.fileSvc.assign(avatar, newUser);
+				return await this.usrSvc.modify(
+					newUser.id,
+					avatarFile ? { baseUser: { avatarPath: avatarFile.path } } : {},
+				);
 			});
 		} catch (error) {
 			switch ((error as { name: string }).name) {
@@ -88,7 +87,8 @@ export class AuthService extends Cryption {
 
 		const user = await this.usrSvc.email(input.email);
 
-		if (user && compare(input.password, user.hashedPassword)) return user;
+		if (user && (await compare(input.password, await user.hashingPassword())))
+			return user;
 		if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
 		throw new ServerException('Invalid', 'Password', '', 'user');
 	}
@@ -102,11 +102,10 @@ export class AuthService extends Cryption {
 	async changePassword(user: User, password: string): Promise<User> {
 		let newUser = await this.usrSvc.id(user.id);
 		newUser.password = password;
-		return validation(newUser, () => {
-			if (newUser.hashedPassword) {
-				newUser = InterfaceCasting.delete(newUser, IUserRelationshipKeys);
-				return this.usrSvc.modify(user.id, newUser);
-			}
+		return validation(newUser, async () => {
+			await newUser.hashingPassword();
+			newUser = InterfaceCasting.delete(newUser, IUserRelationshipKeys);
+			return this.usrSvc.modify(user.id, newUser);
 		});
 	}
 }

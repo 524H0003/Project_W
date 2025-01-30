@@ -5,7 +5,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { config as awsCfg } from 'aws-sdk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { MainModule } from './main.module';
@@ -20,6 +19,7 @@ import { Event } from 'event/event.entity';
 import { EventCreator } from 'event/creator/creator.entity';
 import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
+import helmet from 'helmet';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
@@ -47,6 +47,7 @@ async function bootstrap() {
 			Database,
 			generalDisplay,
 			componentLoader,
+			Components,
 		} = await import('./app/admin/index.mjs');
 
 	AdminJS.registerAdapter({ Resource: getCustomResource(appSvc), Database });
@@ -62,6 +63,7 @@ async function bootstrap() {
 				Notification,
 				EventCreator,
 			].map((i) => generalDisplay(i)),
+			dashboard: { component: Components.Dashboard },
 			componentLoader,
 		}),
 		adminRouter = buildAuthenticatedRouter(
@@ -75,20 +77,34 @@ async function bootstrap() {
 					return { email, password };
 				},
 				cookieName: 'adminjs',
-				cookiePassword: 'sessionsecret',
+				cookiePassword: cfgSvc.get('SERVER_SECRET'),
 			},
 			null,
 			{ resave: false, saveUninitialized: false },
 		);
-	awsCfg.update({
-		accessKeyId: cfgSvc.get('AWS_ACCESS_KEY_ID'),
-		secretAccessKey: cfgSvc.get('AWS_SECRET_ACCESS_KEY'),
-		useFipsEndpoint: cfgSvc.get('AWS_ENDPOINT'),
-		region: cfgSvc.get('AWS_REGION'),
-	});
 
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
+		.use(
+			helmet({
+				crossOriginEmbedderPolicy: false,
+				contentSecurityPolicy: {
+					directives: {
+						imgSrc: [
+							`'self'`,
+							'data:',
+							'apollo-server-landing-page.cdn.apollographql.com',
+						],
+						scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+						manifestSrc: [
+							`'self'`,
+							'apollo-server-landing-page.cdn.apollographql.com',
+						],
+						frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+					},
+				},
+			}),
+		)
 		.use(admin.options.rootPath, adminRouter)
 		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.setGlobalPrefix('api/v1')

@@ -49,7 +49,7 @@ export class SessionService extends DatabaseRequests<Session> {
 	 * @param {string} mtdt - metadata from client
 	 */
 	async getTokens(user: User, mtdt: string) {
-		const hashedUserAgent = hash(mtdt),
+		const hashedUserAgent = await hash(mtdt),
 			accessToken = this.svc.sign.access(user.id),
 			device = await this.svc.device.assign({
 				owner: await this.svc.user.email(user.baseUser.email),

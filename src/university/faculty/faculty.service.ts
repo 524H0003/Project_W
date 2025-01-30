@@ -39,7 +39,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		if (existedUser) throw new ServerException('Invalid', 'Email', '', 'user');
 
 		return validation<User>(rawFaculty, async () => {
-			const eventCreator = await this.svc.eventcreator.assign(
+			const eventCreator = await this.svc.eventCreator.assign(
 				await this.svc.auth.signUp(
 					InterfaceCasting.quick(input, IUserSignUpKeys),
 					avatar,
@@ -47,7 +47,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 				),
 			);
 
-			if (eventCreator.user.hashedPassword) {
+			if (await eventCreator.user.hashingPassword()) {
 				return (
 					await this.save({
 						eventCreator,
@@ -63,7 +63,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 	 * @param {string} id - faculty id
 	 * @return {Promise<Faculty>}
 	 */
-	async id(id: string): Promise<Faculty> {
+	id(id: string): Promise<Faculty> {
 		return this.findOne({ eventCreator: { user: { baseUser: { id } } } });
 	}
 }

@@ -96,29 +96,23 @@ describe('SignService', () => {
 	});
 
 	it('refresh', async () => {
-		// eslint-disable-next-line tsPlugin/require-await
-		await execute(async () => svc.sign.refresh(id), {
+		await execute(() => svc.sign.refresh(id), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 			onFinish: async (result: string) => {
-				await execute(
-					// eslint-disable-next-line tsPlugin/require-await
-					async () => svc.sign.verify(result, { type: 'refresh' }),
-					{ exps: [{ type: 'toMatchObject', params: [{ id }] }] },
-				);
+				await execute(() => svc.sign.verify(result, { type: 'refresh' }), {
+					exps: [{ type: 'toMatchObject', params: [{ id }] }],
+				});
 			},
 		});
 	});
 
 	it('access', async () => {
-		// eslint-disable-next-line tsPlugin/require-await
-		await execute(async () => svc.sign.access(id), {
+		await execute(() => svc.sign.access(id), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 			onFinish: async (result: string) => {
-				await execute(
-					// eslint-disable-next-line tsPlugin/require-await
-					async () => svc.sign.verify(result, { type: 'access' }),
-					{ exps: [{ type: 'toMatchObject', params: [{ id }] }] },
-				);
+				await execute(() => svc.sign.verify(result, { type: 'access' }), {
+					exps: [{ type: 'toMatchObject', params: [{ id }] }],
+				});
 			},
 		});
 	});
