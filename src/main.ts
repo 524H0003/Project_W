@@ -5,7 +5,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { config as awsCfg } from 'aws-sdk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { MainModule } from './main.module';
@@ -82,12 +81,6 @@ async function bootstrap() {
 			null,
 			{ resave: false, saveUninitialized: false },
 		);
-	awsCfg.update({
-		accessKeyId: cfgSvc.get('AWS_ACCESS_KEY_ID'),
-		secretAccessKey: cfgSvc.get('AWS_SECRET_ACCESS_KEY'),
-		useFipsEndpoint: cfgSvc.get('AWS_ENDPOINT'),
-		region: cfgSvc.get('AWS_REGION'),
-	});
 
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
