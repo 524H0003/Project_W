@@ -26,6 +26,9 @@ importers:
       '@aws-sdk/lib-storage':
         specifier: ^3.735.0
         version: 3.735.0(@aws-sdk/client-s3@3.735.0)
+      '@fastify/helmet':
+        specifier: ^13.0.1
+        version: 13.0.1
       '@graphql-codegen/cli':
         specifier: ^5.0.3
         version: 5.0.4(@babel/core@7.26.7)(@types/node@22.12.0)(enquirer@2.4.1)(graphql@16.10.0)(typescript@5.7.3)
@@ -122,9 +125,6 @@ importers:
       handlebars:
         specifier: ^4.7.8
         version: 4.7.8
-      helmet:
-        specifier: ^8.0.0
-        version: 8.0.0
       http:
         specifier: ^0.0.1-security
         version: 0.0.1-security
@@ -1650,6 +1650,9 @@ packages:
   '@faker-js/faker@8.4.1':
     resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
+
+  '@fastify/helmet@13.0.1':
+    resolution: {integrity: sha512-i+ifqazG3d0HwHL3zuZdg6B/WPc9Ee6kVfGpwGho4nxm0UaK1htss0zq+1rVhOoAorZlCgTZ3/i4S58hUGkkoA==}
 
   '@floating-ui/core@1.6.9':
     resolution: {integrity: sha512-uMXCuQ3BItDUbAMhIXw7UPXRfAlOAvZzdK9BWpE60MCn+Svt3aLn9jsPTi/WNGlRUu2uI0v5S7JiIUsbsvh3fw==}
@@ -5118,6 +5121,9 @@ packages:
   fast-xml-parser@4.4.1:
     resolution: {integrity: sha512-xkjOecfnKGkSsOwtZ5Pz7Us/T6mrbPQrq0nh+aCO5V9nk5NLWmasAHumTKjiPJPWANe+kAZ84Jc8ooJkzZ88Sw==}
     hasBin: true
+
+  fastify-plugin@5.0.1:
+    resolution: {integrity: sha512-HCxs+YnRaWzCl+cWRYFnHmeRFyR5GVnJTAaCJQiYzQSDwK9MgJdyAsuL3nh0EWRCYMgQ5MeziymvmAhUHYHDUQ==}
 
   fastq@1.18.0:
     resolution: {integrity: sha512-QKHXPW0hD8g4UET03SdOdunzSouc9N4AuHdsX8XNcTsuz+yYFILVNIX4l9yHABMhiEI9Db0JTTIpu0wB+Y1QQw==}
@@ -11589,6 +11595,11 @@ snapshots:
 
   '@faker-js/faker@8.4.1': {}
 
+  '@fastify/helmet@13.0.1':
+    dependencies:
+      fastify-plugin: 5.0.1
+      helmet: 8.0.0
+
   '@floating-ui/core@1.6.9':
     dependencies:
       '@floating-ui/utils': 0.2.9
@@ -16062,6 +16073,8 @@ snapshots:
   fast-xml-parser@4.4.1:
     dependencies:
       strnum: 1.0.5
+
+  fastify-plugin@5.0.1: {}
 
   fastq@1.18.0:
     dependencies:
