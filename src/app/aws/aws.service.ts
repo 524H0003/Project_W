@@ -40,16 +40,19 @@ export class AWSService {
 		if (this._client) return this._client;
 
 		const { cfg } = this.svc;
-
-		return (this._client = new S3Client({
-			forcePathStyle: true,
-			region: cfg.get('AWS_REGION'),
-			endpoint: cfg.get('AWS_ENDPOINT'),
-			credentials: {
-				accessKeyId: cfg.get('AWS_ACCESS_KEY_ID'),
-				secretAccessKey: cfg.get('AWS_SECRET_ACCESS_KEY'),
-			},
-		}));
+		try {
+			return (this._client = new S3Client({
+				forcePathStyle: true,
+				region: cfg.get('AWS_REGION'),
+				endpoint: cfg.get('AWS_ENDPOINT'),
+				credentials: {
+					accessKeyId: cfg.get('AWS_ACCESS_KEY_ID'),
+					secretAccessKey: cfg.get('AWS_SECRET_ACCESS_KEY'),
+				},
+			}));
+		} catch {
+			return (this._client = null);
+		}
 	}
 
 	/**
