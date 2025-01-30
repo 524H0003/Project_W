@@ -52,14 +52,13 @@ export class AuthService extends Cryption {
 
 		try {
 			return validation(rawUser, async () => {
-				if (await rawUser.hashingPassword()) {
-					const newUser = await this.usrSvc.assign({ ...rawUser, role }),
-						avatarFile = await this.fileSvc.assign(avatar, newUser);
-					return await this.usrSvc.modify(
-						newUser.id,
-						avatarFile ? { baseUser: { avatarPath: avatarFile.path } } : {},
-					);
-				}
+				await rawUser.hashingPassword();
+				const newUser = await this.usrSvc.assign({ ...rawUser, role }),
+					avatarFile = await this.fileSvc.assign(avatar, newUser);
+				return await this.usrSvc.modify(
+					newUser.id,
+					avatarFile ? { baseUser: { avatarPath: avatarFile.path } } : {},
+				);
 			});
 		} catch (error) {
 			switch ((error as { name: string }).name) {
@@ -88,7 +87,7 @@ export class AuthService extends Cryption {
 
 		const user = await this.usrSvc.email(input.email);
 
-		if (user && await compare(input.password, await user.hashingPassword()))
+		if (user && (await compare(input.password, await user.hashingPassword())))
 			return user;
 		if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
 		throw new ServerException('Invalid', 'Password', '', 'user');
