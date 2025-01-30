@@ -129,7 +129,7 @@ export async function initJest(
 		}).compile(),
 		appSvc = module.get(AppService);
 
-	// eslint-disable-next-line tsPlugin/no-unused-vars
+	// eslint-disable-next-line tsEslint/no-unused-vars
 	console.error = (...args: any) => true;
 
 	app = module.createNestApplication();

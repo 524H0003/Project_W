@@ -196,7 +196,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {DeepPartial<T>} updatedEntity - Modified entity
 	 * @return {Promise<T>}
 	 */
-	// eslint-disable-next-line tsPlugin/no-unused-vars
+	// eslint-disable-next-line tsEslint/no-unused-vars
 	modify(entityId: string, updatedEntity: DeepPartial<T>): Promise<T> {
 		throw new ServerException('Fatal', 'Method', 'Implementation', 'server');
 	}

@@ -1,4 +1,4 @@
-/* eslint-disable tsPlugin/no-unused-vars */
+/* eslint-disable tsEslint/no-unused-vars */
 
 import { HttpException, HttpStatus } from '@nestjs/common';
 import pc from 'picocolors';

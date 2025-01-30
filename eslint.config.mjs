@@ -1,25 +1,26 @@
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import tsEslintPlugin from '@typescript-eslint/eslint-plugin';
+import tsEslintParser from '@typescript-eslint/parser';
 
-export default tseslint.config(
-	eslint.configs.recommended,
-	tseslint.configs.strict,
+export default [
 	{
+		plugins: {
+			tsEslint: tsEslintPlugin,
+		},
 		languageOptions: {
+			parser: tsEslintParser,
 			parserOptions: {
 				projectService: true,
-				tsconfigRootDir: import.meta.dirname,
-				project: 'tsconfig.json',
+				project: './tsconfig.json',
 				sourceType: 'commonjs',
 			},
 		},
 		rules: {
-			'@typescript-eslint/no-floating-promises': 'error',
-			'@typescript-eslint/no-unused-vars': 'error',
-			'@typescript-eslint/no-extraneous-class': 'off',
-			'require-await': 'error',
+			'tsEslint/no-explicit-any': 'off',
+			'tsEslint/no-floating-promises': 'error',
+			'tsEslint/require-await': 'error',
+			'tsEslint/no-unused-vars': 'error',
 		},
 		files: ['src/**/*.ts'],
-		ignores: ['**/*.js', 'src/types.ts', '**/*.d.ts'],
+		ignores: ['**/*.js', 'src/types.ts', '**/*.d.ts', 'src/build/*'],
 	},
-);
+];

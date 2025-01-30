@@ -88,7 +88,7 @@ export class FileService extends DatabaseRequests<File> {
 
 		if (
 			filename.match(this.serverFilesReg) ||
-			(await this.isOwner(filename, user!.id))
+			(await this.isOwner(filename, user.id))
 		)
 			return recievedFile;
 
