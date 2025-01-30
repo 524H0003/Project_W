@@ -19,6 +19,7 @@ import { Event } from 'event/event.entity';
 import { EventCreator } from 'event/creator/creator.entity';
 import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
+import helmet from 'helmet';
 
 async function bootstrap() {
 	const httpsPemFolder = './secrets',
@@ -84,6 +85,26 @@ async function bootstrap() {
 
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
+		.use(
+			helmet({
+				crossOriginEmbedderPolicy: false,
+				contentSecurityPolicy: {
+					directives: {
+						imgSrc: [
+							`'self'`,
+							'data:',
+							'apollo-server-landing-page.cdn.apollographql.com',
+						],
+						scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+						manifestSrc: [
+							`'self'`,
+							'apollo-server-landing-page.cdn.apollographql.com',
+						],
+						frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+					},
+				},
+			}),
+		)
 		.use(admin.options.rootPath, adminRouter)
 		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.setGlobalPrefix('api/v1')
