@@ -43,12 +43,11 @@ jobs:
           path: |
             **/node_modules
             **/build
-            **/dist
           key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run build:dev
+      - run: npm run prebuild:dev
 
   Test_service:
     needs: changes
@@ -81,7 +80,6 @@ jobs:
           path: |
             **/node_modules
             **/build
-            **/dist
           key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:service
@@ -124,7 +122,6 @@ jobs:
           path: |
             **/node_modules
             **/build
-            **/dist
           key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:resolver
@@ -167,7 +164,6 @@ jobs:
           path: |
             **/node_modules
             **/build
-            **/dist
           key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run test:controller
@@ -214,7 +210,6 @@ jobs:
           path: |
             **/node_modules
             **/build
-            **/dist
           key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run start:ci
@@ -251,7 +246,6 @@ jobs:
           path: |
             **/node_modules
             **/build
-            **/dist
           key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
 
       - run: npm run format && npm run lint
