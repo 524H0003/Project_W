@@ -42,7 +42,12 @@ beforeEach(async () => {
 			Employee.test(fileName),
 			mailerSvc,
 		),
-		stu = await assignStudent(req, svc, await Student.test(fileName), mailerSvc);
+		stu = await assignStudent(
+			req,
+			svc,
+			await Student.test(fileName),
+			mailerSvc,
+		);
 
 	(student = stu.student),
 		(stuHeaders = stu.headers),

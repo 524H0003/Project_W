@@ -51,9 +51,9 @@ export class RecieverResolver {
 	/**
 	 * Read many notifications
 	 */
-	@Mutation(() => [Reciever])
-	@Roles([UserRole.student])
-	readNotificationMany(@Args('input') input: ReadNotificationMany) {
+	@Mutation(() => [Reciever]) @Roles([UserRole.student]) readNotificationMany(
+		@Args('input') input: ReadNotificationMany,
+	) {
 		return this.svc.recie.readMany(input.recieversId);
 	}
 
@@ -61,9 +61,7 @@ export class RecieverResolver {
 	/**
 	 * list all notification
 	 */
-	@Query(() => [Reciever])
-	@Roles([UserRole.student])
-	listAllNotifications(
+	@Query(() => [Reciever]) @Roles([UserRole.student]) listAllNotifications(
 		@Args('isRead', { nullable: true }) isRead: boolean,
 		@CurrentUser() user: User,
 	) {
