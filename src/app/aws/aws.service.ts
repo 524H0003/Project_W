@@ -50,7 +50,8 @@ export class AWSService {
 					secretAccessKey: cfg.get('AWS_SECRET_ACCESS_KEY'),
 				},
 			}));
-		} catch {
+		} catch (error) {
+			new ServerException('Fatal', 'AWS', 'Implementation', 'server', error);
 			return (this._client = null);
 		}
 	}
