@@ -176,13 +176,6 @@ importers:
       ua-parser-js:
         specifier: ^2.0.0
         version: 2.0.0
-    optionalDependencies:
-      '@css-inline/css-inline-win32-x64-msvc':
-        specifier: ^0.14.3
-        version: 0.14.3
-      '@rollup/rollup-linux-x64-gnu':
-        specifier: ^4.32.0
-        version: 4.32.1
     devDependencies:
       '@compodoc/compodoc':
         specifier: ^1.1.26
@@ -208,6 +201,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
+      '@types/jsonwebtoken':
+        specifier: ^9.0.8
+        version: 9.0.8
       '@types/mime-types':
         specifier: ^2.1.4
         version: 2.1.4
@@ -289,6 +285,13 @@ importers:
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
+    optionalDependencies:
+      '@css-inline/css-inline-win32-x64-msvc':
+        specifier: ^0.14.3
+        version: 0.14.3
+      '@rollup/rollup-linux-x64-gnu':
+        specifier: ^4.32.0
+        version: 4.32.1
 
 packages:
 
