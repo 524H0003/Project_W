@@ -168,14 +168,15 @@ const uuidRegex =
 			),
 		},
 	}),
-	{ hash } = await import('../utils/auth.utils.js'),
 	adminRouter = async (
 		admin: AdminJS,
 		server: any,
 		appService: AppService,
 		config: ConfigService,
+		cookieName: string,
+		cookiePassword: string,
 	) =>
-		buildAuthenticatedRouter(
+		customBuildAuthenticatedRouter(
 			admin,
 			{
 				authenticate: async (email, password) => {
@@ -185,8 +186,8 @@ const uuidRegex =
 
 					return { email, password };
 				},
-				cookieName: 'adminjs',
-				cookiePassword: await hash(config.get('SERVER_SECRET')),
+				cookieName,
+				cookiePassword,
 			},
 			server,
 		),

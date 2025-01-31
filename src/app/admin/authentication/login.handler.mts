@@ -37,7 +37,7 @@ export const withLogin = (
 	fastifyInstance.post(loginPath, async (req, reply) => {
 		const context: AuthenticationContext = { request: req, reply };
 
-		let adminUser: unknown;
+		let adminUser: any;
 		if (provider) {
 			adminUser = await provider.handleLogin(
 				{

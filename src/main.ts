@@ -20,11 +20,12 @@ import { Event } from 'event/event.entity';
 import { EventCreator } from 'event/creator/creator.entity';
 import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
-import helmet from '@fastify/helmet';
+import fastifyHelmet from '@fastify/helmet';
 import Fastify, { FastifyInstance } from 'fastify';
 import { hash } from 'app/utils/auth.utils';
 import { User } from 'user/user.entity';
 import { Hook } from 'app/hook/hook.entity';
+import { fastifyFormbody } from '@fastify/formbody';
 import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 
 declare module 'fastify' {
@@ -43,8 +44,10 @@ declare module 'fastify' {
 async function registerServerPlugins(
 	fastify: FastifyInstance,
 	config: ConfigService,
+	cookieName: string,
+	cookiePassword: string,
 ) {
-	const secret = await hash(config.get<string>('SERVER_SECRET')),
+	const secret = cookiePassword,
 		cookieOptions: CookieOptions = {
 			httpOnly: true,
 			secure: true,
@@ -52,7 +55,8 @@ async function registerServerPlugins(
 		};
 
 	await fastify
-		.register(helmet, {
+		.register(fastifyFormbody)
+		.register(fastifyHelmet, {
 			contentSecurityPolicy: {
 				directives: {
 					defaultSrc: [`'self'`, 'unpkg.com'],
@@ -80,9 +84,8 @@ async function registerServerPlugins(
 		})
 		.register(fastifySession, {
 			secret,
-			cookie: cookieOptions,
-			cookieName: (6).string,
-			cookiePrefix: (6).string,
+			cookie: { secure: false },
+			cookieName,
 		});
 }
 
@@ -90,6 +93,8 @@ async function initiateAdmin(
 	appService: AppService,
 	config: ConfigService,
 	server: any,
+	cookieName: string,
+	cookiePassword: string,
 ) {
 	const {
 		AdminJS,
@@ -121,7 +126,14 @@ async function initiateAdmin(
 		componentLoader,
 	});
 
-	await adminRouter(admin, server, appService, config);
+	await adminRouter(
+		admin,
+		server,
+		appService,
+		config,
+		cookieName,
+		cookiePassword,
+	);
 }
 
 async function bootstrap() {
@@ -141,10 +153,18 @@ async function bootstrap() {
 			},
 		),
 		{ httpAdapter } = nest.get(HttpAdapterHost),
-		config = nest.get(ConfigService);
+		config = nest.get(ConfigService),
+		cookieName = (6).string,
+		cookiePassword = await hash(config.get('SERVER_SECRET'));
 
-	// await registerServerPlugins(server, config);
-	await initiateAdmin(nest.get(AppService), config, server);
+	await registerServerPlugins(server, config, cookieName, cookiePassword);
+	await initiateAdmin(
+		nest.get(AppService),
+		config,
+		server,
+		cookieName,
+		cookiePassword,
+	);
 
 	if (module) console.error('asdpfhiap');
 

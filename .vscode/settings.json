@@ -32,7 +32,7 @@
 		"**/Thumbs.db": true,
 		"**/dist": true,
 		"**/node_modules": false,
-		".adminjs": true,
+		".adminjs": false,
 		".devcontainer": true,
 		".git": true,
 		"LICENSE": true,
