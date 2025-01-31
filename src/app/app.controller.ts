@@ -120,10 +120,12 @@ export class AppController extends BaseController {
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 	): Promise<void> {
-		const rfsRsl = {} as IRefreshResult;
+		const { sessionId } = request.refresh;
+
 		await this.svc.device.remove({
-			id: (await this.svc.session.id(rfsRsl.sessionId)).device.id,
+			id: (await this.svc.session.id(sessionId)).device.id,
 		});
+
 		return this.responseWithUserRecieve(
 			request,
 			response,
@@ -145,16 +147,17 @@ export class AppController extends BaseController {
 	): Promise<void> {
 		const sendBack = (usrRcv: UserRecieve) =>
 				this.responseWithUserRecieve(request, response, usrRcv),
-			rfsRsl = {} as IRefreshResult;
-		if (rfsRsl.status === 'lockdown') {
+			{ sessionId, status, hashedUserAgent } = request.refresh;
+			
+		if (status === 'lockdown') {
 			await this.svc.device.remove({
-				id: (await this.svc.session.id(rfsRsl.sessionId)).device.id,
+				id: (await this.svc.session.id(sessionId)).device.id,
 			});
 			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));
 		} else {
-			if (rfsRsl.status === 'success' && compare(mtdt, rfsRsl.hashedUserAgent))
-				return sendBack(await this.svc.session.rotateToken(rfsRsl.sessionId));
-			else return sendBack(await this.svc.session.addTokens(rfsRsl.sessionId));
+			if (status === 'success' && compare(mtdt, hashedUserAgent))
+				return sendBack(await this.svc.session.rotateToken(sessionId));
+			else return sendBack(await this.svc.session.addTokens(sessionId));
 		}
 	}
 

@@ -24,11 +24,13 @@ import fastify, { FastifyInstance } from 'fastify';
 import { hash } from 'app/utils/auth.utils';
 import { User } from 'user/user.entity';
 import { Hook } from 'app/hook/hook.entity';
+import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 
 declare module 'fastify' {
 	interface FastifyRequest {
 		user: User;
 		hook: Hook;
+		refresh: IRefreshResult;
 	}
 }
 
