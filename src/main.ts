@@ -84,6 +84,7 @@ async function registerServerPlugins(
 		})
 		.register(fastifySession, {
 			secret,
+			// ! Cautious: Session's cookie secure must set false. If not, AdminJS crash
 			cookie: { secure: false },
 			cookieName,
 		});
