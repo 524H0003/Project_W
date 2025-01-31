@@ -10,17 +10,17 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { MetaData } from 'auth/auth.guard';
 import { memoryStorage } from 'multer';
 import { IFacultyAssign } from './faculty.model';
 import { Hook } from 'app/hook/hook.entity';
-import { Request, Response } from 'express';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload } from 'app/utils/controller.utils';
+import { FileInterceptor } from 'app/interceptor/file.interceptor';
 
 /**
  * Faculty controller
@@ -46,13 +46,13 @@ export class FacultyController extends AppController {
 	@UseGuards(AuthGuard('hook'))
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
-		@Req() request: Request,
-		@Res() response: Response,
+		@Req() request: FastifyRequest,
+		@Res() response: FastifyReply,
 		@Body() body: IFacultyAssign,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
 	) {
-		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
+		await this.svc.hook.validating(body.signature, mtdt, request.hook);
 		return this.responseWithUser(
 			request,
 			response,

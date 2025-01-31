@@ -1,8 +1,8 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { compare, Cryption } from 'app/utils/auth.utils';
-import { NextFunction, Request, Response } from 'express';
 import { SignService } from './auth.service';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 /**
  * Auth middleware
@@ -33,26 +33,23 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 
 	/**
 	 * Auth middleware processing request
-	 * @param {Request} req - client's request
-	 * @param {Response} res - server's response
+	 * @param {FastifyRequest} req - client's request
+	 * @param {FastifyReply} res - server's response
 	 * @param {NextFunction} next - continueing processing client's request
 	 */
-	async use(req: Request, res: Response, next: NextFunction) {
+	async use(req: FastifyRequest, res: FastifyReply, next: Function) {
 		const isRefresh = req.url.match(this.rfsgrd);
 
-		let acsTkn: string, rfsTkn: string;
-		for (const cki in req.cookies)
-			if (await compare(this.rfsKey, cki)) rfsTkn = req.cookies[cki];
-			else if (await compare(this.acsKey, cki)) acsTkn = req.cookies[cki];
+		let access: string, refresh: string;
+		for (const cookie in req.cookies)
+			if (await compare(this.rfsKey, cookie)) refresh = req.cookies[cookie];
+			else if (await compare(this.acsKey, cookie)) access = req.cookies[cookie];
 
-		const tknPld = this.decrypt(rfsTkn);
 		if (!req.headers.authorization)
-			req.headers.authorization = `Bearer ${!isRefresh ? this.decrypt(acsTkn, tknPld.split('.')[2]) : tknPld}`;
+			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
 
 		try {
-			req.user = this.signSvc.verify(
-				this.decrypt(acsTkn, tknPld.split('.')[2]),
-			);
+			req.hook = this.signSvc.verify(this.decrypt(access));
 		} catch {}
 
 		next();

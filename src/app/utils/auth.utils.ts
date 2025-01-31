@@ -63,7 +63,7 @@ export class Cryption {
 	 */
 	constructor(
 		private algorithm: string,
-		private svrScr: string,
+		private secret: string,
 	) {}
 
 	/**
@@ -82,7 +82,7 @@ export class Cryption {
 	 * @param {string} key - The key to encrypt text
 	 * @return {string} The encrypted text
 	 */
-	encrypt(input: string, key: string = this.svrScr): string {
+	encrypt(input: string, key: string = this.secret): string {
 		const iv = randomBytes(16),
 			cipher = createCipheriv(this.algorithm, this.sigToKey(key), iv),
 			encrypted = Buffer.concat([cipher.update(input), cipher.final()]);
@@ -95,7 +95,7 @@ export class Cryption {
 	 * @param {string} key - The key to decrypt text
 	 * @return {string} The decrypted text
 	 */
-	decrypt(input: string, key: string = this.svrScr): string {
+	decrypt(input: string, key: string = this.secret): string {
 		if (!input) return '';
 		const iv = Buffer.from(input.substring(0, 32), 'hex'),
 			encrypted = Buffer.from(input.substring(32), 'hex'),

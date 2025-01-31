@@ -27,6 +27,8 @@ import { Throttle } from '@nestjs/throttler';
 import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { FileInterceptor } from './interceptor/file.interceptor';
 
 /**
  * Application Controller
@@ -48,15 +50,15 @@ export class AppController extends BaseController {
 
 	/**
 	 * Login request
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {IStudentSignup} body - login input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('login') @UseInterceptors(NoFilesInterceptor()) async login(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+	@Post('login') @UseInterceptors(FileInterceptor()) async login(
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IStudentSignup,
 		@MetaData() mtdt: string,
 	): Promise<void> {
@@ -83,8 +85,8 @@ export class AppController extends BaseController {
 
 	/**
 	 * Sign up request
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {IUserSignUp} body - sign up input
 	 * @param {string} mtdt - client's metadata
 	 * @param {Express.Multer.File} avatar - user's avatar
@@ -94,8 +96,8 @@ export class AppController extends BaseController {
 	@UseGuards(LocalHostStrategy)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IUserSignUp,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
@@ -110,15 +112,15 @@ export class AppController extends BaseController {
 
 	/**
 	 * Logout request
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @return {Promise<void>}
 	 */
 	@Post('logout') @UseGuards(AuthGuard('refresh')) async logout(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 	): Promise<void> {
-		const rfsRsl = request.user as IRefreshResult;
+		const rfsRsl = {} as IRefreshResult;
 		await this.svc.device.remove({
 			id: (await this.svc.session.id(rfsRsl.sessionId)).device.id,
 		});
@@ -131,39 +133,35 @@ export class AppController extends BaseController {
 
 	/**
 	 * Refreshing tokens request
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
 	@Post('refresh') @UseGuards(AuthGuard('refresh')) async refresh(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		const sendBack = (usrRcv: UserRecieve) =>
 				this.responseWithUserRecieve(request, response, usrRcv),
-			rfsRsl = request.user as IRefreshResult;
+			rfsRsl = {} as IRefreshResult;
 		if (rfsRsl.status === 'lockdown') {
 			await this.svc.device.remove({
 				id: (await this.svc.session.id(rfsRsl.sessionId)).device.id,
 			});
 			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));
 		} else {
-			if (
-				rfsRsl.status === 'success' &&
-				compare(mtdt, rfsRsl.hashedUserAgent)
-			) {
+			if (rfsRsl.status === 'success' && compare(mtdt, rfsRsl.hashedUserAgent))
 				return sendBack(await this.svc.session.rotateToken(rfsRsl.sessionId));
-			} else
-				return sendBack(await this.svc.session.addTokens(rfsRsl.sessionId));
+			else return sendBack(await this.svc.session.addTokens(rfsRsl.sessionId));
 		}
 	}
 
 	/**
 	 * Send signature to email
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
@@ -171,8 +169,8 @@ export class AppController extends BaseController {
 	@Throttle({ default: { limit: 1, ttl: 300000 } })
 	@Post('change-password')
 	async resetPasswordViaEmail(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IBaseUserEmail,
 		@MetaData() mtdt: string,
 	): Promise<void> {
@@ -196,7 +194,7 @@ export class AppController extends BaseController {
 	/**
 	 * Change password
 	 * @param {string} signature - hook's signature
-	 * @param {Response} response - server's response
+	 * @param {FastifyReply} response - server's response
 	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @param {Hook} hook - recieved hook from client
@@ -207,8 +205,8 @@ export class AppController extends BaseController {
 	@UseGuards(AuthGuard('hook'))
 	async changePassword(
 		@Param('token') signature: string,
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: { password: string },
 		@MetaData() mtdt: string,
 		@CurrentUser({ instance: Hook }) hook: Hook,
@@ -234,8 +232,8 @@ export class AppController extends BaseController {
 
 	/**
 	 * Change password via console
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {object} body - request input
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
@@ -243,8 +241,8 @@ export class AppController extends BaseController {
 	@Throttle({ default: { limit: 1, ttl: 600000 } })
 	@Post('request-signature')
 	protected async requestSignatureViaConsole(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: { email: string },
 		@MetaData() mtdt: string,
 	): Promise<void> {

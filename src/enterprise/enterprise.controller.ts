@@ -9,8 +9,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { Request, Response } from 'express';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MetaData } from 'auth/auth.guard';
 import { Hook } from 'app/hook/hook.entity';
@@ -21,6 +20,7 @@ import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload } from 'app/utils/controller.utils';
+import { FileInterceptor } from 'app/interceptor/file.interceptor';
 
 /**
  * Enterprise controller
@@ -47,13 +47,13 @@ export class EnterpriseController extends AppController {
 	@UseGuards(AuthGuard('hook'))
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
-		@Req() request: Request,
-		@Res() response: Response,
+		@Req() request: FastifyRequest,
+		@Res() response: FastifyReply,
 		@Body() body: IEnterpriseAssign,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
 	): Promise<void> {
-		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
+		await this.svc.hook.validating(body.signature, mtdt, request.user);
 		await this.svc.enterprise.assign(body, avatar || null);
 		return this.responseWithUserRecieve(
 			request,

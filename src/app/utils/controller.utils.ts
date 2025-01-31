@@ -1,24 +1,15 @@
 import { AppService } from 'app/app.service';
-import { CookieOptions, Request, Response } from 'express';
 import { compare, hash } from './auth.utils';
 import { IUserRecieve } from 'user/user.model';
 import { User } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 /**
  * Base controller
  */
 export class BaseController {
-	/**
-	 * Global cookie options
-	 */
-	private readonly ckiOpt: CookieOptions = {
-		httpOnly: true,
-		secure: true,
-		sameSite: 'lax',
-	};
-
 	/**
 	 * Server access token secret
 	 */
@@ -39,75 +30,68 @@ export class BaseController {
 
 	/**
 	 * Clear client's cookies
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {boolean} acs - if clear access token
 	 * @param {boolean} rfs - if clear refresh token
 	 */
 	private async clearCookies(
-		request: Request,
-		response: Response,
+		request: FastifyRequest,
+		response: FastifyReply,
 		acs: boolean = true,
 		rfs: boolean = true,
 	) {
-		for (const cki in request.cookies)
+		for (const cookie in request.cookies)
 			if (
-				((await compare(this.acsKey, cki)) && acs) ||
-				((await compare(this.rfsKey, cki)) && rfs)
+				((await compare(this.acsKey, cookie)) && acs) ||
+				((await compare(this.rfsKey, cookie)) && rfs)
 			)
-				response.clearCookie(cki, this.ckiOpt);
+				response.clearCookie(cookie);
 	}
 
 	/**
 	 * Send client user's recieve infomations
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {IUserRecieve} usrRcv - user's recieve infomations
 	 * @return {Promise<void>}
 	 */
 	protected async responseWithUserRecieve(
-		request: Request,
-		response: Response,
+		request: FastifyRequest,
+		response: FastifyReply,
 		usrRcv: IUserRecieve,
 	): Promise<void> {
 		await this.clearCookies(request, response);
 
+		const encryptedAccess = this.svc.auth.encrypt(usrRcv.accessToken),
+			encryptedRefresh = this.svc.auth.encrypt(usrRcv.refreshToken);
+
 		response
-			.cookie(
-				await hash(this.acsKey),
-				this.svc.auth.encrypt(
-					usrRcv.accessToken,
-					usrRcv.refreshToken.split('.')[2],
-				),
-				this.ckiOpt,
-			)
-			.cookie(
-				await hash(this.rfsKey),
-				this.svc.auth.encrypt(usrRcv.refreshToken),
-				this.ckiOpt,
-			)
-			.json({
+			.cookie(await hash(this.acsKey), encryptedAccess)
+			.cookie(await hash(this.rfsKey), encryptedRefresh)
+			.send({
 				session: {
-					access_token: usrRcv.accessToken,
-					refresh_token: usrRcv.refreshToken,
+					access_token: encryptedAccess,
+					refresh_token: encryptedRefresh,
 					expires_in: usrRcv.payload.exp - usrRcv.payload.iat,
 					expires_at: usrRcv.payload.exp,
 				},
-				user: typeof usrRcv.response !== 'string' ? usrRcv.response : '',
-				message: typeof usrRcv.response === 'string' ? usrRcv.response : '',
+				user: typeof usrRcv.response !== 'string' ? usrRcv.response : undefined,
+				message:
+					typeof usrRcv.response === 'string' ? usrRcv.response : undefined,
 			});
 	}
 
 	/**
 	 * Send client user's recieve infomations
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {IUser} user - user's recieve infomations
 	 * @return {Promise<void>}
 	 */
 	protected async responseWithUser(
-		request: Request,
-		response: Response,
+		request: FastifyRequest,
+		response: FastifyReply,
 		user: User,
 		mtdt: string,
 	): Promise<void> {

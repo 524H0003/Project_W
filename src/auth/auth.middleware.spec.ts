@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { hash } from 'app/utils/auth.utils';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, FastifyRequest, FastifyReply } from 'express';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { AuthMiddleware } from './auth.middleware';
 import { AuthService } from './auth.service';
@@ -11,8 +11,8 @@ const acsTkn = '..access-token',
 	rfsTkn = '..refresh-token';
 
 let next: NextFunction,
-	req: Request,
-	res: Response,
+	req: FastifyRequest,
+	res: FastifyReply,
 	authMdw: AuthMiddleware,
 	authSvc: AuthService,
 	cfgSvc: ConfigService,

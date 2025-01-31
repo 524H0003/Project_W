@@ -8,15 +8,15 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { NoFilesInterceptor } from '@nestjs/platform-express';
 import { MetaData } from 'auth/auth.guard';
-import { Request, Response } from 'express';
 import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
 import { IStudentSignup } from './student.model';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { FileInterceptor } from 'app/interceptor/file.interceptor';
 
 /**
  * Student controller
@@ -37,18 +37,18 @@ export class StudentController extends AppController {
 
 	/**
 	 * Student login request
-	 * @param {Request} request - client's request
-	 * @param {Response} response - server's response
+	 * @param {FastifyRequest} request - client's request
+	 * @param {FastifyReply} response - server's response
 	 * @param {IStudentSignup} body - the request context
 	 * @param {string} mtdt - the client meta data
 	 * @return {Promise<void>}
 	 */
 	@Post('signup')
 	@UseGuards(LocalHostStrategy)
-	@UseInterceptors(NoFilesInterceptor())
+	@UseInterceptors(FileInterceptor())
 	async signUp(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IStudentSignup,
 		@MetaData() mtdt: string,
 	): Promise<void> {
