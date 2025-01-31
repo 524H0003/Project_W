@@ -30,8 +30,8 @@ export class FileController {
 			user,
 		);
 
-		res.set({ 'Content-Type': type, 'Content-Length': length });
+		res.headers({ 'content-type': type, 'content-length': length });
 
-		stream.pipe(res);
+		stream.pipe(await res);
 	}
 }

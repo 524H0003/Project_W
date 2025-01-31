@@ -31,6 +31,7 @@ declare module 'fastify' {
 		user: User;
 		hook: Hook;
 		refresh: IRefreshResult;
+		token: object;
 	}
 }
 

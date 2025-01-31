@@ -49,7 +49,7 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
 
 		try {
-			req.hook = this.signSvc.verify(this.decrypt(access));
+			req.token = this.signSvc.verify(this.decrypt(access));
 		} catch {}
 
 		next();
