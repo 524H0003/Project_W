@@ -1,22 +1,16 @@
-import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
 import { TestModule } from 'app/module/test.module';
-import cookieParser from 'cookie-parser';
 import { DocumentNode, print } from 'graphql';
 import TestAgent from 'supertest/lib/agent';
-import request from 'supertest';
-import { HttpAdapterHost } from '@nestjs/core';
-import { AppExceptionFilter } from 'app/app.filter';
-import { graphqlUploadExpress } from 'graphql-upload-ts';
 import supertest from 'supertest';
 import { expect } from '@jest/globals';
 
 /**
  * Exported variables
  */
-let requester: TestAgent, app: INestApplication;
+let requester: TestAgent;
 
 /**
  * Test's expectations
@@ -135,14 +129,5 @@ export async function initJest(
 	// eslint-disable-next-line tsEslint/no-unused-vars
 	console.error = (...args: any) => true;
 
-	app = module.createNestApplication();
-	const { httpAdapter } = app.get(HttpAdapterHost);
-	await app
-		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
-		.use(cookieParser())
-		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
-		.init();
-	requester = request(app.getHttpServer());
-
-	return { module, appSvc, requester };
+	return { module, appSvc };
 }

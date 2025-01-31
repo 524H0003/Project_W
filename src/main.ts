@@ -6,7 +6,8 @@ import {
 	FastifyAdapter,
 	NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import cookie from '@fastify/cookie';
+import fastifyCookie from '@fastify/cookie';
+import fastifySession, { CookieOptions } from '@fastify/session';
 import { MainModule } from './main.module';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Faculty } from 'university/faculty/faculty.entity';
@@ -20,7 +21,7 @@ import { EventCreator } from 'event/creator/creator.entity';
 import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import helmet from '@fastify/helmet';
-import fastify, { FastifyInstance } from 'fastify';
+import Fastify, { FastifyInstance } from 'fastify';
 import { hash } from 'app/utils/auth.utils';
 import { User } from 'user/user.entity';
 import { Hook } from 'app/hook/hook.entity';
@@ -33,12 +34,23 @@ declare module 'fastify' {
 		refresh: IRefreshResult;
 		token: object;
 	}
+
+	interface Session {
+		redirectTo: string;
+	}
 }
 
 async function registerServerPlugins(
 	fastify: FastifyInstance,
 	config: ConfigService,
 ) {
+	const secret = await hash(config.get<string>('SERVER_SECRET')),
+		cookieOptions: CookieOptions = {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+		};
+
 	await fastify
 		.register(helmet, {
 			contentSecurityPolicy: {
@@ -62,16 +74,26 @@ async function registerServerPlugins(
 				},
 			},
 		})
-		.register(cookie, {
-			secret: await hash(config.get<string>('SERVER_SECRET')),
-			parseOptions: { httpOnly: true, secure: true, sameSite: 'lax' },
+		.register(fastifyCookie, {
+			secret,
+			parseOptions: cookieOptions,
+		})
+		.register(fastifySession, {
+			secret,
+			cookie: cookieOptions,
+			cookieName: (6).string,
+			cookiePrefix: (6).string,
 		});
 }
 
-async function initiateAdmin(config: ConfigService, appService: AppService) {
+async function initiateAdmin(
+	appService: AppService,
+	config: ConfigService,
+	server: any,
+) {
 	const {
 		AdminJS,
-		buildAuthenticatedRouter,
+		adminRouter,
 		getCustomResource,
 		Database,
 		generalDisplay,
@@ -83,42 +105,28 @@ async function initiateAdmin(config: ConfigService, appService: AppService) {
 		Resource: getCustomResource(appService),
 		Database,
 	});
+
 	const admin = new AdminJS({
-			resources: [
-				Enterprise,
-				Faculty,
-				Student,
-				Employee,
-				EventTag,
-				Event,
-				Notification,
-				EventCreator,
-			].map((i) => generalDisplay(i)),
-			dashboard: { component: Components.Dashboard },
-			componentLoader,
-		}),
-		adminRouter = buildAuthenticatedRouter(
-			admin,
-			{
-				authenticate: async (email, password) => {
-					const hook = await appService.hook.findOne({ signature: password });
+		resources: [
+			Enterprise,
+			Faculty,
+			Student,
+			Employee,
+			EventTag,
+			Event,
+			Notification,
+			EventCreator,
+		].map((i) => generalDisplay(i)),
+		dashboard: { component: Components.Dashboard },
+		componentLoader,
+	});
 
-					if (!hook || email !== config.get('ADMIN_EMAIL')) return null;
-
-					return { email, password };
-				},
-				cookieName: 'adminjs',
-				cookiePassword: config.get('SERVER_SECRET'),
-			},
-			null,
-			{ resave: false, saveUninitialized: false },
-		);
-
-	return { adminRouter, adminPath: admin.options.rootPath };
+	await adminRouter(admin, server, appService, config);
 }
 
 async function bootstrap() {
-	const server = fastify(),
+	const server = Fastify(),
+		module = process.argv.find((i) => i.startsWith('--test')),
 		nest = await NestFactory.create<NestFastifyApplication>(
 			MainModule,
 			new FastifyAdapter(server),
@@ -133,23 +141,21 @@ async function bootstrap() {
 			},
 		),
 		{ httpAdapter } = nest.get(HttpAdapterHost),
-		config = nest.get(ConfigService),
-		{ adminPath, adminRouter } = await initiateAdmin(
-			config,
-			nest.get(AppService),
-		);
+		config = nest.get(ConfigService);
+
+	await registerServerPlugins(server, config);
+	await initiateAdmin(nest.get(AppService), config, server);
+
+	if (module) console.error('asdpfhiap');
 
 	mkdirSync(config.get('SERVER_PUBLIC'), { recursive: true });
 
-	await registerServerPlugins(server, config);
-
 	await nest
-		.use(adminPath, adminRouter)
 		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.setGlobalPrefix('api/v1')
 		.useGlobalPipes(new ValidationPipe())
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
-		.init();
+		.listen(process.env.PORT || config.get<number>('SERVER_PORT'));
 }
 
 void bootstrap();

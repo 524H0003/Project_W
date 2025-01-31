@@ -1,4 +1,12 @@
-import { AdminJS, BaseRecord, flat, ParamsType } from 'adminjs';
+import {
+	AdminJS,
+	BaseRecord,
+	Filter,
+	FilterElement,
+	flat,
+	ParamsType,
+	ResourceWithOptions,
+} from 'adminjs';
 import { AppService } from 'app/app.service.js';
 import {
 	BaseEntity,
@@ -8,20 +16,29 @@ import {
 	MoreThanOrEqual,
 	Raw,
 } from 'typeorm';
-import { buildAuthenticatedRouter } from '@adminjs/express';
+import { AuthenticationOptions, buildRouter } from '@adminjs/fastify';
 import { Database, Resource } from '@adminjs/typeorm';
 import { componentLoader, Components } from './components.mjs';
-
-type ResourceWithOptions = { resource: any; options: any };
+import { ConfigService } from '@nestjs/config';
+import { withProtectedRoutesHandler } from './authentication/protected-routes.handler.mjs';
+import { withLogin } from './authentication/login.handler.mjs';
+import { withLogout } from './authentication/logout.handler.mjs';
+import { withRefresh } from './authentication/refresh.handler.mjs';
+import { FilterParser, WrongArgumentError } from './types.mjs';
 
 const uuidRegex =
 		/^[0-9A-F]{8}-[0-9A-F]{4}-[5|4|3|2|1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+	MISSING_AUTH_CONFIG_ERROR =
+		'You must configure either "authenticate" method or assign an auth "provider"',
+	INVALID_AUTH_CONFIG_ERROR =
+		'You cannot configure both "authenticate" and "provider". "authenticate" will be removed in next major release.',
 	DefaultParser = {
-		isParserForType: (filter) => filter.property.type() === 'string',
-		parse: (filter, fieldKey) => {
+		isParserForType: (filter: FilterElement) =>
+			filter.property.type() === 'string',
+		parse: (filter: FilterElement, fieldKey: string) => {
 			if (
 				uuidRegex.test(filter.value.toString()) ||
-				filter.property.column.type === 'uuid'
+				filter.property['column'].type === 'uuid'
 			) {
 				return {
 					filterKey: fieldKey,
@@ -33,14 +50,14 @@ const uuidRegex =
 			return { filterKey: fieldKey, filterValue: Like(`%${filter.value}%`) };
 		},
 	},
-	safeParseJSON = (json) => {
+	safeParseJSON = (json: string) => {
 		try {
 			return JSON.parse(json);
 		} catch {
 			return null;
 		}
 	},
-	parsers = [
+	parsers: FilterParser[] = [
 		{
 			isParserForType: (filter) =>
 				['boolean', 'number', 'float', 'object', 'array'].includes(
@@ -48,18 +65,18 @@ const uuidRegex =
 				),
 			parse: (filter, fieldKey) => ({
 				filterKey: fieldKey,
-				filterValue: safeParseJSON(filter.value),
+				filterValue: safeParseJSON(filter.value as string),
 			}),
 		},
 		{
 			isParserForType: (filter) => filter.property.type() === 'reference',
 			parse: (filter) => {
-				const [column] = filter.property.column.propertyPath.split('.');
+				const [column] = filter.property['column'].propertyPath.split('.');
 				return { filterKey: column, filterValue: filter.value };
 			},
 		},
 		{
-			isParserForType: (filter) => filter.property.column.type === 'enum',
+			isParserForType: (filter) => filter.property['column'].type === 'enum',
 			parse: (filter, fieldKey) => ({
 				filterKey: fieldKey,
 				filterValue: filter.value,
@@ -103,11 +120,11 @@ const uuidRegex =
 			isParserForType: (filter: any) => filter?.custom,
 			parse: (filter, fieldKey) => ({
 				filterKey: fieldKey,
-				filterValue: filter?.custom,
+				filterValue: filter['custom'],
 			}),
 		},
 	],
-	convertFilter = (filterObject) => {
+	convertFilter = (filterObject: Filter) => {
 		if (!filterObject) {
 			return {};
 		}
@@ -146,122 +163,172 @@ const uuidRegex =
 				].map((i) => ({ [i]: { isVisible: fullyHideActions } })),
 			),
 		},
-	});
+	}),
+	{ hash } = await import('../utils/auth.utils.js'),
+	adminRouter = async (
+		admin: AdminJS,
+		server: any,
+		appService: AppService,
+		config: ConfigService,
+	) =>
+		buildAuthenticatedRouter(
+			admin,
+			{
+				authenticate: async (email, password) => {
+					const hook = await appService.hook.findOne({ signature: password });
 
-const getCustomResource = (svc: AppService): typeof Resource =>
-	class CustomResource extends Resource {
-		private resourceName: string;
+					if (!hook || email !== config.get('ADMIN_EMAIL')) return null;
 
-		constructor(model: typeof BaseEntity) {
-			super(model);
+					return { email, password };
+				},
+				cookieName: 'adminjs',
+				cookiePassword: await hash(config.get('SERVER_SECRET')),
+			},
+			server,
+		),
+	buildAuthenticatedRouter = async (
+		admin: AdminJS,
+		auth: AuthenticationOptions,
+		fastifyApp: any,
+	): Promise<void> => {
+		const adminSessionId = 'adminUser';
 
-			this.resourceName = model.name.uncapitalize;
+		if (!auth.authenticate && !auth.provider) {
+			throw new WrongArgumentError(MISSING_AUTH_CONFIG_ERROR);
 		}
 
-		isNumeric(value: any) {
-			const stringValue = String(value).replace(/,/g, '.');
-			if (isNaN(parseFloat(stringValue))) return false;
-			return isFinite(Number(stringValue));
+		if (auth.authenticate && auth.provider) {
+			throw new WrongArgumentError(INVALID_AUTH_CONFIG_ERROR);
 		}
 
-		safeParseNumber(value: any) {
-			if (this.isNumeric(value)) return Number(value);
-			return value;
+		if (auth.provider) {
+			admin.options.env = {
+				...admin.options.env,
+				...auth.provider.getUiProps(),
+			};
 		}
 
-		/** Converts params from string to final type */
-		private customPrepareParams(params: {}) {
-			const preparedParams = { ...params };
-			this.properties().forEach((property) => {
-				const param = flat.get(preparedParams, property.path());
-				const key = property.path();
-				if (param === undefined) {
-					return;
-				}
-				const type = property.type();
-				if (type === 'mixed') {
-					preparedParams[key] = param;
-				}
-				if (type === 'number') {
-					if (property.isArray()) {
-						preparedParams[key] = param
-							? param.map((p) => this.safeParseNumber(p))
-							: param;
-					} else {
-						preparedParams[key] = this.safeParseNumber(param);
+		await buildRouter(admin, fastifyApp);
+		withProtectedRoutesHandler(fastifyApp, admin, adminSessionId);
+		withLogin(fastifyApp, admin, auth, adminSessionId);
+		withLogout(fastifyApp, admin, auth);
+		withRefresh(fastifyApp, admin, auth, adminSessionId);
+	},
+	getCustomResource = (svc: AppService): typeof Resource =>
+		class CustomResource extends Resource {
+			private resourceName: string;
+
+			constructor(model: typeof BaseEntity) {
+				super(model);
+
+				this.resourceName = model.name.uncapitalize;
+			}
+
+			isNumeric(value: any) {
+				const stringValue = String(value).replace(/,/g, '.');
+				if (isNaN(parseFloat(stringValue))) return false;
+				return isFinite(Number(stringValue));
+			}
+
+			safeParseNumber(value: any) {
+				if (this.isNumeric(value)) return Number(value);
+				return value;
+			}
+
+			/** Converts params from string to final type */
+			private customPrepareParams(params: {}) {
+				const preparedParams = { ...params };
+				this.properties().forEach((property) => {
+					const param = flat.get(preparedParams, property.path());
+					const key = property.path();
+					if (param === undefined) {
+						return;
 					}
-				}
-				if (type === 'reference') {
-					if (param === null) {
-						preparedParams[property.column.propertyName] = null;
-					} else {
-						const [ref, foreignKey] = property.column.propertyPath.split('.');
-						const id = property.column.type === Number ? Number(param) : param;
-						preparedParams[ref] = foreignKey ? { [foreignKey]: id } : id;
+					const type = property.type();
+					if (type === 'mixed') {
+						preparedParams[key] = param;
 					}
-				}
-			});
-			return preparedParams;
-		}
+					if (type === 'number') {
+						if (property.isArray()) {
+							preparedParams[key] = param
+								? param.map((p) => this.safeParseNumber(p))
+								: param;
+						} else {
+							preparedParams[key] = this.safeParseNumber(param);
+						}
+					}
+					if (type === 'reference') {
+						if (param === null) {
+							preparedParams[property.column.propertyName] = null;
+						} else {
+							const [ref, foreignKey] = property.column.propertyPath.split('.');
+							const id =
+								property.column.type === Number ? Number(param) : param;
+							preparedParams[ref] = foreignKey ? { [foreignKey]: id } : id;
+						}
+					}
+				});
+				return preparedParams;
+			}
 
-		async find(filter: any, params: any) {
-			const { limit = 10, offset = 0, sort = {} } = params;
-			const { direction, sortBy } = sort;
-			const instances = await svc[this.resourceName].find({
-				...convertFilter(filter),
-				take: limit,
-				skip: offset,
-				order: { [sortBy]: (direction || 'asc').toUpperCase() },
-			});
-			return instances.map(
-				(instance: ParamsType) => new BaseRecord(instance, this),
-			);
-		}
+			async find(filter: any, params: any) {
+				const { limit = 10, offset = 0, sort = {} } = params;
+				const { direction, sortBy } = sort;
+				const instances = await svc[this.resourceName].find({
+					...convertFilter(filter),
+					take: limit,
+					skip: offset,
+					order: { [sortBy]: (direction || 'asc').toUpperCase() },
+				});
+				return instances.map(
+					(instance: ParamsType) => new BaseRecord(instance, this),
+				);
+			}
 
-		async findOne(id: string) {
-			const instance = await svc[this.resourceName].id(id);
+			async findOne(id: string) {
+				const instance = await svc[this.resourceName].id(id);
 
-			if (!instance) return null;
+				if (!instance) return null;
 
-			return new BaseRecord(instance, this);
-		}
+				return new BaseRecord(instance, this);
+			}
 
-		async update(id: string, params = {}) {
-			const instance = await svc[this.resourceName].id(id, { deep: 0 });
+			async update(id: string, params = {}) {
+				const instance = await svc[this.resourceName].id(id, { deep: 0 });
 
-			if (!instance) throw new Error('Instance not found.');
+				if (!instance) throw new Error('Instance not found.');
 
-			const preparedParams = flat.unflatten(this.customPrepareParams(params));
-			Object.keys(preparedParams).forEach((paramName) => {
-				if (typeof instance[paramName] !== 'undefined')
-					instance[paramName] = preparedParams[paramName];
-			});
+				const preparedParams = flat.unflatten(this.customPrepareParams(params));
+				Object.keys(preparedParams).forEach((paramName) => {
+					if (typeof instance[paramName] !== 'undefined')
+						instance[paramName] = preparedParams[paramName];
+				});
 
-			return svc[this.resourceName].modify(id, instance);
-		}
+				return svc[this.resourceName].modify(id, instance);
+			}
 
-		delete(id: string) {
-			return svc[this.resourceName].remove(id);
-		}
+			delete(id: string) {
+				return svc[this.resourceName].remove(id);
+			}
 
-		create(params = {}) {
-			const unflattenedParams = this.customPrepareParams(params);
+			create(params = {}) {
+				const unflattenedParams = this.customPrepareParams(params);
 
-			params = {};
-			Object.keys(unflattenedParams).forEach((i) => {
-				let name = i.split('.').at(-1);
-				if (name === 'hashedPassword') name = 'password';
-				if (unflattenedParams[i]) params[name] = unflattenedParams[i];
-			});
+				params = {};
+				Object.keys(unflattenedParams).forEach((i) => {
+					let name = i.split('.').at(-1);
+					if (name === 'hashedPassword') name = 'password';
+					if (unflattenedParams[i]) params[name] = unflattenedParams[i];
+				});
 
-			return svc[this.resourceName].assign(params);
-		}
-	};
+				return svc[this.resourceName].assign(params);
+			}
+		};
 
 export {
 	AdminJS,
 	getCustomResource,
-	buildAuthenticatedRouter,
+	adminRouter,
 	Database,
 	generalDisplay,
 	Components,

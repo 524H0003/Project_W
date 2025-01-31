@@ -35,13 +35,16 @@
 	},
 	"dependencies": {
 		"@adminjs/design-system": "^4.1.1",
-		"@adminjs/express": "^6.1.1",
+		"@adminjs/fastify": "^4.1.3",
 		"@adminjs/typeorm": "^5.0.1",
 		"@apollo/server": "^4.11.3",
+		"@as-integrations/fastify": "^2.1.1",
 		"@aws-sdk/client-s3": "^3.738.0",
 		"@aws-sdk/lib-storage": "^3.738.0",
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/helmet": "^13.0.1",
+		"@fastify/session": "11.1.0",
+		"@fastify/static": "^8.0.4",
 		"@graphql-codegen/cli": "^5.0.4",
 		"@graphql-codegen/typescript": "4.1.3",
 		"@graphql-codegen/typescript-document-nodes": "^4.0.13",
@@ -96,7 +99,6 @@
 		"@nestjs/schematics": "^11.0.0",
 		"@nestjs/testing": "^11.0.6",
 		"@swc/cli": "^0.6.0",
-		"@types/cookie-parser": "^1.4.8",
 		"@types/jest": "^29.5.14",
 		"@types/jsonwebtoken": "^9.0.8",
 		"@types/mime-types": "^2.1.4",
@@ -130,6 +132,14 @@
 	"optionalDependencies": {
 		"@css-inline/css-inline-win32-x64-msvc": "^0.14.3",
 		"@rollup/rollup-linux-x64-gnu": "^4.32.1"
+	},
+	"pnpm": {
+		"overrides": {
+			"@fastify/cookie": "11.0.2",
+			"@fastify/session": "11.1.0",
+			"@fastify/formbody": "8.0.2",
+			"@fastify/multipart": "9.0.3"
+		}
 	},
 	"packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b"
 }
