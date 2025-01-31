@@ -12,8 +12,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MetaData } from 'auth/auth.guard';
-import { Hook } from 'app/hook/hook.entity';
-import { memoryStorage } from 'multer';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
@@ -21,6 +19,8 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
+import { memoryStorage } from 'fastify-multer';
+import { File } from 'fastify-multer/lib/interfaces';
 
 /**
  * Enterprise controller
@@ -51,7 +51,7 @@ export class EnterpriseController extends AppController {
 		@Res() response: FastifyReply,
 		@Body() body: IEnterpriseAssign,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: File,
 	): Promise<void> {
 		await this.svc.hook.validating(body.signature, mtdt, request.hook);
 		await this.svc.enterprise.assign(body, avatar || null);

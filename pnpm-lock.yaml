@@ -216,9 +216,6 @@ importers:
       '@types/mime-types':
         specifier: ^2.1.4
         version: 2.1.4
-      '@types/multer':
-        specifier: ^1.4.12
-        version: 1.4.12
       '@types/node':
         specifier: ^22.12.0
         version: 22.12.0
@@ -3486,9 +3483,6 @@ packages:
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
-
-  '@types/multer@1.4.12':
-    resolution: {integrity: sha512-pQ2hoqvXiJt2FP9WQVLPRO+AmiIm/ZYkavPlIQnx282u4ZrVdztx0pkh3jjpQt0Kz+YI0YhSG264y08UJKoUQg==}
 
   '@types/node-fetch@2.6.12':
     resolution: {integrity: sha512-8nneRWKCg3rMtF69nLQJnOYUcbafYeFSjqkw3jCRLsqkWFlHaoQrr5mXmofFGOx3DKn7UfmBMyov8ySvLRVldA==}
@@ -14182,10 +14176,6 @@ snapshots:
     optional: true
 
   '@types/ms@2.1.0': {}
-
-  '@types/multer@1.4.12':
-    dependencies:
-      '@types/express': 5.0.0
 
   '@types/node-fetch@2.6.12':
     dependencies:

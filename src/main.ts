@@ -41,13 +41,16 @@ declare module 'fastify' {
 	}
 }
 
+type CookieProps = {
+	name: string;
+	password: string;
+};
+
 async function registerServerPlugins(
 	fastify: FastifyInstance,
-	config: ConfigService,
-	cookieName: string,
-	cookiePassword: string,
+	{ password, name }: CookieProps,
 ) {
-	const secret = cookiePassword,
+	const secret = password,
 		cookieOptions: CookieOptions = {
 			httpOnly: true,
 			secure: true,
@@ -86,7 +89,7 @@ async function registerServerPlugins(
 			secret,
 			// ! Cautious: Session's cookie secure must set false. If not, AdminJS crash
 			cookie: { secure: false },
-			cookieName,
+			cookieName: name,
 		});
 }
 
@@ -94,8 +97,7 @@ async function initiateAdmin(
 	appService: AppService,
 	config: ConfigService,
 	server: any,
-	cookieName: string,
-	cookiePassword: string,
+	cookie: CookieProps,
 ) {
 	const {
 		AdminJS,
@@ -127,14 +129,7 @@ async function initiateAdmin(
 		componentLoader,
 	});
 
-	await adminRouter(
-		admin,
-		server,
-		appService,
-		config,
-		cookieName,
-		cookiePassword,
-	);
+	await adminRouter(admin, server, appService, config, cookie);
 }
 
 async function bootstrap() {
@@ -155,17 +150,13 @@ async function bootstrap() {
 		),
 		{ httpAdapter } = nest.get(HttpAdapterHost),
 		config = nest.get(ConfigService),
-		cookieName = (6).string,
-		cookiePassword = await hash(config.get('SERVER_SECRET'));
+		cookie: CookieProps = {
+			name: (6).string,
+			password: await hash(config.get('SERVER_SECRET')),
+		};
 
-	await registerServerPlugins(server, config, cookieName, cookiePassword);
-	await initiateAdmin(
-		nest.get(AppService),
-		config,
-		server,
-		cookieName,
-		cookiePassword,
-	);
+	await registerServerPlugins(server, cookie);
+	await initiateAdmin(nest.get(AppService), config, server, cookie);
 
 	if (module) console.error('asdpfhiap');
 

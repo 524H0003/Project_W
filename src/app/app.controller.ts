@@ -15,20 +15,20 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser, MetaData } from 'auth/auth.guard';
 import { Hook } from 'app/hook/hook.entity';
 import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
-import { memoryStorage } from 'multer';
 import { IStudentSignup } from 'university/student/student.model';
 import { IUserSignUp } from 'user/user.model';
 import { IBaseUserEmail } from './app.model';
 import { AppService } from './app.service';
 import { UserRecieve } from 'user/user.entity';
 import { compare } from './utils/auth.utils';
-import { IRefreshResult } from 'auth/strategies/refresh.strategy';
 import { Throttle } from '@nestjs/throttler';
 import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from './interceptor/file.interceptor';
+import { memoryStorage } from 'fastify-multer';
+import { File } from 'fastify-multer/lib/interfaces';
 
 /**
  * Application Controller
@@ -89,7 +89,7 @@ export class AppController extends BaseController {
 	 * @param {FastifyReply} response - server's response
 	 * @param {IUserSignUp} body - sign up input
 	 * @param {string} mtdt - client's metadata
-	 * @param {Express.Multer.File} avatar - user's avatar
+	 * @param {File} avatar - user's avatar
 	 * @return {Promise<void>}
 	 */
 	@Post('signup')
@@ -100,7 +100,7 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IUserSignUp,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: File,
 	): Promise<void> {
 		return this.responseWithUser(
 			request,
@@ -148,7 +148,7 @@ export class AppController extends BaseController {
 		const sendBack = (usrRcv: UserRecieve) =>
 				this.responseWithUserRecieve(request, response, usrRcv),
 			{ sessionId, status, hashedUserAgent } = request.refresh;
-			
+
 		if (status === 'lockdown') {
 			await this.svc.device.remove({
 				id: (await this.svc.session.id(sessionId)).device.id,

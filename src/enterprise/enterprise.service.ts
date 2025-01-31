@@ -14,6 +14,7 @@ import {
 	IEnterpriseKeys,
 } from 'build/models';
 import { AppService } from 'app/app.service';
+import { File } from 'fastify-multer/lib/interfaces';
 
 /**
  * Enterprise service
@@ -33,12 +34,12 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	/**
 	 * Assign enterprise
 	 * @param {IEnterpriseAssign} input - enterprise assign form
-	 * @param {Express.Multer.File} avatar - user's avatar
+	 * @param {File} avatar - user's avatar
 	 * @return {Promise<Enterprise>}
 	 */
 	async assign(
 		input: IEnterpriseAssign,
-		avatar: Express.Multer.File = null,
+		avatar: File = null,
 	): Promise<Enterprise> {
 		const save = async (
 			entity: DeepPartial<Enterprise>,

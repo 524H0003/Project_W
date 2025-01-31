@@ -12,6 +12,11 @@ export type AuthenticationContext = {
 	reply: FastifyReply;
 };
 
+export type cookieProps = {
+	name: string;
+	password: string;
+};
+
 export type FilterParser = {
 	isParserForType: (filter: FilterElement) => boolean;
 	parse: (

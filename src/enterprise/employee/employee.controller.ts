@@ -12,13 +12,14 @@ import { MetaData } from 'auth/auth.guard';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { AuthGuard } from '@nestjs/passport';
-import { memoryStorage } from 'multer';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
+import { memoryStorage } from 'fastify-multer';
+import { File } from 'fastify-multer/lib/interfaces';
 
 /**
  * Employee controller
@@ -65,7 +66,7 @@ export class EmployeeController extends AppController {
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IEmployeeSignup,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: File,
 	): Promise<void> {
 		await this.svc.hook.validating(body.signature, mtdt, request.hook);
 		return this.responseWithUser(

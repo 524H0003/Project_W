@@ -28,7 +28,7 @@ import { withProtectedRoutesHandler } from './authentication/protected-routes.ha
 import { withLogin } from './authentication/login.handler.mjs';
 import { withLogout } from './authentication/logout.handler.mjs';
 import { withRefresh } from './authentication/refresh.handler.mjs';
-import { FilterParser, WrongArgumentError } from './types.mjs';
+import { cookieProps, FilterParser, WrongArgumentError } from './types.mjs';
 
 const uuidRegex =
 		/^[0-9A-F]{8}-[0-9A-F]{4}-[5|4|3|2|1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
@@ -173,8 +173,7 @@ const uuidRegex =
 		server: any,
 		appService: AppService,
 		config: ConfigService,
-		cookieName: string,
-		cookiePassword: string,
+		{ name, password }: cookieProps,
 	) =>
 		customBuildAuthenticatedRouter(
 			admin,
@@ -186,8 +185,8 @@ const uuidRegex =
 
 					return { email, password };
 				},
-				cookieName,
-				cookiePassword,
+				cookieName: name,
+				cookiePassword: password,
 			},
 			server,
 		),
