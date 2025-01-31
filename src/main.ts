@@ -143,7 +143,7 @@ async function bootstrap() {
 		{ httpAdapter } = nest.get(HttpAdapterHost),
 		config = nest.get(ConfigService);
 
-	await registerServerPlugins(server, config);
+	// await registerServerPlugins(server, config);
 	await initiateAdmin(nest.get(AppService), config, server);
 
 	if (module) console.error('asdpfhiap');

@@ -1,13 +1,18 @@
 {
 	"debug.javascript.autoAttachFilter": "disabled",
-	"editor.codeActionsOnSave": { "source.fixAll": "explicit" },
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
 	"editor.formatOnSave": true,
 	"editor.insertSpaces": false,
 	"editor.tabSize": 2,
-	"editor.tokenColorCustomizations": { "comments": "", "textMateRules": [] },
+	"editor.tokenColorCustomizations": {
+		"comments": "",
+		"textMateRules": []
+	},
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.patterns": {
 		"*.entity.ts": "$(capture).model.ts, $(capture).graphql.ts",
@@ -26,7 +31,7 @@
 		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
 		"**/dist": true,
-		"**/node_modules": true,
+		"**/node_modules": false,
 		".adminjs": true,
 		".devcontainer": true,
 		".git": true,
@@ -42,7 +47,9 @@
 		"types": true,
 		"graphql": true
 	},
-	"jest.outputConfig": { "clearOnRun": "terminal" },
+	"jest.outputConfig": {
+		"clearOnRun": "terminal"
+	},
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,

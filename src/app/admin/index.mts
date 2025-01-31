@@ -16,7 +16,11 @@ import {
 	MoreThanOrEqual,
 	Raw,
 } from 'typeorm';
-import { AuthenticationOptions, buildRouter } from '@adminjs/fastify';
+import {
+	AuthenticationOptions,
+	buildRouter,
+	buildAuthenticatedRouter,
+} from '@adminjs/fastify';
 import { Database, Resource } from '@adminjs/typeorm';
 import { componentLoader, Components } from './components.mjs';
 import { ConfigService } from '@nestjs/config';
@@ -186,7 +190,7 @@ const uuidRegex =
 			},
 			server,
 		),
-	buildAuthenticatedRouter = async (
+	customBuildAuthenticatedRouter = async (
 		admin: AdminJS,
 		auth: AuthenticationOptions,
 		fastifyApp: any,
