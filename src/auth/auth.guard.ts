@@ -18,7 +18,7 @@ import { UserRole } from 'user/user.model';
  */
 function convertForGql(context: ExecutionContext) {
 	const ctx = GqlExecutionContext.create(context);
-	return ctx.getContext().request;
+	return ctx.getContext().req;
 }
 
 /**
