@@ -28,7 +28,7 @@ let mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee,
 	svc: AppService,
-	req: TestAgent,
+	req: () => TestAgent,
 	headers: object,
 	tag: EventTag;
 

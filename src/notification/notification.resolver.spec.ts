@@ -17,7 +17,7 @@ import {
 
 const fileName = curFile(__filename);
 
-let req: TestAgent,
+let req: () => TestAgent,
 	svc: AppService,
 	mailerSvc: MailerService,
 	employee: Employee,

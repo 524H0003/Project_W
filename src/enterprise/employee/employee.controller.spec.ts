@@ -9,7 +9,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent,
+let req: () => TestAgent,
 	svc: AppService,
 	mailerSvc: MailerService,
 	enterprise: Enterprise,
@@ -38,7 +38,7 @@ describe('hook', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req.post('/employee/hook').send({
+					await req().post('/employee/hook').send({
 						enterpriseName: enterprise.baseUser.name,
 						...employee,
 						...employee.eventCreator.user.baseUser,
@@ -55,7 +55,7 @@ describe('hook', () => {
 
 describe('signup', () => {
 	it('success', async () => {
-		const { headers } = await req.post('/employee/hook').send({
+		const { headers } = await req().post('/employee/hook').send({
 				enterpriseName: enterprise.baseUser.name,
 				...employee,
 				...employee.eventCreator.user.baseUser,
@@ -67,7 +67,7 @@ describe('signup', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req
+					await req()
 						.post('/employee/signup')
 						.set('Cookie', headers['set-cookie'])
 						.send({

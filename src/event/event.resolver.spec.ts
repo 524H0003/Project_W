@@ -22,7 +22,7 @@ let mailerSvc: MailerService,
 	employee: Employee,
 	headers: object,
 	svc: AppService,
-	req: TestAgent,
+	req: () => TestAgent,
 	event: Event;
 
 beforeAll(async () => {

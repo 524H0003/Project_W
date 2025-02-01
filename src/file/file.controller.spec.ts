@@ -8,7 +8,7 @@ import { readFileSync } from 'fs';
 import { rootPublic } from 'app/module/test.module';
 
 const fileName = curFile(__filename);
-let rawUsr: User, req: TestAgent, svc: AppService;
+let rawUsr: User, req: () => TestAgent, svc: AppService;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest([FileController]);
@@ -24,7 +24,7 @@ describe('seeUploadedFile', () => {
 	let headers: object, usr: User;
 
 	beforeEach(async () => {
-		const e = await req
+		const e = await req()
 			.post('/signup')
 			.attach('avatar', Buffer.from((40).string, 'base64'), 'avatar.png')
 			.field('name', rawUsr.baseUser.name)
@@ -42,7 +42,7 @@ describe('seeUploadedFile', () => {
 
 		await execute(
 			() =>
-				req
+				req()
 					.get('/file/' + serverFile)
 					.buffer()
 					.parse((res, callback) => {
@@ -69,7 +69,7 @@ describe('seeUploadedFile', () => {
 	it('success', async () => {
 		await execute(
 			() =>
-				req
+				req()
 					.get(`/file/${usr.baseUser.avatarPath}`)
 					.set('Cookie', headers['set-cookie'])
 					.buffer()

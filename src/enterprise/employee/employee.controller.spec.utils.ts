@@ -10,7 +10,7 @@ import TestAgent from 'supertest/lib/agent';
 import { AppService } from 'app/app.service';
 
 export async function assignEmployee(
-	req: TestAgent,
+	req: () => TestAgent,
 	svc: AppService,
 	enterprise: Enterprise,
 	empInp: Employee,
@@ -24,16 +24,18 @@ export async function assignEmployee(
 	);
 
 	const empHeaders = (
-			await req.post('/employee/hook').send({
-				enterpriseName: enterprise.baseUser.name,
-				...empInp,
-				...empInp.eventCreator.user.baseUser,
-			} as IEmployeeHook)
+			await req()
+				.post('/employee/hook')
+				.send({
+					enterpriseName: enterprise.baseUser.name,
+					...empInp,
+					...empInp.eventCreator.user.baseUser,
+				} as IEmployeeHook)
 		).headers,
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0']['context'][
 			'signature'
 		],
-		{ headers } = await req
+		{ headers } = await req()
 			.post('/employee/signup')
 			.set('Cookie', empHeaders['set-cookie'])
 			.send({

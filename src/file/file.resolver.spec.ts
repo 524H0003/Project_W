@@ -11,7 +11,7 @@ import { UserRole } from 'user/user.model';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent, svc: AppService, headers: object;
+let req: () => TestAgent, svc: AppService, headers: object;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();
@@ -23,7 +23,7 @@ beforeEach(async () => {
 	let rawUsr: User = User.test(fileName),
 		usr: User;
 
-	const e = await req.post('/signup').send({ ...rawUsr, ...rawUsr.baseUser });
+	const e = await req().post('/signup').send({ ...rawUsr, ...rawUsr.baseUser });
 	usr = await svc.user.email(rawUsr.baseUser.email);
 
 	headers = e.headers;

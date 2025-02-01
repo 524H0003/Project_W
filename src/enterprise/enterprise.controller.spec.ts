@@ -8,7 +8,7 @@ import { EnterpriseController } from './enterprise.controller';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent,
+let req: () => TestAgent,
 	enterprise: Enterprise,
 	signature: string,
 	svc: AppService,
@@ -26,7 +26,7 @@ beforeEach(() => {
 
 describe('assign', () => {
 	it('success', async () => {
-		const { headers } = await req
+		const { headers } = await req()
 			.post('/request-signature')
 			.send({ email: svc.cfg.get('ADMIN_EMAIL') });
 
@@ -37,7 +37,7 @@ describe('assign', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req
+					await req()
 						.post('/enterprise/assign')
 						.set('Cookie', headers['set-cookie'])
 						.send({

@@ -13,7 +13,7 @@ let svc: AppService,
 	student: Student,
 	event: Event,
 	mailerSvc: MailerService,
-	req: TestAgent;
+	req: () => TestAgent;
 
 beforeAll(async () => {
 	const { appSvc, requester, module } = await initJest();

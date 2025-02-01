@@ -19,7 +19,7 @@ import { Student } from 'university/student/student.entity';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent,
+let req: () => TestAgent,
 	svc: AppService,
 	mailerSvc: MailerService,
 	student: Student,

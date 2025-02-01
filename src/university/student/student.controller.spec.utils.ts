@@ -4,13 +4,13 @@ import { Student } from './student.entity';
 import { AppService } from 'app/app.service';
 
 export async function assignStudent(
-	req: TestAgent,
+	req: () => TestAgent,
 	svc: AppService,
 	studentInp: Student,
 	mailerSvc: MailerService,
 ) {
 	const headersInp = (
-			await req
+			await req()
 				.post('/student/signup')
 				.send({ ...studentInp.user, ...studentInp.user.baseUser })
 		).headers,
@@ -23,12 +23,12 @@ export async function assignStudent(
 			.at(-1),
 		password = (30).string + 'Aa!1';
 
-	await req
+	await req()
 		.post(`/change-password/${token}`)
 		.set('Cookie', headersInp['set-cookie'])
 		.send({ password });
 
-	const { headers } = await req
+	const { headers } = await req()
 			.post('/login')
 			.send({ ...studentInp.user.baseUser, password }),
 		student = await svc.student.findOne({

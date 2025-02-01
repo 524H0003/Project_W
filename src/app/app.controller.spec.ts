@@ -6,7 +6,7 @@ import { expect } from '@jest/globals';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent, usr: User, rfsTms: number, svc: AppService;
+let req: () => TestAgent, usr: User, rfsTms: number, svc: AppService;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();
@@ -20,7 +20,7 @@ beforeEach(() => {
 
 describe('signup', () => {
 	it('success', async () => {
-		await execute(() => req.post('/signup').send({ ...usr, ...usr.baseUser }), {
+		await execute(() => req().post('/signup').send({ ...usr, ...usr.baseUser }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -48,11 +48,11 @@ describe('signup', () => {
 	});
 
 	it('fail due to email already exist', async () => {
-		await req.post('/signup').send({ ...usr, ...usr.baseUser });
+		await req().post('/signup').send({ ...usr, ...usr.baseUser });
 
 		await execute(
 			async () =>
-				(await req.post('/signup').send({ ...usr, ...usr.baseUser })).text,
+				(await req().post('/signup').send({ ...usr, ...usr.baseUser })).text,
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Invalid', 'User', 'SignUp')] },
@@ -64,11 +64,11 @@ describe('signup', () => {
 
 describe('login', () => {
 	beforeEach(
-		async () => await req.post('/signup').send({ ...usr, ...usr.baseUser }),
+		async () => await req().post('/signup').send({ ...usr, ...usr.baseUser }),
 	);
 
 	it('success', async () => {
-		await execute(() => req.post('/login').send({ ...usr, ...usr.baseUser }), {
+		await execute(() => req().post('/login').send({ ...usr, ...usr.baseUser }), {
 			exps: [
 				{
 					type: 'toHaveProperty',
@@ -94,7 +94,7 @@ describe('login', () => {
 
 		await execute(
 			async () =>
-				(await req.post('/login').send({ ...usr, ...usr.baseUser })).text,
+				(await req().post('/login').send({ ...usr, ...usr.baseUser })).text,
 			{
 				exps: [{ type: 'toContain', params: [err('Invalid', 'Password', '')] }],
 			},
@@ -106,7 +106,7 @@ describe('login', () => {
 
 		await execute(
 			async () =>
-				(await req.post('/login').send({ ...usr, ...usr.baseUser })).text,
+				(await req().post('/login').send({ ...usr, ...usr.baseUser })).text,
 			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
 	});
@@ -117,14 +117,14 @@ describe('logout', () => {
 
 	beforeEach(
 		async () =>
-			({ headers } = await req
+			({ headers } = await req()
 				.post('/signup')
 				.send({ ...usr, ...usr.baseUser })),
 	);
 
 	it('success', async () => {
 		await execute(
-			() => req.post('/logout').set('Cookie', headers['set-cookie']),
+			() => req().post('/logout').set('Cookie', headers['set-cookie']),
 			{
 				exps: [
 					{
@@ -145,7 +145,7 @@ describe('logout', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(async () => (await req.post('/logout')).text, {
+		await execute(async () => (await req().post('/logout')).text, {
 			exps: [
 				{ type: 'toContain', params: [err('Unauthorized', 'User', 'Access')] },
 			],
@@ -158,14 +158,14 @@ describe('refresh', () => {
 
 	beforeEach(
 		async () =>
-			({ headers } = await req
+			({ headers } = await req()
 				.post('/signup')
 				.send({ ...usr, ...usr.baseUser })),
 	);
 
 	it('success', async () => {
 		await execute(
-			() => req.post('/refresh').set('Cookie', headers['set-cookie']),
+			() => req().post('/refresh').set('Cookie', headers['set-cookie']),
 			{
 				exps: [
 					{
@@ -189,7 +189,7 @@ describe('refresh', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(async () => (await req.post('/refresh')).text, {
+		await execute(async () => (await req().post('/refresh')).text, {
 			exps: [
 				{ type: 'toContain', params: [err('Unauthorized', 'User', 'Access')] },
 			],
@@ -199,7 +199,7 @@ describe('refresh', () => {
 	it('success in generate new key', async () => {
 		await execute(
 			async () =>
-				({ headers } = await req
+				({ headers } = await req()
 					.post('/refresh')
 					.set('Cookie', headers['set-cookie'])),
 			{
@@ -236,7 +236,7 @@ describe('change-password', () => {
 		await execute(
 			async () =>
 				(
-					await req
+					await req()
 						.post('/change-password')
 						.send({ email: user.baseUser.email })
 				).text,
@@ -255,7 +255,7 @@ describe('change-password', () => {
 		await execute(
 			async () =>
 				(
-					await req
+					await req()
 						.post('/change-password')
 						.send({ email: user.baseUser.email + ']' })
 				).text,
@@ -269,7 +269,7 @@ describe('request-signature', () => {
 		await execute(
 			async () =>
 				(
-					await req
+					await req()
 						.post('/request-signature')
 						.send({ email: svc.cfg.get('ADMIN_EMAIL') })
 				).text,

@@ -31,7 +31,7 @@ import { assignStudent } from 'university/student/student.controller.spec.utils'
 
 const fileName = curFile(__filename);
 
-let req: TestAgent,
+let req: () => TestAgent,
 	svc: AppService,
 	mailerSvc: MailerService,
 	employee: Employee,
@@ -53,7 +53,7 @@ beforeEach(async () => {
 
 	headers = (await assignEmployee(req, svc, enterprise, employee, mailerSvc))
 		.headers;
-	await req.post('/signup').send({ ...user, ...user.baseUser });
+	await req().post('/signup').send({ ...user, ...user.baseUser });
 	user = await svc.user.findOne({ baseUser: { name: user.baseUser.name } });
 
 	notification = await svc.notification.findOne({
