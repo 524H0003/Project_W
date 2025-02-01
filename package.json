@@ -110,6 +110,7 @@
 		"@types/ua-parser-js": "^0.7.39",
 		"@typescript-eslint/eslint-plugin": "^8.22.0",
 		"@typescript-eslint/parser": "^8.22.0",
+		"cookie-parser": "^1.4.7",
 		"cypress": "^14.0.1",
 		"dts-bundle-generator": "^9.5.1",
 		"eslint": "^9.19.0",
