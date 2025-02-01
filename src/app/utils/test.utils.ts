@@ -118,6 +118,12 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	};
 }
 
+jest.mock('fastify-multer', () => ({
+	...jest.requireActual('fastify-multer'),
+	__esModule: true,
+	default: require('multer'),
+}));
+
 /**
  * Init jest test
  */
