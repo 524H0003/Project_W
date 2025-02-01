@@ -1,7 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { hash } from 'app/utils/auth.utils';
-import { NextFunction, FastifyRequest, FastifyReply } from 'express';
-import { createRequest, createResponse } from 'node-mocks-http';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { AuthMiddleware } from './auth.middleware';
 import { AuthService } from './auth.service';
 import { initJest } from 'app/utils/test.utils';
@@ -10,7 +9,7 @@ import { expect } from '@jest/globals';
 const acsTkn = '..access-token',
 	rfsTkn = '..refresh-token';
 
-let next: NextFunction,
+let next: Function,
 	req: FastifyRequest,
 	res: FastifyReply,
 	authMdw: AuthMiddleware,
@@ -26,9 +25,7 @@ beforeEach(async () => {
 		(authSvc = module.get(AuthService)),
 		(cfgSvc = module.get(ConfigService));
 
-	(req = createRequest()),
-		(res = createResponse()),
-		(next = jest.fn()),
+	(next = jest.fn()),
 		(acsKey = cfgSvc.get('ACCESS_SECRET')),
 		(rfsKey = cfgSvc.get('REFRESH_SECRET'));
 });
@@ -43,7 +40,7 @@ describe('use', () => {
 	});
 
 	it('refresh', async () => {
-		req.url = '/refresh';
+		req = { url: '/refresh' } as unknown as FastifyRequest;
 		await authMdw.use(req, res, next),
 			expect(req.headers.authorization).toBe(`Bearer ${rfsTkn}`),
 			expect(next).toHaveBeenCalled();

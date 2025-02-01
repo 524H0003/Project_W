@@ -4,7 +4,7 @@ import { Student } from './student.entity';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent, stu: Student;
+let req: () => TestAgent, stu: Student;
 
 beforeAll(async () => {
 	const { requester } = await initJest();
@@ -23,7 +23,7 @@ describe('signup', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req
+					await req()
 						.post('/student/signup')
 						.send({ ...stu.user, ...stu.user.baseUser }),
 				),
@@ -35,7 +35,7 @@ describe('signup', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req
+					await req()
 						.post('/student/signup')
 						.send({ ...stu.user, ...stu.user.baseUser }),
 				),

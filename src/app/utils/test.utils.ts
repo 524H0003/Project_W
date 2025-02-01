@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
 import { TestModule } from 'app/module/test.module';
-import cookieParser from 'cookie-parser';
 import { DocumentNode, print } from 'graphql';
 import TestAgent from 'supertest/lib/agent';
 import request from 'supertest';
@@ -12,11 +11,14 @@ import { AppExceptionFilter } from 'app/app.filter';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import supertest from 'supertest';
 import { expect } from '@jest/globals';
+import Fastify from 'fastify';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { registerServerPlugins } from './server.utils';
 
 /**
  * Exported variables
  */
-let requester: TestAgent, app: INestApplication;
+let requester: () => TestAgent, app: INestApplication;
 
 /**
  * Test's expectations
@@ -103,7 +105,7 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
 	return async (variables: K, { cookie, map, attach } = {}): Promise<T> => {
-		const l0 = requester
+		const l0 = requester()
 				.post('/graphql')
 				.set('Content-Type', 'multipart/form-data')
 				.set({ 'apollo-require-preflight': 'true' }),
@@ -118,12 +120,6 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	};
 }
 
-jest.mock('fastify-multer', () => ({
-	...jest.requireActual('fastify-multer'),
-	__esModule: true,
-	default: require('multer'),
-}));
-
 /**
  * Init jest test
  */
@@ -136,19 +132,21 @@ export async function initJest(
 			controllers,
 			providers,
 		}).compile(),
-		appSvc = module.get(AppService);
+		appSvc = module.get(AppService),
+		fastify = Fastify();
 
 	// eslint-disable-next-line tsEslint/no-unused-vars
 	console.error = (...args: any) => true;
 
-	app = module.createNestApplication();
+	await registerServerPlugins(fastify, {});
+	app = module.createNestApplication(new FastifyAdapter(fastify));
 	const { httpAdapter } = app.get(HttpAdapterHost);
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
-		.use(cookieParser())
-		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
+		// .use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.init();
-	requester = request(app.getHttpServer());
+	await app.getHttpAdapter().getInstance().ready();
+	requester = () => request(app.getHttpServer());
 
 	return { module, appSvc, requester };
 }
