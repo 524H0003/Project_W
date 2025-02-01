@@ -19,7 +19,7 @@ import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
-import { File } from 'fastify-multer/lib/interfaces';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
 /**
  * Employee controller
@@ -66,7 +66,7 @@ export class EmployeeController extends AppController {
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IEmployeeSignup,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload) avatar: File,
+		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {
 		await this.svc.hook.validating(body.signature, mtdt, request.hook);
 		return this.responseWithUser(

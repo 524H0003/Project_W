@@ -20,7 +20,7 @@ import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
-import { File } from 'fastify-multer/lib/interfaces';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
 /**
  * Enterprise controller
@@ -51,7 +51,7 @@ export class EnterpriseController extends AppController {
 		@Res() response: FastifyReply,
 		@Body() body: IEnterpriseAssign,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload) avatar: File,
+		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {
 		await this.svc.hook.validating(body.signature, mtdt, request.hook);
 		await this.svc.enterprise.assign(body, avatar || null);

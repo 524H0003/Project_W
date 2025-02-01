@@ -28,7 +28,7 @@ import { ConfigService } from '@nestjs/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
-import { File } from 'fastify-multer/lib/interfaces';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
 /**
  * Application Controller
@@ -89,7 +89,7 @@ export class AppController extends BaseController {
 	 * @param {FastifyReply} response - server's response
 	 * @param {IUserSignUp} body - sign up input
 	 * @param {string} mtdt - client's metadata
-	 * @param {File} avatar - user's avatar
+	 * @param {MulterFile} avatar - user's avatar
 	 * @return {Promise<void>}
 	 */
 	@Post('signup')
@@ -100,7 +100,7 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IUserSignUp,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload) avatar: File,
+		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {
 		return this.responseWithUser(
 			request,

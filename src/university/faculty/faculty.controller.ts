@@ -19,7 +19,7 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
-import { File } from 'fastify-multer/lib/interfaces';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { memoryStorage } from 'fastify-multer';
 
 /**
@@ -50,7 +50,7 @@ export class FacultyController extends AppController {
 		@Res() response: FastifyReply,
 		@Body() body: IFacultyAssign,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload) avatar: File,
+		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	) {
 		await this.svc.hook.validating(body.signature, mtdt, request.hook);
 		return this.responseWithUser(

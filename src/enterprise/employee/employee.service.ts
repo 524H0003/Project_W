@@ -12,7 +12,7 @@ import {
 } from 'build/models';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
-import { File } from 'fastify-multer/lib/interfaces';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
 /**
  * Employee service
@@ -62,12 +62,12 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	/**
 	 * Sign up for employee
 	 * @param {IEmployeeSignup} input - the sign up input
-	 * @param {File} avatar - employee's avatar
+	 * @param {MulterFile} avatar - employee's avatar
 	 * @return {Promise<Employee>}
 	 */
 	async assign(
 		input: IEmployeeSignup & { enterpriseId: string },
-		avatar: File = null,
+		avatar: MulterFile = null,
 	): Promise<Employee> {
 		const enterprise = await this.svc.enterprise.id(
 			input.enterpriseId || input.id,
