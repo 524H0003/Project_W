@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { Hook } from 'app/hook/hook.entity';
-import { LocalHostStrategy } from 'auth/guards/localhost.strategy';
 import { IStudentSignup } from 'university/student/student.model';
 import { IUserSignUp } from 'user/user.model';
 import { IBaseUserEmail } from './app.model';
@@ -30,6 +29,7 @@ import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards/hook.guard';
 import { RefreshGuard } from 'auth/guards/refresh.guard';
+import { LocalhostGuard } from 'auth/guards/localhost.guard';
 
 /**
  * Application Controller
@@ -94,7 +94,7 @@ export class AppController extends BaseController {
 	 * @return {Promise<void>}
 	 */
 	@Post('signup')
-	@UseGuards(LocalHostStrategy)
+	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Req() request: FastifyRequest,

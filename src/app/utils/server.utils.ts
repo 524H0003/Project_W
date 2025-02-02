@@ -9,7 +9,12 @@ import { Notification } from 'notification/notification.entity';
 import { Event } from 'event/event.entity';
 import { EventCreator } from 'event/creator/creator.entity';
 import fastifyHelmet from '@fastify/helmet';
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+	FastifyInstance,
+	FastifyReply,
+	FastifyRequest,
+	FastifyServerOptions,
+} from 'fastify';
 import { User } from 'user/user.entity';
 import { Hook } from 'app/hook/hook.entity';
 import { IRefreshResult } from 'auth/guards/refresh.strategy';
@@ -31,6 +36,8 @@ declare module 'fastify' {
 		redirectTo: string;
 	}
 }
+
+export const fastifyOptions: FastifyServerOptions = { maxParamLength: 128 };
 
 export type CookieProps = {
 	name: string;

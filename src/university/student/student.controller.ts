@@ -9,7 +9,6 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { MetaData } from 'auth/guards/access.guard';
-import { LocalHostStrategy } from 'auth/guards/localhost.strategy';
 import { IStudentSignup } from './student.model';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
@@ -17,6 +16,7 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
+import { LocalhostGuard } from 'auth/guards/localhost.guard';
 
 /**
  * Student controller
@@ -44,7 +44,7 @@ export class StudentController extends AppController {
 	 * @return {Promise<void>}
 	 */
 	@Post('signup')
-	@UseGuards(LocalHostStrategy)
+	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor())
 	async signUp(
 		@Req() request: FastifyRequest,

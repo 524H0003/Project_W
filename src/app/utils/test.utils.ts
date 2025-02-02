@@ -13,7 +13,7 @@ import {
 	FastifyAdapter,
 	NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { registerServerPlugins } from './server.utils';
+import { fastifyOptions, registerServerPlugins } from './server.utils';
 import { TestModule } from 'app/module/test.module';
 
 /**
@@ -129,7 +129,7 @@ export async function initJest() {
 			imports: [TestModule, AppModule],
 		}).compile(),
 		appSvc = module.get(AppService),
-		fastify = Fastify();
+		fastify = Fastify(fastifyOptions);
 
 	// eslint-disable-next-line tsEslint/no-unused-vars
 	console.error = (...args: any) => true;

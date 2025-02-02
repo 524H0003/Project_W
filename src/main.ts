@@ -11,6 +11,7 @@ import { AppService } from 'app/app.service';
 import { AppExceptionFilter } from 'app/app.filter';
 import {
 	CookieProps,
+	fastifyOptions,
 	initiateAdmin,
 	registerServerPlugins,
 } from 'app/utils/server.utils';
@@ -18,10 +19,10 @@ import Fastify from 'fastify';
 import { hash } from 'app/utils/auth.utils';
 
 async function bootstrap() {
-	const server = Fastify(),
+	const fastify = Fastify(fastifyOptions),
 		nest = await NestFactory.create<NestFastifyApplication>(
 			MainModule,
-			new FastifyAdapter(server),
+			new FastifyAdapter(fastify),
 			{
 				cors: {
 					// origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
@@ -39,8 +40,8 @@ async function bootstrap() {
 			password: await hash(config.get('SERVER_SECRET')),
 		};
 
-	await registerServerPlugins(server, cookie);
-	await initiateAdmin(nest.get(AppService), config, server, cookie);
+	await registerServerPlugins(fastify, cookie);
+	await initiateAdmin(nest.get(AppService), config, fastify, cookie);
 
 	mkdirSync(config.get('SERVER_PUBLIC'), { recursive: true });
 

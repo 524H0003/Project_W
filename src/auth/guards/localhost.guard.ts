@@ -1,17 +1,13 @@
-import {
-	CanActivate,
-	HttpException,
-	HttpStatus,
-	Injectable,
-} from '@nestjs/common';
+import { CanActivate, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
+import { AuthGuard } from '@nestjs/passport';
 import { IncomingMessage } from 'http';
 
 /**
- * Only allow connections from localhost
+ * Localhost guard class
  */
 @Injectable()
-export class LocalHostStrategy implements CanActivate {
+export class LocalhostGuard implements CanActivate {
 	/**
 	 * Check the connection
 	 * @param {ExecutionContextHost} context - request's context
