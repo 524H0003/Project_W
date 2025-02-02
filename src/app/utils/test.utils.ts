@@ -124,14 +124,9 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 /**
  * Init jest test
  */
-export async function initJest(
-	controllers: Array<any> = [],
-	providers: Array<any> = [],
-) {
+export async function initJest() {
 	const module: TestingModule = await Test.createTestingModule({
 			imports: [TestModule, AppModule],
-			controllers,
-			providers,
 		}).compile(),
 		appSvc = module.get(AppService),
 		fastify = Fastify();

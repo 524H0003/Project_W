@@ -11,7 +11,7 @@ const fileName = curFile(__filename);
 let rawUsr: User, req: () => TestAgent, svc: AppService;
 
 beforeAll(async () => {
-	const { appSvc, requester } = await initJest([FileController]);
+	const { appSvc, requester } = await initJest();
 
 	(svc = appSvc), (req = requester);
 });
