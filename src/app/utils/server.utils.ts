@@ -146,7 +146,7 @@ export class InitServerClass implements OnModuleInit {
 			.addHook(
 				'preValidation',
 				async function (request: FastifyRequest, reply: FastifyReply) {
-					if (!request.raw['isMultipart']) return;
+					if (!request['isMultipart']) return;
 
 					request.body = await processRequest(request.raw, reply.raw, {
 						maxFileSize: (50).mb2b,
@@ -158,7 +158,7 @@ export class InitServerClass implements OnModuleInit {
 				(request: FastifyRequest, payload: IncomingMessage, done: Function) => {
 					request['isMultipart'] = true;
 
-					done();
+					done(null, request.body);
 				},
 			);
 	}
