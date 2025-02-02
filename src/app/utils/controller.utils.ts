@@ -35,17 +35,14 @@ export class BaseController {
 	 * @param {boolean} acs - if clear access token
 	 * @param {boolean} rfs - if clear refresh token
 	 */
-	private async clearCookies(
+	private clearCookies(
 		request: FastifyRequest,
 		response: FastifyReply,
 		acs: boolean = true,
 		rfs: boolean = true,
 	) {
 		for (const cookie in request.cookies)
-			if (
-				((await compare(this.acsKey, cookie)) && acs) ||
-				((await compare(this.rfsKey, cookie)) && rfs)
-			)
+			if ((this.acsKey === cookie && acs) || (this.rfsKey === cookie && rfs))
 				response.clearCookie(cookie);
 	}
 
@@ -56,30 +53,29 @@ export class BaseController {
 	 * @param {IUserRecieve} usrRcv - user's recieve infomations
 	 * @return {Promise<void>}
 	 */
-	protected async responseWithUserRecieve(
+	protected responseWithUserRecieve(
 		request: FastifyRequest,
-		response: FastifyReply,
-		usrRcv: IUserRecieve,
-	): Promise<void> {
-		await this.clearCookies(request, response);
+		reply: FastifyReply,
+		{ accessToken, refreshToken, payload, response }: IUserRecieve,
+	): void {
+		this.clearCookies(request, reply);
 
-		const encryptedAccess = this.svc.auth.encrypt(usrRcv.accessToken),
-			encryptedRefresh = this.svc.auth.encrypt(usrRcv.refreshToken);
+		const encryptedAccess = this.svc.auth.encrypt(accessToken),
+			encryptedRefresh = this.svc.auth.encrypt(refreshToken);
 
-		response
-			.cookie(await hash(this.acsKey), encryptedAccess)
-			.cookie(await hash(this.rfsKey), encryptedRefresh)
-			.send({
-				session: {
-					access_token: encryptedAccess,
-					refresh_token: encryptedRefresh,
-					expires_in: usrRcv.payload.exp - usrRcv.payload.iat,
-					expires_at: usrRcv.payload.exp,
-				},
-				user: typeof usrRcv.response !== 'string' ? usrRcv.response : undefined,
-				message:
-					typeof usrRcv.response === 'string' ? usrRcv.response : undefined,
-			});
+		if (accessToken) reply.cookie(this.acsKey, encryptedAccess);
+		if (refreshToken) reply.cookie(this.rfsKey, encryptedRefresh);
+
+		reply.send({
+			session: {
+				access_token: accessToken ? encryptedAccess : undefined,
+				refresh_token: refreshToken ? encryptedRefresh : undefined,
+				expires_in: payload.exp - payload.iat,
+				expires_at: payload.exp,
+			},
+			user: typeof response !== 'string' ? response : undefined,
+			message: typeof response === 'string' ? response : undefined,
+		});
 	}
 
 	/**

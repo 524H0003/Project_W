@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { compare, Cryption } from 'app/utils/auth.utils';
+import { Cryption } from 'app/utils/auth.utils';
 import { SignService } from './auth.service';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
@@ -39,19 +39,18 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 	 * @param {NextFunction} next - continueing processing client's request
 	 */
 	async use(req: FastifyRequest, res: FastifyReply, next: Function) {
-		const isRefresh = req.url.match(this.rfsgrd);
+		const isRefresh = req.url.match(this.rfsgrd),
+			{ authorization } = req.headers;
 
 		let access: string, refresh: string;
 		for (const cookie in req.cookies)
-			if (await compare(this.rfsKey, cookie)) refresh = req.cookies[cookie];
-			else if (await compare(this.acsKey, cookie)) access = req.cookies[cookie];
+			if (this.rfsKey === cookie) refresh = req.cookies[cookie];
+			else if (this.acsKey === cookie) access = req.cookies[cookie];
 
-		if (!req.headers.authorization)
+		if (access || refresh)
 			req.headers.authorization = `Bearer ${this.decrypt(isRefresh ? refresh : access)}`;
-
-		try {
-			req.token = this.signSvc.verify(this.decrypt(access));
-		} catch {}
+		else if (authorization)
+			req.headers.authorization = `Bearer ${this.decrypt(authorization.split(' ').at(-1))}`;
 
 		if (req['isMultipart'])
 			req.body = await processRequest(req.raw, res.raw, {
