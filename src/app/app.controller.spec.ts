@@ -2,7 +2,7 @@ import { execute, initJest } from 'app/utils/test.utils';
 import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { AppService } from './app.service';
-import { expect } from '@jest/globals';
+import { expect, it } from '@jest/globals';
 
 const fileName = curFile(__filename);
 
@@ -20,17 +20,23 @@ beforeEach(() => {
 
 describe('signup', () => {
 	it('success', async () => {
-		await execute(() => req().post('/signup').send({ ...usr, ...usr.baseUser }), {
-			exps: [
-				{
-					type: 'toHaveProperty',
-					params: [
-						'headers.set-cookie',
-						expect.arrayContaining([expect.anything(), expect.anything()]),
-					],
-				},
-			],
-		});
+		await execute(
+			() =>
+				req()
+					.post('/signup')
+					.send({ ...usr, ...usr.baseUser }),
+			{
+				exps: [
+					{
+						type: 'toHaveProperty',
+						params: [
+							'headers.set-cookie',
+							expect.arrayContaining([expect.anything(), expect.anything()]),
+						],
+					},
+				],
+			},
+		);
 
 		delete usr.password;
 
@@ -48,11 +54,17 @@ describe('signup', () => {
 	});
 
 	it('fail due to email already exist', async () => {
-		await req().post('/signup').send({ ...usr, ...usr.baseUser });
+		await req()
+			.post('/signup')
+			.send({ ...usr, ...usr.baseUser });
 
 		await execute(
 			async () =>
-				(await req().post('/signup').send({ ...usr, ...usr.baseUser })).text,
+				(
+					await req()
+						.post('/signup')
+						.send({ ...usr, ...usr.baseUser })
+				).text,
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Invalid', 'User', 'SignUp')] },
@@ -64,21 +76,30 @@ describe('signup', () => {
 
 describe('login', () => {
 	beforeEach(
-		async () => await req().post('/signup').send({ ...usr, ...usr.baseUser }),
+		async () =>
+			await req()
+				.post('/signup')
+				.send({ ...usr, ...usr.baseUser }),
 	);
 
 	it('success', async () => {
-		await execute(() => req().post('/login').send({ ...usr, ...usr.baseUser }), {
-			exps: [
-				{
-					type: 'toHaveProperty',
-					params: [
-						'headers.set-cookie',
-						expect.arrayContaining([expect.anything(), expect.anything()]),
-					],
-				},
-			],
-		});
+		await execute(
+			() =>
+				req()
+					.post('/login')
+					.send({ ...usr, ...usr.baseUser }),
+			{
+				exps: [
+					{
+						type: 'toHaveProperty',
+						params: [
+							'headers.set-cookie',
+							expect.arrayContaining([expect.anything(), expect.anything()]),
+						],
+					},
+				],
+			},
+		);
 
 		await execute(
 			() =>
@@ -94,7 +115,11 @@ describe('login', () => {
 
 		await execute(
 			async () =>
-				(await req().post('/login').send({ ...usr, ...usr.baseUser })).text,
+				(
+					await req()
+						.post('/login')
+						.send({ ...usr, ...usr.baseUser })
+				).text,
 			{
 				exps: [{ type: 'toContain', params: [err('Invalid', 'Password', '')] }],
 			},
@@ -106,7 +131,11 @@ describe('login', () => {
 
 		await execute(
 			async () =>
-				(await req().post('/login').send({ ...usr, ...usr.baseUser })).text,
+				(
+					await req()
+						.post('/login')
+						.send({ ...usr, ...usr.baseUser })
+				).text,
 			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
 	});

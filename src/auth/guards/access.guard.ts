@@ -18,8 +18,8 @@ import { UserRole } from 'user/user.model';
  * ! Cautious: Since using GraphQL, it's NOT recommend to DELETE this
  */
 function convertForGql(context: ExecutionContext) {
-	const ctx = GqlExecutionContext.create(context);
-	return ctx.getContext().request;
+	const { req, request } = GqlExecutionContext.create(context).getContext();
+	return req || request;
 }
 
 /**
