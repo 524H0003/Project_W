@@ -46,7 +46,7 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 			else if (await compare(this.acsKey, cookie)) access = req.cookies[cookie];
 
 		if (!req.headers.authorization)
-			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
+			req.headers.authorization = `Bearer ${this.decrypt(isRefresh ? refresh : access)}`;
 
 		try {
 			req.token = this.signSvc.verify(this.decrypt(access));

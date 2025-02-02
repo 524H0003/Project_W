@@ -9,12 +9,18 @@ import { Notification } from 'notification/notification.entity';
 import { Event } from 'event/event.entity';
 import { EventCreator } from 'event/creator/creator.entity';
 import fastifyHelmet from '@fastify/helmet';
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { User } from 'user/user.entity';
 import { Hook } from 'app/hook/hook.entity';
-import { IRefreshResult } from 'auth/strategies/refresh.strategy';
+import { IRefreshResult } from 'auth/guards/refresh.strategy';
 import { ConfigService } from '@nestjs/config';
 import { AppService } from 'app/app.service';
+import { OnModuleInit } from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
+import { SignService } from 'auth/auth.service';
+import { AuthMiddleware } from 'auth/auth.middleware';
+import { processRequest } from 'graphql-upload-ts';
+import { IncomingMessage } from 'http';
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -117,4 +123,43 @@ export async function initiateAdmin(
 	});
 
 	await adminRouter(admin, server, appService, config, cookie);
+}
+
+export class InitServerClass implements OnModuleInit {
+	constructor(
+		protected httpAdapterHost: HttpAdapterHost,
+		protected configService: ConfigService,
+		protected signService: SignService,
+	) {}
+
+	onModuleInit() {
+		const adapterInstance: FastifyInstance =
+				this.httpAdapterHost.httpAdapter.getInstance(),
+			authMiddleware = new AuthMiddleware(this.configService, this.signService);
+
+		adapterInstance
+			.addHook(
+				'preValidation',
+				(request: FastifyRequest, response: FastifyReply, next: Function) =>
+					authMiddleware.use(request, response, next) as unknown,
+			)
+			.addHook(
+				'preValidation',
+				async function (request: FastifyRequest, reply: FastifyReply) {
+					if (!request.raw['isMultipart']) return;
+
+					request.body = await processRequest(request.raw, reply.raw, {
+						maxFileSize: (50).mb2b,
+					});
+				},
+			)
+			.addContentTypeParser(
+				/^multipart\/([\w-]+);?/,
+				(request: FastifyRequest, payload: IncomingMessage, done: Function) => {
+					request['isMultipart'] = true;
+
+					done();
+				},
+			);
+	}
 }

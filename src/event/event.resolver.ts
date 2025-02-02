@@ -1,13 +1,13 @@
 import { UseGuards } from '@nestjs/common';
 import { AppService } from 'app/app.service';
 import { User } from 'user/user.entity';
-import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
+import { GetRequest, AccessGuard, Roles } from 'auth/guards/access.guard';
 import { UserRole } from 'user/user.model';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Event, EventAssign, EventUpdate } from './event.entity';
 
 @Resolver(() => Event)
-@UseGuards(RoleGuard)
+@UseGuards(AccessGuard)
 export class EventResolver {
 	/**
 	 * Initiate event resolver
@@ -21,7 +21,7 @@ export class EventResolver {
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async assignEvent(
 		@Args('input') input: EventAssign,
-		@CurrentUser() user: User,
+		@GetRequest('user') user: User,
 	) {
 		return this.svc.event.assign({
 			...input,
@@ -36,7 +36,7 @@ export class EventResolver {
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async updateEvent(
 		@Args('input') input: EventUpdate,
-		@CurrentUser() user: User,
+		@GetRequest('user') user: User,
 	) {
 		const event = await this.svc.event.findOne({
 			eventCreatedBy: { user: { baseUser: { id: user.id } } },

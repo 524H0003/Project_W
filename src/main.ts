@@ -9,8 +9,11 @@ import {
 import { MainModule } from './main.module';
 import { AppService } from 'app/app.service';
 import { AppExceptionFilter } from 'app/app.filter';
-import { graphqlUploadExpress } from 'graphql-upload-ts';
-import { CookieProps, initiateAdmin, registerServerPlugins } from 'app/utils/server.utils';
+import {
+	CookieProps,
+	initiateAdmin,
+	registerServerPlugins,
+} from 'app/utils/server.utils';
 import Fastify from 'fastify';
 import { hash } from 'app/utils/auth.utils';
 
@@ -42,7 +45,6 @@ async function bootstrap() {
 	mkdirSync(config.get('SERVER_PUBLIC'), { recursive: true });
 
 	await nest
-		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.setGlobalPrefix('api/v1')
 		.useGlobalPipes(new ValidationPipe())
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))

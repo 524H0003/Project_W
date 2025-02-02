@@ -12,9 +12,9 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CurrentUser, MetaData } from 'auth/auth.guard';
+import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { Hook } from 'app/hook/hook.entity';
-import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
+import { LocalHostStrategy } from 'auth/guards/localhost.strategy';
 import { IStudentSignup } from 'university/student/student.model';
 import { IUserSignUp } from 'user/user.model';
 import { IBaseUserEmail } from './app.model';
@@ -29,6 +29,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { HookGuard } from 'auth/guards/hook.guard';
 
 /**
  * Application Controller
@@ -205,14 +206,14 @@ export class AppController extends BaseController {
 	 */
 	@Throttle({ default: { limit: 3, ttl: 240000 } })
 	@Post('change-password/:token')
-	@UseGuards(AuthGuard('hook'))
+	@UseGuards(HookGuard)
 	async changePassword(
 		@Param('token') signature: string,
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: { password: string },
 		@MetaData() mtdt: string,
-		@CurrentUser({ instance: Hook }) hook: Hook,
+		@GetRequest('hook') hook: Hook,
 	): Promise<void> {
 		try {
 			await this.svc.hook.validating(signature, mtdt, hook);

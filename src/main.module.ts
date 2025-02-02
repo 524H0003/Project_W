@@ -1,20 +1,21 @@
 import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { loadEnv } from 'app/module/config.module';
 import { SqlModule } from 'app/module/sql.module';
-import { AuthMiddleware } from 'auth/auth.middleware';
 import { AppModule } from 'app/app.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
+import { InitServerClass } from 'app/utils/server.utils';
+import { SignService } from 'auth/auth.service';
 
 @Module({
 	imports: [
@@ -115,8 +116,12 @@ import { redisStore } from 'cache-manager-redis-yet';
 	],
 	providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
-export class MainModule {
-	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(AuthMiddleware).forRoutes('/');
+export class MainModule extends InitServerClass {
+	constructor(
+		protected httpAdapterHost: HttpAdapterHost,
+		protected configService: ConfigService,
+		protected signService: SignService,
+	) {
+		super(httpAdapterHost, configService, signService);
 	}
 }

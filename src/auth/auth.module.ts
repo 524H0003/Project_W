@@ -2,12 +2,13 @@ import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService, SignService } from './auth.service';
-import { AccessStrategy } from './strategies/access.strategy';
-import { RefreshStrategy } from './strategies/refresh.strategy';
-import { LocalHostStrategy } from './strategies/localhost.strategy';
-import { HookStrategy } from './strategies/hook.strategy';
-import { RoleGuard } from './auth.guard';
+import { AccessStrategy } from './guards/access.strategy';
+import { RefreshStrategy } from './guards/refresh.strategy';
+import { LocalHostStrategy } from './guards/localhost.strategy';
+import { HookStrategy } from './guards/hook.strategy';
+import { AccessGuard } from './guards/access.guard';
 import { AppModule } from 'app/app.module';
+import { HookGuard } from './guards/hook.guard';
 
 @Module({
 	imports: [
@@ -25,7 +26,9 @@ import { AppModule } from 'app/app.module';
 		RefreshStrategy,
 		LocalHostStrategy,
 		HookStrategy,
-		RoleGuard,
+		// Guards
+		AccessGuard,
+		HookGuard,
 	],
 	exports: [SignService, AuthService],
 })

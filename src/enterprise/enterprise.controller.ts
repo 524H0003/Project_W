@@ -8,10 +8,9 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { IEnterpriseAssign } from './enterprise.model';
-import { MetaData } from 'auth/auth.guard';
+import { MetaData } from 'auth/guards/access.guard';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
@@ -21,6 +20,7 @@ import { AvatarFileUpload } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { HookGuard } from 'auth/guards/hook.guard';
 
 /**
  * Enterprise controller
@@ -44,7 +44,7 @@ export class EnterpriseController extends AppController {
 	 * Assign enterprise request
 	 */
 	@Post('assign')
-	@UseGuards(AuthGuard('hook'))
+	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
 		@Req() request: FastifyRequest,

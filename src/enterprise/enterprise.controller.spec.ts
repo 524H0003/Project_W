@@ -15,7 +15,7 @@ let req: () => TestAgent,
 	mailerSvc: MailerService;
 
 beforeAll(async () => {
-	const { appSvc, module, requester } = await initJest([EnterpriseController]);
+	const { appSvc, module, requester } = await initJest([]);
 
 	(mailerSvc = module.get(MailerService)), (svc = appSvc), (req = requester);
 });

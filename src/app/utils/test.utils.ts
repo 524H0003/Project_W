@@ -1,24 +1,25 @@
-import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
 import { DocumentNode, print } from 'graphql';
 import TestAgent from 'supertest/lib/agent';
 import request from 'supertest';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
-import { graphqlUploadExpress } from 'graphql-upload-ts';
 import supertest from 'supertest';
 import { expect } from '@jest/globals';
 import Fastify from 'fastify';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
+import {
+	FastifyAdapter,
+	NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import { registerServerPlugins } from './server.utils';
+import { TestModule } from 'app/module/test.module';
 
 /**
  * Exported variables
  */
-let requester: () => TestAgent, app: INestApplication;
+let requester: () => TestAgent, app: NestFastifyApplication;
 
 /**
  * Test's expectations
@@ -143,7 +144,6 @@ export async function initJest(
 	const { httpAdapter } = app.get(HttpAdapterHost);
 	await app
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
-		// .use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
 		.init();
 	await app.getHttpAdapter().getInstance().ready();
 	requester = () => request(app.getHttpServer());

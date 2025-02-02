@@ -8,10 +8,9 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { MetaData } from 'auth/auth.guard';
+import { MetaData } from 'auth/guards/access.guard';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
-import { AuthGuard } from '@nestjs/passport';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
@@ -20,6 +19,7 @@ import { AvatarFileUpload } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { HookGuard } from 'auth/guards/hook.guard';
 
 /**
  * Employee controller
@@ -59,7 +59,7 @@ export class EmployeeController extends AppController {
 	 * Employee signup request
 	 */
 	@Post('signup')
-	@UseGuards(AuthGuard('hook'))
+	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Req() request: FastifyRequest,

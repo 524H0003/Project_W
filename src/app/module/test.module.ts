@@ -1,9 +1,8 @@
 /* eslint-disable tsEslint/require-await */
 import { ApolloDriver } from '@nestjs/apollo';
-import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { SqlModule } from 'app/module/sql.module';
-import { AuthMiddleware } from 'auth/auth.middleware';
 import { loadEnv } from './config.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SignService } from 'auth/auth.service';
@@ -18,6 +17,9 @@ import {
 } from 'fs';
 import { lookup } from 'mime-types';
 import { Readable } from 'stream';
+import { InitServerClass } from 'app/utils/server.utils';
+import { HttpAdapterHost } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 
 export const rootPublic = 'public/';
 
@@ -58,8 +60,12 @@ export const rootPublic = 'public/';
 	],
 	exports: [MailerService, AWSService],
 })
-export class TestModule {
-	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(AuthMiddleware).forRoutes('/');
+export class TestModule extends InitServerClass {
+	constructor(
+		protected httpAdapterHost: HttpAdapterHost,
+		protected configService: ConfigService,
+		protected signService: SignService,
+	) {
+		super(httpAdapterHost, configService, signService);
 	}
 }

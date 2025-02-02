@@ -8,8 +8,8 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { MetaData } from 'auth/auth.guard';
-import { LocalHostStrategy } from 'auth/strategies/localhost.strategy';
+import { MetaData } from 'auth/guards/access.guard';
+import { LocalHostStrategy } from 'auth/guards/localhost.strategy';
 import { IStudentSignup } from './student.model';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';

@@ -2,16 +2,16 @@ import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from 'user/user.model';
-import { RoleGuard } from './auth.guard';
+import { AccessGuard } from './access.guard';
 import { execute, initJest } from 'app/utils/test.utils';
 import { expect } from '@jest/globals';
 
-let roleGrd: RoleGuard, rflt: Reflector, ctx: ExecutionContext;
+let roleGrd: AccessGuard, rflt: Reflector, ctx: ExecutionContext;
 
 beforeEach(async () => {
 	const { module } = await initJest();
 
-	(roleGrd = module.get(RoleGuard)),
+	(roleGrd = module.get(AccessGuard)),
 		(rflt = module.get(Reflector)),
 		(ctx = {
 			getHandler: jest.fn().mockReturnValue({}),
