@@ -9,6 +9,7 @@ import { HookStrategy } from './guards/hook.strategy';
 import { AccessGuard } from './guards/access.guard';
 import { AppModule } from 'app/app.module';
 import { HookGuard } from './guards/hook.guard';
+import { RefreshGuard } from './guards/refresh.guard';
 
 @Module({
 	imports: [
@@ -28,6 +29,7 @@ import { HookGuard } from './guards/hook.guard';
 		HookStrategy,
 		// Guards
 		AccessGuard,
+		RefreshGuard,
 		HookGuard,
 	],
 	exports: [SignService, AuthService],
