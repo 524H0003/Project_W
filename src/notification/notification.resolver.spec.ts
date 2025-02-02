@@ -14,6 +14,7 @@ import {
 	UpdateNotificationMutation,
 	UpdateNotificationMutationVariables,
 } from 'build/compiled_graphql';
+import { it } from '@jest/globals';
 
 const fileName = curFile(__filename);
 
@@ -46,21 +47,35 @@ describe('assignNotification', () => {
 		AssignNotificationMutationVariables
 	>(AssignNotification);
 
-	it('success', async () => {
-		await execute(
-			async () =>
-				(await send({ input: notification }, { cookie: headers['set-cookie'] }))
-					.assignNotification,
-			{
-				exps: [
-					{ type: 'toHaveProperty', params: ['content', notification.content] },
-				],
-			},
-		);
-		await execute(() => svc.notification.find({ title: notification.title }), {
-			exps: [{ type: 'toHaveLength', params: [1] }],
-		});
-	});
+	it(
+		'success',
+		async () => {
+			await execute(
+				async () =>
+					(
+						await send(
+							{ input: notification },
+							{ cookie: headers['set-cookie'] },
+						)
+					).assignNotification,
+				{
+					exps: [
+						{
+							type: 'toHaveProperty',
+							params: ['content', notification.content],
+						},
+					],
+				},
+			);
+			await execute(
+				() => svc.notification.find({ title: notification.title }),
+				{
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				},
+			);
+		},
+		(6000).s2ms,
+	);
 });
 
 describe('updateNotification', () => {

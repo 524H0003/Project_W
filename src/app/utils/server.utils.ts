@@ -19,8 +19,8 @@ import { OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { SignService } from 'auth/auth.service';
 import { AuthMiddleware } from 'auth/auth.middleware';
-import { processRequest } from 'graphql-upload-ts';
 import { IncomingMessage } from 'http';
+import fastifyCors from '@fastify/cors';
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -52,6 +52,13 @@ export async function registerServerPlugins(
 		};
 
 	await fastify
+		.register(fastifyCors, {
+			// origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
+			origin: '*',
+			// /^(https:\/\/){1}(((.*)(anhvietnguyen.id.vn){1}){1}|(localhost){1}:([0-9]){1,4})/,
+			methods: '*',
+			credentials: true,
+		})
 		.register(fastifyHelmet, {
 			contentSecurityPolicy: {
 				directives: {
@@ -147,18 +154,14 @@ export class InitServerClass implements OnModuleInit {
 				'preValidation',
 				async function (request: FastifyRequest, reply: FastifyReply) {
 					if (!request['isMultipart']) return;
-
-					request.body = await processRequest(request.raw, reply.raw, {
-						maxFileSize: (50).mb2b,
-					});
 				},
 			)
 			.addContentTypeParser(
-				/^multipart\/([\w-]+);?/,
+				/^multipart\/form-data;?/,
 				(request: FastifyRequest, payload: IncomingMessage, done: Function) => {
 					request['isMultipart'] = true;
 
-					done(null, request.body);
+					done();
 				},
 			);
 	}
