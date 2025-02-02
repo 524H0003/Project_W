@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Cryption } from 'app/utils/auth.utils';
+import { compare, Cryption } from 'app/utils/auth.utils';
 import { SignService } from './auth.service';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
@@ -36,16 +36,15 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 	 * Auth middleware processing request
 	 * @param {FastifyRequest} req - client's request
 	 * @param {FastifyReply} res - server's response
-	 * @param {NextFunction} next - continueing processing client's request
 	 */
-	async use(req: FastifyRequest, res: FastifyReply, next: Function) {
+	async use(req: FastifyRequest, res: FastifyReply) {
 		const isRefresh = req.url.match(this.rfsgrd),
 			{ authorization } = req.headers;
 
 		let access: string, refresh: string;
 		for (const cookie in req.cookies)
-			if (this.rfsKey === cookie) refresh = req.cookies[cookie];
-			else if (this.acsKey === cookie) access = req.cookies[cookie];
+			if (await compare(this.rfsKey, cookie)) refresh = req.cookies[cookie];
+			else if (await compare(this.rfsKey, cookie)) access = req.cookies[cookie];
 
 		if (access || refresh)
 			req.headers.authorization = `Bearer ${this.decrypt(isRefresh ? refresh : access)}`;
@@ -57,7 +56,5 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 				maxFileSize: 10000000, // 10 MB
 				maxFiles: 20,
 			});
-
-		next();
 	}
 }

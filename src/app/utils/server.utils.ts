@@ -137,8 +137,8 @@ export class InitServerClass implements OnModuleInit {
 		adapterInstance
 			.addHook(
 				'preValidation',
-				(request: FastifyRequest, response: FastifyReply, next: Function) =>
-					authMiddleware.use(request, response, next) as unknown,
+				(request: FastifyRequest, response: FastifyReply) =>
+					authMiddleware.use(request, response),
 			)
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,

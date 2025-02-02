@@ -137,9 +137,9 @@ export async function initJest() {
 	await registerServerPlugins(fastify, {});
 	app = module.createNestApplication(new FastifyAdapter(fastify));
 	const { httpAdapter } = app.get(HttpAdapterHost);
+
 	await app.useGlobalFilters(new AppExceptionFilter(httpAdapter)).init();
 	await app.getHttpAdapter().getInstance().ready();
-	requester = () => request(app.getHttpServer());
 
-	return { module, appSvc, requester };
+	return { module, appSvc, requester: () => request(app.getHttpServer()) };
 }

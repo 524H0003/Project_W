@@ -35,36 +35,39 @@ export class BaseController {
 	 * @param {boolean} acs - if clear access token
 	 * @param {boolean} rfs - if clear refresh token
 	 */
-	private clearCookies(
+	private async clearCookies(
 		request: FastifyRequest,
 		response: FastifyReply,
 		acs: boolean = true,
 		rfs: boolean = true,
 	) {
 		for (const cookie in request.cookies)
-			if ((this.acsKey === cookie && acs) || (this.rfsKey === cookie && rfs))
+			if (
+				((await compare(this.acsKey, cookie)) && acs) ||
+				((await compare(this.acsKey, cookie)) && rfs)
+			)
 				response.clearCookie(cookie);
 	}
 
 	/**
 	 * Send client user's recieve infomations
 	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
+	 * @param {FastifyReply} reply - server's response
 	 * @param {IUserRecieve} usrRcv - user's recieve infomations
 	 * @return {Promise<void>}
 	 */
-	protected responseWithUserRecieve(
+	protected async responseWithUserRecieve(
 		request: FastifyRequest,
 		reply: FastifyReply,
 		{ accessToken, refreshToken, payload, response }: IUserRecieve,
-	): void {
-		this.clearCookies(request, reply);
+	): Promise<void> {
+		await this.clearCookies(request, reply);
 
 		const encryptedAccess = this.svc.auth.encrypt(accessToken),
 			encryptedRefresh = this.svc.auth.encrypt(refreshToken);
 
-		if (accessToken) reply.cookie(this.acsKey, encryptedAccess);
-		if (refreshToken) reply.cookie(this.rfsKey, encryptedRefresh);
+		if (accessToken) reply.cookie(await hash(this.acsKey), encryptedAccess);
+		if (refreshToken) reply.cookie(await hash(this.rfsKey), encryptedRefresh);
 
 		reply.send({
 			session: {
