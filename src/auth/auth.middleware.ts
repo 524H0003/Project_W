@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { compare, Cryption } from 'app/utils/auth.utils';
 import { SignService } from './auth.service';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { processRequest } from 'graphql-upload-ts';
 
 /**
  * Auth middleware
@@ -51,6 +52,12 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 		try {
 			req.token = this.signSvc.verify(this.decrypt(access));
 		} catch {}
+
+		if (req['isMultipart'])
+			req.body = await processRequest(req.raw, res.raw, {
+				maxFileSize: 10000000, // 10 MB
+				maxFiles: 20,
+			});
 
 		next();
 	}

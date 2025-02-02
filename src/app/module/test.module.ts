@@ -31,7 +31,6 @@ export const rootPublic = 'public/';
 			autoSchemaFile: 'src/schema.gql',
 			sortSchema: true,
 			playground: false,
-			context: (context) => context,
 		}),
 		CacheModule.register({ isGlobal: true, ttl: 0 }),
 		JwtModule.register({ global: true }),

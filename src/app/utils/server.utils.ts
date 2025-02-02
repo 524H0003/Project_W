@@ -19,8 +19,6 @@ import { OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { SignService } from 'auth/auth.service';
 import { AuthMiddleware } from 'auth/auth.middleware';
-import { IncomingMessage } from 'http';
-import fastifyCors from '@fastify/cors';
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -52,13 +50,6 @@ export async function registerServerPlugins(
 		};
 
 	await fastify
-		.register(fastifyCors, {
-			// origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
-			origin: '*',
-			// /^(https:\/\/){1}(((.*)(anhvietnguyen.id.vn){1}){1}|(localhost){1}:([0-9]){1,4})/,
-			methods: '*',
-			credentials: true,
-		})
 		.register(fastifyHelmet, {
 			contentSecurityPolicy: {
 				directives: {
@@ -150,18 +141,12 @@ export class InitServerClass implements OnModuleInit {
 				(request: FastifyRequest, response: FastifyReply, next: Function) =>
 					authMiddleware.use(request, response, next) as unknown,
 			)
-			.addHook(
-				'preValidation',
-				async function (request: FastifyRequest, reply: FastifyReply) {
-					if (!request['isMultipart']) return;
-				},
-			)
 			.addContentTypeParser(
-				/^multipart\/form-data;?/,
-				(request: FastifyRequest, payload: IncomingMessage, done: Function) => {
+				/^multipart\/([\w-]+);?/,
+				function (request, payload, done) {
 					request['isMultipart'] = true;
 
-					done();
+					done(null, request.body);
 				},
 			);
 	}
