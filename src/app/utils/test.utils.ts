@@ -140,6 +140,7 @@ export async function initJest() {
 
 	await app.useGlobalFilters(new AppExceptionFilter(httpAdapter)).init();
 	await app.getHttpAdapter().getInstance().ready();
+	requester = () => request(app.getHttpServer());
 
-	return { module, appSvc, requester: () => request(app.getHttpServer()) };
+	return { module, appSvc, requester };
 }
