@@ -44,12 +44,12 @@ export const Roles = Reflector.createDecorator<UserRole[]>(),
 	);
 
 /**
- * Role method guard
+ * Access token guard class
  */
 @Injectable()
 export class AccessGuard extends AuthGuard('access') {
 	/**
-	 * Initiate role guard
+	 * Initiate access token guard
 	 */
 	constructor(private reflector: Reflector) {
 		super({ property: 'user' });

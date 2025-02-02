@@ -11,7 +11,6 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { Hook } from 'app/hook/hook.entity';
 import { LocalHostStrategy } from 'auth/guards/localhost.strategy';
@@ -30,6 +29,7 @@ import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards/hook.guard';
+import { RefreshGuard } from 'auth/guards/refresh.guard';
 
 /**
  * Application Controller
@@ -117,7 +117,7 @@ export class AppController extends BaseController {
 	 * @param {FastifyReply} response - server's response
 	 * @return {Promise<void>}
 	 */
-	@Post('logout') @UseGuards(AuthGuard('refresh')) async logout(
+	@Post('logout') @UseGuards(RefreshGuard) async logout(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 	): Promise<void> {
@@ -141,7 +141,7 @@ export class AppController extends BaseController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Post('refresh') @UseGuards(AuthGuard('refresh')) async refresh(
+	@Post('refresh') @UseGuards(RefreshGuard) async refresh(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@MetaData() mtdt: string,
