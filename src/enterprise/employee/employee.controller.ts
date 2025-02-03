@@ -74,10 +74,7 @@ export class EmployeeController extends AppController {
 			response,
 			(
 				await this.svc.employee.assign(
-					{
-						...body,
-						enterpriseId: JSON.parse(request.hook.note).enterpriseId,
-					},
+					{ ...body, enterpriseId: JSON.parse(request.hook.note).enterpriseId },
 					avatar,
 				)
 			).eventCreator.user,

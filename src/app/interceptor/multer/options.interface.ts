@@ -10,8 +10,7 @@ export interface MulterOptions {
 	 * directly, and the details of properties can be found on https://github.com/mscdex/busboy#busboy-methods
 	 */
 	limits?: {
-		/** Max field name size (Default: 100 bytes) */
-		fieldNameSize?: number;
+		/** Max field name size (Default: 100 bytes) */ fieldNameSize?: number;
 		/** Max field value size (Default: 1MB) */
 		fieldSize?: number;
 		/** Max number of non- file fields (Default: Infinity) */

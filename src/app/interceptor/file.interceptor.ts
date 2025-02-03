@@ -26,14 +26,9 @@ export function FileInterceptor(
 		protected multer: any;
 
 		constructor(
-			@Optional()
-			@Inject('MULTER_MODULE_OPTIONS')
-			options: MulterOptions = {},
+			@Optional() @Inject('MULTER_MODULE_OPTIONS') options: MulterOptions = {},
 		) {
-			this.multer = multer({
-				...options,
-				...localOptions,
-			});
+			this.multer = multer({ ...options, ...localOptions });
 		}
 
 		async intercept(

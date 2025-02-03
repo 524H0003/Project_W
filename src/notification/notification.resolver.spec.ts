@@ -60,10 +60,7 @@ describe('assignNotification', () => {
 					.assignNotification,
 			{
 				exps: [
-					{
-						type: 'toHaveProperty',
-						params: ['content', notification.content],
-					},
+					{ type: 'toHaveProperty', params: ['content', notification.content] },
 				],
 			},
 		);
