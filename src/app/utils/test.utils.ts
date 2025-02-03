@@ -2,23 +2,25 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
 import { DocumentNode, print } from 'graphql';
-import supertest from 'supertest';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
 import { expect } from '@jest/globals';
-import Fastify, { LightMyRequestChain } from 'fastify';
+import Fastify, { InjectOptions, LightMyRequestChain } from 'fastify';
 import {
 	FastifyAdapter,
 	NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { fastifyOptions, registerServerPlugins } from './server.utils';
 import { TestModule } from 'app/module/test.module';
-import TestAgent from 'supertest/lib/agent';
+import { ReadStream } from 'fs';
+import { OutgoingHttpHeaders } from 'http';
+import formAutoContent from 'form-auto-content';
 
 /**
  * Exported variables
  */
-let requester: TestAgent, app: NestFastifyApplication;
+let requester: (op?: InjectOptions) => LightMyRequestChain,
+	app: NestFastifyApplication;
 
 /**
  * Test's expectations
@@ -90,9 +92,9 @@ export type SendGQLType<T, K> = (
 		map,
 		attach,
 	}?: {
-		headers?: any;
+		headers?: OutgoingHttpHeaders;
 		map?: object;
-		attach?: Parameters<supertest.Test['attach']>;
+		attach?: ReadStream;
 	},
 ) => Promise<T>;
 
@@ -138,11 +140,12 @@ export async function initJest() {
 
 	await app.useGlobalFilters(new AppExceptionFilter(httpAdapter)).init();
 	await app.getHttpAdapter().getInstance().ready();
-	requester = supertest(app.getHttpServer());
+	requester = (options?: InjectOptions) =>
+		app.inject(options) as LightMyRequestChain;
 
 	return {
 		module,
 		appSvc,
-		requester: () => app.inject() as LightMyRequestChain,
+		requester,
 	};
 }
