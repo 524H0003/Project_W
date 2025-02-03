@@ -154,8 +154,7 @@ describe('logout', () => {
 
 	it('success', async () => {
 		await execute(
-			() =>
-				req().post('/logout').headers({ 'set-cookie': headers['set-cookie'] }),
+			() => req().post('/logout').headers({ cookie: headers['set-cookie'] }),
 			{
 				exps: [
 					{
@@ -196,8 +195,7 @@ describe('refresh', () => {
 
 	it('success', async () => {
 		await execute(
-			() =>
-				req().post('/refresh').headers({ 'set-cookie': headers['set-cookie'] }),
+			() => req().post('/refresh').headers({ cookie: headers['set-cookie'] }),
 			{
 				exps: [
 					{
@@ -231,9 +229,7 @@ describe('refresh', () => {
 	it('success in generate new key', async () => {
 		await execute(
 			async () =>
-				await req()
-					.post('/refresh')
-					.headers({ 'set-cookie': headers['set-cookie'] }),
+				await req().post('/refresh').headers({ cookie: headers['set-cookie'] }),
 			{
 				numOfRun: rfsTms * 1.2,
 				exps: [

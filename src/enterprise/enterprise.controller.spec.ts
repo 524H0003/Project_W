@@ -38,7 +38,7 @@ describe('assign', () => {
 				JSON.stringify(
 					await req()
 						.post('/enterprise/assign')
-						.headers({ 'set-cookie': headers['set-cookie'] })
+						.headers({ cookie: headers['set-cookie'] })
 						.body({
 							signature,
 							...enterprise,

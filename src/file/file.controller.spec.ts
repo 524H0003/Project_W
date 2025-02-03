@@ -70,7 +70,7 @@ describe('seeUploadedFile', () => {
 			() =>
 				req()
 					.get(`/file/${usr.baseUser.avatarPath}`)
-					.headers({ 'set-cookie': headers['set-cookie'] })
+					.headers({ cookie: headers['set-cookie'] })
 					.buffer()
 					.parse((res, callback) => {
 						res.text = '';

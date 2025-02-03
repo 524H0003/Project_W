@@ -37,7 +37,7 @@ export async function assignEmployee(
 		],
 		{ headers } = await req()
 			.post('/employee/signup')
-			.headers({ 'set-cookie': empHeaders['set-cookie'] })
+			.headers({ cookie: empHeaders['set-cookie'] })
 			.body({
 				signature,
 				enterpriseName: enterprise.baseUser.name,
