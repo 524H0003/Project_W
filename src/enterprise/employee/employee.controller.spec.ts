@@ -1,5 +1,5 @@
 import { AppService } from 'app/app.service';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { Employee } from './employee.entity';
 import { execute, initJest } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
@@ -9,7 +9,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 const fileName = curFile(__filename);
 
-let req: () => TestAgent,
+let req: () => LightMyRequestChain,
 	svc: AppService,
 	mailerSvc: MailerService,
 	enterprise: Enterprise,
@@ -38,11 +38,13 @@ describe('hook', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req().post('/employee/hook').send({
-						enterpriseName: enterprise.baseUser.name,
-						...employee,
-						...employee.eventCreator.user.baseUser,
-					} as IEmployeeHook),
+					await req()
+						.post('/employee/hook')
+						.body({
+							enterpriseName: enterprise.baseUser.name,
+							...employee,
+							...employee.eventCreator.user.baseUser,
+						} as IEmployeeHook),
 				),
 			{
 				exps: [
@@ -55,11 +57,13 @@ describe('hook', () => {
 
 describe('signup', () => {
 	it('success', async () => {
-		const { headers } = await req().post('/employee/hook').send({
-				enterpriseName: enterprise.baseUser.name,
-				...employee,
-				...employee.eventCreator.user.baseUser,
-			} as IEmployeeHook),
+		const { headers } = await req()
+				.post('/employee/hook')
+				.body({
+					enterpriseName: enterprise.baseUser.name,
+					...employee,
+					...employee.eventCreator.user.baseUser,
+				} as IEmployeeHook),
 			signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0'][
 				'context'
 			]['signature'];
@@ -69,8 +73,8 @@ describe('signup', () => {
 				JSON.stringify(
 					await req()
 						.post('/employee/signup')
-						.set('Cookie', headers['set-cookie'])
-						.send({
+						.headers({ 'set-cookie': headers['set-cookie'] })
+						.body({
 							signature,
 							enterpriseName: enterprise.baseUser.name,
 							...employee,

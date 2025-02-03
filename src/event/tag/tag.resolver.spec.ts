@@ -1,6 +1,6 @@
 import { AppService } from 'app/app.service';
 import { execute, initJest, sendGQL } from 'app/utils/test.utils';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { EventTag } from './tag.entity';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
@@ -28,7 +28,7 @@ let mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee,
 	svc: AppService,
-	req: () => TestAgent,
+	req: () => LightMyRequestChain,
 	headers: object,
 	tag: EventTag;
 
@@ -55,8 +55,7 @@ describe('assignEventTag', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({ input: tag }, { cookie: headers['set-cookie'] }))
-					.assignEventTag,
+				(await send({ input: tag }, { headers: headers })).assignEventTag,
 			{
 				exps: [{ type: 'toHaveProperty', params: ['name', tag.name] }],
 				onFinish: async (result) => {
@@ -69,12 +68,11 @@ describe('assignEventTag', () => {
 	});
 
 	it('success when already assigned', async () => {
-		await send({ input: tag }, { cookie: headers['set-cookie'] });
+		await send({ input: tag }, { headers: headers });
 
 		await execute(
 			async () =>
-				(await send({ input: tag }, { cookie: headers['set-cookie'] }))
-					.assignEventTag,
+				(await send({ input: tag }, { headers: headers })).assignEventTag,
 			{
 				exps: [{ type: 'toHaveProperty', params: ['name', tag.name] }],
 				onFinish: async (result) => {
@@ -97,7 +95,7 @@ describe('attachEventTag', () => {
 		eventId = (
 			await sendGQL<AssignEventMutation, AssignEventMutationVariables>(
 				AssignEvent,
-			)({ input: Event.test(fileName) }, { cookie: headers['set-cookie'] })
+			)({ input: Event.test(fileName) }, { headers: headers })
 		).assignEvent.id;
 	});
 
@@ -107,7 +105,7 @@ describe('attachEventTag', () => {
 				(
 					await send(
 						{ input: { eventId, name: tag.name } },
-						{ cookie: headers['set-cookie'] },
+						{ headers: headers },
 					)
 				).attachEventTag.toEvents[0],
 			{ exps: [{ type: 'toHaveProperty', params: ['id', eventId] }] },
@@ -125,14 +123,13 @@ describe('listAllTags', () => {
 		tagId = (
 			await sendGQL<AssignEventTagMutation, AssignEventTagMutationVariables>(
 				AssignEventTag,
-			)({ input: EventTag.test(fileName) }, { cookie: headers['set-cookie'] })
+			)({ input: EventTag.test(fileName) }, { headers: headers })
 		).assignEventTag.id;
 	});
 
 	it('success', async () => {
 		await execute(
-			async () =>
-				(await send({}, { cookie: headers['set-cookie'] })).listAllTags,
+			async () => (await send({}, { headers: headers })).listAllTags,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {

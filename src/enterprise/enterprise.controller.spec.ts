@@ -1,14 +1,13 @@
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { Enterprise } from './enterprise.entity';
 import { execute, initJest } from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
-import { EnterpriseController } from './enterprise.controller';
 
 const fileName = curFile(__filename);
 
-let req: () => TestAgent,
+let req: () => LightMyRequestChain,
 	enterprise: Enterprise,
 	signature: string,
 	svc: AppService,
@@ -28,7 +27,7 @@ describe('assign', () => {
 	it('success', async () => {
 		const { headers } = await req()
 			.post('/request-signature')
-			.send({ email: svc.cfg.get('ADMIN_EMAIL') });
+			.body({ email: svc.cfg.get('ADMIN_EMAIL') });
 
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0]['context'][
 			'signature'
@@ -39,8 +38,8 @@ describe('assign', () => {
 				JSON.stringify(
 					await req()
 						.post('/enterprise/assign')
-						.set('Cookie', headers['set-cookie'])
-						.send({
+						.headers({ 'set-cookie': headers['set-cookie'] })
+						.body({
 							signature,
 							...enterprise,
 							...enterprise.baseUser,

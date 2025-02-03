@@ -1,12 +1,13 @@
 import { execute, initJest } from 'app/utils/test.utils';
-import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
+import { LightMyRequestChain } from 'fastify';
+import { OutgoingHttpHeaders } from 'http2';
 
 const fileName = curFile(__filename);
 
-let req: () => TestAgent, usr: User, rfsTms: number, svc: AppService;
+let req: () => LightMyRequestChain, usr: User, rfsTms: number, svc: AppService;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();
@@ -24,7 +25,7 @@ describe('signup', () => {
 			() =>
 				req()
 					.post('/signup')
-					.send({ ...usr, ...usr.baseUser }),
+					.body({ ...usr, ...usr.baseUser }),
 			{
 				exps: [
 					{
@@ -56,15 +57,15 @@ describe('signup', () => {
 	it('fail due to email already exist', async () => {
 		await req()
 			.post('/signup')
-			.send({ ...usr, ...usr.baseUser });
+			.body({ ...usr, ...usr.baseUser });
 
 		await execute(
 			async () =>
 				(
 					await req()
 						.post('/signup')
-						.send({ ...usr, ...usr.baseUser })
-				).text,
+						.body({ ...usr, ...usr.baseUser })
+				).body,
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Invalid', 'User', 'SignUp')] },
@@ -79,7 +80,7 @@ describe('login', () => {
 		async () =>
 			await req()
 				.post('/signup')
-				.send({ ...usr, ...usr.baseUser }),
+				.body({ ...usr, ...usr.baseUser }),
 	);
 
 	it('success', async () => {
@@ -87,7 +88,7 @@ describe('login', () => {
 			() =>
 				req()
 					.post('/login')
-					.send({ ...usr, ...usr.baseUser }),
+					.body({ ...usr, ...usr.baseUser }),
 			{
 				exps: [
 					{
@@ -118,8 +119,8 @@ describe('login', () => {
 				(
 					await req()
 						.post('/login')
-						.send({ ...usr, ...usr.baseUser })
-				).text,
+						.body({ ...usr, ...usr.baseUser })
+				).body,
 			{
 				exps: [{ type: 'toContain', params: [err('Invalid', 'Password', '')] }],
 			},
@@ -134,26 +135,27 @@ describe('login', () => {
 				(
 					await req()
 						.post('/login')
-						.send({ ...usr, ...usr.baseUser })
-				).text,
+						.body({ ...usr, ...usr.baseUser })
+				).body,
 			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
 	});
 });
 
 describe('logout', () => {
-	let headers: object;
+	let headers: OutgoingHttpHeaders;
 
 	beforeEach(
 		async () =>
 			({ headers } = await req()
 				.post('/signup')
-				.send({ ...usr, ...usr.baseUser })),
+				.body({ ...usr, ...usr.baseUser })),
 	);
 
 	it('success', async () => {
 		await execute(
-			() => req().post('/logout').set('Cookie', headers['set-cookie']),
+			() =>
+				req().post('/logout').headers({ 'set-cookie': headers['set-cookie'] }),
 			{
 				exps: [
 					{
@@ -174,7 +176,7 @@ describe('logout', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(async () => (await req().post('/logout')).text, {
+		await execute(async () => (await req().post('/logout')).body, {
 			exps: [
 				{ type: 'toContain', params: [err('Unauthorized', 'User', 'Access')] },
 			],
@@ -183,18 +185,19 @@ describe('logout', () => {
 });
 
 describe('refresh', () => {
-	let headers: object;
+	let headers: OutgoingHttpHeaders;
 
 	beforeEach(
 		async () =>
 			({ headers } = await req()
 				.post('/signup')
-				.send({ ...usr, ...usr.baseUser })),
+				.body({ ...usr, ...usr.baseUser })),
 	);
 
 	it('success', async () => {
 		await execute(
-			() => req().post('/refresh').set('Cookie', headers['set-cookie']),
+			() =>
+				req().post('/refresh').headers({ 'set-cookie': headers['set-cookie'] }),
 			{
 				exps: [
 					{
@@ -202,7 +205,7 @@ describe('refresh', () => {
 						not: true,
 						params: [
 							'headers.set-cookie',
-							expect.arrayContaining(headers['set-cookie']),
+							expect.arrayContaining(headers['set-cookie'] as unknown[]),
 						],
 					},
 					{
@@ -218,7 +221,7 @@ describe('refresh', () => {
 	});
 
 	it('fail due to not have valid cookies', async () => {
-		await execute(async () => (await req().post('/refresh')).text, {
+		await execute(async () => (await req().post('/refresh')).body, {
 			exps: [
 				{ type: 'toContain', params: [err('Unauthorized', 'User', 'Access')] },
 			],
@@ -228,9 +231,9 @@ describe('refresh', () => {
 	it('success in generate new key', async () => {
 		await execute(
 			async () =>
-				({ headers } = await req()
+				await req()
 					.post('/refresh')
-					.set('Cookie', headers['set-cookie'])),
+					.headers({ 'set-cookie': headers['set-cookie'] }),
 			{
 				numOfRun: rfsTms * 1.2,
 				exps: [
@@ -239,7 +242,7 @@ describe('refresh', () => {
 						not: true,
 						params: [
 							'headers.set-cookie',
-							expect.arrayContaining(headers['set-cookie']),
+							expect.arrayContaining(headers['set-cookie'] as unknown[]),
 						],
 					},
 					{
@@ -267,8 +270,8 @@ describe('change-password', () => {
 				(
 					await req()
 						.post('/change-password')
-						.send({ email: user.baseUser.email })
-				).text,
+						.body({ email: user.baseUser.email })
+				).body,
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },
@@ -286,8 +289,8 @@ describe('change-password', () => {
 				(
 					await req()
 						.post('/change-password')
-						.send({ email: user.baseUser.email + ']' })
-				).text,
+						.body({ email: user.baseUser.email + ']' })
+				).body,
 			{ exps: [{ type: 'toContain', params: ['Invalid_Email'] }] },
 		);
 	});
@@ -300,8 +303,8 @@ describe('request-signature', () => {
 				(
 					await req()
 						.post('/request-signature')
-						.send({ email: svc.cfg.get('ADMIN_EMAIL') })
-				).text,
+						.body({ email: svc.cfg.get('ADMIN_EMAIL') })
+				).body,
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },

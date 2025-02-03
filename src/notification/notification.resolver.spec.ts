@@ -3,7 +3,7 @@ import { AppService } from 'app/app.service';
 import { execute, initJest, sendGQL } from 'app/utils/test.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { Notification } from './notification.entity';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import {
@@ -18,7 +18,7 @@ import { beforeAll, beforeEach, describe, it } from '@jest/globals';
 
 const fileName = curFile(__filename);
 
-let req: () => TestAgent,
+let req: () => LightMyRequestChain,
 	svc: AppService,
 	mailerSvc: MailerService,
 	employee: Employee,
@@ -52,12 +52,8 @@ describe('assignNotification', () => {
 		async () => {
 			await execute(
 				async () =>
-					(
-						await send(
-							{ input: notification },
-							{ cookie: headers['set-cookie'] },
-						)
-					).assignNotification,
+					(await send({ input: notification }, { headers: headers }))
+						.assignNotification,
 				{
 					exps: [
 						{
@@ -90,10 +86,7 @@ describe('updateNotification', () => {
 			await sendGQL<
 				AssignNotificationMutation,
 				AssignNotificationMutationVariables
-			>(AssignNotification)(
-				{ input: notification },
-				{ cookie: headers['set-cookie'] },
-			)
+			>(AssignNotification)({ input: notification }, { headers: headers })
 		).assignNotification.id;
 	});
 
@@ -105,7 +98,7 @@ describe('updateNotification', () => {
 				(
 					await send(
 						{ input: { id: notificationId, content: newContent } },
-						{ cookie: headers['set-cookie'] },
+						{ headers: headers },
 					)
 				).updateNotification,
 			{ exps: [{ type: 'toHaveProperty', params: ['content', newContent] }] },
@@ -128,10 +121,7 @@ describe('updateNotification', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await send(
-						{ input: { id: newId } },
-						{ cookie: headers['set-cookie'] },
-					),
+					await send({ input: { id: newId } }, { headers: headers }),
 				),
 			{
 				exps: [

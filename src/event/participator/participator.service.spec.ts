@@ -2,7 +2,7 @@ import { AppService } from 'app/app.service';
 import { execute, initJest } from 'app/utils/test.utils';
 import { Student } from 'university/student/student.entity';
 import { assignStudent } from 'university/student/student.controller.spec.utils';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Event } from 'event/event.entity';
 import { EventParticipator } from './participator.entity';
@@ -13,7 +13,7 @@ let svc: AppService,
 	student: Student,
 	event: Event,
 	mailerSvc: MailerService,
-	req: () => TestAgent;
+	req: () => LightMyRequestChain;
 
 beforeAll(async () => {
 	const { appSvc, requester, module } = await initJest();

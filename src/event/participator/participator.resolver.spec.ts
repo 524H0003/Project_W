@@ -13,13 +13,13 @@ import { assignEmployee } from 'enterprise/employee/employee.controller.spec.uti
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Event } from 'event/event.entity';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { assignStudent } from 'university/student/student.controller.spec.utils';
 import { Student } from 'university/student/student.entity';
 
 const fileName = curFile(__filename);
 
-let req: () => TestAgent,
+let req: () => LightMyRequestChain,
 	svc: AppService,
 	mailerSvc: MailerService,
 	student: Student,
@@ -70,7 +70,7 @@ describe('assignParticipator', () => {
 				(
 					await send(
 						{ input: { userId: student.user.id, eventId: event.id } },
-						{ cookie: stuHeaders['set-cookie'] },
+						{ headers: stuHeaders },
 					)
 				).assignParticipator,
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
@@ -100,7 +100,7 @@ describe('updateParticipator', () => {
 				AssignParticipatorMutationVariables
 			>(AssignParticipator)(
 				{ input: { userId: student.user.id, eventId: event.id } },
-				{ cookie: stuHeaders['set-cookie'] },
+				{ headers: stuHeaders },
 			)
 		).assignParticipator.id;
 	});
@@ -112,7 +112,7 @@ describe('updateParticipator', () => {
 			() =>
 				send(
 					{ input: { id: participatorId, interviewNote } },
-					{ cookie: empHeaders['set-cookie'] },
+					{ headers: empHeaders },
 				),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
@@ -131,10 +131,7 @@ describe('updateParticipator', () => {
 
 		await execute(
 			() =>
-				send(
-					{ input: { id: newId, interviewNote } },
-					{ cookie: empHeaders['set-cookie'] },
-				),
+				send({ input: { id: newId, interviewNote } }, { headers: empHeaders }),
 			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'User', '')] }] },
 		);
 	});

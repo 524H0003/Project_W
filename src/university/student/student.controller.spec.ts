@@ -1,10 +1,10 @@
 import { execute, initJest } from 'app/utils/test.utils';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { Student } from './student.entity';
 
 const fileName = curFile(__filename);
 
-let req: () => TestAgent, stu: Student;
+let req: () => LightMyRequestChain, stu: Student;
 
 beforeAll(async () => {
 	const { requester } = await initJest();
@@ -25,7 +25,7 @@ describe('signup', () => {
 				JSON.stringify(
 					await req()
 						.post('/student/signup')
-						.send({ ...stu.user, ...stu.user.baseUser }),
+						.body({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
@@ -37,7 +37,7 @@ describe('signup', () => {
 				JSON.stringify(
 					await req()
 						.post('/student/signup')
-						.send({ ...stu.user, ...stu.user.baseUser }),
+						.body({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{
 				exps: [

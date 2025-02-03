@@ -5,13 +5,13 @@ import {
 	UploadFileMutation,
 	UploadFileMutationVariables,
 } from 'build/compiled_graphql';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 
 const fileName = curFile(__filename);
 
-let req: () => TestAgent, svc: AppService, headers: object;
+let req: () => LightMyRequestChain, svc: AppService, headers: object;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();
@@ -23,7 +23,9 @@ beforeEach(async () => {
 	let rawUsr: User = User.test(fileName),
 		usr: User;
 
-	const e = await req().post('/signup').send({ ...rawUsr, ...rawUsr.baseUser });
+	const e = await req()
+		.post('/signup')
+		.body({ ...rawUsr, ...rawUsr.baseUser });
 	usr = await svc.user.email(rawUsr.baseUser.email);
 
 	headers = e.headers;
@@ -46,7 +48,7 @@ describe('uploadFile', () => {
 					await send(
 						{ file: null },
 						{
-							cookie: headers['set-cookie'],
+							headers: headers,
 							map: { file: ['variables.file'] },
 							attach: ['file', content, name],
 						},

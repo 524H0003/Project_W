@@ -6,11 +6,11 @@ import {
 	IEmployeeSignup,
 } from 'enterprise/employee/employee.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { AppService } from 'app/app.service';
 
 export async function assignEmployee(
-	req: () => TestAgent,
+	req: () => LightMyRequestChain,
 	svc: AppService,
 	enterprise: Enterprise,
 	empInp: Employee,
@@ -26,7 +26,7 @@ export async function assignEmployee(
 	const empHeaders = (
 			await req()
 				.post('/employee/hook')
-				.send({
+				.body({
 					enterpriseName: enterprise.baseUser.name,
 					...empInp,
 					...empInp.eventCreator.user.baseUser,
@@ -37,8 +37,8 @@ export async function assignEmployee(
 		],
 		{ headers } = await req()
 			.post('/employee/signup')
-			.set('Cookie', empHeaders['set-cookie'])
-			.send({
+			.headers({ 'set-cookie': empHeaders['set-cookie'] })
+			.body({
 				signature,
 				enterpriseName: enterprise.baseUser.name,
 				...empInp,

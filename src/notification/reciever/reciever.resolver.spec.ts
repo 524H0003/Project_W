@@ -23,7 +23,7 @@ import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Notification } from 'notification/notification.entity';
 import { assignNoti } from 'notification/notification.resolver.spec.utils';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { User } from 'user/user.entity';
 import { Reciever } from './reciever.entity';
 import { Student } from 'university/student/student.entity';
@@ -31,7 +31,7 @@ import { assignStudent } from 'university/student/student.controller.spec.utils'
 
 const fileName = curFile(__filename);
 
-let req: () => TestAgent,
+let req: () => LightMyRequestChain,
 	svc: AppService,
 	mailerSvc: MailerService,
 	employee: Employee,
@@ -53,7 +53,9 @@ beforeEach(async () => {
 
 	headers = (await assignEmployee(req, svc, enterprise, employee, mailerSvc))
 		.headers;
-	await req().post('/signup').send({ ...user, ...user.baseUser });
+	await req()
+		.post('/signup')
+		.body({ ...user, ...user.baseUser });
 	user = await svc.user.findOne({ baseUser: { name: user.baseUser.name } });
 
 	notification = await svc.notification.findOne({
@@ -73,7 +75,7 @@ describe('assignReciever', () => {
 				(
 					await send(
 						{ input: { notificationId: notification.id, userId: user.id } },
-						{ cookie: headers['set-cookie'] },
+						{ headers: headers },
 					)
 				).assignReciever,
 			{
@@ -109,7 +111,7 @@ describe('assignRecieverMany', () => {
 				(
 					await send(
 						{ input: { notificationId: notification.id, usersId } },
-						{ cookie: headers['set-cookie'] },
+						{ headers: headers },
 					)
 				).assignRecieverMany,
 			{
@@ -150,7 +152,7 @@ describe('readNotification', () => {
 				(
 					await send(
 						{ input: { recieverId: reciever.id } },
-						{ cookie: userHeaders['set-cookie'] },
+						{ headers: userHeaders },
 					)
 				).readNotification,
 			{
@@ -190,12 +192,8 @@ describe('readNotificationMany', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(
-					await send(
-						{ input: { recieversId } },
-						{ cookie: userHeaders['set-cookie'] },
-					)
-				).readNotificationMany,
+				(await send({ input: { recieversId } }, { headers: userHeaders }))
+					.readNotificationMany,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
@@ -242,8 +240,7 @@ describe('listAllNotifications', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({}, { cookie: userHeaders['set-cookie'] }))
-					.listAllNotifications.length,
+				(await send({}, { headers: userHeaders })).listAllNotifications.length,
 			{ exps: [{ type: 'toEqual', params: [5] }] },
 		);
 	});
@@ -251,7 +248,7 @@ describe('listAllNotifications', () => {
 	it('success with isRead filterring', async () => {
 		await execute(
 			async () =>
-				(await send({ isRead: false }, { cookie: userHeaders['set-cookie'] }))
+				(await send({ isRead: false }, { headers: userHeaders }))
 					.listAllNotifications,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
