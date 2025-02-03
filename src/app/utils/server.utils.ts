@@ -39,10 +39,7 @@ declare module 'fastify' {
 
 export const fastifyOptions: FastifyServerOptions = { maxParamLength: 128 };
 
-export type CookieProps = {
-	name: string;
-	password: string;
-};
+export type CookieProps = { name: string; password: string };
 
 export async function registerServerPlugins(
 	fastify: FastifyInstance,
@@ -78,10 +75,7 @@ export async function registerServerPlugins(
 				},
 			},
 		})
-		.register(fastifyCookie, {
-			secret,
-			parseOptions: cookieOptions,
-		})
+		.register(fastifyCookie, { secret, parseOptions: cookieOptions })
 		.register(fastifySession, {
 			secret,
 			// ! Cautious: Session's cookie secure must set false. If not, AdminJS crash

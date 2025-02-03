@@ -166,9 +166,5 @@ export async function initJest() {
 
 	requester = requesterFunc;
 
-	return {
-		module,
-		appSvc,
-		requester,
-	};
+	return { module, appSvc, requester };
 }
