@@ -13,9 +13,9 @@ import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Cache, CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-yet';
 import { InitServerClass } from 'app/utils/server.utils';
 import { SignService } from 'auth/auth.service';
+import KeyvRedis from '@keyv/redis';
 
 @Module({
 	imports: [
@@ -88,11 +88,11 @@ import { SignService } from 'auth/auth.service';
 			isGlobal: true,
 			imports: [ConfigModule],
 			inject: [ConfigService],
-			useFactory: async (cfg: ConfigService) => {
+			useFactory: (cfg: ConfigService) => {
 				let store = undefined;
 
 				try {
-					store = await redisStore({
+					store = new KeyvRedis({
 						socket: {
 							host: cfg.get('REDIS_HOST'),
 							port: cfg.get('REDIS_PORT'),
