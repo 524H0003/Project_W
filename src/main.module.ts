@@ -110,7 +110,7 @@ import { SignService } from 'auth/auth.service';
 					);
 				}
 
-				return { store, ttl: (3).s2ms };
+				return { store, ttl: (180).s2ms };
 			},
 		}),
 	],

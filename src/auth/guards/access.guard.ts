@@ -65,8 +65,6 @@ export class AccessGuard extends AuthGuard('access') {
 
 	/**
 	 * Identify if user is allowed to access
-	 * @param {ExecutionContext} context - client request's context
-	 * @return {Promise<boolean>} allow if user valid
 	 */
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		if (this.reflector.get(AllowPublic, context.getHandler())) return true;

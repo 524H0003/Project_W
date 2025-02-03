@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
-import { GetRequest } from 'auth/guards/access.guard';
+import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
+import { AccessGuard, GetRequest } from 'auth/guards/access.guard';
 import { FastifyReply } from 'fastify';
 import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
+import { FileGuard } from 'auth/guards/file.guard';
 
 /**
  * File controller
@@ -20,7 +21,7 @@ export class FileController {
 	 * @param {FastifyReply} res - the server's response
 	 * @param {User} user - the current processing user
 	 */
-	@Get(':filename') async seeUploadedFile(
+	@Get(':filename') @UseGuards(FileGuard) async seeUploadedFile(
 		@Param('filename') fileName: string,
 		@Res() res: FastifyReply,
 		@GetRequest('user') user: User,

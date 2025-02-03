@@ -6,6 +6,7 @@ import { readFileSync } from 'fs';
 import { rootPublic } from 'app/module/test.module';
 import { LightMyRequestChain } from 'fastify';
 import TestAgent from 'supertest/lib/agent';
+import { it } from '@jest/globals';
 
 const fileName = curFile(__filename);
 let rawUsr: User,
@@ -76,7 +77,7 @@ describe('seeUploadedFile', () => {
 			() =>
 				req('supertest')
 					.get(`/file/${usr.baseUser.avatarPath}`)
-					.set({ 'set-cookie': headers['set-cookie'] })
+					.set('Cookie', headers['set-cookie'])
 					.buffer()
 					.parse((res, callback) => {
 						res.text = '';
