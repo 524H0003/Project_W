@@ -17,9 +17,16 @@ import {
 } from 'app/utils/server.utils';
 import Fastify from 'fastify';
 import { hash } from 'app/utils/auth.utils';
+import { createServer, Server } from 'http';
 
 async function bootstrap() {
-	const fastify = Fastify(fastifyOptions),
+	let server: Server;
+
+	const fastify = Fastify({
+			...fastifyOptions,
+			serverFactory: (handle) =>
+				(server = createServer((req, res) => handle(req, res))),
+		}),
 		nest = await NestFactory.create<NestFastifyApplication>(
 			MainModule,
 			new FastifyAdapter(fastify),
@@ -49,7 +56,11 @@ async function bootstrap() {
 		.setGlobalPrefix('api/v1')
 		.useGlobalPipes(new ValidationPipe())
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
-		.listen(process.env.PORT || config.get<number>('SERVER_PORT'));
+		.init();
+
+	fastify.ready(() => {
+		server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
+	});
 }
 
 void bootstrap();
