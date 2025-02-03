@@ -8,8 +8,8 @@
 	"scripts": {
 		"buildfile": "ts-node src/build.ts",
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
-		"mail": "cd ./mail && npm run build && npm i --omit=dev && cd ..",
-		"page": "npm run types && cd ./page && npm run build && npm i --omit=dev && cd ..",
+		"mail": "cd ./mail && npm run build && npm prune --production && cd ..",
+		"page": "npm run types && cd ./page && npm run build && npm prune --production && cd ..",
 		"format": "replace '{\\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace '\\[\\n' '[' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace '\\)\\n' ')' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && npm run prettier && npm run prettier",
 		"lint": "eslint --fix ./src",
 		"prettier": "prettier --write \"./**/*.ts\" \"./**/*.js\" \"./**/*.json\" \"./**/*.*rc\" --log-level silent",
