@@ -88,7 +88,7 @@ import KeyvRedis from '@keyv/redis';
 			isGlobal: true,
 			imports: [ConfigModule],
 			inject: [ConfigService],
-			useFactory: async (cfg: ConfigService) => {
+			useFactory: (cfg: ConfigService) => {
 				let store = undefined;
 
 				try {
