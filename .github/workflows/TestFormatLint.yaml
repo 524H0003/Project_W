@@ -194,7 +194,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 2
+    timeout-minutes: 3
 
     permissions:
       contents: write
@@ -219,15 +219,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 23
+          cache: 'pnpm'
 
       - run: rm -fr public/*
-
-      - uses: actions/cache/restore@v4
-        with:
-          path: |
-            **/node_modules
-            **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
 
       - run: npm run start:ci
 
