@@ -43,8 +43,10 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 
 		let access: string, refresh: string;
 		for (const cookie in req.cookies)
-			if (await compare(this.rfsKey, cookie)) refresh = req.cookies[cookie];
-			else if (await compare(this.acsKey, cookie)) access = req.cookies[cookie];
+			if (await compare(this.rfsKey + '!', cookie, 'base64url'))
+				refresh = req.cookies[cookie];
+			else if (await compare(this.acsKey, cookie, 'base64url'))
+				access = req.cookies[cookie];
 
 		if (access || refresh)
 			req.headers.authorization = `Bearer ${this.decrypt(isRefresh ? refresh : access)}`;

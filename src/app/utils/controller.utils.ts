@@ -43,8 +43,8 @@ export class BaseController {
 	) {
 		for (const cookie in request.cookies)
 			if (
-				((await compare(this.acsKey, cookie)) && acs) ||
-				((await compare(this.acsKey, cookie)) && rfs)
+				((await compare(this.acsKey, cookie, 'base64url')) && acs) ||
+				((await compare(this.rfsKey + '!', cookie, 'base64url')) && rfs)
 			)
 				response.clearCookie(cookie);
 	}
@@ -66,8 +66,13 @@ export class BaseController {
 		const encryptedAccess = this.svc.auth.encrypt(accessToken),
 			encryptedRefresh = this.svc.auth.encrypt(refreshToken);
 
-		if (accessToken) reply.cookie(await hash(this.acsKey), encryptedAccess);
-		if (refreshToken) reply.cookie(await hash(this.rfsKey), encryptedRefresh);
+		if (accessToken)
+			reply.cookie(await hash(this.acsKey, 'base64url'), encryptedAccess);
+		if (refreshToken)
+			reply.cookie(
+				await hash(this.rfsKey + '!', 'base64url'),
+				encryptedRefresh,
+			);
 
 		reply.send({
 			session: {

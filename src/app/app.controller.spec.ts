@@ -224,7 +224,7 @@ describe('refresh', () => {
 				],
 			},
 		);
-	});
+	}, (500).s2ms);
 
 	it('fail due to not have valid cookies', async () => {
 		await execute(async () => (await req().post('/refresh')).body, {

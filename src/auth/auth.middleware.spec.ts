@@ -35,8 +35,10 @@ beforeEach(async () => {
 
 describe('use', () => {
 	beforeEach(async () => {
-		req['cookies'][`${await hash(rfsKey)}`] = authSvc.encrypt(rfsTkn);
-		req['cookies'][`${await hash(acsKey)}`] = authSvc.encrypt(acsTkn);
+		req['cookies'][`${await hash(rfsKey + '!', 'base64url')}`] =
+			authSvc.encrypt(rfsTkn);
+		req['cookies'][`${await hash(acsKey, 'base64url')}`] =
+			authSvc.encrypt(acsTkn);
 	});
 
 	it('refresh', async () => {
