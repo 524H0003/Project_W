@@ -11,7 +11,7 @@ export async function assignEnterprise(
 ) {
 	const { headers } = await req()
 			.post('/request-signature')
-			.send({ email: adminEmail }),
+			.body({ email: adminEmail }),
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0]['context'][
 			'signature'
 		];
@@ -19,7 +19,7 @@ export async function assignEnterprise(
 	await req()
 		.post('/enterprise/assign')
 		.headers({ 'set-cookie': headers['set-cookie'] })
-		.send({
+		.body({
 			signature,
 			...enterprise,
 			...enterprise.baseUser,
