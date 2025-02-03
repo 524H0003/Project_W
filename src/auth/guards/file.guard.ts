@@ -21,7 +21,13 @@ export class FileGuard extends AuthGuard('access') {
 		try {
 			await super.canActivate(context);
 		} catch (error) {
-			console.log(error);
+			switch ((error as Error).message) {
+				case 'Unauthorized':
+					break;
+
+				default:
+					throw error;
+			}
 		}
 		return true;
 	}
