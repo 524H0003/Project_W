@@ -40,9 +40,6 @@ jobs:
 
       - uses: actions/setup-node@v4
 
-      - name: Install dependencies
-        run: pnpm install
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -78,12 +75,7 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
-      - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
-
-      - name: Install dependencies
-        run: pnpm install
 
       - uses: actions/cache/restore@v4
         with:
@@ -125,12 +117,7 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
-      - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
-
-      - name: Install dependencies
-        run: pnpm install
 
       - uses: actions/cache/restore@v4
         with:
@@ -172,12 +159,7 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
-      - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
-
-      - name: Install dependencies
-        run: pnpm install
 
       - uses: actions/cache/restore@v4
         with:
@@ -223,12 +205,7 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
-      - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
-
-      - name: Install dependencies
-        run: pnpm install
 
       - run: rm -fr public/*
 
@@ -266,12 +243,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
-
-      - name: Install dependencies
-        run: pnpm install
 
       - uses: actions/cache@v4
         with:
