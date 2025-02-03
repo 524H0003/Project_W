@@ -205,6 +205,8 @@ jobs:
 
       - uses: pnpm/action-setup@v4
 
+      - run: rm -fr public/*
+
       - uses: actions/cache/restore@v4
         with:
           path: |
