@@ -70,7 +70,6 @@ describe('assignNotification', () => {
 				},
 			);
 		},
-		(6000).s2ms,
 	);
 });
 
