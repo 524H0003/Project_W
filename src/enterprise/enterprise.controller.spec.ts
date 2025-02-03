@@ -4,10 +4,15 @@ import { execute, initJest } from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: () => LightMyRequestChain,
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	enterprise: Enterprise,
 	signature: string,
 	svc: AppService,

@@ -14,18 +14,24 @@ import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Event } from 'event/event.entity';
 import { LightMyRequestChain } from 'fastify';
+import { OutgoingHttpHeaders } from 'http';
+import TestAgent from 'supertest/lib/agent';
 import { assignStudent } from 'university/student/student.controller.spec.utils';
 import { Student } from 'university/student/student.entity';
 
 const fileName = curFile(__filename);
 
-let req: () => LightMyRequestChain,
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	mailerSvc: MailerService,
 	student: Student,
 	event: Event,
-	empHeaders: object,
-	stuHeaders: object;
+	empHeaders: OutgoingHttpHeaders,
+	stuHeaders: OutgoingHttpHeaders;
 
 beforeAll(async () => {
 	const { requester, appSvc, module } = await initJest();

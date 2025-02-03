@@ -8,9 +8,14 @@ import {
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { LightMyRequestChain } from 'fastify';
 import { AppService } from 'app/app.service';
+import TestAgent from 'supertest/lib/agent';
 
 export async function assignEmployee(
-	req: () => LightMyRequestChain,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	enterprise: Enterprise,
 	empInp: Employee,

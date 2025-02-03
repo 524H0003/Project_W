@@ -2,9 +2,14 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Student } from './student.entity';
 import { AppService } from 'app/app.service';
 import { LightMyRequestChain } from 'fastify';
+import TestAgent from 'supertest/lib/agent';
 
 export async function assignStudent(
-	req: () => LightMyRequestChain,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	studentInp: Student,
 	mailerSvc: MailerService,

@@ -5,21 +5,25 @@ import { DocumentNode, print } from 'graphql';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
 import { expect } from '@jest/globals';
-import Fastify, { InjectOptions, LightMyRequestChain } from 'fastify';
+import Fastify, { LightMyRequestChain } from 'fastify';
 import {
 	FastifyAdapter,
 	NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { fastifyOptions, registerServerPlugins } from './server.utils';
 import { TestModule } from 'app/module/test.module';
-import { ReadStream } from 'fs';
 import { OutgoingHttpHeaders } from 'http';
-import formAutoContent from 'form-auto-content';
+import supertest from 'supertest';
+import TestAgent from 'supertest/lib/agent';
 
 /**
  * Exported variables
  */
-let requester: (op?: InjectOptions) => LightMyRequestChain,
+let requester: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	app: NestFastifyApplication;
 
 /**
@@ -94,7 +98,7 @@ export type SendGQLType<T, K> = (
 	}?: {
 		headers?: OutgoingHttpHeaders;
 		map?: object;
-		attach?: ReadStream;
+		attach?: Parameters<supertest.Test['attach']>;
 	},
 ) => Promise<T>;
 
@@ -107,15 +111,18 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
 	return async (variables: K, { headers, map, attach } = {}): Promise<T> => {
-		const l0 = requester
+		const l0 = requester('supertest')
 				.post('/graphql')
 				.set('Content-Type', 'multipart/form-data')
-				.set({ 'apollo-require-preflight': 'true', ...headers }),
-			l1 = l0
+				.set({ 'apollo-require-preflight': 'true' }),
+			l1 = headers['set-cookie']
+				? l0.set('Cookie', headers['set-cookie'] as string[])
+				: l0,
+			l2 = l1
 				.field('operations', JSON.stringify({ query, variables }))
 				.field('map', JSON.stringify(map) || '{}'),
-			l2 = attach ? l1.attach(...attach) : l1,
-			result = await l2;
+			l3 = attach ? l2.attach(...attach) : l2,
+			result = await l3;
 		if (result.body.data) return result.body.data;
 		throw new Error(result.body.errors[0].message);
 	};
@@ -140,8 +147,17 @@ export async function initJest() {
 
 	await app.useGlobalFilters(new AppExceptionFilter(httpAdapter)).init();
 	await app.getHttpAdapter().getInstance().ready();
-	requester = (options?: InjectOptions) =>
-		app.inject(options) as LightMyRequestChain;
+
+	function requesterFunc(testCore: 'fastify'): LightMyRequestChain;
+	function requesterFunc(testCore: 'supertest'): TestAgent;
+	function requesterFunc(): LightMyRequestChain;
+	function requesterFunc(testCore: 'fastify' | 'supertest' = 'fastify') {
+		return testCore == 'fastify'
+			? app.inject()
+			: supertest(app.getHttpServer());
+	}
+
+	requester = requesterFunc;
 
 	return {
 		module,

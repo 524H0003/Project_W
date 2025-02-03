@@ -6,6 +6,7 @@ import { LightMyRequestChain } from 'fastify';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Event } from 'event/event.entity';
 import { EventParticipator } from './participator.entity';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
@@ -13,7 +14,11 @@ let svc: AppService,
 	student: Student,
 	event: Event,
 	mailerSvc: MailerService,
-	req: () => LightMyRequestChain;
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	};
 
 beforeAll(async () => {
 	const { appSvc, requester, module } = await initJest();

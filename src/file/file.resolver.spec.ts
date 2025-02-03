@@ -6,12 +6,20 @@ import {
 	UploadFileMutationVariables,
 } from 'build/compiled_graphql';
 import { LightMyRequestChain } from 'fastify';
+import { OutgoingHttpHeaders } from 'http';
+import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 
 const fileName = curFile(__filename);
 
-let req: () => LightMyRequestChain, svc: AppService, headers: object;
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
+	svc: AppService,
+	headers: OutgoingHttpHeaders;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();

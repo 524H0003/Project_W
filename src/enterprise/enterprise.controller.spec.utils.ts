@@ -2,9 +2,14 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEnterpriseAssign } from 'enterprise/enterprise.model';
 import { LightMyRequestChain } from 'fastify';
+import TestAgent from 'supertest/lib/agent';
 
 export async function assignEnterprise(
-	req: () => LightMyRequestChain,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	enterprise: Enterprise,
 	mailerSvc: MailerService,
 	adminEmail: string,

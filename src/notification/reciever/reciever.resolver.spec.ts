@@ -28,15 +28,21 @@ import { User } from 'user/user.entity';
 import { Reciever } from './reciever.entity';
 import { Student } from 'university/student/student.entity';
 import { assignStudent } from 'university/student/student.controller.spec.utils';
+import { OutgoingHttpHeaders } from 'http';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: () => LightMyRequestChain,
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	mailerSvc: MailerService,
 	employee: Employee,
 	notification: Notification,
-	headers: object,
+	headers: OutgoingHttpHeaders,
 	user: User,
 	enterprise: Enterprise;
 
@@ -138,7 +144,7 @@ describe('readNotification', () => {
 		ReadNotificationMutationVariables
 	>(ReadNotification);
 
-	let reciever: Reciever, userHeaders: object;
+	let reciever: Reciever, userHeaders: OutgoingHttpHeaders;
 
 	beforeEach(async () => {
 		const tUser = await Student.test(fileName);
@@ -174,7 +180,7 @@ describe('readNotificationMany', () => {
 		>(ReadNotificationMany),
 		recieversId: string[] = [];
 
-	let userHeaders: object;
+	let userHeaders: OutgoingHttpHeaders;
 
 	beforeEach(async () => {
 		const tUser = await Student.test(fileName),
@@ -218,7 +224,7 @@ describe('listAllNotifications', () => {
 		>(ListAllNotifications),
 		recieversId: string[] = [];
 
-	let userHeaders: object, numRead: number;
+	let userHeaders: OutgoingHttpHeaders, numRead: number;
 
 	beforeEach(async () => {
 		const tUser = await Student.test(fileName),

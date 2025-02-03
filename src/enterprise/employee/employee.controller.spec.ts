@@ -6,10 +6,15 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
 import { MailerService } from '@nestjs-modules/mailer';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: () => LightMyRequestChain,
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	mailerSvc: MailerService,
 	enterprise: Enterprise,

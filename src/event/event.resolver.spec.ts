@@ -14,15 +14,21 @@ import {
 import { AppService } from 'app/app.service';
 import { LightMyRequestChain } from 'fastify';
 import { assignEmployee } from '../enterprise/employee/employee.controller.spec.utils';
+import { OutgoingHttpHeaders } from 'http';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
 let mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee,
-	headers: object,
+	headers: OutgoingHttpHeaders,
 	svc: AppService,
-	req: () => LightMyRequestChain,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	event: Event;
 
 beforeAll(async () => {

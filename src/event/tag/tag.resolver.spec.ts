@@ -21,6 +21,8 @@ import {
 	ListAllTagsQueryVariables,
 } from 'build/compiled_graphql';
 import { Event } from 'event/event.entity';
+import { OutgoingHttpHeaders } from 'http';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
@@ -28,8 +30,12 @@ let mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee,
 	svc: AppService,
-	req: () => LightMyRequestChain,
-	headers: object,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
+	headers: OutgoingHttpHeaders,
 	tag: EventTag;
 
 beforeAll(async () => {

@@ -4,10 +4,18 @@ import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
 import { LightMyRequestChain } from 'fastify';
 import { OutgoingHttpHeaders } from 'http2';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: () => LightMyRequestChain, usr: User, rfsTms: number, svc: AppService;
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
+	usr: User,
+	rfsTms: number,
+	svc: AppService;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();

@@ -15,15 +15,21 @@ import {
 	UpdateNotificationMutationVariables,
 } from 'build/compiled_graphql';
 import { beforeAll, beforeEach, describe, it } from '@jest/globals';
+import { OutgoingHttpHeaders } from 'http';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: () => LightMyRequestChain,
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	mailerSvc: MailerService,
 	employee: Employee,
 	notification: Notification,
-	headers: object,
+	headers: OutgoingHttpHeaders,
 	enterprise: Enterprise;
 
 beforeAll(async () => {
@@ -47,30 +53,24 @@ describe('assignNotification', () => {
 		AssignNotificationMutationVariables
 	>(AssignNotification);
 
-	it(
-		'success',
-		async () => {
-			await execute(
-				async () =>
-					(await send({ input: notification }, { headers: headers }))
-						.assignNotification,
-				{
-					exps: [
-						{
-							type: 'toHaveProperty',
-							params: ['content', notification.content],
-						},
-					],
-				},
-			);
-			await execute(
-				() => svc.notification.find({ title: notification.title }),
-				{
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				},
-			);
-		},
-	);
+	it('success', async () => {
+		await execute(
+			async () =>
+				(await send({ input: notification }, { headers: headers }))
+					.assignNotification,
+			{
+				exps: [
+					{
+						type: 'toHaveProperty',
+						params: ['content', notification.content],
+					},
+				],
+			},
+		);
+		await execute(() => svc.notification.find({ title: notification.title }), {
+			exps: [{ type: 'toHaveLength', params: [1] }],
+		});
+	});
 });
 
 describe('updateNotification', () => {
