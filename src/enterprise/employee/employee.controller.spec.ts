@@ -1,7 +1,7 @@
 import { AppService } from 'app/app.service';
 import { LightMyRequestChain } from 'fastify';
 import { Employee } from './employee.entity';
-import { execute, initJest } from 'app/utils/test.utils';
+import { cookie, execute, initJest } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
@@ -78,7 +78,7 @@ describe('signup', () => {
 				JSON.stringify(
 					await req()
 						.post('/employee/signup')
-						.headers({ cookie: headers['set-cookie'].join(';') })
+						.headers({ cookie: cookie(headers['set-cookie']) })
 						.body({
 							signature,
 							enterpriseName: enterprise.baseUser.name,

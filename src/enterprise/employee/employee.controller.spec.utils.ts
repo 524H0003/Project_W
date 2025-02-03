@@ -9,6 +9,7 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import { LightMyRequestChain } from 'fastify';
 import { AppService } from 'app/app.service';
 import TestAgent from 'supertest/lib/agent';
+import { cookie } from 'app/utils/test.utils';
 
 export async function assignEmployee(
 	req: {
@@ -42,7 +43,7 @@ export async function assignEmployee(
 		],
 		{ headers } = await req()
 			.post('/employee/signup')
-			.headers({ cookie: empHeaders['set-cookie'].join(';') })
+			.headers({ cookie: cookie(empHeaders['set-cookie']) })
 			.body({
 				signature,
 				enterpriseName: enterprise.baseUser.name,

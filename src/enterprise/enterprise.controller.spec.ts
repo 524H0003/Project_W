@@ -1,6 +1,6 @@
 import { LightMyRequestChain } from 'fastify';
 import { Enterprise } from './enterprise.entity';
-import { execute, initJest } from 'app/utils/test.utils';
+import { cookie, execute, initJest } from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
@@ -43,7 +43,7 @@ describe('assign', () => {
 				JSON.stringify(
 					await req()
 						.post('/enterprise/assign')
-						.headers({ cookie: headers['set-cookie'].join(';') })
+						.headers({ cookie: cookie(headers['set-cookie']) })
 						.body({
 							signature,
 							...enterprise,

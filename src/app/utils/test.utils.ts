@@ -103,6 +103,13 @@ export type SendGQLType<T, K> = (
 ) => Promise<T>;
 
 /**
+ * Get headers cookie
+ */
+export function cookie(headers: string | string[]) {
+	return (Array.isArray(headers) ? headers : [headers]).join(';');
+}
+
+/**
  * GraphQL query runner
  * @param {DocumentNode} astQuery - the graphql query
  * @return {T}

@@ -1,4 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
+import { cookie } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEnterpriseAssign } from 'enterprise/enterprise.model';
 import { LightMyRequestChain } from 'fastify';
@@ -23,7 +24,7 @@ export async function assignEnterprise(
 
 	await req()
 		.post('/enterprise/assign')
-		.headers({ cookie: headers['set-cookie'].join(';') })
+		.headers({ cookie: cookie(headers['set-cookie']) })
 		.body({
 			signature,
 			...enterprise,

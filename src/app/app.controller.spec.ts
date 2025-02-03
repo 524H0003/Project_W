@@ -1,4 +1,4 @@
-import { execute, initJest } from 'app/utils/test.utils';
+import { cookie, execute, initJest } from 'app/utils/test.utils';
 import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
@@ -165,7 +165,7 @@ describe('logout', () => {
 			() =>
 				req()
 					.post('/logout')
-					.headers({ cookie: headers['set-cookie'].join(';') }),
+					.headers({ cookie: cookie(headers['set-cookie']) }),
 			{
 				exps: [
 					{
@@ -209,7 +209,7 @@ describe('refresh', () => {
 			() =>
 				req()
 					.post('/refresh')
-					.headers({ cookie: headers['set-cookie'].join(';') }),
+					.headers({ cookie: cookie(headers['set-cookie']) }),
 			{
 				exps: [
 					{
@@ -245,7 +245,7 @@ describe('refresh', () => {
 			async () =>
 				await req()
 					.post('/refresh')
-					.headers({ cookie: headers['set-cookie'].join(';') }),
+					.headers({ cookie: cookie(headers['set-cookie']) }),
 			{
 				numOfRun: rfsTms * 1.2,
 				exps: [

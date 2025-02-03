@@ -3,6 +3,7 @@ import { Student } from './student.entity';
 import { AppService } from 'app/app.service';
 import { LightMyRequestChain } from 'fastify';
 import TestAgent from 'supertest/lib/agent';
+import { cookie } from 'app/utils/test.utils';
 
 export async function assignStudent(
 	req: {
@@ -30,7 +31,7 @@ export async function assignStudent(
 
 	await req()
 		.post(`/change-password/${token}`)
-		.headers({ cookie: headersInp['set-cookie'].join(';') })
+		.headers({ cookie: cookie(headersInp['set-cookie']) })
 		.body({ password });
 
 	const { headers } = await req()
