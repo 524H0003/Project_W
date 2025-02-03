@@ -36,22 +36,21 @@ jobs:
               - '**.ts'
               - '**.json'
 
-      - uses: actions/cache@v4
-        with:
-          path: |
-            **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
-        with:
-          node-version: 23
-          cache: 'pnpm'
 
-      - run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            **/node_modules
+            **/build
+          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - run: npm run prebuild:dev
 
@@ -82,15 +81,16 @@ jobs:
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
-        with:
-          node-version: 23
-          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
 
       - uses: actions/cache/restore@v4
         with:
           path: |
+            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
 
       - run: npm run test:service
 
@@ -128,15 +128,16 @@ jobs:
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
-        with:
-          node-version: 23
-          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
 
       - uses: actions/cache/restore@v4
         with:
           path: |
+            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
 
       - run: npm run test:resolver
 
@@ -174,15 +175,16 @@ jobs:
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
-        with:
-          node-version: 23
-          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
 
       - uses: actions/cache/restore@v4
         with:
           path: |
+            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
 
       - run: npm run test:controller
 
@@ -224,17 +226,18 @@ jobs:
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
-        with:
-          node-version: 23
-          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
 
       - run: rm -fr public/*
 
       - uses: actions/cache/restore@v4
         with:
           path: |
+            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
 
       - run: npm run start:ci
 
@@ -266,15 +269,16 @@ jobs:
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
-        with:
-          node-version: 23
-          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
 
       - uses: actions/cache@v4
         with:
           path: |
+            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
 
       - run: npm run format && npm run lint
 
