@@ -51,8 +51,7 @@ jobs:
           node-version: 23
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install
+      - run: pnpm install
 
       - run: npm run prebuild:dev
 
@@ -86,9 +85,6 @@ jobs:
         with:
           node-version: 23
           cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
 
       - uses: actions/cache/restore@v4
         with:
@@ -136,9 +132,6 @@ jobs:
           node-version: 23
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install
-
       - uses: actions/cache/restore@v4
         with:
           path: |
@@ -184,9 +177,6 @@ jobs:
         with:
           node-version: 23
           cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
 
       - uses: actions/cache/restore@v4
         with:
@@ -238,9 +228,6 @@ jobs:
           node-version: 23
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install
-
       - run: rm -fr public/*
 
       - uses: actions/cache/restore@v4
@@ -282,9 +269,6 @@ jobs:
         with:
           node-version: 23
           cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
 
       - uses: actions/cache@v4
         with:
