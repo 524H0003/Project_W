@@ -36,6 +36,14 @@ jobs:
               - '**.ts'
               - '**.json'
 
+      - uses: actions/cache@v4
+        with:
+          path: |
+            **/build
+          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
@@ -45,15 +53,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            **/node_modules
-            **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - run: npm run prebuild:dev
 
@@ -94,9 +93,8 @@ jobs:
       - uses: actions/cache/restore@v4
         with:
           path: |
-            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
 
       - run: npm run test:service
 
@@ -144,9 +142,8 @@ jobs:
       - uses: actions/cache/restore@v4
         with:
           path: |
-            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
 
       - run: npm run test:resolver
 
@@ -194,9 +191,8 @@ jobs:
       - uses: actions/cache/restore@v4
         with:
           path: |
-            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
 
       - run: npm run test:controller
 
@@ -250,9 +246,8 @@ jobs:
       - uses: actions/cache/restore@v4
         with:
           path: |
-            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
 
       - run: npm run start:ci
 
@@ -294,9 +289,8 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: |
-            **/node_modules
             **/build
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/schema.gql') }}
 
       - run: npm run format && npm run lint
 

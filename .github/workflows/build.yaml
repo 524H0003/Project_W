@@ -35,13 +35,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - uses: actions/cache@v4
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - run: 'npm run build && npm run doc'
 
       - run: 'cp README.md LICENSE ./types'

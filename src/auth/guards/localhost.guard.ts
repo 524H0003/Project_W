@@ -1,6 +1,5 @@
 import { CanActivate, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
-import { AuthGuard } from '@nestjs/passport';
 import { IncomingMessage } from 'http';
 
 /**
