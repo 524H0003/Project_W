@@ -130,10 +130,6 @@
 		"ts-morph": "^25.0.0",
 		"ts-node": "^10.9.2"
 	},
-	"optionalDependencies": {
-		"@css-inline/css-inline-win32-x64-msvc": "^0.14.3",
-		"@rollup/rollup-linux-x64-gnu": "^4.32.1"
-	},
 	"pnpm": {
 		"overrides": {
 			"@fastify/cookie": "11.0.2",
@@ -143,7 +139,7 @@
 		}
 	},
 	"engines": {
-		"node": "23.7.0"
+		"node": "23.x"
 	},
 	"packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b"
 }
