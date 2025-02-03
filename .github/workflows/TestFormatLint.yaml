@@ -39,6 +39,8 @@ jobs:
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
+        with:
+          node-version: 23
 
       - uses: actions/cache@v4
         with:
@@ -76,6 +78,8 @@ jobs:
       - uses: ikalnytskyi/action-setup-postgres@v6
 
       - uses: actions/setup-node@v4
+        with:
+          node-version: 23
 
       - uses: actions/cache/restore@v4
         with:
@@ -118,6 +122,8 @@ jobs:
       - uses: ikalnytskyi/action-setup-postgres@v6
 
       - uses: actions/setup-node@v4
+        with:
+          node-version: 23
 
       - uses: actions/cache/restore@v4
         with:
@@ -160,6 +166,8 @@ jobs:
       - uses: ikalnytskyi/action-setup-postgres@v6
 
       - uses: actions/setup-node@v4
+        with:
+          node-version: 23
 
       - uses: actions/cache/restore@v4
         with:
@@ -206,6 +214,8 @@ jobs:
       - uses: ikalnytskyi/action-setup-postgres@v6
 
       - uses: actions/setup-node@v4
+        with:
+          node-version: 23
 
       - run: rm -fr public/*
 
@@ -244,6 +254,8 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - uses: actions/setup-node@v4
+        with:
+          node-version: 23
 
       - uses: actions/cache@v4
         with:
