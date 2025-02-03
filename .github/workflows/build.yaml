@@ -30,7 +30,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-node-${{ hashFiles('**/*-lock.*') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
