@@ -23,7 +23,7 @@ export async function assignEnterprise(
 
 	await req()
 		.post('/enterprise/assign')
-		.headers({ cookie: headers['set-cookie'] })
+		.headers({ cookie: headers['set-cookie'].join(';') })
 		.body({
 			signature,
 			...enterprise,

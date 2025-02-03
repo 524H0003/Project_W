@@ -78,7 +78,7 @@ describe('signup', () => {
 				JSON.stringify(
 					await req()
 						.post('/employee/signup')
-						.headers({ cookie: headers['set-cookie'] })
+						.headers({ cookie: headers['set-cookie'].join(';') })
 						.body({
 							signature,
 							enterpriseName: enterprise.baseUser.name,

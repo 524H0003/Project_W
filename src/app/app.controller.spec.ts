@@ -3,7 +3,7 @@ import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
 import { LightMyRequestChain } from 'fastify';
-import { OutgoingHttpHeaders } from 'http2';
+import { OutgoingHttpHeaders } from 'http';
 import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
@@ -162,7 +162,10 @@ describe('logout', () => {
 
 	it('success', async () => {
 		await execute(
-			() => req().post('/logout').headers({ cookie: headers['set-cookie'] }),
+			() =>
+				req()
+					.post('/logout')
+					.headers({ cookie: headers['set-cookie'].join(';') }),
 			{
 				exps: [
 					{
@@ -203,7 +206,10 @@ describe('refresh', () => {
 
 	it('success', async () => {
 		await execute(
-			() => req().post('/refresh').headers({ cookie: headers['set-cookie'] }),
+			() =>
+				req()
+					.post('/refresh')
+					.headers({ cookie: headers['set-cookie'].join(';') }),
 			{
 				exps: [
 					{
@@ -224,7 +230,7 @@ describe('refresh', () => {
 				],
 			},
 		);
-	}, (500).s2ms);
+	});
 
 	it('fail due to not have valid cookies', async () => {
 		await execute(async () => (await req().post('/refresh')).body, {
@@ -237,7 +243,9 @@ describe('refresh', () => {
 	it('success in generate new key', async () => {
 		await execute(
 			async () =>
-				await req().post('/refresh').headers({ cookie: headers['set-cookie'] }),
+				await req()
+					.post('/refresh')
+					.headers({ cookie: headers['set-cookie'].join(';') }),
 			{
 				numOfRun: rfsTms * 1.2,
 				exps: [

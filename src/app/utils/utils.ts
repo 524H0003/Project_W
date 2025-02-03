@@ -216,6 +216,10 @@ declare global {
 		 * To uncapitalize
 		 */
 		readonly uncapitalize: string;
+		/**
+		 * Join function
+		 */
+		join(index: string): string[];
 	}
 
 	/**
@@ -419,6 +423,9 @@ Object.defineProperty(String.prototype, 'capitalize', {
 	enumerable: true,
 	configurable: true,
 });
+String.prototype.join = function (index: string) {
+	return [this as string];
+};
 Object.defineProperty(String.prototype, 'uncapitalize', {
 	get: function () {
 		return (this as string).at(0).toLowerCase() + (this as string).slice(1);

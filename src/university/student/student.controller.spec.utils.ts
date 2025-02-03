@@ -30,7 +30,7 @@ export async function assignStudent(
 
 	await req()
 		.post(`/change-password/${token}`)
-		.headers({ cookie: headersInp['set-cookie'] })
+		.headers({ cookie: headersInp['set-cookie'].join(';') })
 		.body({ password });
 
 	const { headers } = await req()
