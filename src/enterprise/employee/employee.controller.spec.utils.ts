@@ -6,11 +6,17 @@ import {
 	IEmployeeSignup,
 } from 'enterprise/employee/employee.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { AppService } from 'app/app.service';
+import TestAgent from 'supertest/lib/agent';
+import { cookie } from 'app/utils/test.utils';
 
 export async function assignEmployee(
-	req: TestAgent,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	enterprise: Enterprise,
 	empInp: Employee,
@@ -24,19 +30,21 @@ export async function assignEmployee(
 	);
 
 	const empHeaders = (
-			await req.post('/employee/hook').send({
-				enterpriseName: enterprise.baseUser.name,
-				...empInp,
-				...empInp.eventCreator.user.baseUser,
-			} as IEmployeeHook)
+			await req()
+				.post('/employee/hook')
+				.body({
+					enterpriseName: enterprise.baseUser.name,
+					...empInp,
+					...empInp.eventCreator.user.baseUser,
+				} as IEmployeeHook)
 		).headers,
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0']['context'][
 			'signature'
 		],
-		{ headers } = await req
+		{ headers } = await req()
 			.post('/employee/signup')
-			.set('Cookie', empHeaders['set-cookie'])
-			.send({
+			.headers({ cookie: cookie(empHeaders['set-cookie']) })
+			.body({
 				signature,
 				enterpriseName: enterprise.baseUser.name,
 				...empInp,

@@ -8,10 +8,10 @@ import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-hos
 import { IncomingMessage } from 'http';
 
 /**
- * Only allow connections from localhost
+ * Localhost guard class
  */
 @Injectable()
-export class LocalHostStrategy implements CanActivate {
+export class LocalhostGuard implements CanActivate {
 	/**
 	 * Check the connection
 	 * @param {ExecutionContextHost} context - request's context

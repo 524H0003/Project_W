@@ -8,18 +8,18 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
-import { MetaData } from 'auth/auth.guard';
-import { Request, Response } from 'express';
+import { MetaData } from 'auth/guards/access.guard';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
-import { AuthGuard } from '@nestjs/passport';
-import { Hook } from 'app/hook/hook.entity';
-import { memoryStorage } from 'multer';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload } from 'app/utils/controller.utils';
+import { FileInterceptor } from 'app/interceptor/file.interceptor';
+import { memoryStorage } from 'fastify-multer';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { HookGuard } from 'auth/guards/hook.guard';
 
 /**
  * Employee controller
@@ -42,9 +42,9 @@ export class EmployeeController extends AppController {
 	/**
 	 * Employee request hook
 	 */
-	@Post('hook') @UseInterceptors(NoFilesInterceptor()) async employeeHook(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+	@Post('hook') @UseInterceptors(FileInterceptor()) async employeeHook(
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IEmployeeHook,
 		@MetaData() mtdt: string,
 	) {
@@ -59,25 +59,22 @@ export class EmployeeController extends AppController {
 	 * Employee signup request
 	 */
 	@Post('signup')
-	@UseGuards(AuthGuard('hook'))
+	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
-		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: IEmployeeSignup,
 		@MetaData() mtdt: string,
-		@UploadedFile(AvatarFileUpload) avatar: Express.Multer.File,
+		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {
-		await this.svc.hook.validating(body.signature, mtdt, request.user as Hook);
+		await this.svc.hook.validating(body.signature, mtdt, request.hook);
 		return this.responseWithUser(
 			request,
 			response,
 			(
 				await this.svc.employee.assign(
-					{
-						...body,
-						enterpriseId: JSON.parse((request.user as Hook).note).enterpriseId,
-					},
+					{ ...body, enterpriseId: JSON.parse(request.hook.note).enterpriseId },
 					avatar,
 				)
 			).eventCreator.user,

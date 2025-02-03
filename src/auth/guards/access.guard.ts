@@ -7,6 +7,7 @@ import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 import { matching } from 'app/utils/utils';
+import { FastifyRequest } from 'fastify';
 import { UAParser } from 'ua-parser-js';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
@@ -17,8 +18,8 @@ import { UserRole } from 'user/user.model';
  * ! Cautious: Since using GraphQL, it's NOT recommend to DELETE this
  */
 function convertForGql(context: ExecutionContext) {
-	const ctx = GqlExecutionContext.create(context);
-	return ctx.getContext().req;
+	const { req, request } = GqlExecutionContext.create(context).getContext();
+	return req || request;
 }
 
 /**
@@ -29,23 +30,9 @@ function convertForGql(context: ExecutionContext) {
  */
 export const Roles = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),
-	CurrentUser = createParamDecorator(
-		(
-			args: { instance?: any; required?: boolean },
-			context: ExecutionContext,
-		) => {
-			const result = convertForGql(context).user,
-				{ instance = User, required = true } = args || {};
-
-			if (required) {
-				if (!result) throw new ServerException('Invalid', 'User', '', 'user');
-
-				if (!(result instanceof instance))
-					throw new ServerException('Invalid', 'UserType', '', 'user');
-			}
-
-			return new instance(result);
-		},
+	GetRequest = createParamDecorator(
+		<K extends keyof FastifyRequest>(args: K, context: ExecutionContext) =>
+			convertForGql(context)[args || 'user'],
 	),
 	MetaData = createParamDecorator(
 		(data: unknown, context: ExecutionContext): string =>
@@ -57,15 +44,15 @@ export const Roles = Reflector.createDecorator<UserRole[]>(),
 	);
 
 /**
- * Role method guard
+ * Access token guard class
  */
 @Injectable()
-export class RoleGuard extends AuthGuard('access') {
+export class AccessGuard extends AuthGuard('access') {
 	/**
-	 * Initiate role guard
+	 * Initiate access token guard
 	 */
 	constructor(private reflector: Reflector) {
-		super();
+		super({ property: 'user' });
 	}
 
 	/**
@@ -78,8 +65,6 @@ export class RoleGuard extends AuthGuard('access') {
 
 	/**
 	 * Identify if user is allowed to access
-	 * @param {ExecutionContext} context - client request's context
-	 * @return {Promise<boolean>} allow if user valid
 	 */
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		if (this.reflector.get(AllowPublic, context.getHandler())) return true;

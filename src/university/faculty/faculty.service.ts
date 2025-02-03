@@ -10,6 +10,7 @@ import { User } from 'user/user.entity';
 import { validation } from 'app/utils/auth.utils';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
 /**
  * Faculty service
@@ -29,10 +30,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 	/**
 	 * Create faculty
 	 */
-	async assign(
-		input: IFacultyAssign,
-		avatar: Express.Multer.File,
-	): Promise<User> {
+	async assign(input: IFacultyAssign, avatar: MulterFile): Promise<User> {
 		const existedUser = await this.svc.baseUser.email(input.email),
 			rawFaculty = new Faculty(input);
 

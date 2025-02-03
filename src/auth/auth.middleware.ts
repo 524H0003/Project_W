@@ -1,8 +1,9 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { compare, Cryption } from 'app/utils/auth.utils';
-import { NextFunction, Request, Response } from 'express';
 import { SignService } from './auth.service';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { processRequest } from 'graphql-upload-ts';
 
 /**
  * Auth middleware
@@ -33,28 +34,29 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 
 	/**
 	 * Auth middleware processing request
-	 * @param {Request} req - client's request
-	 * @param {Response} res - server's response
-	 * @param {NextFunction} next - continueing processing client's request
+	 * @param {FastifyRequest} req - client's request
+	 * @param {FastifyReply} res - server's response
 	 */
-	async use(req: Request, res: Response, next: NextFunction) {
-		const isRefresh = req.url.match(this.rfsgrd);
+	async use(req: FastifyRequest, res: FastifyReply) {
+		const isRefresh = req.url.match(this.rfsgrd),
+			{ authorization } = req.headers;
 
-		let acsTkn: string, rfsTkn: string;
-		for (const cki in req.cookies)
-			if (await compare(this.rfsKey, cki)) rfsTkn = req.cookies[cki];
-			else if (await compare(this.acsKey, cki)) acsTkn = req.cookies[cki];
+		let access: string, refresh: string;
+		for (const cookie in req.cookies)
+			if (await compare(this.rfsKey + '!', cookie, 'base64url'))
+				refresh = req.cookies[cookie];
+			else if (await compare(this.acsKey, cookie, 'base64url'))
+				access = req.cookies[cookie];
 
-		const tknPld = this.decrypt(rfsTkn);
-		if (!req.headers.authorization)
-			req.headers.authorization = `Bearer ${!isRefresh ? this.decrypt(acsTkn, tknPld.split('.')[2]) : tknPld}`;
+		if (access || refresh)
+			req.headers.authorization = `Bearer ${this.decrypt(isRefresh ? refresh : access)}`;
+		else if (authorization)
+			req.headers.authorization = `Bearer ${this.decrypt(authorization.split(' ').at(-1))}`;
 
-		try {
-			req.user = this.signSvc.verify(
-				this.decrypt(acsTkn, tknPld.split('.')[2]),
-			);
-		} catch {}
-
-		next();
+		if (req['isMultipart'] && req.url === '/graphql')
+			req.body = await processRequest(req.raw, res.raw, {
+				maxFileSize: 10000000, // 10 MB
+				maxFiles: 20,
+			});
 	}
 }

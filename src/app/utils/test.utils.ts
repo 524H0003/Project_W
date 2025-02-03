@@ -1,22 +1,30 @@
-import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'app/app.module';
 import { AppService } from 'app/app.service';
-import { TestModule } from 'app/module/test.module';
-import cookieParser from 'cookie-parser';
 import { DocumentNode, print } from 'graphql';
-import TestAgent from 'supertest/lib/agent';
-import request from 'supertest';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
-import { graphqlUploadExpress } from 'graphql-upload-ts';
-import supertest from 'supertest';
 import { expect } from '@jest/globals';
+import Fastify, { LightMyRequestChain } from 'fastify';
+import {
+	FastifyAdapter,
+	NestFastifyApplication,
+} from '@nestjs/platform-fastify';
+import { fastifyOptions, registerServerPlugins } from './server.utils';
+import { TestModule } from 'app/module/test.module';
+import { OutgoingHttpHeaders } from 'http';
+import supertest from 'supertest';
+import TestAgent from 'supertest/lib/agent';
 
 /**
  * Exported variables
  */
-let requester: TestAgent, app: INestApplication;
+let requester: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
+	app: NestFastifyApplication;
 
 /**
  * Test's expectations
@@ -84,15 +92,22 @@ export async function execute<
 export type SendGQLType<T, K> = (
 	variables: K,
 	{
-		cookie,
+		headers,
 		map,
 		attach,
 	}?: {
-		cookie?: any;
+		headers?: OutgoingHttpHeaders;
 		map?: object;
 		attach?: Parameters<supertest.Test['attach']>;
 	},
 ) => Promise<T>;
+
+/**
+ * Get headers cookie
+ */
+export function cookie(headers: string | string[]) {
+	return (Array.isArray(headers) ? headers : [headers]).join(';');
+}
 
 /**
  * GraphQL query runner
@@ -102,12 +117,14 @@ export type SendGQLType<T, K> = (
 export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
-	return async (variables: K, { cookie, map, attach } = {}): Promise<T> => {
-		const l0 = requester
+	return async (variables: K, { headers, map, attach } = {}): Promise<T> => {
+		const l0 = requester('supertest')
 				.post('/graphql')
 				.set('Content-Type', 'multipart/form-data')
 				.set({ 'apollo-require-preflight': 'true' }),
-			l1 = cookie ? l0.set('Cookie', cookie) : l0,
+			l1 = headers['set-cookie']
+				? l0.set('Cookie', headers['set-cookie'] as string[])
+				: l0,
 			l2 = l1
 				.field('operations', JSON.stringify({ query, variables }))
 				.field('map', JSON.stringify(map) || '{}'),
@@ -121,28 +138,33 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 /**
  * Init jest test
  */
-export async function initJest(
-	controllers: Array<any> = [],
-	providers: Array<any> = [],
-) {
+export async function initJest() {
 	const module: TestingModule = await Test.createTestingModule({
 			imports: [TestModule, AppModule],
-			controllers,
-			providers,
 		}).compile(),
-		appSvc = module.get(AppService);
+		appSvc = module.get(AppService),
+		fastify = Fastify(fastifyOptions);
 
 	// eslint-disable-next-line tsEslint/no-unused-vars
 	console.error = (...args: any) => true;
 
-	app = module.createNestApplication();
+	await registerServerPlugins(fastify, {});
+	app = module.createNestApplication(new FastifyAdapter(fastify));
 	const { httpAdapter } = app.get(HttpAdapterHost);
-	await app
-		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
-		.use(cookieParser())
-		.use('/graphql', graphqlUploadExpress({ maxFileSize: (50).mb2b }))
-		.init();
-	requester = request(app.getHttpServer());
+
+	await app.useGlobalFilters(new AppExceptionFilter(httpAdapter)).init();
+	await app.getHttpAdapter().getInstance().ready();
+
+	function requesterFunc(testCore: 'fastify'): LightMyRequestChain;
+	function requesterFunc(testCore: 'supertest'): TestAgent;
+	function requesterFunc(): LightMyRequestChain;
+	function requesterFunc(testCore: 'fastify' | 'supertest' = 'fastify') {
+		return testCore == 'fastify'
+			? app.inject()
+			: supertest(app.getHttpServer());
+	}
+
+	requester = requesterFunc;
 
 	return { module, appSvc, requester };
 }

@@ -12,17 +12,23 @@ import {
 	UpdateEventMutationVariables,
 } from 'build/compiled_graphql';
 import { AppService } from 'app/app.service';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { assignEmployee } from '../enterprise/employee/employee.controller.spec.utils';
+import { OutgoingHttpHeaders } from 'http';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
 let mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee,
-	headers: object,
+	headers: OutgoingHttpHeaders,
 	svc: AppService,
-	req: TestAgent,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	event: Event;
 
 beforeAll(async () => {
@@ -48,8 +54,7 @@ describe('assignEvent', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({ input: event }, { cookie: headers['set-cookie'] }))
-					.assignEvent,
+				(await send({ input: event }, { headers: headers })).assignEvent,
 			{ exps: [{ type: 'toHaveProperty', params: ['title', event.title] }] },
 		);
 		await execute(() => svc.event.find({ title: event.title }), {
@@ -68,7 +73,7 @@ describe('updateEvent', () => {
 		eventId = (
 			await sendGQL<AssignEventMutation, AssignEventMutationVariables>(
 				AssignEvent,
-			)({ input: event }, { cookie: headers['set-cookie'] })
+			)({ input: event }, { headers: headers })
 		).assignEvent.id;
 	});
 
@@ -80,7 +85,7 @@ describe('updateEvent', () => {
 				(
 					await send(
 						{ input: { id: eventId, title: newTitle } },
-						{ cookie: headers['set-cookie'] },
+						{ headers: headers },
 					)
 				).updateEvent,
 			{ exps: [{ type: 'toHaveProperty', params: ['title', newTitle] }] },
@@ -100,8 +105,7 @@ describe('updateEvent', () => {
 				: eventId.slice(0, -1) + '1';
 
 		await execute(
-			async () =>
-				await send({ input: { id: newId } }, { cookie: headers['set-cookie'] }),
+			async () => await send({ input: { id: newId } }, { headers: headers }),
 			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Event', '')] }] },
 		);
 	});

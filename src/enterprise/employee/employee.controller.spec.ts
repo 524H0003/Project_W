@@ -1,15 +1,20 @@
 import { AppService } from 'app/app.service';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { Employee } from './employee.entity';
-import { execute, initJest } from 'app/utils/test.utils';
+import { cookie, execute, initJest } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
 import { MailerService } from '@nestjs-modules/mailer';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent,
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	mailerSvc: MailerService,
 	enterprise: Enterprise,
@@ -38,11 +43,13 @@ describe('hook', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req.post('/employee/hook').send({
-						enterpriseName: enterprise.baseUser.name,
-						...employee,
-						...employee.eventCreator.user.baseUser,
-					} as IEmployeeHook),
+					await req()
+						.post('/employee/hook')
+						.body({
+							enterpriseName: enterprise.baseUser.name,
+							...employee,
+							...employee.eventCreator.user.baseUser,
+						} as IEmployeeHook),
 				),
 			{
 				exps: [
@@ -55,11 +62,13 @@ describe('hook', () => {
 
 describe('signup', () => {
 	it('success', async () => {
-		const { headers } = await req.post('/employee/hook').send({
-				enterpriseName: enterprise.baseUser.name,
-				...employee,
-				...employee.eventCreator.user.baseUser,
-			} as IEmployeeHook),
+		const { headers } = await req()
+				.post('/employee/hook')
+				.body({
+					enterpriseName: enterprise.baseUser.name,
+					...employee,
+					...employee.eventCreator.user.baseUser,
+				} as IEmployeeHook),
 			signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall['0'][
 				'context'
 			]['signature'];
@@ -67,10 +76,10 @@ describe('signup', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await req
+					await req()
 						.post('/employee/signup')
-						.set('Cookie', headers['set-cookie'])
-						.send({
+						.headers({ cookie: cookie(headers['set-cookie']) })
+						.body({
 							signature,
 							enterpriseName: enterprise.baseUser.name,
 							...employee,

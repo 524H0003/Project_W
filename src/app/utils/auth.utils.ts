@@ -33,8 +33,11 @@ export async function validation<T>(
  * @param {string} input - The string need to hash
  * @return {string} Hashed string
  */
-export async function hash(input: string): Promise<string> {
-	return Buffer.from(await sHash(input), 'utf-8').toString('base64url');
+export async function hash(
+	input: string,
+	encoded: BufferEncoding = 'utf-8',
+): Promise<string> {
+	return Buffer.from(await sHash(input), 'utf-8').toString(encoded);
 }
 
 /**
@@ -43,12 +46,13 @@ export async function hash(input: string): Promise<string> {
  * @param {string} input - hashed string
  * @return {boolean}
  */
-export async function compare(origin: string, input: string): Promise<boolean> {
+export async function compare(
+	origin: string,
+	input: string,
+	encoded: BufferEncoding = 'utf-8',
+): Promise<boolean> {
 	try {
-		return await verify(
-			Buffer.from(input, 'base64url').toString('utf-8'),
-			origin,
-		);
+		return await verify(Buffer.from(input, encoded).toString('utf-8'), origin);
 	} catch {
 		return false;
 	}
@@ -63,7 +67,7 @@ export class Cryption {
 	 */
 	constructor(
 		private algorithm: string,
-		private svrScr: string,
+		private secret: string,
 	) {}
 
 	/**
@@ -82,7 +86,7 @@ export class Cryption {
 	 * @param {string} key - The key to encrypt text
 	 * @return {string} The encrypted text
 	 */
-	encrypt(input: string, key: string = this.svrScr): string {
+	encrypt(input: string, key: string = this.secret): string {
 		const iv = randomBytes(16),
 			cipher = createCipheriv(this.algorithm, this.sigToKey(key), iv),
 			encrypted = Buffer.concat([cipher.update(input), cipher.final()]);
@@ -95,7 +99,7 @@ export class Cryption {
 	 * @param {string} key - The key to decrypt text
 	 * @return {string} The decrypted text
 	 */
-	decrypt(input: string, key: string = this.svrScr): string {
+	decrypt(input: string, key: string = this.secret): string {
 		if (!input) return '';
 		const iv = Buffer.from(input.substring(0, 32), 'hex'),
 			encrypted = Buffer.from(input.substring(32), 'hex'),

@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Reciever } from './reciever.entity';
 import { UseGuards } from '@nestjs/common';
-import { CurrentUser, RoleGuard, Roles } from 'auth/auth.guard';
+import { GetRequest, AccessGuard, Roles } from 'auth/guards/access.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { User } from 'user/user.entity';
@@ -13,7 +13,7 @@ import {
 } from './reciever.graphql';
 
 @Resolver(() => Reciever)
-@UseGuards(RoleGuard)
+@UseGuards(AccessGuard)
 export class RecieverResolver {
 	/**
 	 * Initiate notification reciever resolve
@@ -63,7 +63,7 @@ export class RecieverResolver {
 	 */
 	@Query(() => [Reciever]) @Roles([UserRole.student]) listAllNotifications(
 		@Args('isRead', { nullable: true }) isRead: boolean,
-		@CurrentUser() user: User,
+		@GetRequest('user') user: User,
 	) {
 		if (isRead !== undefined)
 			return this.svc.recie.find({

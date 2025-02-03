@@ -1,17 +1,24 @@
 import { execute, initJest } from 'app/utils/test.utils';
-import { FileController } from 'file/file.controller';
-import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 import { readFileSync } from 'fs';
 import { rootPublic } from 'app/module/test.module';
+import { LightMyRequestChain } from 'fastify';
+import TestAgent from 'supertest/lib/agent';
+import { it } from '@jest/globals';
 
 const fileName = curFile(__filename);
-let rawUsr: User, req: TestAgent, svc: AppService;
+let rawUsr: User,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
+	svc: AppService;
 
 beforeAll(async () => {
-	const { appSvc, requester } = await initJest([FileController]);
+	const { appSvc, requester } = await initJest();
 
 	(svc = appSvc), (req = requester);
 });
@@ -24,7 +31,7 @@ describe('seeUploadedFile', () => {
 	let headers: object, usr: User;
 
 	beforeEach(async () => {
-		const e = await req
+		const e = await req('supertest')
 			.post('/signup')
 			.attach('avatar', Buffer.from((40).string, 'base64'), 'avatar.png')
 			.field('name', rawUsr.baseUser.name)
@@ -42,9 +49,8 @@ describe('seeUploadedFile', () => {
 
 		await execute(
 			() =>
-				req
+				req('supertest')
 					.get('/file/' + serverFile)
-					.buffer()
 					.parse((res, callback) => {
 						res.text = '';
 						res
@@ -69,7 +75,7 @@ describe('seeUploadedFile', () => {
 	it('success', async () => {
 		await execute(
 			() =>
-				req
+				req('supertest')
 					.get(`/file/${usr.baseUser.avatarPath}`)
 					.set('Cookie', headers['set-cookie'])
 					.buffer()

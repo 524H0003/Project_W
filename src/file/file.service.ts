@@ -11,6 +11,8 @@ import { ConfigService } from '@nestjs/config';
 import { AWSRecieve } from 'app/aws/aws.service';
 import { FileUpload } from 'graphql-upload-ts';
 import { createHmac } from 'node:crypto';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { Readable } from 'node:stream';
 
 /**
  * File services
@@ -50,13 +52,13 @@ export class FileService extends DatabaseRequests<File> {
 
 	/**
 	 * Assign file to server
-	 * @param {Express.Multer.File} input - the file to assign
+	 * @param {MulterFile} input - the file to assign
 	 * @param {User} user - the file's assigner
 	 * @param {object} serverFilesOptions - optional options
 	 * @return {Promise<File>} the assigned file's infomations on database
 	 */
 	async assign(
-		input: Express.Multer.File,
+		input: MulterFile,
 		user: User,
 		serverFilesOptions?: { fileName: string },
 	): Promise<File> {
@@ -68,7 +70,7 @@ export class FileService extends DatabaseRequests<File> {
 				? fileName + `.server.${extname(title)}`
 				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(input.buffer).digest('hex')}${extname(title)}`;
 
-		await this.svc.aws.upload(path, input.stream || input.buffer);
+		await this.svc.aws.upload(path, (input.stream as Readable) ?? input.buffer);
 
 		if (!fileName)
 			return this.save({
@@ -89,7 +91,7 @@ export class FileService extends DatabaseRequests<File> {
 
 		if (
 			filename.match(this.serverFilesReg) ||
-			(await this.isOwner(filename, user.id))
+			(user && (await this.isOwner(filename, user.id)))
 		)
 			return recievedFile;
 
@@ -122,11 +124,11 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Convert graphql upload to Express.Multer.File
 	 * @param {FileUpload} input - graphql upload
-	 * @return {Promise<Express.Multer.File>}
+	 * @return {Promise<MulterFile>}
 	 */
-	async GQLUploadToMulterFile(input: FileUpload): Promise<Express.Multer.File> {
+	async GQLUploadToMulterFile(input: FileUpload): Promise<MulterFile> {
 		const { createReadStream, filename, fieldName, mimetype, encoding } = input,
-			uploadFile: Express.Multer.File = {
+			uploadFile: MulterFile = {
 				fieldname: fieldName,
 				encoding: encoding,
 				mimetype: mimetype,

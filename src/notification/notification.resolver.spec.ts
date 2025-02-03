@@ -3,7 +3,7 @@ import { AppService } from 'app/app.service';
 import { execute, initJest, sendGQL } from 'app/utils/test.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import TestAgent from 'supertest/lib/agent';
+import { LightMyRequestChain } from 'fastify';
 import { Notification } from './notification.entity';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import {
@@ -14,15 +14,22 @@ import {
 	UpdateNotificationMutation,
 	UpdateNotificationMutationVariables,
 } from 'build/compiled_graphql';
+import { beforeAll, beforeEach, describe, it } from '@jest/globals';
+import { OutgoingHttpHeaders } from 'http';
+import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: TestAgent,
+let req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	svc: AppService,
 	mailerSvc: MailerService,
 	employee: Employee,
 	notification: Notification,
-	headers: object,
+	headers: OutgoingHttpHeaders,
 	enterprise: Enterprise;
 
 beforeAll(async () => {
@@ -49,7 +56,7 @@ describe('assignNotification', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({ input: notification }, { cookie: headers['set-cookie'] }))
+				(await send({ input: notification }, { headers: headers }))
 					.assignNotification,
 			{
 				exps: [
@@ -75,10 +82,7 @@ describe('updateNotification', () => {
 			await sendGQL<
 				AssignNotificationMutation,
 				AssignNotificationMutationVariables
-			>(AssignNotification)(
-				{ input: notification },
-				{ cookie: headers['set-cookie'] },
-			)
+			>(AssignNotification)({ input: notification }, { headers: headers })
 		).assignNotification.id;
 	});
 
@@ -90,7 +94,7 @@ describe('updateNotification', () => {
 				(
 					await send(
 						{ input: { id: notificationId, content: newContent } },
-						{ cookie: headers['set-cookie'] },
+						{ headers: headers },
 					)
 				).updateNotification,
 			{ exps: [{ type: 'toHaveProperty', params: ['content', newContent] }] },
@@ -113,10 +117,7 @@ describe('updateNotification', () => {
 		await execute(
 			async () =>
 				JSON.stringify(
-					await send(
-						{ input: { id: newId } },
-						{ cookie: headers['set-cookie'] },
-					),
+					await send({ input: { id: newId } }, { headers: headers }),
 				),
 			{
 				exps: [

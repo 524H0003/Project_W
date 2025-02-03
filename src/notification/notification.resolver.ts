@@ -1,13 +1,13 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Notification } from './notification.entity';
 import { UseGuards } from '@nestjs/common';
-import { RoleGuard, Roles } from 'auth/auth.guard';
+import { AccessGuard, Roles } from 'auth/guards/access.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { NotificationAssign, NotificationUpdate } from './notification.graphql';
 
 @Resolver(() => Notification)
-@UseGuards(RoleGuard)
+@UseGuards(AccessGuard)
 export class NotificationResolver {
 	/**
 	 * Initiate notification resolver

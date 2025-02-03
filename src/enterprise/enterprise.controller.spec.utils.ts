@@ -1,25 +1,31 @@
 import { MailerService } from '@nestjs-modules/mailer';
+import { cookie } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEnterpriseAssign } from 'enterprise/enterprise.model';
+import { LightMyRequestChain } from 'fastify';
 import TestAgent from 'supertest/lib/agent';
 
 export async function assignEnterprise(
-	req: TestAgent,
+	req: {
+		(testCore: 'fastify'): LightMyRequestChain;
+		(testCore: 'supertest'): TestAgent;
+		(): LightMyRequestChain;
+	},
 	enterprise: Enterprise,
 	mailerSvc: MailerService,
 	adminEmail: string,
 ) {
-	const { headers } = await req
+	const { headers } = await req()
 			.post('/request-signature')
-			.send({ email: adminEmail }),
+			.body({ email: adminEmail }),
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0]['context'][
 			'signature'
 		];
 
-	await req
+	await req()
 		.post('/enterprise/assign')
-		.set('Cookie', headers['set-cookie'])
-		.send({
+		.headers({ cookie: cookie(headers['set-cookie']) })
+		.body({
 			signature,
 			...enterprise,
 			...enterprise.baseUser,

@@ -4,6 +4,7 @@ types/*
 !types/package.json
 !types/tsconfig.*
 **/node_modules
+**/.pnpm-store
 .adminjs
 src/build
 src/types.ts

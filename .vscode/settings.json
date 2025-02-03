@@ -10,9 +10,10 @@
 	"editor.tokenColorCustomizations": { "comments": "", "textMateRules": [] },
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.patterns": {
+		"*.guard.ts": "$(capture).strategy.ts",
 		"*.entity.ts": "$(capture).model.ts, $(capture).graphql.ts",
 		"*.ts": "$(capture).spec.ts, $(capture).spec.utils.ts",
-		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, LICENSE*, README.MD, nest-cli.json, procfile, .gitignore, codegen.ts, .env*",
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, LICENSE*, README.MD, nest-cli.json, procfile, .gitignore, codegen.ts, .env*, cypress.config.*",
 		"tsconfig.json": "tsconfig.*.json",
 		"jest.all.config.ts": "jest.*.config.ts"
 	},

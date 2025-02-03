@@ -13,6 +13,7 @@ import { User } from 'user/user.entity';
 import { IUserLogin, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
 import { IAuthSignUpOption } from './auth.model';
+import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
 /**
  * Auth service
@@ -33,13 +34,13 @@ export class AuthService extends Cryption {
 	/**
 	 * Sign up user
 	 * @param {IUserSignUp} input - the sign up input
-	 * @param {Express.Multer.File} avatar - user's avatar
+	 * @param {MulterFile} avatar - user's avatar
 	 * @param {Object} options - function's options
 	 * @return {Promise<User>} user's recieve infomations
 	 */
 	async signUp(
 		input: IUserSignUp,
-		avatar: Express.Multer.File,
+		avatar: MulterFile,
 		options?: IAuthSignUpOption,
 	): Promise<User> {
 		input = InterfaceCasting.quick(input, IUserSignUpKeys);
