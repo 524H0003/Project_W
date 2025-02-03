@@ -8,8 +8,8 @@
 	"scripts": {
 		"buildfile": "ts-node src/build.ts",
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
-		"mail": "cd ./mail && npm run build && npm prune --production && cd ..",
-		"page": "npm run types && cd ./page && npm run build && npm prune --production && cd ..",
+		"mail": "cd ./mail && npm run build && rimraf node_modules && cd ..",
+		"page": "npm run types && cd ./page && npm run build && rimraf node_modules && cd ..",
 		"format": "replace '{\\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace '\\[\\n' '[' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace '\\)\\n' ')' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && npm run prettier && npm run prettier",
 		"lint": "eslint --fix ./src",
 		"prettier": "prettier --write \"./**/*.ts\" \"./**/*.js\" \"./**/*.json\" \"./**/*.*rc\" --log-level silent",
@@ -126,6 +126,7 @@
 		"prettier": "^3.4.2",
 		"prettier-plugin-sort-json": "^4.1.1",
 		"replace": "^1.2.2",
+		"rimraf": "^6.0.1",
 		"supertest": "^7.0.0",
 		"ts-jest": "^29.2.5",
 		"ts-morph": "^25.0.0",
