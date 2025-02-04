@@ -1,16 +1,9 @@
-import { execute, initJest } from 'app/utils/test.utils';
-import { LightMyRequestChain } from 'fastify';
+import { execute, initJest, RequesterType } from 'app/utils/test.utils';
 import { Student } from './student.entity';
-import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
-	stu: Student;
+let req: RequesterType, stu: Student;
 
 beforeAll(async () => {
 	const { requester } = await initJest();

@@ -5,7 +5,11 @@ import { DocumentNode, print } from 'graphql';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AppExceptionFilter } from 'app/app.filter';
 import { expect } from '@jest/globals';
-import Fastify, { LightMyRequestChain } from 'fastify';
+import Fastify, {
+	InjectOptions,
+	LightMyRequestChain,
+	LightMyRequestResponse,
+} from 'fastify';
 import {
 	FastifyAdapter,
 	NestFastifyApplication,
@@ -13,18 +17,21 @@ import {
 import { fastifyOptions, registerServerPlugins } from './server.utils';
 import { TestModule } from 'app/module/test.module';
 import { OutgoingHttpHeaders } from 'http';
-import supertest from 'supertest';
-import TestAgent from 'supertest/lib/agent';
+import formAutoContent from 'form-auto-content';
+import { ReadStream } from 'fs';
+
+/**
+ * requester type
+ */
+export type RequesterType = {
+	(): LightMyRequestChain;
+	(opt?: InjectOptions): Promise<LightMyRequestResponse>;
+};
 
 /**
  * Exported variables
  */
-let requester: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
-	app: NestFastifyApplication;
+let requester: RequesterType, app: NestFastifyApplication;
 
 /**
  * Test's expectations
@@ -94,18 +101,18 @@ export type SendGQLType<T, K> = (
 	{
 		headers,
 		map,
-		attach,
+		files,
 	}?: {
 		headers?: OutgoingHttpHeaders;
 		map?: object;
-		attach?: Parameters<supertest.Test['attach']>;
+		files?: Record<string, ReadStream>;
 	},
 ) => Promise<T>;
 
 /**
  * Get headers cookie
  */
-export function cookie(headers: string | string[]) {
+export function getCookie(headers: string | string[]) {
 	return (Array.isArray(headers) ? headers : [headers]).join(';');
 }
 
@@ -117,21 +124,40 @@ export function cookie(headers: string | string[]) {
 export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 	const query = print(astQuery);
 
-	return async (variables: K, { headers, map, attach } = {}): Promise<T> => {
-		const l0 = requester('supertest')
-				.post('/graphql')
-				.set('Content-Type', 'multipart/form-data')
-				.set({ 'apollo-require-preflight': 'true' }),
-			l1 = headers['set-cookie']
-				? l0.set('Cookie', headers['set-cookie'] as string[])
-				: l0,
-			l2 = l1
-				.field('operations', JSON.stringify({ query, variables }))
-				.field('map', JSON.stringify(map) || '{}'),
-			l3 = attach ? l2.attach(...attach) : l2,
-			result = await l3;
-		if (result.body.data) return result.body.data;
-		throw new Error(result.body.errors[0].message);
+	return async (
+		variables: K,
+		{ headers, map = {}, files = {} } = {},
+	): Promise<T> => {
+		const body = { query, variables },
+			cookie = headers['set-cookie']
+				? getCookie(headers['set-cookie'])
+				: undefined,
+			hasFile = Object.keys(files).length,
+			{ payload, contentType } = formAutoContent(
+				{
+					...{
+						operations: JSON.stringify(body),
+						map: JSON.stringify(map),
+					},
+					...files,
+				},
+				{ headers: 'contentType' },
+			),
+			l0 = hasFile
+				? requester({
+						method: 'post',
+						url: '/graphql',
+						payload,
+						headers: {
+							'content-type': contentType['content-type'],
+							'apollo-require-preflight': 'true',
+							cookie,
+						},
+					})
+				: requester().post('/graphql').headers({ cookie }).body(body),
+			{ data, errors } = (await l0).json();
+		if (data) return data as T;
+		throw new Error(errors[0].message);
 	};
 }
 
@@ -155,13 +181,10 @@ export async function initJest() {
 	await app.useGlobalFilters(new AppExceptionFilter(httpAdapter)).init();
 	await app.getHttpAdapter().getInstance().ready();
 
-	function requesterFunc(testCore: 'fastify'): LightMyRequestChain;
-	function requesterFunc(testCore: 'supertest'): TestAgent;
 	function requesterFunc(): LightMyRequestChain;
-	function requesterFunc(testCore: 'fastify' | 'supertest' = 'fastify') {
-		return testCore == 'fastify'
-			? app.inject()
-			: supertest(app.getHttpServer());
+	function requesterFunc(opt: InjectOptions): Promise<LightMyRequestResponse>;
+	function requesterFunc(opt?: InjectOptions) {
+		return opt ? app.inject(opt) : app.inject();
 	}
 
 	requester = requesterFunc;

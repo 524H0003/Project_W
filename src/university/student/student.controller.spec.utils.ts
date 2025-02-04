@@ -1,16 +1,10 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Student } from './student.entity';
 import { AppService } from 'app/app.service';
-import { LightMyRequestChain } from 'fastify';
-import TestAgent from 'supertest/lib/agent';
-import { cookie } from 'app/utils/test.utils';
+import { getCookie, RequesterType } from 'app/utils/test.utils';
 
 export async function assignStudent(
-	req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
+	req: RequesterType,
 	svc: AppService,
 	studentInp: Student,
 	mailerSvc: MailerService,
@@ -31,7 +25,7 @@ export async function assignStudent(
 
 	await req()
 		.post(`/change-password/${token}`)
-		.headers({ cookie: cookie(headersInp['set-cookie']) })
+		.headers({ cookie: getCookie(headersInp['set-cookie']) })
 		.body({ password });
 
 	const { headers } = await req()

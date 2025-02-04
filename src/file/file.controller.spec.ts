@@ -1,21 +1,13 @@
-import { execute, initJest } from 'app/utils/test.utils';
+import { execute, initJest, RequesterType } from 'app/utils/test.utils';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 import { readFileSync } from 'fs';
 import { rootPublic } from 'app/module/test.module';
-import { LightMyRequestChain } from 'fastify';
-import TestAgent from 'supertest/lib/agent';
 import { it } from '@jest/globals';
 
 const fileName = curFile(__filename);
-let rawUsr: User,
-	req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
-	svc: AppService;
+let rawUsr: User, req: RequesterType, svc: AppService;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();
@@ -31,7 +23,7 @@ describe('seeUploadedFile', () => {
 	let headers: object, usr: User;
 
 	beforeEach(async () => {
-		const e = await req('supertest')
+		const e = await req()
 			.post('/signup')
 			.attach('avatar', Buffer.from((40).string, 'base64'), 'avatar.png')
 			.field('name', rawUsr.baseUser.name)
@@ -49,7 +41,7 @@ describe('seeUploadedFile', () => {
 
 		await execute(
 			() =>
-				req('supertest')
+				req()
 					.get('/file/' + serverFile)
 					.parse((res, callback) => {
 						res.text = '';

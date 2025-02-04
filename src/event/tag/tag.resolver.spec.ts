@@ -30,11 +30,7 @@ let mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee,
 	svc: AppService,
-	req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
+	req: RequesterType
 	headers: OutgoingHttpHeaders,
 	tag: EventTag;
 

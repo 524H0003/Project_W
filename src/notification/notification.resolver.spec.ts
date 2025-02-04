@@ -1,9 +1,13 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
-import { execute, initJest, sendGQL } from 'app/utils/test.utils';
+import {
+	execute,
+	initJest,
+	RequesterType,
+	sendGQL,
+} from 'app/utils/test.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import { LightMyRequestChain } from 'fastify';
 import { Notification } from './notification.entity';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import {
@@ -16,15 +20,10 @@ import {
 } from 'build/compiled_graphql';
 import { beforeAll, beforeEach, describe, it } from '@jest/globals';
 import { OutgoingHttpHeaders } from 'http';
-import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
+let req: RequesterType,
 	svc: AppService,
 	mailerSvc: MailerService,
 	employee: Employee,
