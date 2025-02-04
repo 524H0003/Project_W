@@ -1,6 +1,5 @@
 import { AppService } from 'app/app.service';
-import { execute, initJest, sendGQL } from 'app/utils/test.utils';
-import { LightMyRequestChain } from 'fastify';
+import { execute, initJest, RequesterType, sendGQL } from 'app/utils/test.utils';
 import { EventTag } from './tag.entity';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
@@ -22,7 +21,6 @@ import {
 } from 'build/compiled_graphql';
 import { Event } from 'event/event.entity';
 import { OutgoingHttpHeaders } from 'http';
-import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
@@ -30,7 +28,7 @@ let mailerSvc: MailerService,
 	enterprise: Enterprise,
 	employee: Employee,
 	svc: AppService,
-	req: RequesterType
+	req: RequesterType,
 	headers: OutgoingHttpHeaders,
 	tag: EventTag;
 

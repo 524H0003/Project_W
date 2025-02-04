@@ -1,4 +1,4 @@
-import { cookie, execute, initJest, RequesterType } from 'app/utils/test.utils';
+import { execute, getCookie, initJest, RequesterType } from 'app/utils/test.utils';
 import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';

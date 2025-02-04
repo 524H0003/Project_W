@@ -1,6 +1,11 @@
 import { AppService } from 'app/app.service';
 import { Employee } from './employee.entity';
-import { cookie, execute, initJest, RequesterType } from 'app/utils/test.utils';
+import {
+	getCookie,
+	execute,
+	initJest,
+	RequesterType,
+} from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
