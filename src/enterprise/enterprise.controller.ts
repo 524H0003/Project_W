@@ -49,12 +49,12 @@ export class EnterpriseController extends AppController {
 	async assign(
 		@Req() request: FastifyRequest,
 		@Res() response: FastifyReply,
-		@Body() body: IEnterpriseAssign,
+		@Body() { signature, ...body }: IEnterpriseAssign & { signature: string },
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {
-		await this.svc.hook.validating(body.signature, mtdt, request.hook);
-		await this.svc.enterprise.assign(body, avatar || null);
+		await this.svc.hook.validating(signature, mtdt, request.hook);
+		await this.svc.enterprise.assign(body, avatar);
 		return this.responseWithUserRecieve(
 			request,
 			response,

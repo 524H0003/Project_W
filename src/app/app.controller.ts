@@ -175,22 +175,20 @@ export class AppController extends BaseController {
 	async resetPasswordViaEmail(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: IBaseUserEmail,
+		@Body() { email }: IBaseUserEmail,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		return this.responseWithUserRecieve(
 			request,
 			response,
 			await this.svc.hook.assign(mtdt, async (s: string) => {
-				const user = await this.svc.baseUser.email(body.email);
+				const user = await this.svc.baseUser.email(email);
 
 				if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
-				return this.svc.mail.send(
-					body.email,
-					'Change password?',
-					'forgetPassword',
-					{ name: user.name, url: `${request.hostname}/hook/${s}` },
-				);
+				return this.svc.mail.send(email, 'Change password?', 'forgetPassword', {
+					name: user.name,
+					url: `${request.hostname}/hook/${s}`,
+				});
 			}),
 		);
 	}
@@ -211,7 +209,7 @@ export class AppController extends BaseController {
 		@Param('token') signature: string,
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: { password: string },
+		@Body() { password }: { password: string },
 		@MetaData() mtdt: string,
 		@GetRequest('hook') hook: Hook,
 	): Promise<void> {
@@ -222,7 +220,7 @@ export class AppController extends BaseController {
 				baseUser: { email: hook.fromBaseUser.email },
 			});
 
-			if (await this.svc.auth.changePassword(user, body.password)) {
+			if (await this.svc.auth.changePassword(user, password)) {
 				return this.responseWithUserRecieve(
 					request,
 					response,
@@ -247,10 +245,10 @@ export class AppController extends BaseController {
 	protected async requestSignatureViaConsole(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: { email: string },
+		@Body() { email }: { email: string },
 		@MetaData() mtdt: string,
 	): Promise<void> {
-		if (body.email == this.cfg.get('ADMIN_EMAIL'))
+		if (email == this.cfg.get('ADMIN_EMAIL'))
 			return this.responseWithUserRecieve(
 				request,
 				response,

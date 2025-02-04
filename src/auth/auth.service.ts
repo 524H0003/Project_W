@@ -54,11 +54,16 @@ export class AuthService extends Cryption {
 		try {
 			return validation(rawUser, async () => {
 				await rawUser.hashingPassword();
-				const newUser = await this.usrSvc.assign({ ...rawUser, role }),
-					avatarFile = await this.fileSvc.assign(avatar, newUser);
+				const { id } = await this.usrSvc.assign({ ...rawUser, role });
 				return await this.usrSvc.modify(
-					newUser.id,
-					avatarFile ? { baseUser: { avatarPath: avatarFile.path } } : {},
+					id,
+					avatar
+						? {
+								baseUser: {
+									avatarPath: (await this.fileSvc.assign(avatar, id)).path,
+								},
+							}
+						: {},
 				);
 			});
 		} catch (error) {

@@ -39,7 +39,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	 */
 	async assign(
 		input: IEnterpriseAssign,
-		avatar: MulterFile = null,
+		avatar: MulterFile,
 	): Promise<Enterprise> {
 		const save = async (
 			entity: DeepPartial<Enterprise>,
@@ -55,16 +55,19 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 			...IBaseUserInfoKeys,
 		]);
 
-		const avatarFile = await this.svc.file.assign(avatar, null, {
-				fileName: `${input.name}.${input.industry}.logo`,
-			}),
-			result = await save({
-				...input,
-				baseUser: {
-					...InterfaceCasting.quick(input, IBaseUserInfoKeys),
-					avatarPath: avatarFile?.path,
-				},
-			});
+		const result = await save({
+			...input,
+			baseUser: {
+				...InterfaceCasting.quick(input, IBaseUserInfoKeys),
+				avatarPath: avatar
+					? (
+							await this.svc.file.assign(avatar, null, {
+								fileName: `${input.name}.${input.industry}.logo`,
+							})
+						).path
+					: undefined,
+			},
+		});
 
 		return new Enterprise({ ...result, ...result.baseUser });
 	}

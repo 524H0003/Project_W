@@ -23,8 +23,10 @@ export class EventParticipatorResolver {
 	 */
 	@Mutation(() => EventParticipator)
 	@Roles([UserRole.student])
-	assignParticipator(@Args('input') input: EventParticipatorAssign) {
-		return this.svc.eventParticipator.assign(input.userId, input.eventId);
+	assignParticipator(
+		@Args('input') { userId, eventId }: EventParticipatorAssign,
+	) {
+		return this.svc.eventParticipator.assign(userId, eventId);
 	}
 
 	/**

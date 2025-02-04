@@ -4,7 +4,6 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { User } from 'user/user.entity';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
@@ -53,47 +52,41 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Assign file to server
 	 * @param {MulterFile} input - the file to assign
-	 * @param {User} user - the file's assigner
+	 * @param {User} userId - the file's assigner
 	 * @param {object} serverFilesOptions - optional options
 	 * @return {Promise<File>} the assigned file's infomations on database
 	 */
 	async assign(
-		input: MulterFile,
-		user: User,
+		{ buffer, stream, originalname, filename }: MulterFile,
+		userId: string,
 		serverFilesOptions?: { fileName: string },
 	): Promise<File> {
-		if (!input?.buffer) return null;
+		if (!buffer) return null;
 
-		const title = input.originalname || input.filename,
+		const title = originalname || filename,
 			{ fileName = '' } = serverFilesOptions || {},
 			path = fileName
 				? fileName + `.server.${extname(title)}`
-				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(input.buffer).digest('hex')}${extname(title)}`;
+				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(buffer).digest('hex')}${extname(title)}`;
 
-		await this.svc.aws.upload(path, (input.stream as Readable) ?? input.buffer);
+		await this.svc.aws.upload(path, (stream as Readable) ?? buffer);
 
-		if (!fileName)
-			return this.save({
-				path,
-				title,
-				fileCreatedBy: { baseUser: { id: user.id } },
-			});
+		return this.save({
+			path,
+			title,
+			fileCreatedBy: userId ? { baseUser: { id: userId } } : null,
+		});
 	}
 
 	/**
 	 * Recieve file from server
 	 * @param {string} filename - the name of recieving file
-	 * @param {User} user - the user want to recieve file
+	 * @param {string} userId - the id of user want to recieve file
 	 * @return {Promise<AWSRecieve>}
 	 */
-	async recieve(filename: string, user: User): Promise<AWSRecieve> {
-		const recievedFile = await this.svc.aws.download(filename);
-
-		if (
-			filename.match(this.serverFilesReg) ||
-			(user && (await this.isOwner(filename, user.id)))
-		)
-			return recievedFile;
+	async recieve(filename: string, userId: string): Promise<AWSRecieve> {
+		if (await this.isOwner(filename, userId))
+			return this.svc.aws.download(filename);
 
 		throw new ServerException('Forbidden', 'File', 'Access', 'user');
 	}
@@ -112,13 +105,12 @@ export class FileService extends DatabaseRequests<File> {
 	 * @return {Promise<boolean>}
 	 */
 	async isOwner(input: string, ownerId: string): Promise<boolean> {
-		return (
-			(await this.findOne({
-				path: input,
-				fileCreatedBy: { baseUser: { id: ownerId } },
-				deep: 2,
-			})) !== undefined
-		);
+		const file = await this.findOne({
+			path: input,
+			deep: 2,
+		});
+
+		return this.serverFilesReg.test(input) || file.fileCreatedBy.id == ownerId;
 	}
 
 	/**
@@ -126,20 +118,25 @@ export class FileService extends DatabaseRequests<File> {
 	 * @param {FileUpload} input - graphql upload
 	 * @return {Promise<MulterFile>}
 	 */
-	async GQLUploadToMulterFile(input: FileUpload): Promise<MulterFile> {
-		const { createReadStream, filename, fieldName, mimetype, encoding } = input,
-			uploadFile: MulterFile = {
-				fieldname: fieldName,
-				encoding: encoding,
-				mimetype: mimetype,
-				stream: createReadStream(),
-				filename: filename,
-				buffer: null,
-				originalname: undefined,
-				size: undefined,
-				destination: undefined,
-				path: undefined,
-			};
+	async GQLUploadToMulterFile({
+		createReadStream,
+		filename,
+		fieldName,
+		mimetype,
+		encoding,
+	}: FileUpload): Promise<MulterFile> {
+		const uploadFile: MulterFile = {
+			fieldname: fieldName,
+			encoding: encoding,
+			mimetype: mimetype,
+			stream: createReadStream(),
+			filename: filename,
+			buffer: null,
+			originalname: undefined,
+			size: undefined,
+			destination: undefined,
+			path: undefined,
+		};
 
 		uploadFile.buffer = await new Promise((resolve, reject) => {
 			const chunks = [];

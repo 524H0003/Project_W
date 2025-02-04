@@ -48,11 +48,12 @@ export class FacultyController extends AppController {
 	async assign(
 		@Req() request: FastifyRequest,
 		@Res() response: FastifyReply,
-		@Body() body: IFacultyAssign,
+		@Body() { signature, ...body }: IFacultyAssign & { signature: string },
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	) {
-		await this.svc.hook.validating(body.signature, mtdt, request.hook);
+		await this.svc.hook.validating(signature, mtdt, request.hook);
+
 		return this.responseWithUser(
 			request,
 			response,

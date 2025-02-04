@@ -4,7 +4,7 @@ import { Enterprise } from './enterprise.entity';
 
 const fileName = curFile(__filename);
 
-let svc: AppService, enterprise: Enterprise, signature: string;
+let svc: AppService, enterprise: Enterprise;
 
 beforeAll(async () => {
 	const { appSvc } = await initJest();
@@ -18,16 +18,9 @@ beforeEach(() => {
 
 describe('EnterpriseService', () => {
 	it('assign', async () => {
-		await svc.hook.assign((20).string, (s: string) => {
-			signature = s;
-		});
-
 		await execute(
 			() =>
-				svc.enterprise.assign(
-					{ ...enterprise, ...enterprise.baseUser, signature },
-					null,
-				),
+				svc.enterprise.assign({ ...enterprise, ...enterprise.baseUser }, null),
 			{
 				exps: [{ type: 'toBeInstanceOf', params: [Enterprise] }],
 				onFinish: async (result: Enterprise) => {

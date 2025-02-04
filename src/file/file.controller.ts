@@ -28,7 +28,7 @@ export class FileController {
 	) {
 		const { stream, type, length } = await this.svc.file.recieve(
 			fileName,
-			user,
+			user?.id,
 		);
 
 		res.headers({ 'content-type': type, 'content-length': length });

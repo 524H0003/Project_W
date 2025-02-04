@@ -64,11 +64,12 @@ export class EmployeeController extends AppController {
 	async signUp(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: IEmployeeSignup,
+		@Body() { signature, ...body }: IEmployeeSignup & { signature: string },
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {
-		await this.svc.hook.validating(body.signature, mtdt, request.hook);
+		await this.svc.hook.validating(signature, mtdt, request.hook);
+
 		return this.responseWithUser(
 			request,
 			response,

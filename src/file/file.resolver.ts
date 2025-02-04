@@ -20,11 +20,11 @@ export class FileResolver {
 	 */
 	@Mutation(() => File) @Roles([UserRole.admin]) async uploadFile(
 		@Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload,
-		@GetRequest('user') user: User,
+		@GetRequest('user') { id }: User,
 	) {
 		return this.svc.file.assign(
 			await this.svc.file.GQLUploadToMulterFile(file),
-			user,
+			id,
 		);
 	}
 }

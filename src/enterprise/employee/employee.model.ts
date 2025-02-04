@@ -28,12 +28,7 @@ export interface IEmployeeEntity extends IEmployeeRelationship, IEmployeeInfo {}
 /**
  * Employee signup model
  */
-export interface IEmployeeSignup extends IEmployeeInfo, IUserSignUp {
-	/**
-	 * Signature to sign up
-	 */
-	signature: string;
-}
+export interface IEmployeeSignup extends IEmployeeInfo, IUserSignUp {}
 
 /**
  * Employee hooking
