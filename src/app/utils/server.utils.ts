@@ -27,6 +27,7 @@ import { AuthMiddleware } from 'auth/auth.middleware';
 import fastifyCsrf, { CookieSerializeOptions } from '@fastify/csrf-protection';
 import fastifySecuredSession from '@fastify/secure-session';
 import { readFileSync } from 'fs';
+import { hash } from './auth.utils';
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -57,7 +58,7 @@ export async function registerServerPlugins(
 
 	await fastify
 		.register(fastifySecuredSession, {
-			cookieName: (6).string,
+			cookieName: await hash((6).string, 'base64url'),
 			cookie: { ...cookieOptions, signed: true },
 			secret,
 			key: readFileSync('securedSessionKey'),
@@ -65,7 +66,7 @@ export async function registerServerPlugins(
 		})
 		.register(fastifyCsrf, {
 			sessionKey: name,
-			cookieKey: (6).string,
+			cookieKey: await hash((6).string, 'base64url'),
 			cookieOpts: cookieOptions,
 			sessionPlugin: '@fastify/secure-session',
 		})
@@ -150,11 +151,6 @@ export class InitServerClass implements OnModuleInit {
 				(request: FastifyRequest, response: FastifyReply) =>
 					authMiddleware.use(request, response),
 			)
-			// .addHook('onRequest', (req, reply, done) => {
-			// 	if (req.method.toLowerCase() !== 'get')
-			// 		adapterInstance.csrfProtection(req, reply, done);
-			// 	done();
-			// })
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {

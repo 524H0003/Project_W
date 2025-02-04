@@ -58,9 +58,15 @@ async function bootstrap() {
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.init();
 
-	fastify.ready(() => {
-		server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
-	});
+	fastify
+		.addHook('onRequest', (req, reply, done) => {
+			if (req.method.toLowerCase() !== 'get')
+				fastify.csrfProtection(req, reply, done);
+			done();
+		})
+		.ready(() => {
+			server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
+		});
 }
 
 void bootstrap();
