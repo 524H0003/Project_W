@@ -130,19 +130,14 @@ export class FileService extends DatabaseRequests<File> {
 
 	/**
 	 * Find file on database
-	 * @param {string} input - the file's name
+	 * @param {string} path - the file's path on server
 	 * @param {string} ownerId - the owner's id
 	 * @return {Promise<boolean>}
 	 */
-	async isOwner(input: string, ownerId: string): Promise<boolean> {
-		const file = await this.findOne({
-			path: input,
-			deep: 2,
-		});
+	async isOwner(path: string, ownerId: string): Promise<boolean> {
+		const file = await this.findOne({ path, deep: 2 });
 
-		return (
-			this.serverFilesReg.test(`${input}`) || file.fileCreatedBy.id == ownerId
-		);
+		return this.serverFilesReg.test(path) || file?.fileCreatedBy.id == ownerId;
 	}
 
 	/**
