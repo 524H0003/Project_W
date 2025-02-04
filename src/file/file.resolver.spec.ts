@@ -1,5 +1,6 @@
 import { AppService } from 'app/app.service';
 import {
+	createFile,
 	execute,
 	initJest,
 	RequesterType,
@@ -10,7 +11,6 @@ import {
 	UploadFileMutation,
 	UploadFileMutationVariables,
 } from 'build/compiled_graphql';
-import { createReadStream, writeFileSync } from 'fs';
 import { OutgoingHttpHeaders } from 'http';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
@@ -46,10 +46,7 @@ describe('uploadFile', () => {
 
 	it('success', async () => {
 		const content = Buffer.from((40).string, 'base64'),
-			name = fileName + (5).string + '.png',
-			path = './dist/' + name;
-
-		writeFileSync(path, content);
+			name = fileName + (5).string + '.png';
 
 		await execute(
 			async () =>
@@ -60,7 +57,7 @@ describe('uploadFile', () => {
 							headers: headers,
 							map: { file: ['variables.file'] },
 							files: {
-								file: createReadStream(path),
+								file: createFile(name, content),
 							},
 						},
 					)

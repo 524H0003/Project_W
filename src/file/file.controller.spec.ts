@@ -1,10 +1,18 @@
-import { execute, initJest, RequesterType } from 'app/utils/test.utils';
+import {
+	createFile,
+	execute,
+	getCookie,
+	initJest,
+	RequesterType,
+} from 'app/utils/test.utils';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 import { readFileSync } from 'fs';
 import { rootPublic } from 'app/module/test.module';
 import { it } from '@jest/globals';
+import formAutoContent from 'form-auto-content';
+import { OutgoingHttpHeaders } from 'http';
 
 const fileName = curFile(__filename);
 let rawUsr: User, req: RequesterType, svc: AppService;
@@ -20,15 +28,22 @@ beforeEach(() => {
 });
 
 describe('seeUploadedFile', () => {
-	let headers: object, usr: User;
+	let headers: OutgoingHttpHeaders, usr: User;
 
 	beforeEach(async () => {
-		const e = await req()
-			.post('/signup')
-			.attach('avatar', Buffer.from((40).string, 'base64'), 'avatar.png')
-			.field('name', rawUsr.baseUser.name)
-			.field('email', rawUsr.baseUser.email)
-			.field('password', rawUsr.password);
+		const e = await req({
+			method: 'post',
+			url: '/signup',
+			...formAutoContent({
+				name: rawUsr.baseUser.name,
+				email: rawUsr.baseUser.email,
+				password: rawUsr.password,
+				avatar: createFile(
+					(6).string + '.png',
+					Buffer.from((40).string, 'base64'),
+				),
+			}),
+		});
 		usr = await svc.user.email(rawUsr.baseUser.email);
 
 		headers = e.headers;
@@ -40,23 +55,19 @@ describe('seeUploadedFile', () => {
 		const serverFile = 'defaultUser.server.jpg';
 
 		await execute(
-			() =>
-				req()
-					.get('/file/' + serverFile)
-					.parse((res, callback) => {
-						res.text = '';
-						res
-							.setEncoding('base64')
-							.on('data', (chunk) => (res.text += chunk))
-							.on('end', () => callback(null, Buffer.from(res.text, 'base64')));
-					}),
+			async () =>
+				(
+					await req({
+						method: 'get',
+						url: '/file/' + serverFile,
+					})
+				).body,
 			{
 				exps: [
 					{
-						type: 'toHaveProperty',
+						type: 'toEqual',
 						params: [
-							'text',
-							readFileSync(rootPublic + serverFile, { encoding: 'base64' }),
+							readFileSync(rootPublic + serverFile, { encoding: 'utf8' }),
 						],
 					},
 				],
@@ -66,27 +77,23 @@ describe('seeUploadedFile', () => {
 
 	it('success', async () => {
 		await execute(
-			() =>
-				req('supertest')
-					.get(`/file/${usr.baseUser.avatarPath}`)
-					.set('Cookie', headers['set-cookie'])
-					.buffer()
-					.parse((res, callback) => {
-						res.text = '';
-						res
-							.setEncoding('base64')
-							.on('data', (chunk) => (res.text += chunk))
-							.on('end', () => callback(null, Buffer.from(res.text, 'base64')));
-					}),
-
+			async () =>
+				(
+					await req({
+						method: 'get',
+						url: `/file/${usr.baseUser.avatarPath}`,
+						headers: {
+							cookie: getCookie(headers['set-cookie']),
+						},
+					})
+				).body,
 			{
 				exps: [
 					{
-						type: 'toHaveProperty',
+						type: 'toEqual',
 						params: [
-							'text',
 							readFileSync(rootPublic + usr.baseUser.avatarPath, {
-								encoding: 'base64',
+								encoding: 'utf8',
 							}),
 						],
 					},
