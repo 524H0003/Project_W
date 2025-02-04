@@ -140,7 +140,9 @@ export class FileService extends DatabaseRequests<File> {
 			deep: 2,
 		});
 
-		return this.serverFilesReg.test(input) || file.fileCreatedBy.id == ownerId;
+		return (
+			this.serverFilesReg.test(`${input}`) || file.fileCreatedBy.id == ownerId
+		);
 	}
 
 	/**
