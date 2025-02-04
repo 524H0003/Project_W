@@ -70,6 +70,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Secret files
 secrets/*.pem
 **/*.env*
+securedSessionKey
 
 # Execlude files
 !page/src/shims-vue.d.ts

@@ -1,5 +1,5 @@
-import fastifyCookie from '@fastify/cookie';
-import fastifySession, { CookieOptions } from '@fastify/session';
+import '@fastify/cookie';
+import '@fastify/session';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Faculty } from 'university/faculty/faculty.entity';
 import { Student } from 'university/student/student.entity';
@@ -24,6 +24,9 @@ import { OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { SignService } from 'auth/auth.service';
 import { AuthMiddleware } from 'auth/auth.middleware';
+import fastifyCsrf, { CookieSerializeOptions } from '@fastify/csrf-protection';
+import fastifySecuredSession from '@fastify/secure-session';
+import { readFileSync } from 'fs';
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -46,13 +49,29 @@ export async function registerServerPlugins(
 	{ password = (32).string, name = (6).string }: Partial<CookieProps>,
 ) {
 	const secret = password,
-		cookieOptions: CookieOptions = {
+		cookieOptions: CookieSerializeOptions = {
 			httpOnly: true,
 			secure: true,
 			sameSite: 'lax',
 		};
 
+	const test = readFileSync('securedSessionKey');
+	console.warn(test);
+
 	await fastify
+		.register(fastifySecuredSession, {
+			cookieName: (6).string,
+			cookie: { ...cookieOptions, signed: true },
+			secret,
+			key: test,
+			salt: (256).string,
+		})
+		.register(fastifyCsrf, {
+			sessionKey: name,
+			cookieKey: (6).string,
+			cookieOpts: cookieOptions,
+			sessionPlugin: '@fastify/secure-session',
+		})
 		.register(fastifyHelmet, {
 			contentSecurityPolicy: {
 				directives: {
@@ -74,13 +93,6 @@ export async function registerServerPlugins(
 					],
 				},
 			},
-		})
-		.register(fastifyCookie, { secret, parseOptions: cookieOptions })
-		.register(fastifySession, {
-			secret,
-			// ! Cautious: Session's cookie secure must set false. If not, AdminJS crash
-			cookie: { secure: false },
-			cookieName: name,
 		});
 }
 
@@ -141,6 +153,7 @@ export class InitServerClass implements OnModuleInit {
 				(request: FastifyRequest, response: FastifyReply) =>
 					authMiddleware.use(request, response),
 			)
+			//.addHook('onRequest', adapterInstance.csrfProtection)
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {
