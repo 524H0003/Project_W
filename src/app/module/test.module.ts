@@ -45,7 +45,9 @@ export const rootPublic = 'public/';
 			useValue: {
 				upload: jest.fn(async (name: string, input: Readable | Buffer) => {
 					if (input instanceof Readable) {
-						const writableStream = createWriteStream(rootPublic + name);
+						const writableStream = createWriteStream(rootPublic + name, {
+							flags: 'r+',
+						});
 						input.pipe(writableStream);
 					} else writeFileSync(rootPublic + name, input);
 				}),
