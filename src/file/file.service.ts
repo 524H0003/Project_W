@@ -11,7 +11,23 @@ import { AWSRecieve } from 'app/aws/aws.service';
 import { FileUpload } from 'graphql-upload-ts';
 import { createHmac } from 'node:crypto';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-import { Readable } from 'node:stream';
+
+type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
+	| {
+			[K in Keys]-?: Required<Pick<Pick<T, Keys>, K>> &
+				Partial<Pick<T, Exclude<Keys, K>>>;
+	  }[Keys]
+	| Partial<Pick<T, Keys>>;
+
+async function stream2buffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+	return new Promise<Buffer>((resolve, reject) => {
+		const _buf = Array<any>();
+
+		stream.on('data', (chunk) => _buf.push(chunk));
+		stream.on('end', () => resolve(Buffer.concat(_buf)));
+		stream.on('error', (err) => reject(`error converting stream - ${err}`));
+	});
+}
 
 /**
  * File services
@@ -35,10 +51,17 @@ export class FileService extends DatabaseRequests<File> {
 			}
 
 			for (const file of files)
-				if (file.match(this.serverFilesReg)) {
+				if (this.serverFilesReg.test(file)) {
 					const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 					try {
-						await this.svc.aws.upload(file, createReadStream(filePath));
+						await this.assign(
+							{
+								stream: createReadStream(filePath),
+								originalname: file,
+							},
+							null,
+							{ fileName: file.split('.').splice(-2).join('.') },
+						);
 					} catch {}
 				}
 		});
@@ -47,7 +70,7 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * @ignore
 	 */
-	private serverFilesReg = /^.*\.server\.(.*)/g;
+	private serverFilesReg = /^.*\.server\.[^.]+$/g;
 
 	/**
 	 * Assign file to server
@@ -57,19 +80,26 @@ export class FileService extends DatabaseRequests<File> {
 	 * @return {Promise<File>} the assigned file's infomations on database
 	 */
 	async assign(
-		{ buffer, stream, originalname, filename }: MulterFile,
+		{
+			buffer,
+			stream,
+			originalname,
+		}: RequireOnlyOne<MulterFile, 'stream' | 'buffer'> &
+			Required<Pick<MulterFile, 'originalname'>>,
 		userId: string,
 		serverFilesOptions?: { fileName: string },
 	): Promise<File> {
+		buffer = buffer || (await stream2buffer(stream));
+
 		if (!buffer) return null;
 
-		const title = originalname || filename,
+		const title = originalname,
 			{ fileName = '' } = serverFilesOptions || {},
 			path = fileName
 				? fileName + `.server.${extname(title)}`
 				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(buffer).digest('hex')}${extname(title)}`;
 
-		await this.svc.aws.upload(path, (stream as Readable) ?? buffer);
+		await this.svc.aws.upload(path, buffer);
 
 		return this.save({
 			path,

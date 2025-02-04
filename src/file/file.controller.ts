@@ -32,7 +32,6 @@ export class FileController {
 		);
 
 		res.headers({ 'content-type': type, 'content-length': length });
-
 		stream.pipe(res.raw);
 	}
 }

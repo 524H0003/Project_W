@@ -52,18 +52,15 @@ export async function registerServerPlugins(
 		cookieOptions: CookieSerializeOptions = {
 			httpOnly: true,
 			secure: true,
-			sameSite: 'lax',
+			sameSite: 'strict',
 		};
-
-	const test = readFileSync('securedSessionKey');
-	console.warn(test);
 
 	await fastify
 		.register(fastifySecuredSession, {
 			cookieName: (6).string,
 			cookie: { ...cookieOptions, signed: true },
 			secret,
-			key: test,
+			key: readFileSync('securedSessionKey'),
 			salt: (256).string,
 		})
 		.register(fastifyCsrf, {
@@ -153,7 +150,11 @@ export class InitServerClass implements OnModuleInit {
 				(request: FastifyRequest, response: FastifyReply) =>
 					authMiddleware.use(request, response),
 			)
-			//.addHook('onRequest', adapterInstance.csrfProtection)
+			// .addHook('onRequest', (req, reply, done) => {
+			// 	if (req.method.toLowerCase() !== 'get')
+			// 		adapterInstance.csrfProtection(req, reply, done);
+			// 	done();
+			// })
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {
