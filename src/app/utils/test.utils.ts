@@ -18,7 +18,13 @@ import { fastifyOptions, registerServerPlugins } from './server.utils';
 import { TestModule } from 'app/module/test.module';
 import { OutgoingHttpHeaders } from 'http';
 import formAutoContent from 'form-auto-content';
-import { ReadStream } from 'fs';
+import {
+	createReadStream,
+	existsSync,
+	mkdirSync,
+	ReadStream,
+	writeFileSync,
+} from 'fs';
 
 /**
  * requester type
@@ -190,4 +196,21 @@ export async function initJest() {
 	requester = requesterFunc;
 
 	return { module, appSvc, requester };
+}
+
+/**
+ * Create file for testing
+ * @param {string} name - name for file
+ * @param {Buffer} content - file content in buffer
+ * @return {ReadStream}
+ */
+export function createFile(name: string, content: Buffer): ReadStream {
+	const dir = './dist/',
+		path = dir + name;
+
+	if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+
+	writeFileSync(path, content);
+
+	return createReadStream(path);
 }
