@@ -179,33 +179,6 @@ export class BaseController {
 			throw error;
 		}
 	}
-
-	/**
-	 * Change password via console
-	 */
-	@Throttle({ requestSignature: { limit: 1, ttl: 600000 } })
-	@Post('request-signature')
-	protected async requestSignatureViaConsole(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { email }: BaseUserEmail,
-		@MetaData() mtdt: string,
-	): Promise<void> {
-		if (email == this.cfg.get('ADMIN_EMAIL'))
-			return this.responseWithUserRecieve(
-				request,
-				response,
-				await this.svc.hook.assign(mtdt, (signature: string) =>
-					this.svc.mail.send(
-						this.svc.cfg.get('ADMIN_EMAIL'),
-						'Signature request',
-						'sendSignatureAdmin',
-						{ signature },
-					),
-				),
-			);
-		throw new ServerException('Invalid', 'Email', '', 'user');
-	}
 }
 
 export const AvatarFileUpload = new ParseFilePipeBuilder()
