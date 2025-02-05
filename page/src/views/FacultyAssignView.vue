@@ -58,10 +58,10 @@ import {
 } from '@/auth.service';
 import FormContainerComp from '@/components/FormContainerComp.vue';
 import FormTextInputComp from '@/components/FormTextInputComp.vue';
-import { IFacultyAssign } from 'project-w-backend';
+import { IFacultyAssign, ISignature } from 'project-w-backend';
 import { reactive } from 'vue';
 
-const input = reactive<IFacultyAssign>({
+const input = reactive<IFacultyAssign & ISignature>({
     signature: '',
     department: '',
     password: '',

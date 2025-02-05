@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {
   IEmployeeHook,
-  IEmployeeSignup,
+  IEmployeeSignUp,
   IEnterpriseAssign,
   IEntityId,
   IEventInfo,
@@ -58,7 +58,7 @@ export async function assignFaculty(input: IFacultyAssign) {
   return response.data;
 }
 
-export async function assignEnterpriseUser(input: IEmployeeSignup) {
+export async function assignEnterpriseUser(input: IEmployeeSignUp) {
   const response = await axios.post(`${API_URL}/employee/signup`, input);
   return response.data;
 }

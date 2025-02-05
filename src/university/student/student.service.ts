@@ -5,9 +5,6 @@ import { Student } from './student.entity';
 import { Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { IStudentSignUp } from './student.model';
-import { InterfaceCasting } from 'app/utils/utils';
-import { IStudentInfoKeys, IUserSignUpKeys } from 'build/models';
-import { validation } from 'app/utils/auth.utils';
 import { AppService } from 'app/app.service';
 
 /**
@@ -34,33 +31,32 @@ export class StudentService extends DatabaseRequests<Student> {
 	 * @param {IStudentSignUp} input - the sign up form
 	 * @return {Promise<void>}
 	 */
-	async signUp(input: IStudentSignUp): Promise<void> {
-		const user = await this.svc.baseUser.email(input.email),
-			rawStu = new Student(input);
+	async signUp({
+		email,
+	}: Required<Pick<IStudentSignUp, 'email'>>): Promise<void> {
+		const existedUser = await this.svc.baseUser.email(email);
 
-		if (user) throw new ServerException('Invalid', 'User', 'SignUp', 'user');
-		if (!rawStu.user.baseUser.email.match(this.studentMailRex))
+		if (existedUser)
+			throw new ServerException('Invalid', 'User', 'SignUp', 'user');
+		if (!email.match(this.studentMailRex))
 			throw new ServerException('Invalid', 'Email', '', 'user');
 
-		return await validation(rawStu, async () => {
-			const user = await this.svc.auth.signUp(
-				{
-					...InterfaceCasting.quick(input, IUserSignUpKeys),
-					name: input.email,
-					password: (32).string + '!1Aa',
-				},
-				null,
-				{ role: UserRole.student },
-			);
+		const student = await this.svc.auth.signUp(
+			{
+				email,
+				name: email,
+				password: (32).string + '!1Aa',
+			},
+			null,
+			{ role: UserRole.student },
+		);
 
-			if (await user.hashingPassword()) {
-				await this.save({
-					user,
-					...InterfaceCasting.quick(input, IStudentInfoKeys),
-					enrollmentYear: Number('20' + input.email.toString().slice(1, 3)),
-				});
-				throw new ServerException('Success', 'User', 'SignUp', 'user');
-			}
+		await student.hashingPassword();
+		await this.save({
+			user: student,
+			enrollmentYear: Number('20' + email.toString().slice(1, 3)),
 		});
+
+		throw new ServerException('Success', 'User', 'SignUp', 'user');
 	}
 }

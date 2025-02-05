@@ -58,9 +58,9 @@ import {
 import FormContainerComp from '@/components/FormContainerComp.vue';
 import FormTextInputComp from '@/components/FormTextInputComp.vue';
 import { reactive } from 'vue';
-import { IEnterpriseAssign } from 'project-w-backend';
+import { IEnterpriseAssign, ISignature } from 'project-w-backend';
 
-const input = reactive<IEnterpriseAssign>({
+const input = reactive<IEnterpriseAssign & ISignature>({
     signature: '',
     description: '',
     industry: '',
