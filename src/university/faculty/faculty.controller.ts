@@ -9,8 +9,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { MetaData } from 'auth/guards/access.guard';
-import { IFacultyAssign } from './faculty.model';
+import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
@@ -20,7 +19,8 @@ import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { memoryStorage } from 'fastify-multer';
 import { HookGuard } from 'auth/guards/hook.guard';
-import { ISignature } from 'app/app.model';
+import { Hook } from 'app/hook/hook.entity';
+import { FacultyAssign } from './faculty.dto';
 
 /**
  * Faculty controller
@@ -48,11 +48,12 @@ export class FacultyController extends BaseController {
 	async assign(
 		@Req() request: FastifyRequest,
 		@Res() response: FastifyReply,
-		@Body() { signature, ...body }: IFacultyAssign & ISignature,
+		@Body() { signature, ...body }: FacultyAssign,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
+		@GetRequest('hook') hook: Hook,
 	) {
-		await this.svc.hook.validating(signature, mtdt, request.hook);
+		await this.svc.hook.validating(signature, mtdt, hook);
 
 		return this.responseWithUser(
 			request,

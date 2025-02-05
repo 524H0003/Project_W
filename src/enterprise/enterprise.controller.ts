@@ -9,8 +9,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { IEnterpriseAssign } from './enterprise.model';
-import { MetaData } from 'auth/guards/access.guard';
+import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
@@ -20,7 +19,8 @@ import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards/hook.guard';
-import { ISignature } from 'app/app.model';
+import { EnterpriseAssign } from './enterprise.dto';
+import { Hook } from 'app/hook/hook.entity';
 
 /**
  * Enterprise controller
@@ -30,8 +30,6 @@ import { ISignature } from 'app/app.model';
 export class EnterpriseController extends BaseController {
 	/**
 	 * Initiate enterprise controller
-	 * @param {AppService} svc - general app service
-	 * @param {ConfigService} cfg - general app config
 	 */
 	constructor(
 		protected svc: AppService,
@@ -49,11 +47,12 @@ export class EnterpriseController extends BaseController {
 	async assign(
 		@Req() request: FastifyRequest,
 		@Res() response: FastifyReply,
-		@Body() { signature, ...body }: IEnterpriseAssign & ISignature,
+		@Body() { signature, ...body }: EnterpriseAssign,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
+		@GetRequest('hook') hook: Hook,
 	): Promise<void> {
-		await this.svc.hook.validating(signature, mtdt, request.hook);
+		await this.svc.hook.validating(signature, mtdt, hook);
 		await this.svc.enterprise.assign(body, avatar);
 		return this.responseWithUserRecieve(
 			request,

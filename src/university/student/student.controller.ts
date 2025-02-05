@@ -9,7 +9,6 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { MetaData } from 'auth/guards/access.guard';
-import { IStudentSignUp } from './student.model';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -17,6 +16,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { LocalhostGuard } from 'auth/guards/localhost.guard';
 import { BaseController } from 'app/utils/controller.utils';
+import { StudentSignUp } from './student.dto';
 
 /**
  * Student controller
@@ -37,11 +37,6 @@ export class StudentController extends BaseController {
 
 	/**
 	 * Student login request
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {IStudentSignUp} body - the request context
-	 * @param {string} mtdt - the client meta data
-	 * @return {Promise<void>}
 	 */
 	@Post('sign-up')
 	@UseGuards(LocalhostGuard)
@@ -49,7 +44,7 @@ export class StudentController extends BaseController {
 	async signUp(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: IStudentSignUp,
+		@Body() body: StudentSignUp,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
