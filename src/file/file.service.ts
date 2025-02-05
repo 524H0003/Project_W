@@ -145,13 +145,13 @@ export class FileService extends DatabaseRequests<File> {
 	 * @param {FileUpload} input - graphql upload
 	 * @return {Promise<MulterFile>}
 	 */
-	async GQLUploadToMulterFile({
+	GQLUploadToMulterFile({
 		createReadStream,
 		filename,
 		fieldName,
 		mimetype,
 		encoding,
-	}: FileUpload): Promise<MulterFile> {
+	}: FileUpload): MulterFile {
 		const uploadFile: MulterFile = {
 			fieldname: fieldName,
 			encoding: encoding,
@@ -159,24 +159,11 @@ export class FileService extends DatabaseRequests<File> {
 			stream: createReadStream(),
 			filename: filename,
 			buffer: null,
-			originalname: undefined,
+			originalname: filename,
 			size: undefined,
 			destination: undefined,
 			path: undefined,
 		};
-
-		uploadFile.buffer = await new Promise((resolve, reject) => {
-			const chunks = [];
-			uploadFile.stream.on('data', (data) => {
-				if (typeof data === 'string') chunks.push(Buffer.from(data, 'utf-8'));
-				else if (data instanceof Buffer) chunks.push(data);
-				else chunks.push(Buffer.from(JSON.stringify(data), 'utf-8'));
-			});
-			uploadFile.stream.on('end', () => {
-				resolve(Buffer.concat(chunks));
-			});
-			uploadFile.stream.on('error', reject);
-		});
 
 		return uploadFile;
 	}

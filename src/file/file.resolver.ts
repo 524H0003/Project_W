@@ -22,9 +22,6 @@ export class FileResolver {
 		@Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload,
 		@GetRequest('user') { id }: User,
 	) {
-		return this.svc.file.assign(
-			await this.svc.file.GQLUploadToMulterFile(file),
-			id,
-		);
+		return this.svc.file.assign(this.svc.file.GQLUploadToMulterFile(file), id);
 	}
 }
