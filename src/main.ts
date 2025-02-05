@@ -1,5 +1,5 @@
 import { mkdirSync } from 'fs';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import {
@@ -53,20 +53,15 @@ async function bootstrap() {
 	mkdirSync(config.get('SERVER_PUBLIC'), { recursive: true });
 
 	await nest
-		.setGlobalPrefix('api/v1')
+		.setGlobalPrefix('api')
 		.useGlobalPipes(new ValidationPipe())
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
+		.enableVersioning({ type: VersioningType.URI })
 		.init();
 
-	fastify
-		.addHook('onRequest', (req, reply, done) => {
-			if (req.method.toLowerCase() !== 'get')
-				fastify.csrfProtection(req, reply, done);
-			done();
-		})
-		.ready(() => {
-			server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
-		});
+	fastify.ready(() => {
+		server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
+	});
 }
 
 void bootstrap();

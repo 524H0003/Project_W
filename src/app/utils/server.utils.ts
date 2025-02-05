@@ -69,6 +69,7 @@ export async function registerServerPlugins(
 			cookieKey: await hash((6).string, 'base64url'),
 			cookieOpts: cookieOptions,
 			sessionPlugin: '@fastify/secure-session',
+			csrfOpts: { validity: (180).s2ms },
 		})
 		.register(fastifyHelmet, {
 			contentSecurityPolicy: {
@@ -146,6 +147,18 @@ export class InitServerClass implements OnModuleInit {
 			authMiddleware = new AuthMiddleware(this.configService, this.signService);
 
 		adapterInstance
+			.route({
+				method: 'get',
+				url: '/csrf-token',
+				handler(req, rep) {
+					rep.send({ token: rep.generateCsrf() });
+				},
+			})
+			.addHook('onRequest', (req, reply, done) => {
+				if (req.method.toLowerCase() !== 'get')
+					adapterInstance.csrfProtection(req, reply, done);
+				else done();
+			})
 			.addHook(
 				'preValidation',
 				(request: FastifyRequest, response: FastifyReply) =>

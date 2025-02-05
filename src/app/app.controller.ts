@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	forwardRef,
+	Get,
 	Inject,
 	Param,
 	Post,
@@ -34,7 +35,7 @@ import { LocalhostGuard } from 'auth/guards/localhost.guard';
 /**
  * Application Controller
  */
-@Controller('')
+@Controller({ version: '1', path: '' })
 @UseInterceptors(CacheInterceptor)
 export class AppController extends BaseController {
 	/**
@@ -170,7 +171,7 @@ export class AppController extends BaseController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Throttle({ default: { limit: 1, ttl: 300000 } })
+	@Throttle({ changePasswordRequest: { limit: 1, ttl: 300000 } })
 	@Post('change-password')
 	async resetPasswordViaEmail(
 		@Req() request: FastifyRequest,
@@ -202,7 +203,7 @@ export class AppController extends BaseController {
 	 * @param {Hook} hook - recieved hook from client
 	 * @return {Promise<void>}
 	 */
-	@Throttle({ default: { limit: 3, ttl: 240000 } })
+	@Throttle({ changePassword: { limit: 3, ttl: 240000 } })
 	@Post('change-password/:token')
 	@UseGuards(HookGuard)
 	async changePassword(
@@ -240,9 +241,9 @@ export class AppController extends BaseController {
 	 * @param {string} mtdt - client's metadata
 	 * @return {Promise<void>}
 	 */
-	@Throttle({ default: { limit: 1, ttl: 600000 } })
+	@Throttle({ requestSignature: { limit: 1, ttl: 600000 } })
 	@Post('request-signature')
-	protected async requestSignatureViaConsole(
+	async requestSignatureViaConsole(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() { email }: { email: string },
@@ -262,5 +263,13 @@ export class AppController extends BaseController {
 				),
 			);
 		throw new ServerException('Invalid', 'Email', '', 'user');
+	}
+
+	/**
+	 * Check server status
+	 */
+	@Get('status')
+	serverStatus(@Res({ passthrough: true }) response: FastifyReply) {
+		response.send({ status: 'OK' });
 	}
 }

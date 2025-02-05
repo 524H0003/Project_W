@@ -25,7 +25,7 @@ import { HookGuard } from 'auth/guards/hook.guard';
 /**
  * Enterprise controller
  */
-@Controller('enterprise')
+@Controller({ version: '1', path: 'enterprise' })
 @UseInterceptors(CacheInterceptor)
 export class EnterpriseController extends AppController {
 	/**

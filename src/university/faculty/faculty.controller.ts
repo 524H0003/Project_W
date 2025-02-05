@@ -26,7 +26,7 @@ import { HookGuard } from 'auth/guards/hook.guard';
  * Faculty controller
  */
 @Injectable()
-@Controller('faculty')
+@Controller({ version: '1', path: 'faculty' })
 @UseInterceptors(CacheInterceptor)
 export class FacultyController extends AppController {
 	/**

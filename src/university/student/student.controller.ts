@@ -22,7 +22,7 @@ import { LocalhostGuard } from 'auth/guards/localhost.guard';
  * Student controller
  */
 @Injectable()
-@Controller('student')
+@Controller({ version: '1', path: 'student' })
 @UseInterceptors(CacheInterceptor)
 export class StudentController extends AppController {
 	/**

@@ -15,7 +15,7 @@ import {
 import { styled } from '@adminjs/design-system/styled-components';
 import { useTranslation } from 'adminjs';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 let email: string;
 
@@ -54,23 +54,40 @@ const Wrapper = styled(Box)<BoxProps>`
 	TextNoTopMargin = styled(Text)<BoxProps>`
 		margin-top: 0;
 	`,
-	handleRequest = () =>
-		fetch('../api/v1/request-signature', {
+	handleRequest = async () => {
+		const { token } = await (
+			await fetch('../csrf-token', { method: 'GET' })
+		).json();
+
+		return fetch('../api/v1/request-signature', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
+				'csrf-token': token,
 			},
 			body: JSON.stringify({ email }),
 		});
+	};
 export type LoginProps = {
 	message?: string;
 	action: string;
 };
 
 export const Login: React.FC = () => {
-	const props = (window as any).__APP_STATE__;
-	const { action, errorMessage: message } = props;
-	const { translateComponent, translateMessage } = useTranslation();
+	const props = (window as any).__APP_STATE__,
+		{ action, errorMessage: message } = props,
+		{ translateComponent, translateMessage } = useTranslation(),
+		[token, setToken] = useState(null);
+
+	useEffect(() => {
+		async function getToken() {
+			const { token } = await (
+				await fetch('../csrf-token', { method: 'GET' })
+			).json();
+			setToken(token);
+		}
+		getToken();
+	}, []);
 
 	return (
 		<Wrapper flex variant="grey" className="login__Wrapper">
@@ -127,6 +144,7 @@ export const Login: React.FC = () => {
 							variant="danger"
 						/>
 					)}
+					<Input name="_csrf" type="hidden" value={token} />
 					<FormGroup>
 						<Label required>
 							{translateComponent('Login.properties.email')}

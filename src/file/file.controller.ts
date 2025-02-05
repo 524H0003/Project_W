@@ -8,7 +8,7 @@ import { FileGuard } from 'auth/guards/file.guard';
 /**
  * File controller
  */
-@Controller('file')
+@Controller({ version: '1', path: 'file' })
 export class FileController {
 	/**
 	 * Initiate file controller
