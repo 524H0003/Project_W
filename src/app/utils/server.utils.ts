@@ -83,7 +83,12 @@ export async function registerServerPlugins(
 						'unpkg.com',
 					],
 					fontSrc: [`'self'`, 'fonts.gstatic.com', 'data:'],
-					imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net'],
+					imgSrc: [
+						`'self'`,
+						'data:',
+						'cdn.jsdelivr.net',
+						'validator.swagger.io',
+					],
 					scriptSrc: [
 						`'self'`,
 						`https: 'unsafe-inline'`,

@@ -41,7 +41,8 @@
 		"src/build": true,
 		"src/types.ts": true,
 		"types": true,
-		"graphql": true
+		"graphql": true,
+		"securedSessionKey": true
 	},
 	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {

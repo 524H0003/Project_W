@@ -18,6 +18,7 @@ import {
 import Fastify from 'fastify';
 import { hash } from 'app/utils/auth.utils';
 import { createServer, Server } from 'http';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
 	let server: Server;
@@ -58,6 +59,10 @@ async function bootstrap() {
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.enableVersioning({ type: VersioningType.URI })
 		.init();
+
+	const docConfig = new DocumentBuilder().setTitle('Project W APIs').build(),
+		documentFactory = () => SwaggerModule.createDocument(nest, docConfig);
+	SwaggerModule.setup('api', nest, documentFactory);
 
 	fastify.ready(() => {
 		server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
