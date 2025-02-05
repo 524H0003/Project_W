@@ -64,15 +64,16 @@ async function bootstrap() {
 		documentFactory = () => SwaggerModule.createDocument(nest, docConfig);
 	SwaggerModule.setup('api', nest, documentFactory);
 
-	fastify
-		.addHook('preValidation', (req, reply, done) => {
+	if (process.argv.length == 3 && process.argv[2] != 'no-csrf')
+		fastify.addHook('preValidation', (req, reply, done) => {
 			if (req.method.toLowerCase() !== 'get')
 				fastify.csrfProtection(req, reply, done);
 			else done();
-		})
-		.ready(() => {
-			server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
 		});
+
+	fastify.ready(() => {
+		server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
+	});
 }
 
 void bootstrap();
