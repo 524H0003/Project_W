@@ -1,5 +1,10 @@
 import { Enterprise } from './enterprise.entity';
-import { getCookie, execute, initJest, RequesterType } from 'app/utils/test.utils';
+import {
+	getCookie,
+	execute,
+	initJest,
+	RequesterType,
+} from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';

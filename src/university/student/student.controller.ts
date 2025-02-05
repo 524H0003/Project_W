@@ -43,7 +43,7 @@ export class StudentController extends AppController {
 	 * @param {string} mtdt - the client meta data
 	 * @return {Promise<void>}
 	 */
-	@Post('signup')
+	@Post('sign-up')
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor())
 	async signUp(
