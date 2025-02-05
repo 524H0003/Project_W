@@ -159,11 +159,6 @@ export class InitServerClass implements OnModuleInit {
 					rep.send({ token: rep.generateCsrf() });
 				},
 			})
-			.addHook('preValidation', (req, reply, done) => {
-				if (req.method.toLowerCase() !== 'get')
-					adapterInstance.csrfProtection(req, reply, done);
-				else done();
-			})
 			.addHook(
 				'preValidation',
 				(request: FastifyRequest, response: FastifyReply) =>
