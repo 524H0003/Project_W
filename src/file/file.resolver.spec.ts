@@ -30,7 +30,7 @@ beforeEach(async () => {
 		usr: User;
 
 	const e = await req()
-		.post('/signup')
+		.post('/sign-up')
 		.body({ ...rawUsr, ...rawUsr.baseUser });
 	usr = await svc.user.email(rawUsr.baseUser.email);
 

@@ -11,7 +11,7 @@ export async function assignStudent(
 ) {
 	const headersInp = (
 			await req()
-				.post('/student/signup')
+				.post('/student/sign-up')
 				.body({ ...studentInp.user, ...studentInp.user.baseUser })
 		).headers,
 		token = (

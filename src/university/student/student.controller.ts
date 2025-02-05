@@ -9,7 +9,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { MetaData } from 'auth/guards/access.guard';
-import { IStudentSignup } from './student.model';
+import { IStudentSignUp } from './student.model';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
@@ -39,7 +39,7 @@ export class StudentController extends AppController {
 	 * Student login request
 	 * @param {FastifyRequest} request - client's request
 	 * @param {FastifyReply} response - server's response
-	 * @param {IStudentSignup} body - the request context
+	 * @param {IStudentSignUp} body - the request context
 	 * @param {string} mtdt - the client meta data
 	 * @return {Promise<void>}
 	 */
@@ -49,7 +49,7 @@ export class StudentController extends AppController {
 	async signUp(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: IStudentSignup,
+		@Body() body: IStudentSignUp,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {

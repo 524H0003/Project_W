@@ -1,4 +1,9 @@
-import { execute, getCookie, initJest, RequesterType } from 'app/utils/test.utils';
+import {
+	execute,
+	getCookie,
+	initJest,
+	RequesterType,
+} from 'app/utils/test.utils';
 import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
@@ -18,12 +23,12 @@ beforeEach(() => {
 	usr = User.test(fileName);
 });
 
-describe('signup', () => {
+describe('signUp', () => {
 	it('success', async () => {
 		await execute(
 			() =>
 				req()
-					.post('/signup')
+					.post('/sign-up')
 					.body({ ...usr, ...usr.baseUser }),
 			{
 				exps: [
@@ -55,14 +60,14 @@ describe('signup', () => {
 
 	it('fail due to email already exist', async () => {
 		await req()
-			.post('/signup')
+			.post('/sign-up')
 			.body({ ...usr, ...usr.baseUser });
 
 		await execute(
 			async () =>
 				(
 					await req()
-						.post('/signup')
+						.post('/sign-up')
 						.body({ ...usr, ...usr.baseUser })
 				).body,
 			{
@@ -78,7 +83,7 @@ describe('login', () => {
 	beforeEach(
 		async () =>
 			await req()
-				.post('/signup')
+				.post('/sign-up')
 				.body({ ...usr, ...usr.baseUser }),
 	);
 
@@ -147,7 +152,7 @@ describe('logout', () => {
 	beforeEach(
 		async () =>
 			({ headers } = await req()
-				.post('/signup')
+				.post('/sign-up')
 				.body({ ...usr, ...usr.baseUser })),
 	);
 
@@ -191,7 +196,7 @@ describe('refresh', () => {
 	beforeEach(
 		async () =>
 			({ headers } = await req()
-				.post('/signup')
+				.post('/sign-up')
 				.body({ ...usr, ...usr.baseUser })),
 	);
 

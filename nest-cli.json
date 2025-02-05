@@ -5,7 +5,17 @@
 		"assets": ["**/*.html", "app/page"],
 		"deleteOutDir": true,
 		"tsConfigPath": "tsconfig.build.json",
-		"watchAssets": true
+		"watchAssets": true,
+		"plugins": [
+			{
+				"name": "@nestjs/swagger",
+				"options": {
+					"dtoFileNameSuffix": [".dto.ts", ".entity.ts"],
+					"classValidatorShim": false,
+					"introspectComments": true
+				}
+			}
+		]
 	},
 	"sourceRoot": "src"
 }

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { MetaData } from 'auth/guards/access.guard';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { IEmployeeHook, IEmployeeSignup } from './employee.model';
+import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
 import { AppService } from 'app/app.service';
 import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
@@ -56,15 +56,15 @@ export class EmployeeController extends AppController {
 	}
 
 	/**
-	 * Employee signup request
+	 * Employee sign up request
 	 */
-	@Post('signup')
+	@Post('sign-up')
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { signature, ...body }: IEmployeeSignup & { signature: string },
+		@Body() { signature, ...body }: IEmployeeSignUp & { signature: string },
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {

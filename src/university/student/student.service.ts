@@ -1,10 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IUserSignUp, UserRole } from 'user/user.model';
+import { UserRole } from 'user/user.model';
 import { Student } from './student.entity';
 import { Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { IStudentSignup } from './student.model';
+import { IStudentSignUp } from './student.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IStudentInfoKeys, IUserSignUpKeys } from 'build/models';
 import { validation } from 'app/utils/auth.utils';
@@ -31,10 +31,10 @@ export class StudentService extends DatabaseRequests<Student> {
 
 	/**
 	 * Sign up for student
-	 * @param {IStudentSignup} input - the sign up form
+	 * @param {IStudentSignUp} input - the sign up form
 	 * @return {Promise<void>}
 	 */
-	async signUp(input: IStudentSignup): Promise<void> {
+	async signUp(input: IStudentSignUp): Promise<void> {
 		const user = await this.svc.baseUser.email(input.email),
 			rawStu = new Student(input);
 
@@ -48,7 +48,7 @@ export class StudentService extends DatabaseRequests<Student> {
 					...InterfaceCasting.quick(input, IUserSignUpKeys),
 					name: input.email,
 					password: (32).string + '!1Aa',
-				} as IUserSignUp,
+				},
 				null,
 				{ role: UserRole.student },
 			);

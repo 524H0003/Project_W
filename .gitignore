@@ -7,7 +7,6 @@ types/*
 **/.pnpm-store
 .adminjs
 src/build
-src/types.ts
 *.tsbuildinfo
 types/src
 src/**/*.js*

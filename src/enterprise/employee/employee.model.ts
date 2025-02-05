@@ -26,9 +26,9 @@ export interface IEmployeeRelationship {
  */
 export interface IEmployeeEntity extends IEmployeeRelationship, IEmployeeInfo {}
 /**
- * Employee signup model
+ * Employee sign up model
  */
-export interface IEmployeeSignup extends IEmployeeInfo, IUserSignUp {}
+export interface IEmployeeSignUp extends IEmployeeInfo, IUserSignUp {}
 
 /**
  * Employee hooking

@@ -59,7 +59,7 @@ beforeEach(async () => {
 	headers = (await assignEmployee(req, svc, enterprise, employee, mailerSvc))
 		.headers;
 	await req()
-		.post('/signup')
+		.post('/sign-up')
 		.body({ ...user, ...user.baseUser });
 	user = await svc.user.findOne({ baseUser: { name: user.baseUser.name } });
 

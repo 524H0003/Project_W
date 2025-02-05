@@ -3,12 +3,12 @@ import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Employee } from './employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IEmployeeHook, IEmployeeSignup } from './employee.model';
+import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import {
 	IEmployeeHookKeys,
 	IEmployeeInfoKeys,
-	IEmployeeSignupKeys,
+	IEmployeeSignUpKeys,
 } from 'build/models';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';

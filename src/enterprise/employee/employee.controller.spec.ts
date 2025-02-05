@@ -7,7 +7,7 @@ import {
 	RequesterType,
 } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import { IEmployeeHook, IEmployeeSignup } from './employee.model';
+import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
 import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
 import { MailerService } from '@nestjs-modules/mailer';
 
@@ -59,7 +59,7 @@ describe('hook', () => {
 	});
 });
 
-describe('signup', () => {
+describe('signUp', () => {
 	it('success', async () => {
 		const { headers } = await req()
 				.post('/employee/hook')
@@ -76,7 +76,7 @@ describe('signup', () => {
 			async () =>
 				JSON.stringify(
 					await req()
-						.post('/employee/signup')
+						.post('/employee/sign-up')
 						.headers({ cookie: getCookie(headers['set-cookie']) })
 						.body({
 							signature,
@@ -84,7 +84,7 @@ describe('signup', () => {
 							...employee,
 							...employee.eventCreator.user,
 							...employee.eventCreator.user.baseUser,
-						} as IEmployeeSignup),
+						} as IEmployeeSignUp),
 				),
 			{
 				exps: [

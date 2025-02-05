@@ -15,7 +15,7 @@ beforeEach(async () => {
 	stu = await Student.test(fileName);
 });
 
-describe('signup', () => {
+describe('signUp', () => {
 	it('fail due to wrong email format', async () => {
 		stu = await Student.test(fileName, { email: 'aa' });
 
@@ -23,7 +23,7 @@ describe('signup', () => {
 			async () =>
 				JSON.stringify(
 					await req()
-						.post('/student/signup')
+						.post('/student/sign-up')
 						.body({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
@@ -35,7 +35,7 @@ describe('signup', () => {
 			async () =>
 				JSON.stringify(
 					await req()
-						.post('/student/signup')
+						.post('/student/sign-up')
 						.body({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{

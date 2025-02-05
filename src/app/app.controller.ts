@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { Hook } from 'app/hook/hook.entity';
-import { IStudentSignup } from 'university/student/student.model';
 import { IUserSignUp } from 'user/user.model';
 import { IBaseUserEmail } from './app.model';
 import { AppService } from './app.service';
@@ -31,6 +30,7 @@ import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards/hook.guard';
 import { RefreshGuard } from 'auth/guards/refresh.guard';
 import { LocalhostGuard } from 'auth/guards/localhost.guard';
+import { StudentSignUp } from 'university/student/student.dto';
 
 /**
  * Application Controller
@@ -52,11 +52,6 @@ export class AppController extends BaseController {
 
 	/**
 	 * Login request
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {IStudentSignup} body - login input
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
 	 */
 	@Post('login') @UseInterceptors(FileInterceptor()) async login(
 		@Req() request: FastifyRequest,
@@ -94,7 +89,7 @@ export class AppController extends BaseController {
 	 * @param {MulterFile} avatar - user's avatar
 	 * @return {Promise<void>}
 	 */
-	@Post('signup')
+	@Post('sign-up')
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(

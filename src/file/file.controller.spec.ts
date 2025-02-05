@@ -33,7 +33,7 @@ describe('seeUploadedFile', () => {
 	beforeEach(async () => {
 		const e = await req({
 			method: 'post',
-			url: '/signup',
+			url: '/sign-up',
 			...formAutoContent({
 				name: rawUsr.baseUser.name,
 				email: rawUsr.baseUser.email,

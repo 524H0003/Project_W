@@ -14,7 +14,7 @@
 		"lint": "eslint --fix ./src",
 		"prettier": "prettier --write \"./**/*.ts\" \"./**/*.js\" \"./**/*.json\" \"./**/*.*rc\" --log-level silent",
 		"gqlgen": " gqlg --schemaFilePath ./src/schema.gql --destDirPath ./graphql/operations --ext graphql",
-		"types": "npm run buildfile && tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/types.ts --verbose",
+		"types": "npm run buildfile && tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/build/types.ts --verbose",
 		"codegen": "npm run gqlgen && graphql-codegen --config codegen.ts",
 		"prestart:ci": "npm run build && pnpm i --prod && npx @fastify/secure-session > securedSessionKey",
 		"start": "nest start",
