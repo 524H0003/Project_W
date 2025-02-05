@@ -1,5 +1,10 @@
 import { AppService } from 'app/app.service';
-import { execute, initJest, RequesterType, sendGQL } from 'app/utils/test.utils';
+import {
+	execute,
+	initJest,
+	RequesterType,
+	sendGQL,
+} from 'app/utils/test.utils';
 import { EventTag } from './tag.entity';
 import { assignEmployee } from 'enterprise/employee/employee.controller.spec.utils';
 import { Employee } from 'enterprise/employee/employee.entity';

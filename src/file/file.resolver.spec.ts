@@ -56,9 +56,7 @@ describe('uploadFile', () => {
 						{
 							headers: headers,
 							map: { file: ['variables.file'] },
-							files: {
-								file: createFile(name, content),
-							},
+							files: { file: createFile(name, content) },
 						},
 					)
 				).uploadFile,

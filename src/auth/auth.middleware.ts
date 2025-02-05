@@ -53,7 +53,11 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 		else if (authorization)
 			req.headers.authorization = `Bearer ${this.decrypt(authorization.split(' ').at(-1))}`;
 
-		if (typeof req.isMultipart == 'boolean' && req.isMultipart && req.url === '/graphql')
+		if (
+			typeof req.isMultipart == 'boolean' &&
+			req.isMultipart &&
+			req.url === '/graphql'
+		)
 			req.body = await processRequest(req.raw, res.raw, {
 				maxFileSize: (50).mb2b,
 			});

@@ -8,7 +8,11 @@ import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
-import { IEmployeeHookKeys, IEmployeeInfoKeys, IEmployeeSignUpKeys } from 'build/models';
+import {
+	IEmployeeHookKeys,
+	IEmployeeInfoKeys,
+	IEmployeeSignUpKeys,
+} from 'build/models';
 
 /**
  * Employee service

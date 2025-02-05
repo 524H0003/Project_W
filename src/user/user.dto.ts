@@ -4,11 +4,9 @@ import { IUserAuthentication, IUserLogIn, IUserSignUp } from './user.model';
 export class UserSignUp implements IUserSignUp {
 	password: string;
 	name: string;
-	@ApiHideProperty()
-	avatarPath?: string;
+	@ApiHideProperty() avatarPath?: string;
 	email: string;
-	@ApiHideProperty()
-	id?: string;
+	@ApiHideProperty() id?: string;
 }
 
 export class UserLogIn implements IUserLogIn {

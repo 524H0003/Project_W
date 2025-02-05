@@ -10,7 +10,7 @@
 		"src/build.ts",
 		"src/build",
 		"page",
-		"types",
+		"types"
 	],
 	"extends": "./tsconfig.json"
 }

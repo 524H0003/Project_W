@@ -56,12 +56,7 @@ describe('seeUploadedFile', () => {
 
 		await execute(
 			async () =>
-				(
-					await req({
-						method: 'get',
-						url: '/file/' + serverFile,
-					})
-				).body,
+				(await req({ method: 'get', url: '/file/' + serverFile })).body,
 			{
 				exps: [
 					{
@@ -82,9 +77,7 @@ describe('seeUploadedFile', () => {
 					await req({
 						method: 'get',
 						url: `/file/${usr.baseUser.avatarPath}`,
-						headers: {
-							cookie: getCookie(headers['set-cookie']),
-						},
+						headers: { cookie: getCookie(headers['set-cookie']) },
 					})
 				).body,
 			{

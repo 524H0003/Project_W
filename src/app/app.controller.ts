@@ -174,8 +174,9 @@ export class AppController extends BaseController {
 	/**
 	 * Check server status
 	 */
-	@Get('status')
-	serverStatus(@Res({ passthrough: true }) response: FastifyReply) {
+	@Get('status') serverStatus(
+		@Res({ passthrough: true }) response: FastifyReply,
+	) {
 		response.send({ status: 'OK' });
 	}
 }

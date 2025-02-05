@@ -6,10 +6,8 @@ export class FacultyAssign implements IFacultyAssign, ISignature {
 	department: string;
 	password: string;
 	name: string;
-	@ApiHideProperty()
-	avatarPath?: string;
+	@ApiHideProperty() avatarPath?: string;
 	email: string;
-	@ApiHideProperty()
-	id?: string;
+	@ApiHideProperty() id?: string;
 	signature: string;
 }

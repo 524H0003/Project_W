@@ -141,10 +141,7 @@ export function sendGQL<T, K>(astQuery: DocumentNode): SendGQLType<T, K> {
 			hasFile = Object.keys(files).length,
 			{ payload, contentType } = formAutoContent(
 				{
-					...{
-						operations: JSON.stringify(body),
-						map: JSON.stringify(map),
-					},
+					...{ operations: JSON.stringify(body), map: JSON.stringify(map) },
 					...files,
 				},
 				{ headers: 'contentType' },

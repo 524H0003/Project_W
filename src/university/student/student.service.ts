@@ -42,11 +42,7 @@ export class StudentService extends DatabaseRequests<Student> {
 			throw new ServerException('Invalid', 'Email', '', 'user');
 
 		const student = await this.svc.auth.signUp(
-			{
-				email,
-				name: email,
-				password: (32).string + '!1Aa',
-			},
+			{ email, name: email, password: (32).string + '!1Aa' },
 			null,
 			{ role: UserRole.student },
 		);

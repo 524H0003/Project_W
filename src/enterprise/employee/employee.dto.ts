@@ -9,11 +9,9 @@ import { ISignature } from 'app/app.model';
 export class EmployeeHook implements IEmployeeHook {
 	enterpriseName: string;
 	name: string;
-	@ApiHideProperty()
-	avatarPath?: string;
+	@ApiHideProperty() avatarPath?: string;
 	email: string;
-	@ApiHideProperty()
-	id?: string;
+	@ApiHideProperty() id?: string;
 	position: EmployeePosition;
 }
 
@@ -22,9 +20,7 @@ export class EmployeeSignUp implements IEmployeeSignUp, ISignature {
 	position: EmployeePosition;
 	password: string;
 	name: string;
-	@ApiHideProperty()
-	avatarPath?: string;
+	@ApiHideProperty() avatarPath?: string;
 	email: string;
-	@ApiHideProperty()
-	id?: string;
+	@ApiHideProperty() id?: string;
 }

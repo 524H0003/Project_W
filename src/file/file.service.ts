@@ -55,10 +55,7 @@ export class FileService extends DatabaseRequests<File> {
 					const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 					try {
 						await this.assign(
-							{
-								stream: createReadStream(filePath),
-								originalname: file,
-							},
+							{ stream: createReadStream(filePath), originalname: file },
 							null,
 							{ fileName: file.split('.').splice(-2).join('.') },
 						);

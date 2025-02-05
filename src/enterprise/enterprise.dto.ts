@@ -7,9 +7,7 @@ export class EnterpriseAssign implements IEnterpriseAssign, ISignature {
 	description: string;
 	industry: string;
 	name: string;
-	@ApiHideProperty()
-	avatarPath?: string;
+	@ApiHideProperty() avatarPath?: string;
 	email: string;
-	@ApiHideProperty()
-	id?: string;
+	@ApiHideProperty() id?: string;
 }
