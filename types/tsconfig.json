@@ -10,5 +10,5 @@
 	},
 	"exclude": ["."],
 	"extends": "../tsconfig.json",
-	"include": ["../src/**/*.model.ts", "../src/types.ts"]
+	"include": ["../src/**/*.model.ts", "../src/build/types.ts"]
 }
