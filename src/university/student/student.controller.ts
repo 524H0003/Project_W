@@ -11,12 +11,12 @@ import {
 import { MetaData } from 'auth/guards/access.guard';
 import { IStudentSignUp } from './student.model';
 import { AppService } from 'app/app.service';
-import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { LocalhostGuard } from 'auth/guards/localhost.guard';
+import { BaseController } from 'app/utils/controller.utils';
 
 /**
  * Student controller
@@ -24,7 +24,7 @@ import { LocalhostGuard } from 'auth/guards/localhost.guard';
 @Injectable()
 @Controller({ version: '1', path: 'student' })
 @UseInterceptors(CacheInterceptor)
-export class StudentController extends AppController {
+export class StudentController extends BaseController {
 	/**
 	 * Initiate student controller
 	 */

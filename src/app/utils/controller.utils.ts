@@ -1,10 +1,25 @@
 import { AppService } from 'app/app.service';
 import { compare, hash } from './auth.utils';
 import { IUserRecieve } from 'user/user.model';
-import { User } from 'user/user.entity';
+import { User, UserRecieve } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
-import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
+import {
+	Body,
+	HttpStatus,
+	Param,
+	ParseFilePipeBuilder,
+	Post,
+	Req,
+	Res,
+	UseGuards,
+} from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { Throttle } from '@nestjs/throttler';
+import { BaseUserEmail } from 'app/app.dto';
+import { MetaData, GetRequest } from 'auth/guards/access.guard';
+import { HookGuard } from 'auth/guards/hook.guard';
+import { UserAuthencation } from 'user/user.dto';
+import { Hook } from 'app/hook/hook.entity';
 
 /**
  * Base controller
@@ -104,6 +119,92 @@ export class BaseController {
 			response,
 			await this.svc.session.getTokens(user, mtdt),
 		);
+	}
+
+	/**
+	 * Send signature to email
+	 */
+	@Throttle({ changePasswordRequest: { limit: 1, ttl: 300000 } })
+	@Post('change-password')
+	protected async resetPasswordViaEmail(
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
+		@Body() { email }: BaseUserEmail,
+		@MetaData() mtdt: string,
+	): Promise<void> {
+		return this.responseWithUserRecieve(
+			request,
+			response,
+			await this.svc.hook.assign(mtdt, async (s: string) => {
+				const user = await this.svc.baseUser.email(email);
+
+				if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
+				return this.svc.mail.send(email, 'Change password?', 'forgetPassword', {
+					name: user.name,
+					url: `${request.hostname}/hook/${s}`,
+				});
+			}),
+		);
+	}
+
+	/**
+	 * Change password
+	 */
+	@Throttle({ changePassword: { limit: 3, ttl: 240000 } })
+	@Post('change-password/:token')
+	@UseGuards(HookGuard)
+	private async changePassword(
+		@Param('token') signature: string,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
+		@Body() { password }: UserAuthencation,
+		@MetaData() mtdt: string,
+		@GetRequest('hook') hook: Hook,
+	): Promise<void> {
+		try {
+			await this.svc.hook.validating(signature, mtdt, hook);
+
+			const user = await this.svc.user.findOne({
+				baseUser: { email: hook.fromBaseUser.email },
+			});
+
+			if (await this.svc.auth.changePassword(user, password)) {
+				return this.responseWithUserRecieve(
+					request,
+					response,
+					new UserRecieve({ response: 'Success_Change_Password' }),
+				);
+			}
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	/**
+	 * Change password via console
+	 */
+	@Throttle({ requestSignature: { limit: 1, ttl: 600000 } })
+	@Post('request-signature')
+	protected async requestSignatureViaConsole(
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
+		@Body() { email }: BaseUserEmail,
+		@MetaData() mtdt: string,
+	): Promise<void> {
+		if (email == this.cfg.get('ADMIN_EMAIL'))
+			return this.responseWithUserRecieve(
+				request,
+				response,
+				await this.svc.hook.assign(mtdt, (signature: string) =>
+					this.svc.mail.send(
+						this.svc.cfg.get('ADMIN_EMAIL'),
+						'Signature request',
+						'sendSignatureAdmin',
+						{ signature },
+					),
+				),
+			);
+		throw new ServerException('Invalid', 'Email', '', 'user');
 	}
 }
 

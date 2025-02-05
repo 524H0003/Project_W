@@ -4,7 +4,6 @@ import {
 	forwardRef,
 	Get,
 	Inject,
-	Param,
 	Post,
 	Req,
 	Res,
@@ -12,12 +11,10 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { GetRequest, MetaData } from 'auth/guards/access.guard';
-import { Hook } from 'app/hook/hook.entity';
+import { MetaData } from 'auth/guards/access.guard';
 import { AppService } from './app.service';
 import { UserRecieve } from 'user/user.entity';
 import { compare } from './utils/auth.utils';
-import { Throttle } from '@nestjs/throttler';
 import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -25,11 +22,9 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-import { HookGuard } from 'auth/guards/hook.guard';
 import { RefreshGuard } from 'auth/guards/refresh.guard';
 import { LocalhostGuard } from 'auth/guards/localhost.guard';
-import { UserAuthencation, UserLogIn, UserSignUp } from 'user/user.dto';
-import { BaseUserEmail } from './app.dto';
+import { UserLogIn, UserSignUp } from 'user/user.dto';
 
 /**
  * Application Controller
@@ -145,92 +140,6 @@ export class AppController extends BaseController {
 				return sendBack(await this.svc.session.rotateToken(sessionId));
 			else return sendBack(await this.svc.session.addTokens(sessionId));
 		}
-	}
-
-	/**
-	 * Send signature to email
-	 */
-	@Throttle({ changePasswordRequest: { limit: 1, ttl: 300000 } })
-	@Post('change-password')
-	async resetPasswordViaEmail(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { email }: BaseUserEmail,
-		@MetaData() mtdt: string,
-	): Promise<void> {
-		return this.responseWithUserRecieve(
-			request,
-			response,
-			await this.svc.hook.assign(mtdt, async (s: string) => {
-				const user = await this.svc.baseUser.email(email);
-
-				if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
-				return this.svc.mail.send(email, 'Change password?', 'forgetPassword', {
-					name: user.name,
-					url: `${request.hostname}/hook/${s}`,
-				});
-			}),
-		);
-	}
-
-	/**
-	 * Change password
-	 */
-	@Throttle({ changePassword: { limit: 3, ttl: 240000 } })
-	@Post('change-password/:token')
-	@UseGuards(HookGuard)
-	async changePassword(
-		@Param('token') signature: string,
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { password }: UserAuthencation,
-		@MetaData() mtdt: string,
-		@GetRequest('hook') hook: Hook,
-	): Promise<void> {
-		try {
-			await this.svc.hook.validating(signature, mtdt, hook);
-
-			const user = await this.svc.user.findOne({
-				baseUser: { email: hook.fromBaseUser.email },
-			});
-
-			if (await this.svc.auth.changePassword(user, password)) {
-				return this.responseWithUserRecieve(
-					request,
-					response,
-					new UserRecieve({ response: 'Success_Change_Password' }),
-				);
-			}
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
-	 * Change password via console
-	 */
-	@Throttle({ requestSignature: { limit: 1, ttl: 600000 } })
-	@Post('request-signature')
-	async requestSignatureViaConsole(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { email }: BaseUserEmail,
-		@MetaData() mtdt: string,
-	): Promise<void> {
-		if (email == this.cfg.get('ADMIN_EMAIL'))
-			return this.responseWithUserRecieve(
-				request,
-				response,
-				await this.svc.hook.assign(mtdt, (signature: string) =>
-					this.svc.mail.send(
-						this.svc.cfg.get('ADMIN_EMAIL'),
-						'Signature request',
-						'sendSignatureAdmin',
-						{ signature },
-					),
-				),
-			);
-		throw new ServerException('Invalid', 'Email', '', 'user');
 	}
 
 	/**

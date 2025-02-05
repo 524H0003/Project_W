@@ -1,5 +1,10 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { EmployeePosition, IEmployeeHook } from './employee.model';
+import { ApiHideProperty } from '@nestjs/swagger';
+import {
+	EmployeePosition,
+	IEmployeeHook,
+	IEmployeeSignUp,
+} from './employee.model';
+import { ISignature } from 'app/app.model';
 
 export class EmployeeHook implements IEmployeeHook {
 	enterpriseName: string;
@@ -9,6 +14,17 @@ export class EmployeeHook implements IEmployeeHook {
 	email: string;
 	@ApiHideProperty()
 	id?: string;
-	@ApiProperty({ enum: EmployeePosition, default: EmployeePosition.Other })
 	position: EmployeePosition;
+}
+
+export class EmployeeSignUp implements IEmployeeSignUp, ISignature {
+	signature: string;
+	position: EmployeePosition;
+	password: string;
+	name: string;
+	@ApiHideProperty()
+	avatarPath?: string;
+	email: string;
+	@ApiHideProperty()
+	id?: string;
 }

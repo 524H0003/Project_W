@@ -13,10 +13,9 @@ import { IEnterpriseAssign } from './enterprise.model';
 import { MetaData } from 'auth/guards/access.guard';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
-import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { AvatarFileUpload } from 'app/utils/controller.utils';
+import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
@@ -28,7 +27,7 @@ import { ISignature } from 'app/app.model';
  */
 @Controller({ version: '1', path: 'enterprise' })
 @UseInterceptors(CacheInterceptor)
-export class EnterpriseController extends AppController {
+export class EnterpriseController extends BaseController {
 	/**
 	 * Initiate enterprise controller
 	 * @param {AppService} svc - general app service

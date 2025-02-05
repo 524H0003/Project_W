@@ -8,27 +8,25 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { MetaData } from 'auth/guards/access.guard';
+import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { IEmployeeSignUp } from './employee.model';
 import { AppService } from 'app/app.service';
-import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { AvatarFileUpload } from 'app/utils/controller.utils';
+import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards/hook.guard';
-import { ISignature } from 'app/app.model';
-import { EmployeeHook } from './employee.dto';
+import { EmployeeHook, EmployeeSignUp } from './employee.dto';
+import { Hook } from 'app/hook/hook.entity';
 
 /**
  * Employee controller
  */
 @Controller({ version: '1', path: 'employee' })
 @UseInterceptors(CacheInterceptor)
-export class EmployeeController extends AppController {
+export class EmployeeController extends BaseController {
 	/**
 	 * Initiate employee controller
 	 * @param {AppService} svc - general app service
@@ -66,18 +64,19 @@ export class EmployeeController extends AppController {
 	async signUp(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { signature, ...body }: IEmployeeSignUp & ISignature,
+		@Body() { signature, ...body }: EmployeeSignUp,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
+		@GetRequest('hook') hook: Hook,
 	): Promise<void> {
-		await this.svc.hook.validating(signature, mtdt, request.hook);
+		await this.svc.hook.validating(signature, mtdt, hook);
 
 		return this.responseWithUser(
 			request,
 			response,
 			(
 				await this.svc.employee.assign(
-					{ ...body, enterpriseId: JSON.parse(request.hook.note).enterpriseId },
+					{ ...body, enterpriseId: JSON.parse(hook.note).enterpriseId },
 					avatar,
 				)
 			).eventCreator.user,
