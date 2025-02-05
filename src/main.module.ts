@@ -83,7 +83,13 @@ import KeyvRedis from '@keyv/redis';
 		// Application modules
 		AppModule,
 		// Serving static pages
-		ServeStaticModule.forRoot({ rootPath: join(__dirname, '../app/page') }),
+		ServeStaticModule.forRoot(
+			{
+				serveRoot: '/',
+				rootPath: join(__dirname, '../app/page'),
+			},
+			{ serveRoot: '/docs', rootPath: join(__dirname, '../app/docs') },
+		),
 		// Request caching
 		CacheModule.registerAsync({
 			isGlobal: true,

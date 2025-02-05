@@ -18,6 +18,7 @@ public/*
 documentation/
 src/app/mail/templates
 src/app/page
+src/app/docs
 
 # Logs
 logs

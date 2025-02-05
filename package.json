@@ -7,7 +7,7 @@
 	"type": "commonjs",
 	"scripts": {
 		"buildfile": "ts-node src/build.ts",
-		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator",
+		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator -d ./src/app/docs",
 		"mail": "cd ./mail && npm run build && rimraf node_modules && cd ..",
 		"page": "npm run types && cd ./page && npm run build && rimraf node_modules && cd ..",
 		"format": "replace '{\\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace '\\[\\n' '[' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && replace '\\)\\n' ')' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" --silent && npm run prettier && npm run prettier",
@@ -23,7 +23,7 @@
 		"start:prod": "node dist/src/main",
 		"start:ci": "start-server-and-test 'npm run start:prod -- no-csrf' :3000 test:web",
 		"prebuild:dev": "pnpm i && (npm run buildfile & (npm run gqlgen && npm run codegen))",
-		"prebuild": "pnpm i && (npm-run-all --parallel mail page codegen)",
+		"prebuild": "pnpm i && (npm-run-all --parallel mail page codegen doc)",
 		"build:dev": "nest build",
 		"build": "nest build",
 		"test": "jest --config=jest.all.config.ts",
