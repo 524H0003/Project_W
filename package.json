@@ -106,6 +106,7 @@
 		"@nestjs/schematics": "^11.0.0",
 		"@nestjs/testing": "^11.0.6",
 		"@swc/cli": "^0.6.0",
+		"@swc/core": "^1.10.14",
 		"@types/jest": "^29.5.14",
 		"@types/jsonwebtoken": "^9.0.8",
 		"@types/mime-types": "^2.1.4",
