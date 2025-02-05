@@ -34,6 +34,7 @@ declare module 'fastify' {
 		user: User;
 		hook: Hook;
 		refresh: IRefreshResult;
+		isMultipart: boolean;
 	}
 
 	interface Session {
@@ -173,7 +174,7 @@ export class InitServerClass implements OnModuleInit {
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {
-					request['isMultipart'] = true;
+					request.isMultipart = true;
 
 					done(null, request.body);
 				},
