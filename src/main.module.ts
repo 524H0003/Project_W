@@ -66,6 +66,7 @@ import KeyvRedis from '@keyv/redis';
 					plugins: [ApolloServerPluginLandingPageLocalDefault()],
 					includeStacktraceInErrorResponses: false,
 					inheritResolversFromInterfaces: false,
+					introspection: true,
 					// Caching
 					cache: {
 						get: (key: string) => cacheManager.get(key),

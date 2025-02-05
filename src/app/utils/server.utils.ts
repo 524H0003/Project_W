@@ -88,6 +88,7 @@ export async function registerServerPlugins(
 						'data:',
 						'cdn.jsdelivr.net',
 						'validator.swagger.io',
+						'apollo-server-landing-page.cdn.apollographql.com',
 					],
 					scriptSrc: [
 						`'self'`,
@@ -95,6 +96,11 @@ export async function registerServerPlugins(
 						`cdn.jsdelivr.net`,
 						`'unsafe-eval'`,
 					],
+					manifestSrc: [
+						`'self'`,
+						'apollo-server-landing-page.cdn.apollographql.com',
+					],
+					frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
 				},
 			},
 		});
