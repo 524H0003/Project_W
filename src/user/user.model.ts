@@ -103,7 +103,7 @@ export interface IUserRecieve {
 /**
  * Login fields
  */
-export interface IUserLogin extends IUserAuthentication, IBaseUserEmail {}
+export interface IUserLogIn extends IUserAuthentication, IBaseUserEmail {}
 
 /**
  * Sign up fields

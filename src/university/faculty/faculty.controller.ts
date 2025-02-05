@@ -21,6 +21,7 @@ import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { memoryStorage } from 'fastify-multer';
 import { HookGuard } from 'auth/guards/hook.guard';
+import { ISignature } from 'app/app.model';
 
 /**
  * Faculty controller
@@ -48,7 +49,7 @@ export class FacultyController extends AppController {
 	async assign(
 		@Req() request: FastifyRequest,
 		@Res() response: FastifyReply,
-		@Body() { signature, ...body }: IFacultyAssign & { signature: string },
+		@Body() { signature, ...body }: IFacultyAssign & ISignature,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	) {

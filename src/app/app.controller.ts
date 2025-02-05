@@ -28,7 +28,7 @@ import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards/hook.guard';
 import { RefreshGuard } from 'auth/guards/refresh.guard';
 import { LocalhostGuard } from 'auth/guards/localhost.guard';
-import { UserAuthencation, UserSignUp } from 'user/user.dto';
+import { UserAuthencation, UserLogIn, UserSignUp } from 'user/user.dto';
 import { BaseUserEmail } from './app.dto';
 
 /**
@@ -55,7 +55,7 @@ export class AppController extends BaseController {
 	@Post('login') @UseInterceptors(FileInterceptor()) async login(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: UserSignUp,
+		@Body() body: UserLogIn,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
@@ -125,10 +125,6 @@ export class AppController extends BaseController {
 
 	/**
 	 * Refreshing tokens request
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
 	 */
 	@Post('refresh') @UseGuards(RefreshGuard) async refresh(
 		@Req() request: FastifyRequest,
@@ -153,11 +149,6 @@ export class AppController extends BaseController {
 
 	/**
 	 * Send signature to email
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {object} body - request input
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
 	 */
 	@Throttle({ changePasswordRequest: { limit: 1, ttl: 300000 } })
 	@Post('change-password')
@@ -217,11 +208,6 @@ export class AppController extends BaseController {
 
 	/**
 	 * Change password via console
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {object} body - request input
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
 	 */
 	@Throttle({ requestSignature: { limit: 1, ttl: 600000 } })
 	@Post('request-signature')

@@ -4,13 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, Cryption, validation } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { FileService } from 'file/file.service';
-import {
-	IUserLoginKeys,
-	IUserRelationshipKeys,
-	IUserSignUpKeys,
-} from 'build/models';
+import { IUserRelationshipKeys, IUserSignUpKeys } from 'build/models';
 import { User } from 'user/user.entity';
-import { IUserLogin, IUserSignUp, UserRole } from 'user/user.model';
+import { IUserLogIn, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
 import { IAuthSignUpOption } from './auth.model';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
@@ -88,15 +84,14 @@ export class AuthService extends Cryption {
 	 * @param {IUserLogin} input - the login input
 	 * @return {Promise<User>} user's recieve infomations
 	 */
-	async login(input: IUserLogin): Promise<User> {
-		input = InterfaceCasting.quick(input, IUserLoginKeys);
+	async login({ email, password }: IUserLogIn): Promise<User> {
+		const user = await this.usrSvc.email(email);
 
-		const user = await this.usrSvc.email(input.email);
-
-		if (user && (await compare(input.password, await user.hashingPassword())))
-			return user;
-		if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
-		throw new ServerException('Invalid', 'Password', '', 'user');
+		if (user) {
+			if (await compare(password, await user.hashingPassword())) return user;
+			throw new ServerException('Invalid', 'Password', '', 'user');
+		}
+		throw new ServerException('Invalid', 'Email', '', 'user');
 	}
 
 	/**
