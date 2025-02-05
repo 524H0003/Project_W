@@ -2,7 +2,6 @@
 	"$schema": "https://json.schemastore.org/nest-cli",
 	"collection": "@nestjs/schematics",
 	"compilerOptions": {
-		"builder": "swc",
 		"assets": ["**/*.html", "app/page"],
 		"deleteOutDir": true,
 		"tsConfigPath": "tsconfig.build.json",
@@ -13,13 +12,6 @@
 				"options": {
 					"dtoFileNameSuffix": [".dto.ts", ".entity.ts"],
 					"classValidatorShim": false,
-					"introspectComments": true
-				}
-			},
-			{
-				"name": "@nestjs/graphql",
-				"options": {
-					"typeFileNameSuffix": [".entity.ts"],
 					"introspectComments": true
 				}
 			}
