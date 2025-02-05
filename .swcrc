@@ -7,7 +7,7 @@
 			"decorators": true,
 			"dynamicImport": true
 		},
-		"baseUrl": "./"
+		"baseUrl": "."
 	},
 	"minify": true
 }

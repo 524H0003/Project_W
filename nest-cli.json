@@ -15,6 +15,13 @@
 					"classValidatorShim": false,
 					"introspectComments": true
 				}
+			},
+			{
+				"name": "@nestjs/graphql",
+				"options": {
+					"typeFileNameSuffix": [".entity.ts"],
+					"introspectComments": true
+				}
 			}
 		]
 	},
