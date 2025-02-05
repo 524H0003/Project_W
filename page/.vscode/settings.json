@@ -16,7 +16,7 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "**/node_modules": true,
-    "**/.vscode": false,
+    "**/.vscode": true,
     "dist": true
   },
   "explorerExclude.backup": {}
