@@ -116,13 +116,14 @@ export class User extends BaseEntity implements IUserEntity {
 
 	/**
 	 * User's password
+	 * ! WARNING: Weak password validation
 	 */
 	@IsStrongPassword({
-		minLength: 1, // 16
-		// minLowercase: 1,
-		// minUppercase: 1,
-		// minNumbers: 1,
-		// minSymbols: 1,
+		minLength: 1,			// 16
+		minLowercase: 0,	// 1
+		minUppercase: 0,	// 1
+		minNumbers: 0,		// 1
+		minSymbols: 0,		// 1
 	})
 	password: string;
 
