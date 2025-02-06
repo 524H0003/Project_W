@@ -4,6 +4,7 @@ import {
 	forwardRef,
 	Get,
 	Inject,
+	Param,
 	Post,
 	Req,
 	Res,
@@ -11,7 +12,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { MetaData } from 'auth/guards/access.guard';
+import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { AppService } from './app.service';
 import { UserRecieve } from 'user/user.entity';
 import { compare } from './utils/auth.utils';
@@ -24,9 +25,11 @@ import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { RefreshGuard } from 'auth/guards/refresh.guard';
 import { LocalhostGuard } from 'auth/guards/localhost.guard';
-import { UserLogIn, UserSignUp } from 'user/user.dto';
+import { UserAuthencation, UserLogIn, UserSignUp } from 'user/user.dto';
 import { Throttle } from '@nestjs/throttler';
 import { BaseUserEmail } from './app.dto';
+import { Hook } from './hook/hook.entity';
+import { HookGuard } from 'auth/guards/hook.guard';
 
 /**
  * Application Controller
@@ -169,6 +172,53 @@ export class AppController extends BaseController {
 				),
 			);
 		throw new ServerException('Invalid', 'Email', '', 'user');
+	}
+
+	/**
+	 * Change password
+	 */
+	@Throttle({ changePassword: { limit: 3, ttl: 240000 } })
+	@Post('change-password/:token')
+	@UseGuards(HookGuard)
+	protected async changePassword(
+		@Param('token') signature: string,
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
+		@Body() { password }: UserAuthencation,
+		@MetaData() mtdt: string,
+		@GetRequest('hook') hook: Hook,
+	): Promise<void> {
+		await super.changePassword(
+			signature,
+			request,
+			response,
+			{ password },
+			mtdt,
+			hook,
+		);
+	}
+
+	/**
+	 * Send signature to email
+	 */
+	@Throttle({ changePasswordRequest: { limit: 1, ttl: 300000 } })
+	@Post('change-password')
+	protected async resetPasswordViaEmail(
+		@Req() request: FastifyRequest,
+		@Res({ passthrough: true }) response: FastifyReply,
+		@Body() { email }: BaseUserEmail,
+		@MetaData() mtdt: string,
+	): Promise<void> {
+		return super.resetPasswordViaEmail(request, response, { email }, mtdt);
+	}
+
+	/**
+	 * Request a csrf token
+	 */
+	@Get('csrf-token') getCsrfToken(
+		@Res({ passthrough: true }) response: FastifyReply,
+	) {
+		response.send({ token: response.generateCsrf() });
 	}
 
 	/**

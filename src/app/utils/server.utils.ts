@@ -160,13 +160,6 @@ export class InitServerClass implements OnModuleInit {
 			authMiddleware = new AuthMiddleware(this.configService, this.signService);
 
 		adapterInstance
-			.route({
-				method: 'get',
-				url: '/csrf-token',
-				handler(req, rep) {
-					rep.send({ token: rep.generateCsrf() });
-				},
-			})
 			.addHook(
 				'preValidation',
 				(request: FastifyRequest, response: FastifyReply) =>
