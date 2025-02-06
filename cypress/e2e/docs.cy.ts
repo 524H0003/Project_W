@@ -1,5 +1,5 @@
 const url = 'localhost:3000/docs';
 
 describe('Api page test', () => {
-	it('visitable', () => cy.visit(url));
+	it('visitable', () => cy.visit(url).contains('project_w documentation'));
 });

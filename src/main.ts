@@ -75,7 +75,7 @@ async function bootstrap() {
 
 	fastify
 		.register(fastifyStatic, {
-			prefix: '/docs/',
+			prefix: '/docs',
 			root: join(__dirname, '..', 'app/docs'),
 		})
 		.register(
@@ -84,8 +84,9 @@ async function bootstrap() {
 					root: join(__dirname, '..', 'app/page'),
 					wildcard: false,
 				});
-				childContext.setNotFoundHandler((_, reply) => {
-					return reply.code(200).type('text/html').sendFile('index.html');
+				childContext.setNotFoundHandler((req, reply) => {
+					if (req.url == '/docs') return reply.redirect('./docs/');
+					else return reply.code(200).type('text/html').sendFile('index.html');
 				});
 				done();
 			},

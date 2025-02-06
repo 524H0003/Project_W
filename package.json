@@ -7,6 +7,7 @@
 	"type": "commonjs",
 	"scripts": {
 		"buildfile": "ts-node src/build.ts",
+		"genkey": "npx @fastify/secure-session > securedSessionKey",
 		"doc": "compodoc src -p tsconfig.doc.json --disableSourceCode --hideGenerator -d ./src/app/docs",
 		"mail": "cd ./mail && npm run build && rimraf node_modules && cd ..",
 		"page": "npm run types && cd ./page && npm run build && rimraf node_modules && cd ..",
@@ -16,7 +17,7 @@
 		"gqlgen": " gqlg --schemaFilePath ./src/schema.gql --destDirPath ./graphql/operations --ext graphql",
 		"types": "npm run buildfile && tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/build/types.ts --verbose",
 		"codegen": "npm run gqlgen && graphql-codegen --config codegen.ts",
-		"prestart:ci": "npm run build && pnpm i --prod && npx @fastify/secure-session > securedSessionKey",
+		"prestart:ci": "npm run build && pnpm i --prod && npm run genkey",
 		"start": "nest start",
 		"start:debug": "npm run buildfile && nest start --debug --watch",
 		"start:dev": "nest start --watch",
