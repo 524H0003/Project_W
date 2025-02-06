@@ -86,7 +86,11 @@ async function bootstrap() {
 				});
 				childContext.setNotFoundHandler((req, reply) => {
 					if (req.url == '/docs') return reply.redirect('./docs/');
-					else return reply.code(200).type('text/html').sendFile('index.html');
+					else
+						return reply
+							.code(req.url == '/' ? 200 : 404)
+							.type('text/html')
+							.sendFile('index.html');
 				});
 				done();
 			},
