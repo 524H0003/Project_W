@@ -19,6 +19,7 @@ import Fastify from 'fastify';
 import { hash } from 'app/utils/auth.utils';
 import { createServer, Server } from 'http';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { join } from 'path';
 
 async function bootstrap() {
 	let server: Server;
@@ -58,6 +59,7 @@ async function bootstrap() {
 		.useGlobalPipes(new ValidationPipe())
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.enableVersioning({ type: VersioningType.URI })
+		.useStaticAssets({ prefix: '/docs/', root: join(__dirname, '../app/docs') })
 		.init();
 
 	const docConfig = new DocumentBuilder().setTitle('Project W APIs').build(),
