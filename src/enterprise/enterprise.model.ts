@@ -21,12 +21,7 @@ export interface IEnterpriseInfo {
 /**
  * Enterprise assign form
  */
-export interface IEnterpriseAssign extends IEnterpriseInfo, IBaseUserInfo {
-	/**
-	 * Signature to assign
-	 */
-	signature: string;
-}
+export interface IEnterpriseAssign extends IEnterpriseInfo, IBaseUserInfo {}
 
 /**
  * Enterprise model

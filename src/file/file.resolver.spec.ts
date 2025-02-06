@@ -1,25 +1,23 @@
 import { AppService } from 'app/app.service';
-import { execute, initJest, sendGQL } from 'app/utils/test.utils';
+import {
+	createFile,
+	execute,
+	initJest,
+	RequesterType,
+	sendGQL,
+} from 'app/utils/test.utils';
 import {
 	UploadFile,
 	UploadFileMutation,
 	UploadFileMutationVariables,
 } from 'build/compiled_graphql';
-import { LightMyRequestChain } from 'fastify';
 import { OutgoingHttpHeaders } from 'http';
-import TestAgent from 'supertest/lib/agent';
 import { User } from 'user/user.entity';
 import { UserRole } from 'user/user.model';
 
 const fileName = curFile(__filename);
 
-let req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
-	svc: AppService,
-	headers: OutgoingHttpHeaders;
+let req: RequesterType, svc: AppService, headers: OutgoingHttpHeaders;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();
@@ -32,7 +30,7 @@ beforeEach(async () => {
 		usr: User;
 
 	const e = await req()
-		.post('/signup')
+		.post('/sign-up')
 		.body({ ...rawUsr, ...rawUsr.baseUser });
 	usr = await svc.user.email(rawUsr.baseUser.email);
 
@@ -58,7 +56,7 @@ describe('uploadFile', () => {
 						{
 							headers: headers,
 							map: { file: ['variables.file'] },
-							attach: ['file', content, name],
+							files: { file: createFile(name, content) },
 						},
 					)
 				).uploadFile,

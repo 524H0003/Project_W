@@ -9,29 +9,27 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { IEnterpriseAssign } from './enterprise.model';
-import { MetaData } from 'auth/guards/access.guard';
+import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
-import { AppController } from 'app/app.controller';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { AvatarFileUpload } from 'app/utils/controller.utils';
+import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards/hook.guard';
+import { EnterpriseAssign } from './enterprise.dto';
+import { Hook } from 'app/hook/hook.entity';
 
 /**
  * Enterprise controller
  */
-@Controller('enterprise')
+@Controller({ version: '1', path: 'enterprise' })
 @UseInterceptors(CacheInterceptor)
-export class EnterpriseController extends AppController {
+export class EnterpriseController extends BaseController {
 	/**
 	 * Initiate enterprise controller
-	 * @param {AppService} svc - general app service
-	 * @param {ConfigService} cfg - general app config
 	 */
 	constructor(
 		protected svc: AppService,
@@ -49,12 +47,13 @@ export class EnterpriseController extends AppController {
 	async assign(
 		@Req() request: FastifyRequest,
 		@Res() response: FastifyReply,
-		@Body() body: IEnterpriseAssign,
+		@Body() { signature, ...body }: EnterpriseAssign,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
+		@GetRequest('hook') hook: Hook,
 	): Promise<void> {
-		await this.svc.hook.validating(body.signature, mtdt, request.hook);
-		await this.svc.enterprise.assign(body, avatar || null);
+		await this.svc.hook.validating(signature, mtdt, hook);
+		await this.svc.enterprise.assign(body, avatar);
 		return this.responseWithUserRecieve(
 			request,
 			response,

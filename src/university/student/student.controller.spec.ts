@@ -1,16 +1,9 @@
-import { execute, initJest } from 'app/utils/test.utils';
-import { LightMyRequestChain } from 'fastify';
+import { execute, initJest, RequesterType } from 'app/utils/test.utils';
 import { Student } from './student.entity';
-import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
-	stu: Student;
+let req: RequesterType, stu: Student;
 
 beforeAll(async () => {
 	const { requester } = await initJest();
@@ -22,7 +15,7 @@ beforeEach(async () => {
 	stu = await Student.test(fileName);
 });
 
-describe('signup', () => {
+describe('signUp', () => {
 	it('fail due to wrong email format', async () => {
 		stu = await Student.test(fileName, { email: 'aa' });
 
@@ -30,7 +23,7 @@ describe('signup', () => {
 			async () =>
 				JSON.stringify(
 					await req()
-						.post('/student/signup')
+						.post('/student/sign-up')
 						.body({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
@@ -42,7 +35,7 @@ describe('signup', () => {
 			async () =>
 				JSON.stringify(
 					await req()
-						.post('/student/signup')
+						.post('/student/sign-up')
 						.body({ ...stu.user, ...stu.user.baseUser }),
 				),
 			{

@@ -1,18 +1,17 @@
-import { LightMyRequestChain } from 'fastify';
 import { Enterprise } from './enterprise.entity';
-import { cookie, execute, initJest } from 'app/utils/test.utils';
+import {
+	getCookie,
+	execute,
+	initJest,
+	RequesterType,
+} from 'app/utils/test.utils';
 import { IEnterpriseAssign } from './enterprise.model';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
-import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
+let req: RequesterType,
 	enterprise: Enterprise,
 	signature: string,
 	svc: AppService,
@@ -43,7 +42,7 @@ describe('assign', () => {
 				JSON.stringify(
 					await req()
 						.post('/enterprise/assign')
-						.headers({ cookie: cookie(headers['set-cookie']) })
+						.headers({ cookie: getCookie(headers['set-cookie']) })
 						.body({
 							signature,
 							...enterprise,

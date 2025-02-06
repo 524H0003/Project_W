@@ -3,16 +3,16 @@ import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Employee } from './employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IEmployeeHook, IEmployeeSignup } from './employee.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import {
-	IEmployeeHookKeys,
-	IEmployeeInfoKeys,
-	IEmployeeSignupKeys,
-} from 'build/models';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
+import {
+	IEmployeeHookKeys,
+	IEmployeeInfoKeys,
+	IEmployeeSignUpKeys,
+} from 'build/models';
 
 /**
  * Employee service
@@ -61,18 +61,18 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 
 	/**
 	 * Sign up for employee
-	 * @param {IEmployeeSignup} input - the sign up input
+	 * @param {IEmployeeSignUp} input - the sign up input
 	 * @param {MulterFile} avatar - employee's avatar
 	 * @return {Promise<Employee>}
 	 */
 	async assign(
-		input: IEmployeeSignup & { enterpriseId: string },
+		input: IEmployeeSignUp & { enterpriseId: string },
 		avatar: MulterFile = null,
 	): Promise<Employee> {
 		const enterprise = await this.svc.enterprise.id(
 			input.enterpriseId || input.id,
 		);
-		input = InterfaceCasting.quick(input, IEmployeeSignupKeys);
+		input = InterfaceCasting.quick(input, IEmployeeSignUpKeys);
 
 		if (!enterprise)
 			throw new ServerException('Invalid', 'Enterprise', '', 'user');

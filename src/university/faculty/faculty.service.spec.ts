@@ -17,13 +17,7 @@ beforeEach(() => {});
 
 describe('FacultyService', () => {
 	it('assign', async () => {
-		let signature: string;
-
 		faculty = Faculty.test(fileName);
-
-		await svc.hook.assign((20).string, (s: string) => {
-			signature = s;
-		});
 
 		await execute(
 			() =>
@@ -32,7 +26,6 @@ describe('FacultyService', () => {
 						...faculty.eventCreator.user.baseUser,
 						...faculty.eventCreator.user,
 						...faculty,
-						signature,
 					},
 					null,
 				),
@@ -41,14 +34,9 @@ describe('FacultyService', () => {
 	});
 
 	it('assign failed due to email already taken', async () => {
-		let signature: string;
-
 		faculty = Faculty.test(fileName);
 
 		await svc.baseUser.assign({ ...faculty.eventCreator.user.baseUser });
-		await svc.hook.assign((20).string, (s: string) => {
-			signature = s;
-		});
 
 		await execute(
 			() =>
@@ -57,7 +45,6 @@ describe('FacultyService', () => {
 						...faculty.eventCreator.user.baseUser,
 						...faculty.eventCreator.user,
 						...faculty,
-						signature,
 					},
 					null,
 				),

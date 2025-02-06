@@ -27,9 +27,4 @@ export interface IFacultyEntity extends IFacultyRelationship, IFacultyInfo {}
 /**
  * Faculty assign
  */
-export interface IFacultyAssign extends IFacultyInfo, IUserSignUp {
-	/**
-	 * Signature to assign
-	 */
-	signature: string;
-}
+export interface IFacultyAssign extends IFacultyInfo, IUserSignUp {}

@@ -3,20 +3,14 @@ import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
 import { Employee } from 'enterprise/employee/employee.entity';
 import {
 	IEmployeeHook,
-	IEmployeeSignup,
+	IEmployeeSignUp,
 } from 'enterprise/employee/employee.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import { LightMyRequestChain } from 'fastify';
 import { AppService } from 'app/app.service';
-import TestAgent from 'supertest/lib/agent';
-import { cookie } from 'app/utils/test.utils';
+import { getCookie, RequesterType } from 'app/utils/test.utils';
 
 export async function assignEmployee(
-	req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
+	req: RequesterType,
 	svc: AppService,
 	enterprise: Enterprise,
 	empInp: Employee,
@@ -42,15 +36,15 @@ export async function assignEmployee(
 			'signature'
 		],
 		{ headers } = await req()
-			.post('/employee/signup')
-			.headers({ cookie: cookie(empHeaders['set-cookie']) })
+			.post('/employee/sign-up')
+			.headers({ cookie: getCookie(empHeaders['set-cookie']) })
 			.body({
 				signature,
 				enterpriseName: enterprise.baseUser.name,
 				...empInp,
 				...empInp.eventCreator.user,
 				...empInp.eventCreator.user.baseUser,
-			} as IEmployeeSignup),
+			} as IEmployeeSignUp),
 		employee = await svc.employee.findOne({
 			eventCreator: {
 				user: {

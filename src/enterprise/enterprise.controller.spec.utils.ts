@@ -1,16 +1,10 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { cookie } from 'app/utils/test.utils';
+import { getCookie, RequesterType } from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IEnterpriseAssign } from 'enterprise/enterprise.model';
-import { LightMyRequestChain } from 'fastify';
-import TestAgent from 'supertest/lib/agent';
 
 export async function assignEnterprise(
-	req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
+	req: RequesterType,
 	enterprise: Enterprise,
 	mailerSvc: MailerService,
 	adminEmail: string,
@@ -24,7 +18,7 @@ export async function assignEnterprise(
 
 	await req()
 		.post('/enterprise/assign')
-		.headers({ cookie: cookie(headers['set-cookie']) })
+		.headers({ cookie: getCookie(headers['set-cookie']) })
 		.body({
 			signature,
 			...enterprise,

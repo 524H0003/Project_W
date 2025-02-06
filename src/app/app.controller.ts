@@ -2,8 +2,8 @@ import {
 	Body,
 	Controller,
 	forwardRef,
+	Get,
 	Inject,
-	Param,
 	Post,
 	Req,
 	Res,
@@ -11,15 +11,10 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { GetRequest, MetaData } from 'auth/guards/access.guard';
-import { Hook } from 'app/hook/hook.entity';
-import { IStudentSignup } from 'university/student/student.model';
-import { IUserSignUp } from 'user/user.model';
-import { IBaseUserEmail } from './app.model';
+import { MetaData } from 'auth/guards/access.guard';
 import { AppService } from './app.service';
 import { UserRecieve } from 'user/user.entity';
 import { compare } from './utils/auth.utils';
-import { Throttle } from '@nestjs/throttler';
 import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -27,14 +22,16 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-import { HookGuard } from 'auth/guards/hook.guard';
 import { RefreshGuard } from 'auth/guards/refresh.guard';
 import { LocalhostGuard } from 'auth/guards/localhost.guard';
+import { UserLogIn, UserSignUp } from 'user/user.dto';
+import { Throttle } from '@nestjs/throttler';
+import { BaseUserEmail } from './app.dto';
 
 /**
  * Application Controller
  */
-@Controller('')
+@Controller({ version: '1', path: '' })
 @UseInterceptors(CacheInterceptor)
 export class AppController extends BaseController {
 	/**
@@ -51,16 +48,11 @@ export class AppController extends BaseController {
 
 	/**
 	 * Login request
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {IStudentSignup} body - login input
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
 	 */
 	@Post('login') @UseInterceptors(FileInterceptor()) async login(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: IStudentSignup,
+		@Body() body: UserLogIn,
 		@MetaData() mtdt: string,
 	): Promise<void> {
 		try {
@@ -86,20 +78,14 @@ export class AppController extends BaseController {
 
 	/**
 	 * Sign up request
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {IUserSignUp} body - sign up input
-	 * @param {string} mtdt - client's metadata
-	 * @param {MulterFile} avatar - user's avatar
-	 * @return {Promise<void>}
 	 */
-	@Post('signup')
+	@Post('sign-up')
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: IUserSignUp,
+		@Body() body: UserSignUp,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {
@@ -136,10 +122,6 @@ export class AppController extends BaseController {
 
 	/**
 	 * Refreshing tokens request
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
 	 */
 	@Post('refresh') @UseGuards(RefreshGuard) async refresh(
 		@Req() request: FastifyRequest,
@@ -163,94 +145,17 @@ export class AppController extends BaseController {
 	}
 
 	/**
-	 * Send signature to email
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {object} body - request input
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
-	 */
-	@Throttle({ default: { limit: 1, ttl: 300000 } })
-	@Post('change-password')
-	async resetPasswordViaEmail(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: IBaseUserEmail,
-		@MetaData() mtdt: string,
-	): Promise<void> {
-		return this.responseWithUserRecieve(
-			request,
-			response,
-			await this.svc.hook.assign(mtdt, async (s: string) => {
-				const user = await this.svc.baseUser.email(body.email);
-
-				if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
-				return this.svc.mail.send(
-					body.email,
-					'Change password?',
-					'forgetPassword',
-					{ name: user.name, url: `${request.hostname}/hook/${s}` },
-				);
-			}),
-		);
-	}
-
-	/**
-	 * Change password
-	 * @param {string} signature - hook's signature
-	 * @param {FastifyReply} response - server's response
-	 * @param {object} body - request input
-	 * @param {string} mtdt - client's metadata
-	 * @param {Hook} hook - recieved hook from client
-	 * @return {Promise<void>}
-	 */
-	@Throttle({ default: { limit: 3, ttl: 240000 } })
-	@Post('change-password/:token')
-	@UseGuards(HookGuard)
-	async changePassword(
-		@Param('token') signature: string,
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: { password: string },
-		@MetaData() mtdt: string,
-		@GetRequest('hook') hook: Hook,
-	): Promise<void> {
-		try {
-			await this.svc.hook.validating(signature, mtdt, hook);
-
-			const user = await this.svc.user.findOne({
-				baseUser: { email: hook.fromBaseUser.email },
-			});
-
-			if (await this.svc.auth.changePassword(user, body.password)) {
-				return this.responseWithUserRecieve(
-					request,
-					response,
-					new UserRecieve({ response: 'Success_Change_Password' }),
-				);
-			}
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
 	 * Change password via console
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @param {object} body - request input
-	 * @param {string} mtdt - client's metadata
-	 * @return {Promise<void>}
 	 */
-	@Throttle({ default: { limit: 1, ttl: 600000 } })
+	@Throttle({ requestSignature: { limit: 1, ttl: 600000 } })
 	@Post('request-signature')
 	protected async requestSignatureViaConsole(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() body: { email: string },
+		@Body() { email }: BaseUserEmail,
 		@MetaData() mtdt: string,
 	): Promise<void> {
-		if (body.email == this.cfg.get('ADMIN_EMAIL'))
+		if (email == this.cfg.get('ADMIN_EMAIL'))
 			return this.responseWithUserRecieve(
 				request,
 				response,
@@ -264,5 +169,14 @@ export class AppController extends BaseController {
 				),
 			);
 		throw new ServerException('Invalid', 'Email', '', 'user');
+	}
+
+	/**
+	 * Check server status
+	 */
+	@Get('status') serverStatus(
+		@Res({ passthrough: true }) response: FastifyReply,
+	) {
+		response.send({ status: 'OK' });
 	}
 }

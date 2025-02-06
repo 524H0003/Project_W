@@ -7,10 +7,10 @@
 		"dist",
 		"./*.d.ts",
 		"**/build.ts",
-		"./src/build/models.ts",
 		"./page",
 		"./types",
-		"./src/app/utils/test.utils.ts"
+		"./src/app/utils/test.utils.ts",
+		"./src/build"
 	],
 	"extends": "./tsconfig.json"
 }

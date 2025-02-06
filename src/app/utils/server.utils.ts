@@ -1,5 +1,5 @@
-import fastifyCookie from '@fastify/cookie';
-import fastifySession, { CookieOptions } from '@fastify/session';
+import '@fastify/cookie';
+import '@fastify/session';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Faculty } from 'university/faculty/faculty.entity';
 import { Student } from 'university/student/student.entity';
@@ -24,12 +24,17 @@ import { OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { SignService } from 'auth/auth.service';
 import { AuthMiddleware } from 'auth/auth.middleware';
+import fastifyCsrf, { CookieSerializeOptions } from '@fastify/csrf-protection';
+import fastifySecuredSession from '@fastify/secure-session';
+import { readFileSync } from 'fs';
+import { hash } from './auth.utils';
 
 declare module 'fastify' {
 	interface FastifyRequest {
 		user: User;
 		hook: Hook;
 		refresh: IRefreshResult;
+		isMultipart: boolean;
 	}
 
 	interface Session {
@@ -46,13 +51,27 @@ export async function registerServerPlugins(
 	{ password = (32).string, name = (6).string }: Partial<CookieProps>,
 ) {
 	const secret = password,
-		cookieOptions: CookieOptions = {
+		cookieOptions: CookieSerializeOptions = {
 			httpOnly: true,
 			secure: true,
-			sameSite: 'lax',
+			sameSite: 'strict',
 		};
 
 	await fastify
+		.register(fastifySecuredSession, {
+			cookieName: await hash((6).string, 'base64url'),
+			cookie: { ...cookieOptions, signed: true },
+			secret,
+			key: readFileSync('securedSessionKey'),
+			salt: (256).string,
+		})
+		.register(fastifyCsrf, {
+			sessionKey: name,
+			cookieKey: await hash((6).string, 'base64url'),
+			cookieOpts: cookieOptions,
+			sessionPlugin: '@fastify/secure-session',
+			csrfOpts: { validity: (180).s2ms },
+		})
 		.register(fastifyHelmet, {
 			contentSecurityPolicy: {
 				directives: {
@@ -65,22 +84,27 @@ export async function registerServerPlugins(
 						'unpkg.com',
 					],
 					fontSrc: [`'self'`, 'fonts.gstatic.com', 'data:'],
-					imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net'],
+					imgSrc: [
+						`'self'`,
+						'data:',
+						'cdn.jsdelivr.net',
+						'validator.swagger.io',
+						'apollo-server-landing-page.cdn.apollographql.com',
+					],
 					scriptSrc: [
 						`'self'`,
 						`https: 'unsafe-inline'`,
 						`cdn.jsdelivr.net`,
 						`'unsafe-eval'`,
 					],
+					manifestSrc: [
+						`'self'`,
+						'apollo-server-landing-page.cdn.apollographql.com',
+					],
+					frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+					objectSrc: ["'self'"],
 				},
 			},
-		})
-		.register(fastifyCookie, { secret, parseOptions: cookieOptions })
-		.register(fastifySession, {
-			secret,
-			// ! Cautious: Session's cookie secure must set false. If not, AdminJS crash
-			cookie: { secure: false },
-			cookieName: name,
 		});
 }
 
@@ -136,6 +160,13 @@ export class InitServerClass implements OnModuleInit {
 			authMiddleware = new AuthMiddleware(this.configService, this.signService);
 
 		adapterInstance
+			.route({
+				method: 'get',
+				url: '/csrf-token',
+				handler(req, rep) {
+					rep.send({ token: rep.generateCsrf() });
+				},
+			})
 			.addHook(
 				'preValidation',
 				(request: FastifyRequest, response: FastifyReply) =>
@@ -144,7 +175,7 @@ export class InitServerClass implements OnModuleInit {
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {
-					request['isMultipart'] = true;
+					request.isMultipart = true;
 
 					done(null, request.body);
 				},

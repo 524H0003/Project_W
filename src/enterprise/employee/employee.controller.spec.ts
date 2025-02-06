@@ -1,20 +1,19 @@
 import { AppService } from 'app/app.service';
-import { LightMyRequestChain } from 'fastify';
 import { Employee } from './employee.entity';
-import { cookie, execute, initJest } from 'app/utils/test.utils';
+import {
+	getCookie,
+	execute,
+	initJest,
+	RequesterType,
+} from 'app/utils/test.utils';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import { IEmployeeHook, IEmployeeSignup } from './employee.model';
+import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
 import { assignEnterprise } from 'enterprise/enterprise.controller.spec.utils';
 import { MailerService } from '@nestjs-modules/mailer';
-import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
+let req: RequesterType,
 	svc: AppService,
 	mailerSvc: MailerService,
 	enterprise: Enterprise,
@@ -60,7 +59,7 @@ describe('hook', () => {
 	});
 });
 
-describe('signup', () => {
+describe('signUp', () => {
 	it('success', async () => {
 		const { headers } = await req()
 				.post('/employee/hook')
@@ -77,15 +76,15 @@ describe('signup', () => {
 			async () =>
 				JSON.stringify(
 					await req()
-						.post('/employee/signup')
-						.headers({ cookie: cookie(headers['set-cookie']) })
+						.post('/employee/sign-up')
+						.headers({ cookie: getCookie(headers['set-cookie']) })
 						.body({
 							signature,
 							enterpriseName: enterprise.baseUser.name,
 							...employee,
 							...employee.eventCreator.user,
 							...employee.eventCreator.user.baseUser,
-						} as IEmployeeSignup),
+						} as IEmployeeSignUp),
 				),
 			{
 				exps: [

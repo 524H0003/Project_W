@@ -1,5 +1,5 @@
 import { mkdirSync } from 'fs';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import {
@@ -18,6 +18,9 @@ import {
 import Fastify from 'fastify';
 import { hash } from 'app/utils/auth.utils';
 import { createServer, Server } from 'http';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { join } from 'path';
+import fastifyStatic from '@fastify/static';
 
 async function bootstrap() {
 	let server: Server;
@@ -53,14 +56,44 @@ async function bootstrap() {
 	mkdirSync(config.get('SERVER_PUBLIC'), { recursive: true });
 
 	await nest
-		.setGlobalPrefix('api/v1')
+		.setGlobalPrefix('api')
 		.useGlobalPipes(new ValidationPipe())
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
+		.enableVersioning({ type: VersioningType.URI })
 		.init();
 
-	fastify.ready(() => {
-		server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
-	});
+	const docConfig = new DocumentBuilder().setTitle('Project W APIs').build(),
+		documentFactory = () => SwaggerModule.createDocument(nest, docConfig);
+	SwaggerModule.setup('api', nest, documentFactory);
+
+	if (process.argv.length == 3 && process.argv[2] != 'no-csrf')
+		fastify.addHook('preValidation', (req, reply, done) => {
+			if (req.method.toLowerCase() !== 'get')
+				fastify.csrfProtection(req, reply, done);
+			else done();
+		});
+
+	fastify
+		.register(fastifyStatic, {
+			prefix: '/docs/',
+			root: join(__dirname, '..', 'app/docs'),
+		})
+		.register(
+			(childContext, _, done) => {
+				childContext.register(fastifyStatic, {
+					root: join(__dirname, '..', 'app/page'),
+					wildcard: false,
+				});
+				childContext.setNotFoundHandler((_, reply) => {
+					return reply.code(200).type('text/html').sendFile('index.html');
+				});
+				done();
+			},
+			{ prefix: '/', decorateReply: false },
+		)
+		.ready(() => {
+			server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
+		});
 }
 
 void bootstrap();

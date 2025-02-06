@@ -4,7 +4,6 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { User } from 'user/user.entity';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
@@ -12,7 +11,23 @@ import { AWSRecieve } from 'app/aws/aws.service';
 import { FileUpload } from 'graphql-upload-ts';
 import { createHmac } from 'node:crypto';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-import { Readable } from 'node:stream';
+
+type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
+	| {
+			[K in Keys]-?: Required<Pick<Pick<T, Keys>, K>> &
+				Partial<Pick<T, Exclude<Keys, K>>>;
+	  }[Keys]
+	| Partial<Pick<T, Keys>>;
+
+async function stream2buffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+	return new Promise<Buffer>((resolve, reject) => {
+		const _buf = Array<any>();
+
+		stream.on('data', (chunk) => _buf.push(chunk));
+		stream.on('end', () => resolve(Buffer.concat(_buf)));
+		stream.on('error', (err) => reject(`error converting stream - ${err}`));
+	});
+}
 
 /**
  * File services
@@ -36,10 +51,14 @@ export class FileService extends DatabaseRequests<File> {
 			}
 
 			for (const file of files)
-				if (file.match(this.serverFilesReg)) {
+				if (this.serverFilesReg.test(file)) {
 					const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 					try {
-						await this.svc.aws.upload(file, createReadStream(filePath));
+						await this.assign(
+							{ stream: createReadStream(filePath), originalname: file },
+							null,
+							{ fileName: file.split('.').splice(-2).join('.') },
+						);
 					} catch {}
 				}
 		});
@@ -48,52 +67,53 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * @ignore
 	 */
-	private serverFilesReg = /^.*\.server\.(.*)/g;
+	private serverFilesReg = /^.*\.server\.[^.]+$/g;
 
 	/**
 	 * Assign file to server
 	 * @param {MulterFile} input - the file to assign
-	 * @param {User} user - the file's assigner
+	 * @param {User} userId - the file's assigner
 	 * @param {object} serverFilesOptions - optional options
 	 * @return {Promise<File>} the assigned file's infomations on database
 	 */
 	async assign(
-		input: MulterFile,
-		user: User,
+		{
+			buffer,
+			stream,
+			originalname,
+		}: RequireOnlyOne<MulterFile, 'stream' | 'buffer'> &
+			Required<Pick<MulterFile, 'originalname'>>,
+		userId: string,
 		serverFilesOptions?: { fileName: string },
 	): Promise<File> {
-		if (!input?.buffer) return null;
+		buffer = buffer || (await stream2buffer(stream));
 
-		const title = input.originalname || input.filename,
+		if (!buffer) return null;
+
+		const title = originalname,
 			{ fileName = '' } = serverFilesOptions || {},
 			path = fileName
 				? fileName + `.server.${extname(title)}`
-				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(input.buffer).digest('hex')}${extname(title)}`;
+				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(buffer).digest('hex')}${extname(title)}`;
 
-		await this.svc.aws.upload(path, (input.stream as Readable) ?? input.buffer);
+		await this.svc.aws.upload(path, buffer);
 
-		if (!fileName)
-			return this.save({
-				path,
-				title,
-				fileCreatedBy: { baseUser: { id: user.id } },
-			});
+		return this.save({
+			path,
+			title,
+			fileCreatedBy: userId ? { baseUser: { id: userId } } : null,
+		});
 	}
 
 	/**
 	 * Recieve file from server
 	 * @param {string} filename - the name of recieving file
-	 * @param {User} user - the user want to recieve file
+	 * @param {string} userId - the id of user want to recieve file
 	 * @return {Promise<AWSRecieve>}
 	 */
-	async recieve(filename: string, user: User): Promise<AWSRecieve> {
-		const recievedFile = await this.svc.aws.download(filename);
-
-		if (
-			filename.match(this.serverFilesReg) ||
-			(user && (await this.isOwner(filename, user.id)))
-		)
-			return recievedFile;
+	async recieve(filename: string, userId: string): Promise<AWSRecieve> {
+		if (await this.isOwner(filename, userId))
+			return this.svc.aws.download(filename);
 
 		throw new ServerException('Forbidden', 'File', 'Access', 'user');
 	}
@@ -107,18 +127,14 @@ export class FileService extends DatabaseRequests<File> {
 
 	/**
 	 * Find file on database
-	 * @param {string} input - the file's name
+	 * @param {string} path - the file's path on server
 	 * @param {string} ownerId - the owner's id
 	 * @return {Promise<boolean>}
 	 */
-	async isOwner(input: string, ownerId: string): Promise<boolean> {
-		return (
-			(await this.findOne({
-				path: input,
-				fileCreatedBy: { baseUser: { id: ownerId } },
-				deep: 2,
-			})) !== undefined
-		);
+	async isOwner(path: string, ownerId: string): Promise<boolean> {
+		const file = await this.findOne({ path, deep: 2 });
+
+		return this.serverFilesReg.test(path) || file?.fileCreatedBy.id == ownerId;
 	}
 
 	/**
@@ -126,33 +142,25 @@ export class FileService extends DatabaseRequests<File> {
 	 * @param {FileUpload} input - graphql upload
 	 * @return {Promise<MulterFile>}
 	 */
-	async GQLUploadToMulterFile(input: FileUpload): Promise<MulterFile> {
-		const { createReadStream, filename, fieldName, mimetype, encoding } = input,
-			uploadFile: MulterFile = {
-				fieldname: fieldName,
-				encoding: encoding,
-				mimetype: mimetype,
-				stream: createReadStream(),
-				filename: filename,
-				buffer: null,
-				originalname: undefined,
-				size: undefined,
-				destination: undefined,
-				path: undefined,
-			};
-
-		uploadFile.buffer = await new Promise((resolve, reject) => {
-			const chunks = [];
-			uploadFile.stream.on('data', (data) => {
-				if (typeof data === 'string') chunks.push(Buffer.from(data, 'utf-8'));
-				else if (data instanceof Buffer) chunks.push(data);
-				else chunks.push(Buffer.from(JSON.stringify(data), 'utf-8'));
-			});
-			uploadFile.stream.on('end', () => {
-				resolve(Buffer.concat(chunks));
-			});
-			uploadFile.stream.on('error', reject);
-		});
+	GQLUploadToMulterFile({
+		createReadStream,
+		filename,
+		fieldName,
+		mimetype,
+		encoding,
+	}: FileUpload): MulterFile {
+		const uploadFile: MulterFile = {
+			fieldname: fieldName,
+			encoding: encoding,
+			mimetype: mimetype,
+			stream: createReadStream(),
+			filename: filename,
+			buffer: null,
+			originalname: filename,
+			size: undefined,
+			destination: undefined,
+			path: undefined,
+		};
 
 		return uploadFile;
 	}

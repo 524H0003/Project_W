@@ -35,3 +35,7 @@ export interface IBaseUserEntity
 	extends IBaseUserInfo,
 		IBaseUserRelationships,
 		IEntityId {}
+
+export interface ISignature {
+	signature: string;
+}

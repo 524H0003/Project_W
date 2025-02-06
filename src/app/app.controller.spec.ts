@@ -1,21 +1,17 @@
-import { cookie, execute, initJest } from 'app/utils/test.utils';
+import {
+	execute,
+	getCookie,
+	initJest,
+	RequesterType,
+} from 'app/utils/test.utils';
 import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
-import { LightMyRequestChain } from 'fastify';
 import { OutgoingHttpHeaders } from 'http';
-import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
-let req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
-	usr: User,
-	rfsTms: number,
-	svc: AppService;
+let req: RequesterType, usr: User, rfsTms: number, svc: AppService;
 
 beforeAll(async () => {
 	const { appSvc, requester } = await initJest();
@@ -27,12 +23,12 @@ beforeEach(() => {
 	usr = User.test(fileName);
 });
 
-describe('signup', () => {
+describe('signUp', () => {
 	it('success', async () => {
 		await execute(
 			() =>
 				req()
-					.post('/signup')
+					.post('/sign-up')
 					.body({ ...usr, ...usr.baseUser }),
 			{
 				exps: [
@@ -64,14 +60,14 @@ describe('signup', () => {
 
 	it('fail due to email already exist', async () => {
 		await req()
-			.post('/signup')
+			.post('/sign-up')
 			.body({ ...usr, ...usr.baseUser });
 
 		await execute(
 			async () =>
 				(
 					await req()
-						.post('/signup')
+						.post('/sign-up')
 						.body({ ...usr, ...usr.baseUser })
 				).body,
 			{
@@ -87,7 +83,7 @@ describe('login', () => {
 	beforeEach(
 		async () =>
 			await req()
-				.post('/signup')
+				.post('/sign-up')
 				.body({ ...usr, ...usr.baseUser }),
 	);
 
@@ -156,7 +152,7 @@ describe('logout', () => {
 	beforeEach(
 		async () =>
 			({ headers } = await req()
-				.post('/signup')
+				.post('/sign-up')
 				.body({ ...usr, ...usr.baseUser })),
 	);
 
@@ -165,7 +161,7 @@ describe('logout', () => {
 			() =>
 				req()
 					.post('/logout')
-					.headers({ cookie: cookie(headers['set-cookie']) }),
+					.headers({ cookie: getCookie(headers['set-cookie']) }),
 			{
 				exps: [
 					{
@@ -200,7 +196,7 @@ describe('refresh', () => {
 	beforeEach(
 		async () =>
 			({ headers } = await req()
-				.post('/signup')
+				.post('/sign-up')
 				.body({ ...usr, ...usr.baseUser })),
 	);
 
@@ -209,7 +205,7 @@ describe('refresh', () => {
 			() =>
 				req()
 					.post('/refresh')
-					.headers({ cookie: cookie(headers['set-cookie']) }),
+					.headers({ cookie: getCookie(headers['set-cookie']) }),
 			{
 				exps: [
 					{
@@ -245,7 +241,7 @@ describe('refresh', () => {
 			async () =>
 				await req()
 					.post('/refresh')
-					.headers({ cookie: cookie(headers['set-cookie']) }),
+					.headers({ cookie: getCookie(headers['set-cookie']) }),
 			{
 				numOfRun: rfsTms * 1.2,
 				exps: [

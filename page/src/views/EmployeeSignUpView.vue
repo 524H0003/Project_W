@@ -73,11 +73,12 @@ import FormTextInputComp from '@/components/FormTextInputComp.vue';
 import {
   EmployeePosition,
   IEmployeeHook,
-  IEmployeeSignup,
+  IEmployeeSignUp,
+  ISignature,
 } from 'project-w-backend';
 import { reactive } from 'vue';
 
-const input = reactive<IEmployeeSignup>({
+const input = reactive<IEmployeeSignUp & ISignature>({
     signature: '',
     position: EmployeePosition['Other'],
     password: '',

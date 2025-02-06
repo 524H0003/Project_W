@@ -6,13 +6,11 @@
 		"*.config.*",
 		"dist",
 		"**/*.d.ts",
-		"**/build.ts",
-		"**/types.ts",
-		"**/build/models.ts",
-		"**/main.ts",
+		"src/main.ts",
+		"src/build.ts",
+		"src/build",
 		"page",
-		"types",
-		"**/build/*.*"
+		"types"
 	],
 	"extends": "./tsconfig.json"
 }

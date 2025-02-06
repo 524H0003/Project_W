@@ -1,15 +1,10 @@
-import { IBaseUserEntity } from 'app/app.model';
+import { IBaseUserEntity, ISignature } from 'app/app.model';
 
 // Interfaces
 /**
  * Hook model
  */
-export interface IHook {
-	/**
-	 * Hook's signature
-	 */
-	signature: string;
-
+export interface IHook extends ISignature {
 	/**
 	 * Hook from user
 	 */

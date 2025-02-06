@@ -21,11 +21,11 @@ export class EventResolver {
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async assignEvent(
 		@Args('input') input: EventAssign,
-		@GetRequest('user') user: User,
+		@GetRequest('user') { id }: User,
 	) {
 		return this.svc.event.assign({
 			...input,
-			eventCreatedBy: await this.svc.eventCreator.id(user.id),
+			eventCreatedBy: await this.svc.eventCreator.id(id),
 		});
 	}
 
@@ -36,10 +36,10 @@ export class EventResolver {
 	@Roles([UserRole.faculty, UserRole.enterprise])
 	async updateEvent(
 		@Args('input') input: EventUpdate,
-		@GetRequest('user') user: User,
+		@GetRequest('user') { id }: User,
 	) {
 		const event = await this.svc.event.findOne({
-			eventCreatedBy: { user: { baseUser: { id: user.id } } },
+			eventCreatedBy: { user: { baseUser: { id } } },
 			id: input.id,
 		});
 

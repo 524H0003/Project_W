@@ -2,10 +2,20 @@
 	"$schema": "https://json.schemastore.org/nest-cli",
 	"collection": "@nestjs/schematics",
 	"compilerOptions": {
-		"assets": ["**/*.html", "app/page"],
+		"assets": ["app/page", "app/docs"],
 		"deleteOutDir": true,
 		"tsConfigPath": "tsconfig.build.json",
-		"watchAssets": true
+		"watchAssets": true,
+		"plugins": [
+			{
+				"name": "@nestjs/swagger",
+				"options": {
+					"dtoFileNameSuffix": [".dto.ts", ".entity.ts"],
+					"classValidatorShim": false,
+					"introspectComments": true
+				}
+			}
+		]
 	},
 	"sourceRoot": "src"
 }

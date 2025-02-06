@@ -48,6 +48,6 @@ export interface IStudentInfo {
 }
 
 /**
- * Student signup
+ * Student sign up
  */
-export interface IStudentSignup extends IStudentInfo, IUserSignUp {}
+export interface IStudentSignUp extends IStudentInfo, IUserSignUp {}

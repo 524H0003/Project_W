@@ -26,14 +26,9 @@ export interface IEmployeeRelationship {
  */
 export interface IEmployeeEntity extends IEmployeeRelationship, IEmployeeInfo {}
 /**
- * Employee signup model
+ * Employee sign up model
  */
-export interface IEmployeeSignup extends IEmployeeInfo, IUserSignUp {
-	/**
-	 * Signature to sign up
-	 */
-	signature: string;
-}
+export interface IEmployeeSignUp extends IEmployeeInfo, IUserSignUp {}
 
 /**
  * Employee hooking
@@ -50,8 +45,8 @@ export interface IEmployeeHook
 
 // Enums
 export enum EmployeePosition {
+	'Other' = 'other',
 	'Manager' = 'manager',
 	'Human_resource' = 'hr',
 	'Recruiter' = 'recruiter',
-	'Other' = 'other',
 }

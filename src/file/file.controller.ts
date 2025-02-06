@@ -8,7 +8,7 @@ import { FileGuard } from 'auth/guards/file.guard';
 /**
  * File controller
  */
-@Controller('file')
+@Controller({ version: '1', path: 'file' })
 export class FileController {
 	/**
 	 * Initiate file controller
@@ -28,11 +28,11 @@ export class FileController {
 	) {
 		const { stream, type, length } = await this.svc.file.recieve(
 			fileName,
-			user,
+			user?.id,
 		);
 
-		res.headers({ 'content-type': type, 'content-length': length });
-
-		stream.pipe(res.raw);
+		res
+			.headers({ 'content-type': type, 'content-length': length })
+			.send(stream);
 	}
 }

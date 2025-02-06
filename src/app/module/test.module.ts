@@ -44,10 +44,11 @@ export const rootPublic = 'public/';
 			provide: AWSService,
 			useValue: {
 				upload: jest.fn(async (name: string, input: Readable | Buffer) => {
-					if (input instanceof Readable) {
-						const writableStream = createWriteStream(rootPublic + name);
-						input.pipe(writableStream);
-					} else writeFileSync(rootPublic + name, input);
+					if (!name.includes('.server.'))
+						if (input instanceof Readable) {
+							const writableStream = createWriteStream(rootPublic + name);
+							input.pipe(writableStream);
+						} else writeFileSync(rootPublic + name, input);
 				}),
 				download: jest.fn(async (name: string): Promise<AWSRecieve> => {
 					const stream = createReadStream(rootPublic + name),

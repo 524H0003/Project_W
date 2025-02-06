@@ -7,7 +7,6 @@ types/*
 **/.pnpm-store
 .adminjs
 src/build
-src/types.ts
 *.tsbuildinfo
 types/src
 src/**/*.js*
@@ -19,6 +18,7 @@ public/*
 documentation/
 src/app/mail/templates
 src/app/page
+src/app/docs
 
 # Logs
 logs
@@ -70,6 +70,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Secret files
 secrets/*.pem
 **/*.env*
+securedSessionKey
 
 # Execlude files
 !page/src/shims-vue.d.ts

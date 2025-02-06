@@ -2,7 +2,12 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Event } from './event.entity';
-import { execute, initJest, sendGQL } from 'app/utils/test.utils';
+import {
+	execute,
+	initJest,
+	RequesterType,
+	sendGQL,
+} from 'app/utils/test.utils';
 import {
 	AssignEvent,
 	AssignEventMutation,
@@ -12,10 +17,8 @@ import {
 	UpdateEventMutationVariables,
 } from 'build/compiled_graphql';
 import { AppService } from 'app/app.service';
-import { LightMyRequestChain } from 'fastify';
 import { assignEmployee } from '../enterprise/employee/employee.controller.spec.utils';
 import { OutgoingHttpHeaders } from 'http';
-import TestAgent from 'supertest/lib/agent';
 
 const fileName = curFile(__filename);
 
@@ -24,11 +27,7 @@ let mailerSvc: MailerService,
 	employee: Employee,
 	headers: OutgoingHttpHeaders,
 	svc: AppService,
-	req: {
-		(testCore: 'fastify'): LightMyRequestChain;
-		(testCore: 'supertest'): TestAgent;
-		(): LightMyRequestChain;
-	},
+	req: RequesterType,
 	event: Event;
 
 beforeAll(async () => {

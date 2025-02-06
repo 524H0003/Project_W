@@ -21,6 +21,6 @@ export default [
 			'tsEslint/no-unused-vars': 'error',
 		},
 		files: ['src/**/*.ts'],
-		ignores: ['**/*.js', 'src/types.ts', '**/*.d.ts', 'src/build/*'],
+		ignores: ['**/*.js', '**/*.d.ts', 'src/build/*'],
 	},
 ];
