@@ -53,9 +53,6 @@ importers:
       '@fastify/session':
         specifier: 11.1.0
         version: 11.1.0
-      '@fastify/static':
-        specifier: ^8.0.4
-        version: 8.0.4
       '@keyv/redis':
         specifier: ^4.2.0
         version: 4.2.0
@@ -11834,7 +11831,8 @@ snapshots:
 
   '@faker-js/faker@8.4.1': {}
 
-  '@fastify/accept-negotiator@2.0.1': {}
+  '@fastify/accept-negotiator@2.0.1':
+    optional: true
 
   '@fastify/ajv-compiler@3.6.0':
     dependencies:
@@ -11939,6 +11937,7 @@ snapshots:
       fast-decode-uri-component: 1.0.1
       http-errors: 2.0.0
       mime: 3.0.0
+    optional: true
 
   '@fastify/session@11.1.0':
     dependencies:
@@ -11953,6 +11952,7 @@ snapshots:
       fastify-plugin: 5.0.1
       fastq: 1.18.0
       glob: 11.0.1
+    optional: true
 
   '@floating-ui/core@1.6.9':
     dependencies:
@@ -12845,7 +12845,8 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@lukeed/ms@2.0.2': {}
+  '@lukeed/ms@2.0.2':
+    optional: true
 
   '@microsoft/tsdoc@0.15.0': {}
 
@@ -18370,7 +18371,8 @@ snapshots:
   mime@2.6.0:
     optional: true
 
-  mime@3.0.0: {}
+  mime@3.0.0:
+    optional: true
 
   mimic-fn@2.1.0: {}
 
