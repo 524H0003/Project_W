@@ -214,6 +214,7 @@ jobs:
 
       - uses: supercharge/redis-github-action@1.8.0
         with:
+          redis-version: 7
           redis-password: ''
 
       - uses: ikalnytskyi/action-setup-postgres@v6
