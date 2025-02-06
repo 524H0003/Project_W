@@ -101,7 +101,11 @@ export async function registerServerPlugins(
 						`'self'`,
 						'apollo-server-landing-page.cdn.apollographql.com',
 					],
-					frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+					frameSrc: [
+						`'self'`,
+						'sandbox.embed.apollographql.com',
+						'explorer.embed.apollographql.com',
+					],
 					objectSrc: ["'self'"],
 				},
 			},
