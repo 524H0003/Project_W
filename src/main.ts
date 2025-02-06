@@ -66,7 +66,7 @@ async function bootstrap() {
 		documentFactory = () => SwaggerModule.createDocument(nest, docConfig);
 	SwaggerModule.setup('api', nest, documentFactory);
 
-	if (process.argv.length == 3 && process.argv[2] != 'no-csrf')
+	if (!process.argv.slice(2).some((i) => i == '--no-csrf'))
 		fastify.addHook('preValidation', (req, reply, done) => {
 			if (req.method.toLowerCase() !== 'get')
 				fastify.csrfProtection(req, reply, done);
