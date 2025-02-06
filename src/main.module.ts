@@ -3,7 +3,6 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { loadEnv } from 'app/module/config.module';
 import { SqlModule } from 'app/module/sql.module';
 import { AppModule } from 'app/app.module';
@@ -82,8 +81,6 @@ import KeyvRedis from '@keyv/redis';
 		SqlModule('deploy'),
 		// Application modules
 		AppModule,
-		// Serving static pages
-		ServeStaticModule.forRoot({ rootPath: join(__dirname, '../app/page') }),
 		// Request caching
 		CacheModule.registerAsync({
 			isGlobal: true,

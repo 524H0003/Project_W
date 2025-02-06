@@ -20,6 +20,7 @@ import { hash } from 'app/utils/auth.utils';
 import { createServer, Server } from 'http';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { join } from 'path';
+import fastifyStatic from '@fastify/static';
 
 async function bootstrap() {
 	let server: Server;
@@ -59,7 +60,6 @@ async function bootstrap() {
 		.useGlobalPipes(new ValidationPipe())
 		.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 		.enableVersioning({ type: VersioningType.URI })
-		.useStaticAssets({ prefix: '/docs/', root: join(__dirname, '../app/docs') })
 		.init();
 
 	const docConfig = new DocumentBuilder().setTitle('Project W APIs').build(),
@@ -73,9 +73,27 @@ async function bootstrap() {
 			else done();
 		});
 
-	fastify.ready(() => {
-		server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
-	});
+	fastify
+		.register(fastifyStatic, {
+			prefix: '/docs/',
+			root: join(__dirname, '..', 'app/docs'),
+		})
+		.register(
+			(childContext, _, done) => {
+				childContext.register(fastifyStatic, {
+					root: join(__dirname, '..', 'app/page'),
+					wildcard: false,
+				});
+				childContext.setNotFoundHandler((_, reply) => {
+					return reply.code(200).type('text/html').sendFile('index.html');
+				});
+				done();
+			},
+			{ prefix: '/', decorateReply: false },
+		)
+		.ready(() => {
+			server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
+		});
 }
 
 void bootstrap();
