@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { ApolloServerPluginLandingPageProductionDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -62,7 +62,12 @@ import KeyvRedis from '@keyv/redis';
 					sortSchema: true,
 					// Init Apollo SandBox
 					playground: false,
-					plugins: [ApolloServerPluginLandingPageLocalDefault()],
+					plugins: [
+						ApolloServerPluginLandingPageProductionDefault({
+							embed: true,
+							graphRef: 'ProjectW@current',
+						}),
+					],
 					includeStacktraceInErrorResponses: false,
 					inheritResolversFromInterfaces: false,
 					introspection: true,

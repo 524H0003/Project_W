@@ -66,7 +66,7 @@ async function bootstrap() {
 		documentFactory = () => SwaggerModule.createDocument(nest, docConfig);
 	SwaggerModule.setup('api', nest, documentFactory);
 
-	if (process.argv.length == 3 && process.argv[2] != 'no-csrf')
+	if (!process.argv.slice(2).some((i) => i == '--no-csrf'))
 		fastify.addHook('preValidation', (req, reply, done) => {
 			if (req.method.toLowerCase() !== 'get')
 				fastify.csrfProtection(req, reply, done);
@@ -75,7 +75,7 @@ async function bootstrap() {
 
 	fastify
 		.register(fastifyStatic, {
-			prefix: '/docs/',
+			prefix: '/docs',
 			root: join(__dirname, '..', 'app/docs'),
 		})
 		.register(
@@ -84,8 +84,13 @@ async function bootstrap() {
 					root: join(__dirname, '..', 'app/page'),
 					wildcard: false,
 				});
-				childContext.setNotFoundHandler((_, reply) => {
-					return reply.code(200).type('text/html').sendFile('index.html');
+				childContext.setNotFoundHandler((req, reply) => {
+					if (req.url == '/docs') return reply.redirect('./docs/');
+					else
+						return reply
+							.code(req.url == '/' ? 200 : 404)
+							.type('text/html')
+							.sendFile('index.html');
 				});
 				done();
 			},

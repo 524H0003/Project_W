@@ -1,1 +1,1 @@
-web: npx @fastify/secure-session > securedSessionKey && npm run start:prod
+web: npm run genkey && npm run start:prod

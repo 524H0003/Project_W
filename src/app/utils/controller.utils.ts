@@ -3,21 +3,9 @@ import { compare, hash } from './auth.utils';
 import { IUserRecieve } from 'user/user.model';
 import { User, UserRecieve } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
-import {
-	Body,
-	HttpStatus,
-	Param,
-	ParseFilePipeBuilder,
-	Post,
-	Req,
-	Res,
-	UseGuards,
-} from '@nestjs/common';
+import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { Throttle } from '@nestjs/throttler';
 import { BaseUserEmail } from 'app/app.dto';
-import { MetaData, GetRequest } from 'auth/guards/access.guard';
-import { HookGuard } from 'auth/guards/hook.guard';
 import { UserAuthencation } from 'user/user.dto';
 import { Hook } from 'app/hook/hook.entity';
 
@@ -124,13 +112,11 @@ export class BaseController {
 	/**
 	 * Send signature to email
 	 */
-	@Throttle({ changePasswordRequest: { limit: 1, ttl: 300000 } })
-	@Post('change-password')
 	protected async resetPasswordViaEmail(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { email }: BaseUserEmail,
-		@MetaData() mtdt: string,
+		request: FastifyRequest,
+		response: FastifyReply,
+		{ email }: BaseUserEmail,
+		mtdt: string,
 	): Promise<void> {
 		return this.responseWithUserRecieve(
 			request,
@@ -150,16 +136,13 @@ export class BaseController {
 	/**
 	 * Change password
 	 */
-	@Throttle({ changePassword: { limit: 3, ttl: 240000 } })
-	@Post('change-password/:token')
-	@UseGuards(HookGuard)
-	private async changePassword(
-		@Param('token') signature: string,
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { password }: UserAuthencation,
-		@MetaData() mtdt: string,
-		@GetRequest('hook') hook: Hook,
+	protected async changePassword(
+		signature: string,
+		request: FastifyRequest,
+		response: FastifyReply,
+		{ password }: UserAuthencation,
+		mtdt: string,
+		hook: Hook,
 	): Promise<void> {
 		try {
 			await this.svc.hook.validating(signature, mtdt, hook);

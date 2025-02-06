@@ -53,7 +53,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm run prebuild:dev && npx @fastify/secure-session > securedSessionKey
+      - run: npm run prebuild:dev && npm run genkey
 
   Test_service:
     needs: changes
@@ -225,7 +225,7 @@ jobs:
           node-version: 23
           cache: 'pnpm'
 
-      - run: rm -fr public/* && npx @fastify/secure-session > securedSessionKey
+      - run: rm -fr public/* && npm run genkey
 
       - run: npm run start:ci
 
