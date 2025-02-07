@@ -1,1 +1,1 @@
-web: npm run genkey && npm run start:prod
+web: npm run genkey && npm run start:prod --no-csrf

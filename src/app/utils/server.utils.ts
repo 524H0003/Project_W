@@ -87,6 +87,7 @@ export async function registerServerPlugins(
 					imgSrc: [
 						`'self'`,
 						'data:',
+						'blob:',
 						'cdn.jsdelivr.net',
 						'validator.swagger.io',
 						'apollo-server-landing-page.cdn.apollographql.com',

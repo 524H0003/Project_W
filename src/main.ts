@@ -62,11 +62,19 @@ async function bootstrap() {
 		.enableVersioning({ type: VersioningType.URI })
 		.init();
 
-	const docConfig = new DocumentBuilder().setTitle('Project W APIs').build(),
+	const docConfig = new DocumentBuilder()
+			.setTitle('Project W APIs')
+			.setDescription('List of APIs available on server')
+			.setContact(
+				'Anh "Takahashi" Nguyễn',
+				'https://anhvietnguyen.id.vn',
+				'vietuk.nguyen.git@icloud.com',
+			)
+			.build(),
 		documentFactory = () => SwaggerModule.createDocument(nest, docConfig);
 	SwaggerModule.setup('api', nest, documentFactory);
 
-	if (!process.argv.slice(2).some((i) => i == '--no-csrf'))
+	if (!process.argv.some((i) => i == '--no-csrf'))
 		fastify.addHook('preValidation', (req, reply, done) => {
 			if (req.method.toLowerCase() !== 'get')
 				fastify.csrfProtection(req, reply, done);
@@ -77,6 +85,7 @@ async function bootstrap() {
 		.register(fastifyStatic, {
 			prefix: '/docs',
 			root: join(__dirname, '..', 'app/docs'),
+			redirect: true,
 		})
 		.register(
 			(childContext, _, done) => {
@@ -84,14 +93,9 @@ async function bootstrap() {
 					root: join(__dirname, '..', 'app/page'),
 					wildcard: false,
 				});
-				childContext.setNotFoundHandler((req, reply) => {
-					if (req.url == '/docs') return reply.redirect('./docs/');
-					else
-						return reply
-							.code(req.url == '/' ? 200 : 404)
-							.type('text/html')
-							.sendFile('index.html');
-				});
+				childContext.setNotFoundHandler((_, reply) =>
+					reply.code(404).type('text/html').sendFile('index.html'),
+				);
 				done();
 			},
 			{ prefix: '/', decorateReply: false },

@@ -16,6 +16,7 @@
   "dependencies": {
     "axios": "^1.7.9",
     "flowbite": "^2.5.2",
+    "markdown-it": "^14.1.0",
     "material-symbols": "^0.27.2",
     "project-w-backend": "file:../types",
     "vue": "^3.5.13",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.10.5",
     "@vitejs/plugin-basic-ssl": "^1.2.0",
     "@vitejs/plugin-vue": "^5.2.1",
