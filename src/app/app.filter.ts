@@ -1,6 +1,9 @@
 import { ArgumentsHost, Catch, ContextType, HttpServer } from '@nestjs/common';
 import { AbstractHttpAdapter, BaseExceptionFilter } from '@nestjs/core';
 
+/**
+ * App exception filter class
+ */
 @Catch()
 export class AppExceptionFilter extends BaseExceptionFilter {
 	constructor(
@@ -17,12 +20,7 @@ export class AppExceptionFilter extends BaseExceptionFilter {
 
 		switch (errorStatus(exception)) {
 			case 401:
-				exception = new ServerException(
-					'Unauthorized',
-					'User',
-					'Access',
-					'user',
-				);
+				exception = new ServerException('Unauthorized', 'User', 'Access');
 				break;
 		}
 		super.catch(exception, host);

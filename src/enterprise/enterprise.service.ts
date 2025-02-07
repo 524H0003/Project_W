@@ -61,9 +61,11 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 				...InterfaceCasting.quick(input, IBaseUserInfoKeys),
 				avatarPath: avatar
 					? (
-							await this.svc.file.assign(avatar, null, {
-								fileName: `${input.name}.${input.industry}.logo`,
-							})
+							await this.svc.file.assign(
+								avatar,
+								null,
+								`${input.name}.${input.industry}.logo`,
+							)
 						).path
 					: undefined,
 			},

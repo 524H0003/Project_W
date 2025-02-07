@@ -36,10 +36,9 @@ export class StudentService extends DatabaseRequests<Student> {
 	}: Required<Pick<IStudentSignUp, 'email'>>): Promise<void> {
 		const existedUser = await this.svc.baseUser.email(email);
 
-		if (existedUser)
-			throw new ServerException('Invalid', 'User', 'SignUp', 'user');
+		if (existedUser) throw new ServerException('Invalid', 'User', 'SignUp');
 		if (!email.match(this.studentMailRex))
-			throw new ServerException('Invalid', 'Email', '', 'user');
+			throw new ServerException('Invalid', 'Email', '');
 
 		const student = await this.svc.auth.signUp(
 			{ email, name: email, password: (32).string + '!1Aa' },
@@ -53,6 +52,6 @@ export class StudentService extends DatabaseRequests<Student> {
 			enrollmentYear: Number('20' + email.toString().slice(1, 3)),
 		});
 
-		throw new ServerException('Success', 'User', 'SignUp', 'user');
+		throw new ServerException('Success', 'User', 'SignUp');
 	}
 }

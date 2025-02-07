@@ -74,6 +74,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 					break;
 			}
 		}
-		throw new ServerException('Invalid', 'Token', '', 'user');
+		throw new ServerException('Invalid', 'Token', '');
 	}
 }

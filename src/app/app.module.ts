@@ -16,6 +16,9 @@ import { UserModule } from 'user/user.module';
 import { NotificationModule } from 'notification/notification.module';
 import { AWSModule } from './aws/aws.module';
 
+/**
+ * List of server modules
+ */
 const modules = [
 	HookModule,
 	AWSModule,
@@ -31,6 +34,9 @@ const modules = [
 	UserModule,
 ];
 
+/**
+ * App module class
+ */
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([BaseUser]),

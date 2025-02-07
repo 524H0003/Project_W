@@ -21,7 +21,10 @@ import { InitServerClass } from 'app/utils/server.utils';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 
-export const rootPublic = 'public/';
+/**
+ * Server public path
+ */
+export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 
 @Global()
 @Module({

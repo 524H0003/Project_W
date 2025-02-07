@@ -4,13 +4,12 @@
 		"**/*.graphql.ts",
 		"**/schema.gql",
 		"*.config.*",
-		"dist",
 		"**/*.d.ts",
-		"src/main.ts",
-		"src/build.ts",
-		"src/build",
-		"page",
-		"types"
+		"**/*.dto.ts",
+		"**/*.tsx",
+		"main.ts",
+		"build.ts",
+		"build"
 	],
 	"extends": "./tsconfig.json"
 }

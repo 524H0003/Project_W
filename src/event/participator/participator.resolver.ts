@@ -43,7 +43,7 @@ export class EventParticipatorResolver {
 			fromEvent: { eventCreatedBy: { user: { baseUser: { id: user.id } } } },
 		});
 
-		if (!participator) throw new ServerException('Invalid', 'User', '', 'user');
+		if (!participator) throw new ServerException('Invalid', 'User', '');
 
 		return this.svc.eventParticipator.modify(participator.id, input);
 	}

@@ -4,7 +4,8 @@ import { User } from 'user/user.entity';
 import { GetRequest, AccessGuard, Roles } from 'auth/guards/access.guard';
 import { UserRole } from 'user/user.model';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { Event, EventAssign, EventUpdate } from './event.entity';
+import { Event } from './event.entity';
+import { EventAssign, EventUpdate } from './event.dto';
 
 @Resolver(() => Event)
 @UseGuards(AccessGuard)
@@ -43,7 +44,7 @@ export class EventResolver {
 			id: input.id,
 		});
 
-		if (!event) throw new ServerException('Invalid', 'Event', '', 'user');
+		if (!event) throw new ServerException('Invalid', 'Event', '');
 
 		return this.svc.event.modify(event.id, input);
 	}

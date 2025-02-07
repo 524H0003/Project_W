@@ -12,13 +12,20 @@ import { FileUpload } from 'graphql-upload-ts';
 import { createHmac } from 'node:crypto';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
+/**
+ * Only required specified keys and optional for remains
+ */
 type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
 	| {
-			[K in Keys]-?: Required<Pick<Pick<T, Keys>, K>> &
-				Partial<Pick<T, Exclude<Keys, K>>>;
+			[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
 	  }[Keys]
 	| Partial<Pick<T, Keys>>;
 
+/**
+ * Convert a stream to buffer
+ * @param {NodeJS.ReadableStream} stream - input stream
+ * @return {Promise<Buffer>}
+ */
 async function stream2buffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
 	return new Promise<Buffer>((resolve, reject) => {
 		const _buf = Array<any>();
@@ -44,9 +51,9 @@ export class FileService extends DatabaseRequests<File> {
 	) {
 		super(repo);
 
-		readdir(cfg.get('SERVER_PUBLIC'), async (error, files) => {
+		readdir(cfg.get('SERVER_PUBLIC'), async (error: Error, files) => {
 			if (error) {
-				new ServerException('Fatal', 'File', 'Read', 'server', error);
+				new ServerException('Fatal', 'File', 'Read', error);
 				return;
 			}
 
@@ -57,7 +64,7 @@ export class FileService extends DatabaseRequests<File> {
 						await this.assign(
 							{ stream: createReadStream(filePath), originalname: file },
 							null,
-							{ fileName: file.split('.').splice(-2).join('.') },
+							file.split('.').splice(-2).join('.'),
 						);
 					} catch {}
 				}
@@ -65,16 +72,19 @@ export class FileService extends DatabaseRequests<File> {
 	}
 
 	/**
-	 * @ignore
+	 * Server file regular expression
 	 */
 	private serverFilesReg = /^.*\.server\.[^.]+$/g;
 
 	/**
 	 * Assign file to server
-	 * @param {MulterFile} input - the file to assign
-	 * @param {User} userId - the file's assigner
-	 * @param {object} serverFilesOptions - optional options
-	 * @return {Promise<File>} the assigned file's infomations on database
+	 * @param {MulterFile} file - the file to assign
+	 * @param {Buffer} file.buffer - buffer of file
+	 * @param {NodeJS.ReadableStream} file.stream - stream of file
+	 * @param {string} file.originalname - name of file
+	 * @param {User} userId - the file's assigner id
+	 * @param {string} serverFileName - name of file to assign as server file
+	 * @return {Promise<File>}
 	 */
 	async assign(
 		{
@@ -84,16 +94,15 @@ export class FileService extends DatabaseRequests<File> {
 		}: RequireOnlyOne<MulterFile, 'stream' | 'buffer'> &
 			Required<Pick<MulterFile, 'originalname'>>,
 		userId: string,
-		serverFilesOptions?: { fileName: string },
+		serverFileName?: string,
 	): Promise<File> {
 		buffer = buffer || (await stream2buffer(stream));
 
 		if (!buffer) return null;
 
 		const title = originalname,
-			{ fileName = '' } = serverFilesOptions || {},
-			path = fileName
-				? fileName + `.server.${extname(title)}`
+			path = serverFileName
+				? serverFileName + `.server.${extname(title)}`
 				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(buffer).digest('hex')}${extname(title)}`;
 
 		await this.svc.aws.upload(path, buffer);
@@ -115,7 +124,7 @@ export class FileService extends DatabaseRequests<File> {
 		if (await this.isOwner(filename, userId))
 			return this.svc.aws.download(filename);
 
-		throw new ServerException('Forbidden', 'File', 'Access', 'user');
+		throw new ServerException('Forbidden', 'File', 'Access');
 	}
 
 	/**

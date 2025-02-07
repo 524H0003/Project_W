@@ -124,7 +124,7 @@ export class BaseController {
 			await this.svc.hook.assign(mtdt, async (s: string) => {
 				const user = await this.svc.baseUser.email(email);
 
-				if (!user) throw new ServerException('Invalid', 'Email', '', 'user');
+				if (!user) throw new ServerException('Invalid', 'Email', '');
 				return this.svc.mail.send(email, 'Change password?', 'forgetPassword', {
 					name: user.name,
 					url: `${request.hostname}/hook/${s}`,
@@ -164,6 +164,9 @@ export class BaseController {
 	}
 }
 
+/**
+ * Server global avatar file upload properties
+ */
 export const AvatarFileUpload = new ParseFilePipeBuilder()
 	.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
 	.addMaxSizeValidator({ maxSize: (0.3).mb2b })
