@@ -4,6 +4,9 @@ import {
 	PayloadTooLargeException,
 } from '@nestjs/common';
 
+/**
+ * Multer exceptions
+ */
 const multerExceptions = {
 	// from https://github.com/expressjs/multer/blob/master/lib/multer-error.js
 	LIMIT_PART_COUNT: 'Too many parts',
@@ -16,6 +19,9 @@ const multerExceptions = {
 	MISSING_FIELD_NAME: 'Field name missing',
 };
 
+/**
+ * Busboy exceptions
+ */
 const busboyExceptions = {
 	// from https://github.com/mscdex/busboy/blob/master/lib/types/multipart.js
 	MULTIPART_BOUNDARY_NOT_FOUND: 'Multipart: Boundary not found',
@@ -24,9 +30,14 @@ const busboyExceptions = {
 	MULTIPART_UNEXPECTED_END_OF_FILE: 'Unexpected end of file',
 };
 
+/**
+ * Transform error to server exception
+ * @param {(Error & { field?: string }) | undefined} error - recieve error
+ * @return {Error}
+ */
 export function transformException(
 	error: (Error & { field?: string }) | undefined,
-) {
+): Error {
 	if (!error || error instanceof HttpException) {
 		return error;
 	}

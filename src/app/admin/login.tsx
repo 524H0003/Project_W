@@ -68,6 +68,7 @@ const Wrapper = styled(Box)<BoxProps>`
 			body: JSON.stringify({ email }),
 		});
 	};
+	
 export type LoginProps = {
 	message?: string;
 	action: string;

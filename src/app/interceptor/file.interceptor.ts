@@ -13,8 +13,11 @@ import { MulterOptions } from './multer/options.interface';
 import { transformException } from './multer/utils';
 
 /**
- * @param fieldName
- * @param localOptions
+ * File interceptor decorator
+ *
+ * @param {string} fieldName - request body field
+ * @param {MulterOptions} localOptions - function options
+ * @return {Type<NestInterceptor>}
  *
  * @publicApi
  */

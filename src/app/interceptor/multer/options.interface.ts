@@ -1,6 +1,9 @@
 import { FastifyRequest } from 'fastify';
 import { File, FileFilterCallback } from 'fastify-multer/lib/interfaces';
 
+/**
+ * Multer options
+ */
 export interface MulterOptions {
 	dest?: string;
 	/** The storage engine to use for uploaded files. */

@@ -1,6 +1,9 @@
 import { ArgumentsHost, Catch, ContextType, HttpServer } from '@nestjs/common';
 import { AbstractHttpAdapter, BaseExceptionFilter } from '@nestjs/core';
 
+/**
+ * App exception filter class
+ */
 @Catch()
 export class AppExceptionFilter extends BaseExceptionFilter {
 	constructor(

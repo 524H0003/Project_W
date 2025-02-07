@@ -29,7 +29,13 @@ import fastifySecuredSession from '@fastify/secure-session';
 import { readFileSync } from 'fs';
 import { hash } from './auth.utils';
 
+/**
+ * Modified fastify interfaces
+ */
 declare module 'fastify' {
+	/**
+	 * Server request addition fields
+	 */
 	interface FastifyRequest {
 		user: User;
 		hook: Hook;
@@ -37,15 +43,27 @@ declare module 'fastify' {
 		isMultipart: boolean;
 	}
 
+	/**
+	 * Server session addition fields
+	 */
 	interface Session {
 		redirectTo: string;
 	}
 }
 
+/**
+ * Fastify server options
+ */
 export const fastifyOptions: FastifyServerOptions = { maxParamLength: 128 };
 
+/**
+ * Cookie option properties
+ */
 export type CookieProps = { name: string; password: string };
 
+/**
+ * Register fastify plugins
+ */
 export async function registerServerPlugins(
 	fastify: FastifyInstance,
 	{ password = (32).string, name = (6).string }: Partial<CookieProps>,
@@ -113,6 +131,9 @@ export async function registerServerPlugins(
 		});
 }
 
+/**
+ * Initiate AdminJS
+ */
 export async function initiateAdmin(
 	appService: AppService,
 	config: ConfigService,
@@ -152,6 +173,9 @@ export async function initiateAdmin(
 	await adminRouter(admin, server, appService, config, cookie);
 }
 
+/**
+ * Server initiation class
+ */
 export class InitServerClass implements OnModuleInit {
 	constructor(
 		protected httpAdapterHost: HttpAdapterHost,

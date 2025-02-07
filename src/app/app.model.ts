@@ -1,6 +1,9 @@
 import { IHook } from './hook/hook.model';
 
 // Interfaces
+/**
+ * Base user info
+ */
 export interface IBaseUserInfo extends IBaseUserEmail, IEntityId {
 	/**
 	 * Base user name
@@ -13,6 +16,9 @@ export interface IBaseUserInfo extends IBaseUserEmail, IEntityId {
 	avatarPath?: string;
 }
 
+/**
+ * Base user email
+ */
 export interface IBaseUserEmail {
 	/**
 	 * Base user email address
@@ -20,10 +26,16 @@ export interface IBaseUserEmail {
 	email: string;
 }
 
+/**
+ * Base user relationships
+ */
 export interface IBaseUserRelationships {
 	hooks: IHook[];
 }
 
+/**
+ * Entity id
+ */
 export interface IEntityId {
 	/**
 	 * Entity's unique Identify digits
@@ -31,11 +43,17 @@ export interface IEntityId {
 	id?: string;
 }
 
+/**
+ * Base user entity
+ */
 export interface IBaseUserEntity
 	extends IBaseUserInfo,
 		IBaseUserRelationships,
 		IEntityId {}
 
+/**
+ * Signature interface
+ */
 export interface ISignature {
 	signature: string;
 }

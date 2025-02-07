@@ -164,6 +164,9 @@ export class BaseController {
 	}
 }
 
+/**
+ * Server global avatar file upload properties
+ */
 export const AvatarFileUpload = new ParseFilePipeBuilder()
 	.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
 	.addMaxSizeValidator({ maxSize: (0.3).mb2b })

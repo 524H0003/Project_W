@@ -10,6 +10,9 @@ import {
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
+/**
+ * Modified find option
+ */
 export type FindOptionsWithCustom<T> = DeepPartial<T> & {
 	deep?: number;
 	take?: number;
@@ -18,6 +21,9 @@ export type FindOptionsWithCustom<T> = DeepPartial<T> & {
 	relations?: string[];
 };
 
+/**
+ * Convert type from an array to a non array property
+ */
 export type NonArray<T> = T extends (infer U)[] ? U : T;
 
 /**

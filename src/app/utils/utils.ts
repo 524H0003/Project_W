@@ -62,13 +62,23 @@ export const logMethodCall = methodDecorator({
 	matching = <T>(input: T, required: T[]): boolean =>
 		required.some((i) => i === input);
 
-// Types
+/**
+ * Method decorator type
+ */
 type MethodDecorator = (
 	target: any,
 	propertyKey: string,
 	descriptor: PropertyDescriptor,
 ) => PropertyDescriptor;
+
+/**
+ * Prerun method type
+ */
 type MethodPrerun = (target: any, propertyKey: Function, args: any) => void;
+
+/**
+ * Postrun method type
+ */
 type MethodPostrun = (target: any, propertyKey: Function, result: any) => void;
 
 // Decorators
@@ -290,7 +300,14 @@ declare global {
 	function errorStatus(error: any): number;
 }
 
+/**
+ * Server error type
+ */
 type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
+
+/**
+ * Server error object type
+ */
 type ErrorObject =
 	| 'User'
 	| 'File'
@@ -308,6 +325,10 @@ type ErrorObject =
 	| 'Enterprise'
 	| 'Event'
 	| 'Password';
+
+/**
+ * Server error action type
+ */
 type ErrorAction =
 	| ''
 	| 'Read'
@@ -319,6 +340,9 @@ type ErrorAction =
 	| 'LogOut'
 	| 'Access';
 
+/**
+ * Server exception class
+ */
 class ServerException extends HttpException {
 	constructor(
 		type: ErrorType,
@@ -345,15 +369,25 @@ class ServerException extends HttpException {
 	}
 }
 
+/**
+ * Removing properties have prefix bg
+ */
 type RemoveBgKeys<T> = {
 	[K in keyof T as K extends `bg${infer _}` ? never : K]: T[K];
 };
+
+/**
+ * Keep properties have prefix bg
+ */
 type KeepBgKeys<T> = {
 	[K in keyof T as K extends `bg${infer Rest}`
 		? Uncapitalize<Rest>
 		: never]: T[K];
 };
 
+/**
+ * Colored logging options
+ */
 interface ColorLogOptions {
 	msg: string;
 	bg?: keyof KeepBgKeys<Colors> | '';
