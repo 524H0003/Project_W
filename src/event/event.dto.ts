@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { EventStatus, EventType, IEventInfo } from './event.model';
+import JSON from 'graphql-type-json';
 
 @InputType()
 export class EventAssign implements IEventInfo {

@@ -9,7 +9,7 @@
 		"**/*.tsx",
 		"main.ts",
 		"build.ts",
-		"build",
+		"build"
 	],
 	"extends": "./tsconfig.json"
 }
