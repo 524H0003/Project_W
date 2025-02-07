@@ -171,7 +171,7 @@ export class AppController extends BaseController {
 					),
 				),
 			);
-		throw new ServerException('Invalid', 'Email', '', 'user');
+		throw new ServerException('Invalid', 'Email', '');
 	}
 
 	/**

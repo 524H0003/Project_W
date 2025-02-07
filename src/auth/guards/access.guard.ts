@@ -76,6 +76,6 @@ export class AccessGuard extends AuthGuard('access') {
 
 			return matching(user.role, roles);
 		}
-		throw new ServerException('Fatal', 'Method', 'Implementation', 'server');
+		throw new ServerException('Fatal', 'Method', 'Implementation');
 	}
 }

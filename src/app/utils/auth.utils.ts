@@ -18,14 +18,7 @@ export async function validation<T>(
 	) as object;
 
 	if (!Object.keys(errors).length) return then();
-	else
-		throw new ServerException(
-			'Invalid',
-			'Entity',
-			'',
-			'user',
-			JSON.stringify(errors),
-		);
+	else throw new ServerException('Invalid', 'Entity', '');
 }
 
 /**

@@ -267,8 +267,7 @@ declare global {
 			type: ErrorType,
 			object: ErrorObject,
 			action: ErrorAction,
-			cause: 'user' | 'server',
-			extend?: any,
+			extend?: Error,
 		);
 	}
 
@@ -348,23 +347,23 @@ class ServerException extends HttpException {
 		type: ErrorType,
 		object: ErrorObject,
 		action: ErrorAction,
-		cause: 'user' | 'server',
-		extend: any = null,
+		{ cause, message, stack }: Error = new Error(),
 	) {
 		const errCode = '400';
 
 		super(type + '_' + object + (action ? '_' : '') + action, +errCode);
 
-		const message = `${'-'.repeat(6)}${this.message}-${errCode}${'-'.repeat(6)}`;
+		const title = `${'-'.repeat(6)}${this.message}-${errCode}${'-'.repeat(6)}`;
 
 		console.error(
-			color({ bg: 'red', msg: message }) +
+			color({ bg: 'red', msg: title }) +
 				'\n' +
-				color({ font: 'yellow', msg: extend }) +
+				color({
+					font: 'yellow',
+					msg: `\tCause: ${cause}\n\tMessage: ${message}\n\tStack: ${stack}`,
+				}) +
 				'\n' +
-				(extend
-					? color({ bg: 'red', msg: '-'.repeat(message.length) })
-					: undefined),
+				color({ bg: 'red', msg: '-'.repeat(message.length) }),
 		);
 	}
 }

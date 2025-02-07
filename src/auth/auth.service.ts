@@ -45,7 +45,7 @@ export class AuthService extends Cryption {
 			{ role = UserRole.undefined } = options || {},
 			rawUser = new User({ ...input, email: input.email.lower });
 
-		if (user) throw new ServerException('Invalid', 'User', 'SignUp', 'user');
+		if (user) throw new ServerException('Invalid', 'User', 'SignUp');
 
 		try {
 			return validation(rawUser, async () => {
@@ -65,13 +65,7 @@ export class AuthService extends Cryption {
 		} catch (error) {
 			switch ((error as { name: string }).name) {
 				case 'BadRequestException':
-					throw new ServerException(
-						'Invalid',
-						'Entity',
-						'SignUp',
-						'user',
-						JSON.parse((error as { message: string }).message),
-					);
+					throw new ServerException('Invalid', 'Entity', 'SignUp');
 
 				default:
 					throw error;
@@ -89,9 +83,9 @@ export class AuthService extends Cryption {
 
 		if (user) {
 			if (await compare(password, await user.hashingPassword())) return user;
-			throw new ServerException('Invalid', 'Password', '', 'user');
+			throw new ServerException('Invalid', 'Password', '');
 		}
-		throw new ServerException('Invalid', 'Email', '', 'user');
+		throw new ServerException('Invalid', 'Email', '');
 	}
 
 	/**

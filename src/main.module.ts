@@ -108,8 +108,7 @@ import KeyvRedis from '@keyv/redis';
 						'Fatal',
 						'Redis',
 						'Implementation',
-						'server',
-						error,
+						error as Error,
 					);
 				}
 

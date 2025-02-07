@@ -68,7 +68,7 @@ export class AWSService {
 				},
 			}).done();
 		} catch (error) {
-			throw new ServerException('Fatal', 'AWS', 'Upload', 'server', error);
+			throw new ServerException('Fatal', 'AWS', 'Upload', error as Error);
 		}
 	}
 
@@ -95,9 +95,9 @@ export class AWSService {
 				error instanceof NoSuchKey ||
 				(error as S3ServiceException).name == 'SignatureDoesNotMatch'
 			)
-				throw new ServerException('Invalid', 'FileName', '', 'user');
+				throw new ServerException('Invalid', 'FileName', '');
 
-			throw new ServerException('Fatal', 'AWS', 'Download', 'server', error);
+			throw new ServerException('Fatal', 'AWS', 'Download', error as Error);
 		}
 	}
 }

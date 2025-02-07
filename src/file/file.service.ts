@@ -51,9 +51,9 @@ export class FileService extends DatabaseRequests<File> {
 	) {
 		super(repo);
 
-		readdir(cfg.get('SERVER_PUBLIC'), async (error, files) => {
+		readdir(cfg.get('SERVER_PUBLIC'), async (error: Error, files) => {
 			if (error) {
-				new ServerException('Fatal', 'File', 'Read', 'server', error);
+				new ServerException('Fatal', 'File', 'Read', error);
 				return;
 			}
 
@@ -124,7 +124,7 @@ export class FileService extends DatabaseRequests<File> {
 		if (await this.isOwner(filename, userId))
 			return this.svc.aws.download(filename);
 
-		throw new ServerException('Forbidden', 'File', 'Access', 'user');
+		throw new ServerException('Forbidden', 'File', 'Access');
 	}
 
 	/**
