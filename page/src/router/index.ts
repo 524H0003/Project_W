@@ -8,6 +8,7 @@ import FacultyAssignView from '@/views/FacultyAssignView.vue';
 import EventAssignView from '@/views/EventAssignView.vue';
 import EventUpdateView from '@/views/EventUpdateView.vue';
 import AdminRequestSignatureView from '@/views/AdminRequestSignatureView.vue';
+import FrontPageView from '@/views/FrontPageView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -20,6 +21,7 @@ const router = createRouter({
     { path: '/event/assign', component: EventAssignView },
     { path: '/event/update', component: EventUpdateView },
     { path: '/request-signature', component: AdminRequestSignatureView },
+    { path: '/', component: FrontPageView },
     { path: '/:pathMatch(.*)*', component: NotFoundView },
   ],
 });
