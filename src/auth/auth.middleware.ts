@@ -1,7 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { compare, Cryption } from 'app/utils/auth.utils';
-import { SignService } from './auth.service';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 
@@ -13,24 +12,14 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 	/**
 	 * Initiate auth middleware
 	 */
-	constructor(
-		private cfgSvc: ConfigService,
-		private signSvc: SignService,
-	) {
-		super(cfgSvc.get('AES_ALGO'), cfgSvc.get('SERVER_SECRET'));
+	constructor(private config: ConfigService) {
+		super(config.get('AES_ALGO'), config.get('SERVER_SECRET'));
 	}
+
 	/**
-	 * @ignore
+	 * Refresh guard regular expression
 	 */
-	private readonly rfsgrd = /(logout|refresh){1}/gi;
-	/**
-	 * @ignore
-	 */
-	private readonly rfsKey = this.cfgSvc.get('REFRESH_SECRET');
-	/**
-	 * @ignore
-	 */
-	private readonly acsKey = this.cfgSvc.get('ACCESS_SECRET');
+	private readonly rfsgrd = /^\/(api\/v1\/)?(logout|refresh){1}$/;
 
 	/**
 	 * Auth middleware processing request
@@ -38,14 +27,22 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 	 * @param {FastifyReply} res - server's response
 	 */
 	async use(req: FastifyRequest, res: FastifyReply) {
-		const isRefresh = req.url.match(this.rfsgrd),
+		const isRefresh = this.rfsgrd.test(req.url),
 			{ authorization } = req.headers;
 
 		let access: string, refresh: string;
 		for (const cookie in req.cookies)
-			if (await compare(this.rfsKey + '!', cookie, 'base64url'))
+			if (
+				await compare(
+					this.config.get('REFRESH_SECRET') + '!',
+					cookie,
+					'base64url',
+				)
+			)
 				refresh = req.cookies[cookie];
-			else if (await compare(this.acsKey, cookie, 'base64url'))
+			else if (
+				await compare(this.config.get('ACCESS_SECRET'), cookie, 'base64url')
+			)
 				access = req.cookies[cookie];
 
 		if (access || refresh)
