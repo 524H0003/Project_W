@@ -74,7 +74,7 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Server file regular expression
 	 */
-	private serverFilesReg = /^.*\.server\.[^.]+$/g;
+	private serverFilesReg = /^[^.]+\.server\.[^.]+$/g;
 
 	/**
 	 * Assign file to server
