@@ -35,7 +35,7 @@ it('assign', async () => {
 						{
 							type: 'toMatchObject',
 							params: [
-								new Hook({ signature, mtdt, note: null, fromBaseUser: null }),
+								new Hook({ signature, mtdt, note: {}, fromBaseUser: null }),
 							],
 						},
 					],

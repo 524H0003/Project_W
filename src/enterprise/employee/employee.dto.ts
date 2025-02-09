@@ -15,12 +15,9 @@ export class EmployeeHook implements IEmployeeHook {
 	position: EmployeePosition;
 }
 
-export class EmployeeSignUp implements IEmployeeSignUp, ISignature {
+export class EmployeeSignUp
+	implements Pick<IEmployeeSignUp, 'password'>, ISignature
+{
 	signature: string;
-	position: EmployeePosition;
 	password: string;
-	name: string;
-	@ApiHideProperty() avatarPath?: string;
-	email: string;
-	@ApiHideProperty() id?: string;
 }

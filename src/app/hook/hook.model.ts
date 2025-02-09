@@ -18,5 +18,5 @@ export interface IHook extends ISignature {
 	/**
 	 * Addition infomations
 	 */
-	note: string;
+	note: object;
 }

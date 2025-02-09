@@ -39,7 +39,7 @@ export class Hook extends SensitiveInfomations implements IHook {
 	/**
 	 * Addition infomations
 	 */
-	@Column({ nullable: true }) note: string;
+	@Column({ type: 'jsonb', default: {} }) note: object;
 
 	// Embedded Entity
 	/**
