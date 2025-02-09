@@ -1,8 +1,8 @@
 /* Your custom CSS resets for email */
-@import "resets";
+@import "resets.css";
 
 /* Tailwind CSS components */
-@import "tailwindcss/components";
+/* @import "tailwindcss/components"; */
 
 /**
  * @import here any custom CSS components - that is, CSS that
@@ -11,7 +11,7 @@
 */
 
 /* Tailwind CSS utility classes */
-@import "tailwindcss/utilities";
+/* @import "tailwindcss/utilities"; */
 
 /* Your custom utility classes */
-@import "utilities";
+@import "utilities.css";
