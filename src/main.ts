@@ -35,9 +35,10 @@ async function bootstrap() {
 			new FastifyAdapter(fastify),
 			{
 				cors: {
-					// origin: /(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}/,
-					origin: '*',
-					// /^(https:\/\/){1}(((.*)(anhvietnguyen.id.vn){1}){1}|(localhost){1}:([0-9]){1,4})/,
+					origin:
+						process.env.NODE_ENV == 'production'
+							? /^(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}$/
+							: '*',
 					methods: '*',
 					credentials: true,
 				},

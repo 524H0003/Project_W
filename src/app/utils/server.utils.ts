@@ -186,7 +186,7 @@ export class InitServerClass implements OnModuleInit {
 	onModuleInit() {
 		const adapterInstance: FastifyInstance =
 				this.httpAdapterHost.httpAdapter.getInstance(),
-			authMiddleware = new AuthMiddleware(this.configService, this.signService);
+			authMiddleware = new AuthMiddleware(this.configService);
 
 		adapterInstance
 			.addHook(

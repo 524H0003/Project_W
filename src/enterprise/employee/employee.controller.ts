@@ -71,16 +71,13 @@ export class EmployeeController extends BaseController {
 	): Promise<void> {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
-		return this.responseWithUser(
-			request,
-			response,
-			(
-				await this.svc.employee.assign(
-					{ ...body, enterpriseId: JSON.parse(hook.note).enterpriseId },
-					avatar,
-				)
-			).eventCreator.user,
-			mtdt,
-		);
+		const { user } = (
+			await this.svc.employee.assign(
+				{ ...body, enterpriseId: JSON.parse(hook.note).enterpriseId },
+				avatar,
+			)
+		).eventCreator;
+
+		return this.responseWithUser(request, response, user, mtdt);
 	}
 }
