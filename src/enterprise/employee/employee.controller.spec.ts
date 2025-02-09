@@ -74,7 +74,7 @@ describe('signUp', () => {
 
 		await execute(
 			async () =>
-				JSON.stringify(
+				(
 					await req()
 						.post('/employee/sign-up')
 						.headers({ cookie: getCookie(headers['set-cookie']) })
@@ -84,13 +84,14 @@ describe('signUp', () => {
 							...employee,
 							...employee.eventCreator.user,
 							...employee.eventCreator.user.baseUser,
-						} as IEmployeeSignUp),
-				),
+						} as IEmployeeSignUp)
+						.end()
+				).body,
 			{
 				exps: [
 					{
 						type: 'toContain',
-						params: [employee.eventCreator.user.baseUser.email],
+						params: [employee.eventCreator.user.baseUser.email.lower],
 					},
 				],
 			},

@@ -2,7 +2,7 @@
 @import "resets";
 
 /* Tailwind CSS components */
-@import "tailwindcss/components";
+@tailwind "components";
 
 /**
  * @import here any custom CSS components - that is, CSS that
@@ -11,7 +11,7 @@
 */
 
 /* Tailwind CSS utility classes */
-@import "tailwindcss/utilities";
+@tailwind "utilities";
 
 /* Your custom utility classes */
 @import "utilities";

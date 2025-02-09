@@ -20,6 +20,7 @@ import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards/hook.guard';
 import { EmployeeHook, EmployeeSignUp } from './employee.dto';
 import { Hook } from 'app/hook/hook.entity';
+import { IEmployeeSignUp } from './employee.model';
 
 /**
  * Employee controller
@@ -51,7 +52,7 @@ export class EmployeeController extends BaseController {
 		return this.responseWithUserRecieve(
 			request,
 			response,
-			await this.svc.employee.hook(body, request.hostname, mtdt),
+			await this.svc.employee.hook(body, mtdt),
 		);
 	}
 
@@ -64,23 +65,22 @@ export class EmployeeController extends BaseController {
 	async signUp(
 		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
-		@Body() { signature, ...body }: EmployeeSignUp,
+		@Body() { signature, password }: EmployeeSignUp,
 		@MetaData() mtdt: string,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 		@GetRequest('hook') hook: Hook,
 	): Promise<void> {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
-		return this.responseWithUser(
-			request,
-			response,
-			(
-				await this.svc.employee.assign(
-					{ ...body, enterpriseId: JSON.parse(hook.note).enterpriseId },
-					avatar,
-				)
-			).eventCreator.user,
-			mtdt,
-		);
+		const { user } = (
+			await this.svc.employee.assign(
+				{ password, ...hook.note } as unknown as IEmployeeSignUp & {
+					enterpriseId: string;
+				},
+				avatar,
+			)
+		).eventCreator;
+
+		return this.responseWithUser(request, response, user, mtdt);
 	}
 }

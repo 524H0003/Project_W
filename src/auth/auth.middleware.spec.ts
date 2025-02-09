@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { hash } from 'app/utils/auth.utils';
 import { AuthMiddleware } from './auth.middleware';
-import { AuthService, SignService } from './auth.service';
+import { AuthService } from './auth.service';
 import { initJest } from 'app/utils/test.utils';
 import { expect } from '@jest/globals';
 import { createRequest, createResponse } from 'node-mocks-http';
@@ -15,7 +15,6 @@ let req: Request,
 	authMdw: AuthMiddleware,
 	authSvc: AuthService,
 	cfgSvc: ConfigService,
-	signSvc: SignService,
 	acsKey: string,
 	rfsKey: string;
 
@@ -24,8 +23,7 @@ beforeEach(async () => {
 
 	(authSvc = module.get(AuthService)),
 		(cfgSvc = module.get(ConfigService)),
-		(signSvc = module.get(SignService)),
-		(authMdw = new AuthMiddleware(cfgSvc, signSvc));
+		(authMdw = new AuthMiddleware(cfgSvc));
 
 	(req = createRequest()),
 		(res = createResponse()),

@@ -8,11 +8,7 @@ import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
-import {
-	IEmployeeHookKeys,
-	IEmployeeInfoKeys,
-	IEmployeeSignUpKeys,
-} from 'build/models';
+import { IEmployeeInfoKeys, IEmployeeSignUpKeys } from 'build/models';
 
 /**
  * Employee service
@@ -32,13 +28,14 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	/**
 	 * Employee request hook service
 	 */
-	async hook(input: IEmployeeHook, host: string, mtdt: string) {
-		input = InterfaceCasting.quick(input, IEmployeeHookKeys);
-
+	async hook(
+		{ name, email, position, enterpriseName }: IEmployeeHook,
+		mtdt: string,
+	) {
 		const ent = await this.svc.enterprise.findOne({
-			baseUser: { name: input.enterpriseName },
+			baseUser: { name: enterpriseName },
 		});
-		if (!ent || !input.enterpriseName)
+		if (!ent || !enterpriseName)
 			throw new ServerException('Invalid', 'Enterprise', '');
 
 		return this.svc.hook.assign(
@@ -46,16 +43,11 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			(signature: string) =>
 				this.svc.mail.send(
 					ent.baseUser.email,
-					`An account assignment request from ${input.name}`,
+					`An account assignment request from ${name}`,
 					'sendSignatureEmployee',
-					{
-						signature,
-						name: input.name,
-						email: input.email,
-						position: input.position,
-					},
+					{ signature, name, email, position },
 				),
-			{ enterpriseId: ent.id },
+			{ enterpriseId: ent.id, name, email, position },
 		);
 	}
 

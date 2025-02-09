@@ -39,7 +39,7 @@ export class HookService extends DatabaseRequests<Hook> {
 			hook = await this.save({
 				signature,
 				mtdt,
-				note: JSON.stringify(addInfo),
+				note: addInfo,
 				fromBaseUser: baseUser ? baseUser : null,
 			});
 

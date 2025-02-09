@@ -106,6 +106,6 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 		id: string,
 		options?: FindOptionsWithCustom<Enterprise>,
 	): Promise<Enterprise> {
-		return this.findOne({ ...options, baseUser: { id } });
+		if (id) return this.findOne({ ...options, baseUser: { id } });
 	}
 }
