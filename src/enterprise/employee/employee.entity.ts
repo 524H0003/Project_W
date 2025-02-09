@@ -57,11 +57,6 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	})
 	position: EmployeePosition;
 
-	/**
-	 * Is employee verified by company
-	 */
-	@Column({ default: false }) isVerified: boolean;
-
 	// Methods
 	/**
 	 * @ignore
