@@ -1,10 +1,4 @@
-import {
-	ArgumentsHost,
-	Catch,
-	ContextType,
-	HttpException,
-	HttpServer,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ContextType, HttpServer } from '@nestjs/common';
 import { AbstractHttpAdapter, BaseExceptionFilter } from '@nestjs/core';
 
 /**
