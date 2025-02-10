@@ -107,6 +107,7 @@
 		"@nestjs/testing": "^11.0.6",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/commit-analyzer": "^13.0.1",
+		"@semantic-release/git": "^10.0.1",
 		"@semantic-release/github": "^11.0.1",
 		"@semantic-release/release-notes-generator": "^14.0.3",
 		"@types/jest": "^29.5.14",
@@ -159,7 +160,8 @@
 			"@semantic-release/commit-analyzer",
 			"@semantic-release/release-notes-generator",
 			"@semantic-release/changelog",
-			"@semantic-release/github"
+			"@semantic-release/github",
+			"@semantic-release/git"
 		]
 	}
 }
