@@ -49,6 +49,10 @@ export class AppExceptionFilter extends BaseExceptionFilter {
 				);
 				break;
 		}
+
+		if (typeof exception['terminalLogging'] == 'function')
+			exception['terminalLogging']();
+
 		super.catch(exception, host);
 	}
 }
