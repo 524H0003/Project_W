@@ -62,12 +62,15 @@ export class BaseController {
 	protected async responseWithUserRecieve(
 		request: FastifyRequest,
 		reply: FastifyReply,
-		{ accessToken, refreshToken, payload, response }: IUserRecieve,
+		{ accessToken, refreshToken, response }: IUserRecieve,
 	): Promise<void> {
 		await this.clearCookies(request, reply);
 
 		const encryptedAccess = this.svc.auth.encrypt(accessToken),
-			encryptedRefresh = this.svc.auth.encrypt(refreshToken);
+			encryptedRefresh = this.svc.auth.encrypt(
+				refreshToken,
+				accessToken.split('.').at(-1),
+			);
 
 		if (accessToken)
 			reply.cookie(await hash(this.acsKey, 'base64url'), encryptedAccess);
@@ -78,12 +81,6 @@ export class BaseController {
 			);
 
 		reply.send({
-			session: {
-				access_token: accessToken ? encryptedAccess : undefined,
-				refresh_token: refreshToken ? encryptedRefresh : undefined,
-				expires_in: payload.exp - payload.iat,
-				expires_at: payload.exp,
-			},
 			user: typeof response !== 'string' ? response : undefined,
 			message: typeof response === 'string' ? response : undefined,
 		});

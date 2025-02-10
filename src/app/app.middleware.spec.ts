@@ -1,18 +1,18 @@
 import { ConfigService } from '@nestjs/config';
 import { hash } from 'app/utils/auth.utils';
-import { AuthMiddleware } from './auth.middleware';
-import { AuthService } from './auth.service';
+import { AppMiddleware } from './app.middleware';
 import { initJest } from 'app/utils/test.utils';
 import { expect } from '@jest/globals';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { AuthService } from 'auth/auth.service';
 
 const acsTkn = '..access-token',
 	rfsTkn = '..refresh-token';
 
 let req: Request,
 	res: Response,
-	authMdw: AuthMiddleware,
+	authMdw: AppMiddleware,
 	authSvc: AuthService,
 	cfgSvc: ConfigService,
 	acsKey: string,
@@ -23,7 +23,7 @@ beforeEach(async () => {
 
 	(authSvc = module.get(AuthService)),
 		(cfgSvc = module.get(ConfigService)),
-		(authMdw = new AuthMiddleware(cfgSvc));
+		(authMdw = new AppMiddleware(cfgSvc));
 
 	(req = createRequest()),
 		(res = createResponse()),
@@ -34,7 +34,7 @@ beforeEach(async () => {
 describe('use', () => {
 	beforeEach(async () => {
 		req['cookies'][`${await hash(rfsKey + '!', 'base64url')}`] =
-			authSvc.encrypt(rfsTkn);
+			authSvc.encrypt(rfsTkn, acsTkn.split('.').at(-1));
 		req['cookies'][`${await hash(acsKey, 'base64url')}`] =
 			authSvc.encrypt(acsTkn);
 	});
