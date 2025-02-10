@@ -5,10 +5,10 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 
 /**
- * Auth middleware
+ * App middleware
  */
 @Injectable()
-export class AuthMiddleware extends Cryption implements NestMiddleware {
+export class AppMiddleware extends Cryption implements NestMiddleware {
 	/**
 	 * Initiate auth middleware
 	 */
@@ -22,15 +22,15 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 	private readonly rfsgrd = /^\/(api\/v1\/)?(logout|refresh){1}$/;
 
 	/**
-	 * Auth middleware processing request
+	 * App middleware processing request
 	 * @param {FastifyRequest} req - client's request
 	 * @param {FastifyReply} res - server's response
 	 */
 	async use(req: FastifyRequest, res: FastifyReply) {
-		const isRefresh = this.rfsgrd.test(req.url),
-			{ authorization } = req.headers;
+		const isRefresh = this.rfsgrd.test(req.url);
 
-		let access: string, refresh: string;
+		let access: string = '',
+			refresh: string = '';
 		for (const cookie in req.cookies)
 			if (
 				await compare(
@@ -43,12 +43,12 @@ export class AuthMiddleware extends Cryption implements NestMiddleware {
 			else if (
 				await compare(this.config.get('ACCESS_SECRET'), cookie, 'base64url')
 			)
-				access = req.cookies[cookie];
+				access = this.decrypt(req.cookies[cookie]);
+
+		refresh = this.decrypt(refresh, access.split('.').at(-1));
 
 		if (access || refresh)
-			req.headers.authorization = `Bearer ${this.decrypt(isRefresh ? refresh : access)}`;
-		else if (authorization)
-			req.headers.authorization = `Bearer ${this.decrypt(authorization.split(' ').at(-1))}`;
+			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
 
 		if (
 			typeof req.isMultipart == 'boolean' &&

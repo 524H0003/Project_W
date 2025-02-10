@@ -23,11 +23,11 @@ import { AppService } from 'app/app.service';
 import { OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { SignService } from 'auth/auth.service';
-import { AuthMiddleware } from 'auth/auth.middleware';
 import fastifyCsrf, { CookieSerializeOptions } from '@fastify/csrf-protection';
 import fastifySecuredSession from '@fastify/secure-session';
 import { readFileSync } from 'fs';
 import { hash } from './auth.utils';
+import { AppMiddleware } from 'app/app.middleware';
 
 /**
  * Modified fastify interfaces
@@ -186,13 +186,13 @@ export class InitServerClass implements OnModuleInit {
 	onModuleInit() {
 		const adapterInstance: FastifyInstance =
 				this.httpAdapterHost.httpAdapter.getInstance(),
-			authMiddleware = new AuthMiddleware(this.configService);
+			middleware = new AppMiddleware(this.configService);
 
 		adapterInstance
 			.addHook(
 				'preValidation',
 				(request: FastifyRequest, response: FastifyReply) =>
-					authMiddleware.use(request, response),
+					middleware.use(request, response),
 			)
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,

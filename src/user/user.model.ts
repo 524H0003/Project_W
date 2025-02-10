@@ -2,7 +2,6 @@ import { IBaseUserEntity, IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
 import { IDeviceEntity } from 'auth/device/device.model';
 import { IEventParticipatorEntiy } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
-import { JwtPayload } from 'jsonwebtoken';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';
 
 // Interfaces
@@ -93,11 +92,6 @@ export interface IUserRecieve {
 	 * Server's response
 	 */
 	response: string | IUserInfo;
-
-	/**
-	 * Jwt payload
-	 */
-	payload: JwtPayload;
 }
 
 /**
