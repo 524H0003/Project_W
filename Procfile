@@ -1,1 +1,1 @@
-web: npm run genkey && npm run start:prod --no-csrf --disable-CORS
+web: npm run genkey && npm run start:prod -- --no-csrf --disable-CORS
