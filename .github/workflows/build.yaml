@@ -41,7 +41,7 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v4
         if: github.ref == 'refs/heads/master'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           publish_dir: types
           publish_branch: package
           force_orphan: true
@@ -49,7 +49,7 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v4
         if: github.ref == 'refs/heads/master'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           publish_dir: documentation
           publish_branch: documentation
           force_orphan: true
@@ -57,4 +57,4 @@ jobs:
       - run: npx semantic-release
         if: github.ref == 'refs/heads/master'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ github.token }}
