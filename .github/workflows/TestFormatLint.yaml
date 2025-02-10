@@ -277,7 +277,7 @@ jobs:
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: izhangzhihao/delete-comment@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           delete_user_name: 'github-actions[bot]'
           issue_number: ${{ github.event.number }}
 
