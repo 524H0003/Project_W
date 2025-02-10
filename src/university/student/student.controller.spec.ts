@@ -21,11 +21,12 @@ describe('signUp', () => {
 
 		await execute(
 			async () =>
-				JSON.stringify(
+				(
 					await req()
 						.post('/student/sign-up')
-						.body({ ...stu.user, ...stu.user.baseUser }),
-				),
+						.body({ ...stu.user, ...stu.user.baseUser })
+						.end()
+				).body,
 			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
 	});
@@ -33,11 +34,12 @@ describe('signUp', () => {
 	it('success and request signature from email', async () => {
 		await execute(
 			async () =>
-				JSON.stringify(
+				(
 					await req()
 						.post('/student/sign-up')
-						.body({ ...stu.user, ...stu.user.baseUser }),
-				),
+						.body({ ...stu.user, ...stu.user.baseUser })
+						.end()
+				).body,
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },
