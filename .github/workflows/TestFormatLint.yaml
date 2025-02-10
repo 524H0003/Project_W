@@ -259,6 +259,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
+      
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
         with:
