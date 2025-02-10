@@ -89,16 +89,17 @@ describe('login', () => {
 
 	it('success', async () => {
 		await execute(
-			() =>
-				req()
-					.post('/login')
-					.body({ ...usr, ...usr.baseUser }),
+			async () =>
+				(
+					await req()
+						.post('/login')
+						.body({ ...usr, ...usr.baseUser })
+				).headers['set-cookie'],
 			{
 				exps: [
 					{
-						type: 'toHaveProperty',
+						type: 'toEqual',
 						params: [
-							'headers.set-cookie',
 							expect.arrayContaining([expect.anything(), expect.anything()]),
 						],
 					},
