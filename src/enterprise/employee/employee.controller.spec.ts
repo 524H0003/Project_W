@@ -41,15 +41,16 @@ describe('hook', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				JSON.stringify(
+				(
 					await req()
 						.post('/employee/hook')
 						.body({
 							enterpriseName: enterprise.baseUser.name,
 							...employee,
 							...employee.eventCreator.user.baseUser,
-						} as IEmployeeHook),
-				),
+						} as IEmployeeHook)
+						.end()
+				).body,
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },

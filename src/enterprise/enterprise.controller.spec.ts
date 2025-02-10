@@ -39,7 +39,7 @@ describe('assign', () => {
 
 		await execute(
 			async () =>
-				JSON.stringify(
+				(
 					await req()
 						.post('/enterprise/assign')
 						.headers({ cookie: getCookie(headers['set-cookie']) })
@@ -47,8 +47,9 @@ describe('assign', () => {
 							signature,
 							...enterprise,
 							...enterprise.baseUser,
-						} as IEnterpriseAssign),
-				),
+						} as IEnterpriseAssign)
+						.end()
+				).body,
 			{ exps: [{ type: 'toContain', params: ['Success_Assign_Enterprise'] }] },
 		);
 		await execute(

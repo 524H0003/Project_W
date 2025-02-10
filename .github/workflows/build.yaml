@@ -53,3 +53,8 @@ jobs:
           publish_dir: documentation
           publish_branch: documentation
           force_orphan: true
+
+      - run: npx semantic-release
+        if: github.ref == 'refs/heads/master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

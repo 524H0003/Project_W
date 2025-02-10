@@ -308,6 +308,8 @@ type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
  * Server error object type
  */
 type ErrorObject =
+	| 'CsrfCookie'
+	| 'CsrfToken'
 	| 'User'
 	| 'File'
 	| 'AWS'
@@ -347,9 +349,17 @@ class ServerException extends HttpException {
 		type: ErrorType,
 		object: ErrorObject,
 		action: ErrorAction,
-		{ cause, message, stack }: Error = new Error(),
+		{
+			cause,
+			message,
+			stack,
+			statusCode = 400,
+		}: Error & { statusCode: string | number } = {
+			...new Error(),
+			statusCode: 400,
+		},
 	) {
-		const errCode = '400';
+		const errCode = statusCode;
 
 		super(type + '_' + object + (action ? '_' : '') + action, +errCode);
 
@@ -363,7 +373,7 @@ class ServerException extends HttpException {
 					msg: `\tCause: ${cause}\n\tMessage: ${message}\n\tStack: ${stack}`,
 				}) +
 				'\n' +
-				color({ bg: 'red', msg: '-'.repeat(message.length) }),
+				color({ bg: 'red', msg: '-'.repeat(title.length) }),
 		);
 	}
 }

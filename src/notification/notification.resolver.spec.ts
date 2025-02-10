@@ -114,10 +114,7 @@ describe('updateNotification', () => {
 				: notificationId.slice(0, -1) + '1';
 
 		await execute(
-			async () =>
-				JSON.stringify(
-					await send({ input: { id: newId } }, { headers: headers }),
-				),
+			async () => await send({ input: { id: newId } }, { headers: headers }),
 			{
 				exps: [
 					{ type: 'toThrow', params: [err('Invalid', 'Notification', '')] },

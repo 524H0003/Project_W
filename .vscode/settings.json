@@ -42,7 +42,8 @@
 		"src/types.ts": true,
 		"types": true,
 		"graphql": true,
-		"securedSessionKey": true
+		"securedSessionKey": true,
+		"src/schema.gql": true
 	},
 	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {
@@ -50,6 +51,7 @@
 		"showInlineError": true,
 		"type": "on-demand"
 	},
+	"postman.settings.dotenv-detection-notification-visibility": false,
 	"testing.automaticallyOpenTestResults": "neverOpen",
 	"testing.openTesting": "neverOpen",
 	"todohighlight.keywords": [
