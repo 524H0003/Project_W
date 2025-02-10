@@ -105,6 +105,11 @@
 		"@jest/globals": "^29.7.0",
 		"@nestjs/schematics": "^11.0.0",
 		"@nestjs/testing": "^11.0.6",
+		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/commit-analyzer": "^13.0.1",
+		"@semantic-release/git": "^10.0.1",
+		"@semantic-release/github": "^11.0.1",
+		"@semantic-release/release-notes-generator": "^14.0.3",
 		"@types/jest": "^29.5.14",
 		"@types/jsonwebtoken": "^9.0.8",
 		"@types/mime-types": "^2.1.4",
@@ -130,6 +135,7 @@
 		"prettier-plugin-sort-json": "^4.1.1",
 		"replace": "^1.2.2",
 		"rimraf": "^6.0.1",
+		"semantic-release": "^24.2.2",
 		"ts-jest": "^29.2.5",
 		"ts-morph": "^25.0.0",
 		"ts-node": "^10.9.2"
@@ -145,5 +151,36 @@
 	"engines": {
 		"node": "23.x"
 	},
-	"packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b"
+	"packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b",
+	"release": {
+		"branches": [
+			"master"
+		],
+		"plugins": [
+			"@semantic-release/commit-analyzer",
+			"@semantic-release/release-notes-generator",
+			"@semantic-release/changelog",
+			[
+				"@semantic-release/github",
+				{
+					"assets": [
+						{
+							"path": "dist.zip",
+							"label": "Distribution"
+						}
+					]
+				}
+			],
+			[
+				"@semantic-release/git",
+				{
+					"assets": [
+						"package.json",
+						"CHANGELOG.md"
+					],
+					"message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+				}
+			]
+		]
+	}
 }
