@@ -90,6 +90,8 @@ jobs:
             **/build
             securedSessionKey
           key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - run: npm run test:service
 
@@ -135,6 +137,8 @@ jobs:
             **/build
             securedSessionKey
           key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - run: npm run test:resolver
 
@@ -180,6 +184,8 @@ jobs:
             **/build
             securedSessionKey
           key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - run: npm run test:controller
 
@@ -257,14 +263,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 23
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            **/node_modules
-            **/build
-            securedSessionKey
-          key: ${{ runner.os }}-node-${{ hashFiles('./pnpm-lock.*') }}
+          cache: 'pnpm'
 
       - run: npm run format && npm run lint
 
