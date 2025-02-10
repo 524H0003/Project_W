@@ -36,9 +36,10 @@ async function bootstrap() {
 			{
 				cors: {
 					origin:
-						process.env.NODE_ENV == 'production'
-							? /^(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}$/
-							: '*',
+						process.env.NODE_ENV != 'production' ||
+						process.argv.some((i) => i == '--disable-CORS')
+							? '*'
+							: /^(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}$/,
 					methods: '*',
 					credentials: true,
 				},
