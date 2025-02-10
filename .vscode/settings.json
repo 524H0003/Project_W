@@ -1,13 +1,18 @@
 {
 	"debug.javascript.autoAttachFilter": "disabled",
-	"editor.codeActionsOnSave": { "source.fixAll": "explicit" },
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.detectIndentation": false,
 	"editor.foldingImportsByDefault": true,
 	"editor.formatOnSave": true,
 	"editor.insertSpaces": false,
 	"editor.tabSize": 2,
-	"editor.tokenColorCustomizations": { "comments": "", "textMateRules": [] },
+	"editor.tokenColorCustomizations": {
+		"comments": "",
+		"textMateRules": []
+	},
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.patterns": {
 		"*.guard.ts": "$(capture).strategy.ts",
@@ -45,7 +50,9 @@
 		"securedSessionKey": true,
 		"src/schema.gql": true
 	},
-	"jest.outputConfig": { "clearOnRun": "terminal" },
+	"jest.outputConfig": {
+		"clearOnRun": "terminal"
+	},
 	"jest.runMode": {
 		"coverage": true,
 		"showInlineError": true,
@@ -150,5 +157,6 @@
 			"isWholeLine": true,
 			"text": " Core Entity"
 		}
-	]
+	],
+	"postman.settings.dotenv-detection-notification-visibility": false
 }
