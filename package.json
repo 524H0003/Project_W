@@ -23,7 +23,7 @@
 		"start:dev": "nest start --watch",
 		"start:prod": "node dist/src/main",
 		"start:ci": "start-server-and-test 'npm run start:prod -- --no-csrf' :3000 test:web",
-		"prebuild:dev": "pnpm i && (npm run buildfile & (npm run gqlgen && npm run codegen))",
+		"prebuild:dev": "pnpm i && (npm run buildfile & (npm run gqlgen && npm run codegen) & npm run genkey)",
 		"prebuild": "pnpm i && (npm-run-all --parallel mail page codegen doc)",
 		"build:dev": "nest build",
 		"build": "nest build",
