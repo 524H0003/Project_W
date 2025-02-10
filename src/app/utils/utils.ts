@@ -342,6 +342,11 @@ type ErrorAction =
 	| 'Access';
 
 /**
+ * Server error extender
+ */
+type ErrorExtender = Error & { statusCode: string | number };
+
+/**
  * Server exception class
  */
 class ServerException extends HttpException {
@@ -349,28 +354,24 @@ class ServerException extends HttpException {
 		type: ErrorType,
 		object: ErrorObject,
 		action: ErrorAction,
-		{
-			cause,
-			message,
-			stack,
-			statusCode = 400,
-		}: Error & { statusCode: string | number } = {
-			...new Error(),
-			statusCode: 400,
-		},
+		private err: ErrorExtender = new Error() as ErrorExtender,
 	) {
-		const errCode = statusCode;
+		super(
+			type + '_' + object + (action ? '_' : '') + action + '_' + (6).string,
+			+(err.statusCode || 400),
+		);
+	}
 
-		super(type + '_' + object + (action ? '_' : '') + action, +errCode);
-
-		const title = `${'-'.repeat(6)}${this.message}-${errCode}${'-'.repeat(6)}`;
+	terminalLogging() {
+		const { cause, message, stack, statusCode } = this.err,
+			title = `${'-'.repeat(6)}${this.message}-${statusCode || 400}${'-'.repeat(6)}`;
 
 		console.error(
 			color({ bg: 'red', msg: title }) +
 				'\n' +
 				color({
 					font: 'yellow',
-					msg: `\tCause: ${cause}\n\tMessage: ${message}\n\tStack: ${stack}`,
+					msg: `\tCause: ${cause || 'unknown'}\n\tMessage: ${message || 'N/A'}\n\tStack: ${stack}`,
 				}) +
 				'\n' +
 				color({ bg: 'red', msg: '-'.repeat(title.length) }),
