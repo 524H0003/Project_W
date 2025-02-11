@@ -33,11 +33,10 @@ jobs:
           base: ${{ steps.getBranch.outputs.test }}
           filters: |
             project:
-              - '**.ts'
-              - '**.json'
-              - '!**/*.md'
-              - '!**/*.yml'
-              - '!package.json'
+              - 'src/**'
+              - 'mail/**'
+              - 'page/**'
+              - 'pnpm-lock.yaml'
 
   Test_service:
     needs: changes

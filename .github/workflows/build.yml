@@ -29,11 +29,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install SSH Client 🔑
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
-
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
@@ -65,3 +60,13 @@ jobs:
 
       - run: npx semantic-release
         if: github.ref == 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - uses: leigholiver/commit-with-deploy-key@v1.0.4
+        if: github.ref == 'refs/heads/master'
+        with:
+          source: .
+          destination_branch: master
+          destination_repo: 524H0003/Project_W
+          deploy_key: ${{ secrets.DEPLOY_KEY }}
