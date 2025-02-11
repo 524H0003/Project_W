@@ -219,7 +219,7 @@ export class AppController extends BaseController {
 	@Get('csrf-token') getCsrfToken(
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		response.send({ token: response.generateCsrf() });
+		response.send(response.generateCsrf());
 	}
 
 	/**
