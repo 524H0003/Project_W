@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { AppService } from 'app/app.service';
 import { User } from 'user/user.entity';
-import { GetRequest, AccessGuard, Roles } from 'auth/guards/access.guard';
+import { GetRequest, AccessGuard, Allow } from 'auth/guards/access.guard';
 import { UserRole } from 'user/user.model';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Event } from './event.entity';
@@ -19,7 +19,7 @@ export class EventResolver {
 	 * Event assign
 	 */
 	@Mutation(() => Event)
-	@Roles([UserRole.faculty, UserRole.enterprise])
+	@Allow([UserRole.faculty, UserRole.enterprise])
 	async assignEvent(
 		@Args('input') input: EventAssign,
 		@GetRequest('user') { id }: User,
@@ -34,7 +34,7 @@ export class EventResolver {
 	 * Update event
 	 */
 	@Mutation(() => Event)
-	@Roles([UserRole.faculty, UserRole.enterprise])
+	@Allow([UserRole.faculty, UserRole.enterprise])
 	async updateEvent(
 		@Args('input') input: EventUpdate,
 		@GetRequest('user') { id }: User,

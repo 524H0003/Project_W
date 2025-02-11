@@ -31,27 +31,57 @@ describe('canActivate', () => {
 		expect(await roleGrd.canActivate(ctx)).toBe(true);
 	});
 
-	it("success when user's role match the required roles", async () => {
+	it("success when user's role match the allowance roles", async () => {
 		const req = { user: { role: UserRole.faculty } };
+		jest
+			.spyOn(rflt, 'get')
+			.mockReturnValueOnce(false)
+			.mockReturnValueOnce([UserRole.faculty])
+			.mockReturnValueOnce(null),
+			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
+		expect(await roleGrd.canActivate(ctx)).toBe(true);
+	});
+
+	it("fail when user's role match the forbiddance roles", async () => {
+		const req = { user: { role: UserRole.faculty } };
+		jest
+			.spyOn(rflt, 'get')
+			.mockReturnValueOnce(false)
+			.mockReturnValueOnce(null)
+			.mockReturnValueOnce([UserRole.faculty]),
+			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
+		expect(await roleGrd.canActivate(ctx)).toBe(false);
+	});
+
+	it("fail when user's roles not match the required roles", async () => {
+		const req = { user: { role: UserRole.student } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
 			.mockReturnValueOnce([UserRole.faculty]),
 			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
-		expect(await roleGrd.canActivate(ctx)).toBe(true);
+		expect(await roleGrd.canActivate(ctx)).toBe(false);
 	});
 
-	it("fail due to user's roles not match the required roles", async () => {
+	it('success when allowance and forbiddance roles not defined', async () => {
 		const req = { user: { role: UserRole.student } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
-			.mockReturnValueOnce([UserRole.faculty]);
-		jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
-		expect(await roleGrd.canActivate(ctx)).toBe(false);
+			.mockReturnValueOnce(null)
+			.mockReturnValueOnce(null),
+			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
+		expect(await roleGrd.canActivate(ctx)).toBe(true);
 	});
 
-	it('fail due to roles are not defined', async () => {
+	it('fail when allowance and forbiddance roles have same child', async () => {
+		const req = { user: { role: UserRole.student } };
+		jest
+			.spyOn(rflt, 'get')
+			.mockReturnValueOnce(false)
+			.mockReturnValueOnce([UserRole.admin])
+			.mockReturnValueOnce([UserRole.admin]),
+			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
 		await execute(() => roleGrd.canActivate(ctx), {
 			exps: [
 				{ type: 'toThrow', params: [err('Fatal', 'Method', 'Implementation')] },
