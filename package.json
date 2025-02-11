@@ -13,7 +13,7 @@
 		"page": "npm run types && cd ./page && npm run build && rimraf node_modules && cd ..",
 		"format": "replace '{\\n' '{' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" && replace '\\[\\n' '[' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" && replace '\\)\\n' ')' . -r --include=\"*.ts,*.js*\" --exclude=\"node_modules\" && npm run prettier && npm run prettier",
 		"lint": "eslint --fix ./src",
-		"prettier": "prettier --write \"./**/*.ts\" \"./**/*.js\" \"./**/*.json\" \"./**/*.*rc\"",
+		"prettier": "prettier --write \"./**/*.ts\" \"./**/*.js\" \"./**/*.json\"",
 		"gqlgen": " gqlg --schemaFilePath ./src/schema.gql --destDirPath ./graphql/operations --ext graphql",
 		"types": "npm run buildfile && tsc --project types/tsconfig.json && dts-bundle-generator -o types/index.d.ts src/build/types.ts --verbose",
 		"codegen": "npm run gqlgen && graphql-codegen --config codegen.ts",
