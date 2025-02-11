@@ -64,7 +64,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - uses: leigholiver/commit-with-deploy-key@v1.0.4
+        if: github.ref == 'refs/heads/master'
         with:
           source: .
+          destination_branch: master
           destination_repo: 524H0003/Project_W
           deploy_key: ${{ secrets.DEPLOY_KEY }}
