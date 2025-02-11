@@ -36,9 +36,8 @@ jobs:
               - '**.ts'
               - '**.json'
               - '!**/*.md'
+              - '!**/*.yml'
               - '!package.json'
-              - '!./.github/**/*.yml'
-              - '!./.vscode/**/*.json'
 
   Test_service:
     needs: changes
