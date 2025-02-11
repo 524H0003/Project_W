@@ -13,7 +13,7 @@
 		"*.guard.ts": "$(capture).strategy.ts",
 		"*.entity.ts": "$(capture).model.ts, $(capture).graphql.ts, $(capture).dto.ts",
 		"*.ts": "$(capture).spec.ts, $(capture).spec.utils.ts",
-		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, LICENSE*, README.md, nest-cli.json, .gitignore, codegen.ts, .env*, cypress.config.*, Procfile, .*rc",
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, LICENSE*, *.md, nest-cli.json, .gitignore, codegen.ts, .env*, cypress.config.*, Procfile, .*rc",
 		"tsconfig.json": "tsconfig.*.json",
 		"jest.all.config.ts": "jest.*.config.ts"
 	},

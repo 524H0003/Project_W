@@ -28,7 +28,8 @@ function convertForGql(context: ExecutionContext) {
  * ! WARNING: it's must be (data: unknown, context: ExecutionContext) => {}
  * ! to void error [ExceptionsHandler] Cannot read properties of undefined (reading 'getType').
  */
-export const Roles = Reflector.createDecorator<UserRole[]>(),
+export const Allow = Reflector.createDecorator<UserRole[]>(),
+	Forbid = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),
 	GetRequest = createParamDecorator(
 		<K extends keyof FastifyRequest>(args: K, context: ExecutionContext) =>
@@ -68,14 +69,20 @@ export class AccessGuard extends AuthGuard('access') {
 	 */
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		if (this.reflector.get(AllowPublic, context.getHandler())) return true;
-		await super.canActivate(context); // ! Must run to check passport
-		const roles = this.reflector.get(Roles, context.getHandler());
-		if (roles) {
-			const req = this.getRequest(context),
-				user = req.user as User;
 
-			return matching(user.role, roles);
-		}
-		throw new ServerException('Fatal', 'Method', 'Implementation');
+		await super.canActivate(context); // ! Must run to check passport
+
+		const allow = this.reflector.get(Allow, context.getHandler()) || [],
+			forbid = this.reflector.get(Forbid, context.getHandler()) || [];
+
+		const { role } = this.getRequest(context).user as User;
+
+		if (allow.some((i) => matching(i, forbid)))
+			throw new ServerException('Fatal', 'Method', 'Implementation');
+		else if (!allow.length && !forbid.length) return true;
+
+		return (
+			(allow.length ? matching(role, allow) : true) && !matching(role, forbid)
+		);
 	}
 }

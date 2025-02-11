@@ -43,5 +43,9 @@ describe('matching', () => {
 				matching(UserRole.admin, [UserRole.faculty, UserRole.student]),
 			).toEqual(false);
 		});
+
+		it('case #4', () => {
+			expect(matching(UserRole.admin, [])).toEqual(false);
+		});
 	});
 });

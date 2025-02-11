@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Notification } from './notification.entity';
 import { UseGuards } from '@nestjs/common';
-import { AccessGuard, Roles } from 'auth/guards/access.guard';
+import { AccessGuard, Allow } from 'auth/guards/access.guard';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { NotificationAssign, NotificationUpdate } from './notification.graphql';
@@ -19,7 +19,7 @@ export class NotificationResolver {
 	 * Notification assign
 	 */
 	@Mutation(() => Notification)
-	@Roles([UserRole.faculty, UserRole.enterprise])
+	@Allow([UserRole.faculty, UserRole.enterprise])
 	assignNotification(@Args('input') input: NotificationAssign) {
 		return this.svc.notification.assign({ ...input });
 	}
@@ -28,7 +28,7 @@ export class NotificationResolver {
 	 * Update notification
 	 */
 	@Mutation(() => Notification)
-	@Roles([UserRole.faculty, UserRole.enterprise])
+	@Allow([UserRole.faculty, UserRole.enterprise])
 	async updateNotification(@Args('input') input: NotificationUpdate) {
 		const notification = await this.svc.notification.findOne({ id: input.id });
 

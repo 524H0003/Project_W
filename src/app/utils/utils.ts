@@ -357,7 +357,7 @@ class ServerException extends HttpException {
 		private err: ErrorExtender = new Error() as ErrorExtender,
 	) {
 		super(
-			type + '_' + object + (action ? '_' : '') + action + '_' + (6).string,
+			(6).string + '_' + type + '_' + object + (action ? '_' : '') + action,
 			+(err.statusCode || 400),
 		);
 	}
