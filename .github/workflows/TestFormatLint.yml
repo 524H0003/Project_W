@@ -36,9 +36,8 @@ jobs:
               - '**.ts'
               - '**.json'
               - '!**/*.md'
+              - '!**/*.yml'
               - '!package.json'
-              - '!.github/*'
-              - '!.vscode/*'
 
   Test_service:
     needs: changes
@@ -48,7 +47,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 2
+    timeout-minutes: 3
 
     permissions:
       contents: write
@@ -88,7 +87,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 2
+    timeout-minutes: 3
 
     permissions:
       contents: write
@@ -128,7 +127,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 2
+    timeout-minutes: 3
 
     permissions:
       contents: write
