@@ -1,8 +1,9 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { File } from './file.entity';
 import { UseGuards } from '@nestjs/common';
-import { GetRequest, AccessGuard } from 'auth/guards/access.guard';
+import { GetRequest, AccessGuard, Allow } from 'auth/guards/access.guard';
 import { AppService } from 'app/app.service';
+import { UserRole } from 'user/user.model';
 import { User } from 'user/user.entity';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 
@@ -17,7 +18,7 @@ export class FileResolver {
 	/**
 	 * Upload file
 	 */
-	@Mutation(() => File) async uploadFile(
+	@Mutation(() => File) @Allow([UserRole.admin]) async uploadFile(
 		@Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload,
 		@GetRequest('user') { id }: User,
 	) {
