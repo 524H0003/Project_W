@@ -28,6 +28,8 @@ import fastifySecuredSession from '@fastify/secure-session';
 import { readFileSync } from 'fs';
 import { hash } from './auth.utils';
 import { AppMiddleware } from 'app/app.middleware';
+import fastifyCompression from '@fastify/compress';
+import { constants } from 'zlib';
 
 /**
  * Modified fastify interfaces
@@ -76,6 +78,10 @@ export async function registerServerPlugins(
 		};
 
 	await fastify
+		.register(fastifyCompression, {
+			encodings: ['gzip', 'deflate'],
+			brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } },
+		})
 		.register(fastifySecuredSession, {
 			cookieName: await hash((6).string, 'base64url'),
 			cookie: { ...cookieOptions, signed: true },
