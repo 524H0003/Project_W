@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/524H0003/Project_W/compare/v1.0.1...v1.1.0) (2025-02-13)
+
+
+### Features
+
+* **server:** add compression for server performance ([#125](https://github.com/524H0003/Project_W/issues/125)) ([ef11e50](https://github.com/524H0003/Project_W/commit/ef11e502ba9ca5cfa2f1c1be91e0a963f8bc55b7))
+
 ## [1.0.1](https://github.com/524H0003/Project_W/compare/v1.0.0...v1.0.1) (2025-02-11)
 
 
