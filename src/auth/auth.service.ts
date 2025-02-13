@@ -8,8 +8,8 @@ import { IUserRelationshipKeys, IUserSignUpKeys } from 'build/models';
 import { User } from 'user/user.entity';
 import { IUserLogIn, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
-import { IAuthSignUpOption } from './auth.model';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { IAuthSignUpOption } from './auth.interface';
 
 /**
  * Auth service
