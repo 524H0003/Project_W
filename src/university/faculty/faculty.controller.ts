@@ -3,14 +3,13 @@ import {
 	Controller,
 	Injectable,
 	Post,
-	Req,
 	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { GetRequest, MetaData } from 'auth/guards/access.guard';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -46,7 +45,6 @@ export class FacultyController extends BaseController {
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
-		@Req() request: FastifyRequest,
 		@Res() response: FastifyReply,
 		@Body() { signature, ...body }: FacultyAssign,
 		@MetaData() mtdt: string,
@@ -56,7 +54,6 @@ export class FacultyController extends BaseController {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
 		return this.responseWithUser(
-			request,
 			response,
 			await this.svc.faculty.assign(body, avatar),
 			mtdt,

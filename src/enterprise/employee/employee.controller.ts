@@ -2,14 +2,13 @@ import {
 	Body,
 	Controller,
 	Post,
-	Req,
 	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { GetRequest, MetaData } from 'auth/guards/access.guard';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -44,13 +43,11 @@ export class EmployeeController extends BaseController {
 	 * Employee request hook
 	 */
 	@Post('hook') @UseInterceptors(FileInterceptor()) async employeeHook(
-		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: EmployeeHook,
 		@MetaData() mtdt: string,
 	) {
 		return this.responseWithUserRecieve(
-			request,
 			response,
 			await this.svc.employee.hook(body, mtdt),
 		);
@@ -63,7 +60,6 @@ export class EmployeeController extends BaseController {
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
-		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() { signature, password }: EmployeeSignUp,
 		@MetaData() mtdt: string,
@@ -81,6 +77,6 @@ export class EmployeeController extends BaseController {
 			)
 		).eventCreator;
 
-		return this.responseWithUser(request, response, user, mtdt);
+		return this.responseWithUser(response, user, mtdt);
 	}
 }

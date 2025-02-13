@@ -3,16 +3,15 @@ import {
 	Controller,
 	Injectable,
 	Post,
-	Req,
 	Res,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { MetaData } from 'auth/guards/access.guard';
+import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { LocalhostGuard } from 'auth/guards/localhost.guard';
 import { BaseController } from 'app/utils/controller.utils';
@@ -42,10 +41,10 @@ export class StudentController extends BaseController {
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor())
 	async signUp(
-		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: StudentSignUp,
 		@MetaData() mtdt: string,
+		@GetRequest('hostname') hostname: string,
 	): Promise<void> {
 		try {
 			await this.svc.student.signUp(body);
@@ -53,7 +52,7 @@ export class StudentController extends BaseController {
 			const { message } = error as ServerException;
 			switch (true) {
 				case message.includes(err('Success', 'User', 'SignUp')):
-					return this.resetPasswordViaEmail(request, response, body, mtdt);
+					return this.resetPasswordViaEmail(response, hostname, body, mtdt);
 
 				default:
 					throw error;

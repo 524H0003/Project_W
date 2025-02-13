@@ -2,13 +2,12 @@ import {
 	Body,
 	Controller,
 	Post,
-	Req,
 	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
@@ -45,7 +44,6 @@ export class EnterpriseController extends BaseController {
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
-		@Req() request: FastifyRequest,
 		@Res() response: FastifyReply,
 		@Body() { signature, ...body }: EnterpriseAssign,
 		@MetaData() mtdt: string,
@@ -55,7 +53,6 @@ export class EnterpriseController extends BaseController {
 		await this.svc.hook.validating(signature, mtdt, hook);
 		await this.svc.enterprise.assign(body, avatar);
 		return this.responseWithUserRecieve(
-			request,
 			response,
 			new UserRecieve({ response: 'Success_Assign_Enterprise' }),
 		);

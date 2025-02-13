@@ -38,12 +38,15 @@ export class AppMiddleware extends Cryption implements NestMiddleware {
 					cookie,
 					'base64url',
 				)
-			)
+			) {
 				refresh = req.cookies[cookie];
-			else if (
+				res.clearCookie(cookie);
+			} else if (
 				await compare(this.config.get('ACCESS_SECRET'), cookie, 'base64url')
-			)
+			) {
 				access = this.decrypt(req.cookies[cookie]);
+				res.clearCookie(cookie);
+			}
 
 		refresh = this.decrypt(refresh, access.split('.').at(-1));
 
