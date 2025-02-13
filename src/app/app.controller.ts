@@ -30,6 +30,14 @@ import { BaseUserEmail } from './app.dto';
 import { Hook } from './hook/hook.entity';
 import { HookGuard } from 'auth/guards/hook.guard';
 import { IRefreshResult } from 'auth/guards/refresh.strategy';
+import {
+	DiskHealthIndicator,
+	HealthCheck,
+	HealthCheckService,
+	MemoryHealthIndicator,
+	TypeOrmHealthIndicator,
+} from '@nestjs/terminus';
+import { join } from 'path';
 
 /**
  * Application Controller
@@ -204,13 +212,29 @@ export class AppController extends BaseController {
 	) {
 		response.send({ token: response.generateCsrf() });
 	}
+}
 
-	/**
-	 * Check server status
-	 */
-	@Get('status') serverStatus(
-		@Res({ passthrough: true }) response: FastifyReply,
-	) {
-		response.send({ status: 'OK' });
+@Controller('health')
+export class HealthController {
+	constructor(
+		private health: HealthCheckService,
+		private db: TypeOrmHealthIndicator,
+		private readonly disk: DiskHealthIndicator,
+		private memory: MemoryHealthIndicator,
+	) {}
+
+	@Get()
+	@HealthCheck()
+	check() {
+		return this.health.check([
+			() => this.db.pingCheck('database'),
+			() =>
+				this.disk.checkStorage('storage', {
+					path: join(__dirname),
+					thresholdPercent: 0.75,
+				}),
+			() => this.memory.checkHeap('memory_heap', (365).mb2b),
+			() => this.memory.checkRSS('memory_rss', (128).mb2b),
+		]);
 	}
 }
