@@ -36,12 +36,15 @@ export const Allow = Reflector.createDecorator<UserRole[]>(),
 			convertForGql(context)[args || 'user'],
 	),
 	MetaData = createParamDecorator(
-		(data: unknown, context: ExecutionContext): string =>
-			JSON.stringify(
-				new UAParser()
-					.setUA(convertForGql(context).headers['user-agent'])
-					.getResult(),
-			),
+		(data: unknown, context: ExecutionContext): string => {
+			const { headers } = context.getArgByIndex(0),
+				uap = UAParser(headers);
+
+			return JSON.stringify({
+				...uap.withClientHints(),
+				...uap.withFeatureCheck(),
+			});
+		},
 	);
 
 /**
