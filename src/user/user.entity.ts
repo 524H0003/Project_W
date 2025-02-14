@@ -6,7 +6,7 @@ import {
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
 } from 'build/models';
-import { BaseEntity, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity, BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
 	IUserEntity,
@@ -140,7 +140,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * Hash the current password
 	 */
-	@BeforeUpdate()
+	@BeforeInsert()
 	private async hashingPassword() {
 		if (this.password)
 			this.hashedPassword = await hashing(this.password, {
