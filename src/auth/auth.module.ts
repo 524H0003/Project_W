@@ -5,11 +5,8 @@ import { AuthService, SignService } from './auth.service';
 import { AccessStrategy } from './guards/access.strategy';
 import { RefreshStrategy } from './guards/refresh.strategy';
 import { HookStrategy } from './guards/hook.strategy';
-import { AccessGuard } from './guards/access.guard';
 import { AppModule } from 'app/app.module';
-import { HookGuard } from './guards/hook.guard';
-import { RefreshGuard } from './guards/refresh.guard';
-import { LocalhostGuard } from './guards/localhost.guard';
+import { AccessGuard, HookGuard, LocalhostGuard, RefreshGuard } from './guards';
 
 @Module({
 	imports: [

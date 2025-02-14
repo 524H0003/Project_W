@@ -4,8 +4,6 @@ import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { AuthService, SignService } from 'auth/auth.service';
-import { DeviceService } from 'auth/device/device.service';
-import { SessionService } from 'auth/session/session.service';
 import { HookService } from './hook/hook.service';
 import { MailService } from './mail/mail.service';
 import { StudentService } from 'university/student/student.service';
@@ -22,6 +20,7 @@ import { RecieverService } from 'notification/reciever/reciever.service';
 import { EventParticipatorService } from 'event/participator/participator.service';
 import { AWSService } from './aws/aws.service';
 import { ConfigService } from '@nestjs/config';
+import { BlocService } from 'auth/bloc/bloc.service';
 
 /**
  * Server services
@@ -33,8 +32,7 @@ export class AppService {
 	constructor(
 		@InjectRepository(BaseUser) baseUserRepo: Repository<BaseUser>,
 		@Inject(forwardRef(() => AuthService)) public auth: AuthService,
-		@Inject(forwardRef(() => DeviceService)) public device: DeviceService,
-		@Inject(forwardRef(() => SessionService)) public session: SessionService,
+		@Inject(forwardRef(() => BlocService)) public bloc: BlocService,
 		@Inject(forwardRef(() => ConfigService)) public cfg: ConfigService,
 		@Inject(forwardRef(() => HookService)) public hook: HookService,
 		@Inject(forwardRef(() => MailService)) public mail: MailService,
@@ -102,14 +100,6 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 			await super.update({ id: entityId }, updatedEntity);
 		}
 		return new BaseUser(await this.id(entityId));
-	}
-
-	/**
-	 * Remove base user
-	 * @param {string} entityId - base user's id
-	 */
-	async remove(entityId: string) {
-		await this.delete({ id: entityId });
 	}
 
 	/**

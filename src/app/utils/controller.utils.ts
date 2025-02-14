@@ -1,5 +1,4 @@
 import { AppService } from 'app/app.service';
-import { hash } from './auth.utils';
 import { IUserRecieve } from 'user/user.model';
 import { User, UserRecieve } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +7,7 @@ import { FastifyReply } from 'fastify';
 import { BaseUserEmail } from 'app/app.dto';
 import { UserAuthencation } from 'user/user.dto';
 import { Hook } from 'app/hook/hook.entity';
+import { MetaData } from 'auth/guards';
 
 /**
  * Base controller
@@ -37,26 +37,21 @@ export class BaseController {
 	 * @param {IUserRecieve} usrRcv - user's recieve infomations
 	 * @return {Promise<void>}
 	 */
-	protected async responseWithUserRecieve(
+	protected responseWithUserRecieve(
 		reply: FastifyReply,
 		{ accessToken, refreshToken, response }: IUserRecieve,
-	): Promise<void> {
+	): void {
 		const encryptedAccess = this.svc.auth.encrypt(accessToken),
 			encryptedRefresh = this.svc.auth.encrypt(
 				refreshToken,
 				accessToken.split('.').at(-1),
 			);
 
-		if (accessToken)
-			reply.cookie(await hash(this.acsKey, 'base64url'), encryptedAccess);
-		if (refreshToken)
-			reply.cookie(
-				await hash(this.rfsKey + '!', 'base64url'),
-				encryptedRefresh,
-			);
+		if (accessToken) reply.cookie(this.acsKey, encryptedAccess);
+		if (refreshToken) reply.cookie(this.rfsKey + '!', encryptedRefresh);
 
 		reply.send({
-			user: typeof response !== 'string' ? response : undefined,
+			user: typeof response === 'object' ? response : undefined,
 			message: typeof response === 'string' ? response : undefined,
 		});
 	}
@@ -70,11 +65,11 @@ export class BaseController {
 	protected async responseWithUser(
 		response: FastifyReply,
 		user: User,
-		mtdt: string,
+		mtdt: MetaData,
 	): Promise<void> {
 		return this.responseWithUserRecieve(
 			response,
-			await this.svc.session.getTokens(user, mtdt),
+			await this.svc.bloc.getTokens(user, mtdt),
 		);
 	}
 
@@ -85,18 +80,23 @@ export class BaseController {
 		response: FastifyReply,
 		hostname: string,
 		{ email }: BaseUserEmail,
-		mtdt: string,
+		mtdt: MetaData,
 	): Promise<void> {
+		const { id } = await this.svc.hook.assign(mtdt, async (s: string) => {
+			const user = await this.svc.baseUser.email(email);
+
+			if (!user) throw new ServerException('Invalid', 'Email', '');
+			return this.svc.mail.send(email, 'Change password?', 'forgetPassword', {
+				name: user.name,
+				url: `${hostname}/hook/${s}`,
+			});
+		});
+
 		return this.responseWithUserRecieve(
 			response,
-			await this.svc.hook.assign(mtdt, async (s: string) => {
-				const user = await this.svc.baseUser.email(email);
-
-				if (!user) throw new ServerException('Invalid', 'Email', '');
-				return this.svc.mail.send(email, 'Change password?', 'forgetPassword', {
-					name: user.name,
-					url: `${hostname}/hook/${s}`,
-				});
+			new UserRecieve({
+				accessToken: this.svc.sign.access(id),
+				response: err('Success', 'Signature', 'Sent'),
 			}),
 		);
 	}
@@ -108,7 +108,7 @@ export class BaseController {
 		signature: string,
 		response: FastifyReply,
 		{ password }: UserAuthencation,
-		mtdt: string,
+		mtdt: MetaData,
 		hook: Hook,
 	): Promise<void> {
 		try {

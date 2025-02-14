@@ -9,6 +9,7 @@ import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
 import { IEmployeeInfoKeys, IEmployeeSignUpKeys } from 'build/models';
+import { MetaData } from 'auth/guards';
 
 /**
  * Employee service
@@ -30,7 +31,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	 */
 	async hook(
 		{ name, email, position, enterpriseName }: IEmployeeHook,
-		mtdt: string,
+		mtdt: MetaData,
 	) {
 		const ent = await this.svc.enterprise.findOne({
 			baseUser: { name: enterpriseName },

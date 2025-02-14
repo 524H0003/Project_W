@@ -6,8 +6,6 @@ import { AppService } from 'app/app.service';
 import { HookModule } from './hook/hook.module';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from 'auth/auth.module';
-import { DeviceModule } from 'auth/device/device.module';
-import { SessionModule } from 'auth/session/session.module';
 import { EnterpriseModule } from 'enterprise/enterprise.module';
 import { EventModule } from 'event/event.module';
 import { FileModule } from 'file/file.module';
@@ -16,6 +14,7 @@ import { UserModule } from 'user/user.module';
 import { NotificationModule } from 'notification/notification.module';
 import { AWSModule } from './aws/aws.module';
 import { TerminusModule } from '@nestjs/terminus';
+import { BlocModule } from 'auth/bloc/bloc.module';
 
 /**
  * List of server modules
@@ -25,8 +24,7 @@ const modules = [
 	AWSModule,
 	MailModule,
 	AuthModule,
-	DeviceModule,
-	SessionModule,
+	BlocModule,
 	EnterpriseModule,
 	EventModule,
 	FileModule,

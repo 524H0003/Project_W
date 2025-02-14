@@ -1,5 +1,5 @@
 import { AppService } from 'app/app.service';
-import { Device } from './device.entity';
+import { Device } from './bloc.entity';
 import { execute, initJest } from 'app/utils/test.utils';
 
 const fileName = curFile(__filename);

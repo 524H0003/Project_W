@@ -1,4 +1,4 @@
-import { hash as sHash, verify } from 'argon2';
+import { hash as sHash, verify, Options as Argon2Options } from 'argon2';
 import { validate } from 'class-validator';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 
@@ -24,13 +24,14 @@ export async function validation<T>(
 /**
  * Hash function
  * @param {string} input - The string need to hash
+ * @param {Argon2Options} option - the option for hash
  * @return {string} Hashed string
  */
 export async function hash(
 	input: string,
-	encoded: BufferEncoding = 'utf-8',
+	option: Argon2Options,
 ): Promise<string> {
-	return Buffer.from(await sHash(input), 'utf-8').toString(encoded);
+	return sHash(input, option);
 }
 
 /**
@@ -64,6 +65,16 @@ export class Cryption {
 	) {}
 
 	/**
+	 * Encrypt separator
+	 */
+	private separator = '%';
+
+	/**
+	 * Encrypt encoding
+	 */
+	private encoding: BufferEncoding = 'base64url';
+
+	/**
 	 * Convert signature to key
 	 * @param {string} str - the signature to be converted
 	 * @return {string} the key have been converted
@@ -80,10 +91,11 @@ export class Cryption {
 	 * @return {string} The encrypted text
 	 */
 	encrypt(input: string, key: string = this.secret): string {
-		const iv = randomBytes(16),
-			cipher = createCipheriv(this.algorithm, this.sigToKey(key), iv),
+		const { encoding, separator, algorithm } = this,
+			iv = randomBytes(10 + (6).random),
+			cipher = createCipheriv(algorithm, this.sigToKey(key), iv),
 			encrypted = Buffer.concat([cipher.update(input), cipher.final()]);
-		return iv.toString('hex') + encrypted.toString('hex');
+		return encrypted.toString(encoding) + separator + iv.toString(encoding);
 	}
 
 	/**
@@ -94,10 +106,17 @@ export class Cryption {
 	 */
 	decrypt(input: string, key: string = this.secret): string {
 		if (!input) return '';
-		const iv = Buffer.from(input.substring(0, 32), 'hex'),
-			encrypted = Buffer.from(input.substring(32), 'hex'),
-			decipher = createDecipheriv(this.algorithm, this.sigToKey(key), iv),
-			decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+		const { encoding, separator, algorithm } = this,
+			[content, header] = input.split(separator),
+			decipher = createDecipheriv(
+				algorithm,
+				this.sigToKey(key),
+				Buffer.from(header, encoding),
+			),
+			decrypted = Buffer.concat([
+				decipher.update(Buffer.from(content, encoding)),
+				decipher.final(),
+			]);
 		return decrypted.toString();
 	}
 }

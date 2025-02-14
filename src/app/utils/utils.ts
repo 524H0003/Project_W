@@ -226,6 +226,10 @@ declare global {
 		 * To uncapitalize
 		 */
 		readonly uncapitalize: string;
+		/**
+		 * Convert to base64url
+		 */
+		readonly toBase64Url: string;
 	}
 
 	/**
@@ -297,6 +301,11 @@ declare global {
 	 * @return {number}
 	 */
 	function errorStatus(error: any): number;
+
+	/**
+	 * Get current time
+	 */
+	function currentTime(): number;
 }
 
 /**
@@ -415,6 +424,7 @@ try {
 		error instanceof HttpException
 			? error.getStatus()
 			: HttpStatus.INTERNAL_SERVER_ERROR;
+	global.currentTime = () => Math.floor(new Date().getTime() / 1000);
 	global.err = (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
 		type + '_' + object + (action ? '_' : '') + action;
 	global.disableDescribe = (
@@ -442,6 +452,13 @@ try {
 	};
 } catch {}
 // String.prototype
+Object.defineProperty(String.prototype, 'toBase64Url', {
+	get: function () {
+		return Buffer.from(this as string, 'utf8').toString('base64url');
+	},
+	enumerable: true,
+	configurable: true,
+});
 Object.defineProperty(String.prototype, 'randomChar', {
 	get: function () {
 		return (this as string).charAt((this as string).length.random);

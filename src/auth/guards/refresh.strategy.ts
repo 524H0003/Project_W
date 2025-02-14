@@ -2,29 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
-import { DeviceService } from 'auth/device/device.service';
-import { SessionService } from 'auth/session/session.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-
-/**
- * Refresh request interface
- */
-export interface IRefreshResult {
-	/**
-	 * Refresh status
-	 */
-	status: 'success' | 'fail' | 'lockdown';
-
-	/**
-	 * The session's id
-	 */
-	sessionId: string;
-
-	/**
-	 * Client's user agent
-	 */
-	hashedUserAgent?: string;
-}
+import { IRefreshResult } from '.';
 
 /**
  * Check the refresh token from client
@@ -34,11 +13,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	/**
 	 * Initiate refresh strategy
 	 */
-	constructor(
-		protected cfgSvc: ConfigService,
-		protected sesSvc: SessionService,
-		protected dvcSvc: DeviceService,
-	) {
+	constructor(protected cfgSvc: ConfigService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: true,

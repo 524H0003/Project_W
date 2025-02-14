@@ -1,9 +1,8 @@
 import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
-import { GetRequest } from 'auth/guards/access.guard';
+import { FileGuard, GetRequest } from 'auth/guards';
 import { FastifyReply } from 'fastify';
 import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
-import { FileGuard } from 'auth/guards/file.guard';
 
 /**
  * File controller

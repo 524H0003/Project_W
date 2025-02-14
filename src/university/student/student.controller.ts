@@ -7,13 +7,12 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { GetRequest, MetaData } from 'auth/guards/access.guard';
+import { GetMetaData, GetRequest, LocalhostGuard, MetaData } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { FastifyReply } from 'fastify';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
-import { LocalhostGuard } from 'auth/guards/localhost.guard';
 import { BaseController } from 'app/utils/controller.utils';
 import { StudentSignUp } from './student.dto';
 
@@ -43,7 +42,7 @@ export class StudentController extends BaseController {
 	async signUp(
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: StudentSignUp,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 		@GetRequest('hostname') hostname: string,
 	): Promise<void> {
 		try {

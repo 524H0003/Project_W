@@ -11,7 +11,6 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { AppService } from './app.service';
 import { UserRecieve } from 'user/user.entity';
 import { compare } from './utils/auth.utils';
@@ -22,14 +21,10 @@ import { FastifyReply } from 'fastify';
 import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-import { RefreshGuard } from 'auth/guards/refresh.guard';
-import { LocalhostGuard } from 'auth/guards/localhost.guard';
 import { UserAuthencation, UserLogIn, UserSignUp } from 'user/user.dto';
 import { Throttle } from '@nestjs/throttler';
 import { BaseUserEmail } from './app.dto';
 import { Hook } from './hook/hook.entity';
-import { HookGuard } from 'auth/guards/hook.guard';
-import { IRefreshResult } from 'auth/guards/refresh.strategy';
 import {
 	DiskHealthIndicator,
 	HealthCheck,
@@ -38,6 +33,15 @@ import {
 	TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
 import { join } from 'path';
+import {
+	GetMetaData,
+	GetRequest,
+	HookGuard,
+	IRefreshResult,
+	LocalhostGuard,
+	MetaData,
+	RefreshGuard,
+} from 'auth/guards';
 
 /**
  * Application Controller
@@ -63,7 +67,7 @@ export class AppController extends BaseController {
 	@Post('login') @UseInterceptors(FileInterceptor()) async login(
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: UserLogIn,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 		@GetRequest('hostname') hostname: string,
 	): Promise<void> {
 		try {
@@ -96,7 +100,7 @@ export class AppController extends BaseController {
 	async signUp(
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: UserSignUp,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<void> {
 		return this.responseWithUser(
@@ -130,7 +134,7 @@ export class AppController extends BaseController {
 	 */
 	@Post('refresh') @UseGuards(RefreshGuard) async refresh(
 		@Res({ passthrough: true }) response: FastifyReply,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 		@GetRequest('refresh') refresh: IRefreshResult,
 	): Promise<void> {
 		const sendBack = (usrRcv: UserRecieve) =>
@@ -157,21 +161,27 @@ export class AppController extends BaseController {
 	protected async requestSignatureViaConsole(
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() { email }: BaseUserEmail,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 	): Promise<void> {
-		if (email == this.cfg.get('ADMIN_EMAIL'))
-			return this.responseWithUserRecieve(
-				response,
-				await this.svc.hook.assign(mtdt, (signature: string) =>
-					this.svc.mail.send(
-						this.svc.cfg.get('ADMIN_EMAIL'),
-						'Signature request',
-						'sendSignatureAdmin',
-						{ signature },
-					),
-				),
-			);
-		throw new ServerException('Invalid', 'Email', '');
+		if (email !== this.cfg.get('ADMIN_EMAIL'))
+			throw new ServerException('Invalid', 'Email', '');
+
+		const { id } = await this.svc.hook.assign(mtdt, (signature: string) =>
+			this.svc.mail.send(
+				this.svc.cfg.get('ADMIN_EMAIL'),
+				'Signature request',
+				'sendSignatureAdmin',
+				{ signature },
+			),
+		);
+
+		return this.responseWithUserRecieve(
+			response,
+			new UserRecieve({
+				accessToken: this.svc.sign.access(id),
+				response: err('Success', 'Signature', 'Sent'),
+			}),
+		);
 	}
 
 	/**
@@ -184,7 +194,7 @@ export class AppController extends BaseController {
 		@Param('token') signature: string,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() { password }: UserAuthencation,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 		@GetRequest('hook') hook: Hook,
 	): Promise<void> {
 		await super.changePassword(signature, response, { password }, mtdt, hook);
@@ -199,7 +209,7 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: FastifyReply,
 		@GetRequest('hostname') hostname: string,
 		@Body() { email }: BaseUserEmail,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 	): Promise<void> {
 		return super.resetPasswordViaEmail(response, hostname, { email }, mtdt);
 	}

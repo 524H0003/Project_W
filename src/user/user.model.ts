@@ -1,5 +1,5 @@
 import { IBaseUserEntity, IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
-import { IDeviceEntity } from 'auth/device/device.model';
+import { IBlocEntity } from 'auth/bloc/bloc.model';
 import { IEventParticipatorEntiy } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';
@@ -59,7 +59,7 @@ export interface IUserSensitive {
 export interface IUserRelationship {
 	baseUser: IBaseUserEntity;
 	recievedNotifications: IRecieverEntity[];
-	devices: IDeviceEntity[];
+	authBloc: IBlocEntity[];
 	uploadFiles: IFile[];
 	participatedEvents: IEventParticipatorEntiy[];
 }

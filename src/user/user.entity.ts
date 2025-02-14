@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { Device } from 'auth/device/device.entity';
 import {
 	IBaseUserInfoKeys,
 	IUserAuthenticationKeys,
@@ -23,6 +22,7 @@ import { BaseUser } from 'app/app.entity';
 import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
+import { Bloc } from 'auth/bloc/bloc.entity';
 
 /**
  * User entity
@@ -75,8 +75,8 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * User's device logged in
 	 */
-	@OneToMany(() => Device, (_: Device) => _.owner, { onDelete: 'CASCADE' })
-	devices: Device[];
+	@OneToMany(() => Bloc, (_: Bloc) => _.owner, { onDelete: 'CASCADE' })
+	authBloc: Bloc[];
 
 	/**
 	 * User uploaded files
