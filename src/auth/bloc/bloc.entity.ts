@@ -2,7 +2,7 @@ import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IBlocEntity, IBlocInfo } from './bloc.model';
-import { hash } from 'app/utils/auth.utils';
+import { hashing } from 'app/utils/auth.utils';
 import { MetaData } from 'auth/guards';
 
 /**
@@ -55,11 +55,24 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	@Column({ type: 'jsonb', default: {} }) content: IBlocContent;
 
 	// Methods
+	/**
+	 * Hashing bloc
+	 */
 	@BeforeUpdate()
-	async hashBloc() {
-		const { prev, id } = this;
+	private async hashBloc() {
+		const { prev, id } = this,
+			hash = (
+				await hashing(JSON.stringify({ ...this.content, prev, id }), {
+					parallelism: 2,
+					memoryCost: 600,
+					timeCost: 2,
+					hashLength: 27,
+				})
+			)
+				.split('$')
+				.at(-1);
 
-		this.hash = await hash(JSON.stringify({ ...this.content, prev, id }));
+		this.hash = hash;
 	}
 
 	// eslint-disable-next-line tsEslint/no-unused-vars

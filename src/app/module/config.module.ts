@@ -23,7 +23,7 @@ export const loadEnv =
 			// Refresh token
 			REFRESH_SECRET: Joi.string().default('refresh'),
 			REFRESH_EXPIRE: Joi.string().default('66d'),
-			REFRESH_USE: Joi.number().default(6),
+			REFRESH_USE: Joi.number().default(60),
 			// Server config
 			SERVER_SECRET: Joi.string().default((64).alpha),
 			SERVER_PORT: Joi.number().default(3000),

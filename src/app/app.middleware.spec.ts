@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { hash } from 'app/utils/auth.utils';
+import { hashing } from 'app/utils/auth.utils';
 import { AppMiddleware } from './app.middleware';
 import { initJest } from 'app/utils/test.utils';
 import { expect } from '@jest/globals';
@@ -33,9 +33,9 @@ beforeEach(async () => {
 
 describe('use', () => {
 	beforeEach(async () => {
-		req['cookies'][`${await hash(rfsKey + '!', 'base64url')}`] =
+		req['cookies'][`${await hashing(rfsKey + '!', 'base64url')}`] =
 			authSvc.encrypt(rfsTkn, acsTkn.split('.').at(-1));
-		req['cookies'][`${await hash(acsKey, 'base64url')}`] =
+		req['cookies'][`${await hashing(acsKey, 'base64url')}`] =
 			authSvc.encrypt(acsTkn);
 	});
 

@@ -27,9 +27,14 @@ export async function validation<T>(
  * @param {Argon2Options} option - the option for hash
  * @return {string} Hashed string
  */
-export async function hash(
+export async function hashing(
 	input: string,
-	option: Argon2Options,
+	option: Required<
+		Pick<
+			Argon2Options,
+			'hashLength' | 'parallelism' | 'timeCost' | 'memoryCost'
+		>
+	>,
 ): Promise<string> {
 	return sHash(input, option);
 }

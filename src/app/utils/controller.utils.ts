@@ -41,14 +41,8 @@ export class BaseController {
 		reply: FastifyReply,
 		{ accessToken, refreshToken, response }: IUserRecieve,
 	): void {
-		const encryptedAccess = this.svc.auth.encrypt(accessToken),
-			encryptedRefresh = this.svc.auth.encrypt(
-				refreshToken,
-				accessToken.split('.').at(-1),
-			);
-
-		if (accessToken) reply.cookie(this.acsKey, encryptedAccess);
-		if (refreshToken) reply.cookie(this.rfsKey + '!', encryptedRefresh);
+		reply.access = accessToken;
+		reply.refresh = refreshToken;
 
 		reply.send({
 			user: typeof response === 'object' ? response : undefined,

@@ -17,7 +17,6 @@ import {
 } from 'fastify';
 import { User } from 'user/user.entity';
 import { Hook } from 'app/hook/hook.entity';
-import { IRefreshResult } from 'auth/guards/refresh.strategy';
 import { ConfigService } from '@nestjs/config';
 import { AppService } from 'app/app.service';
 import { OnModuleInit } from '@nestjs/common';
@@ -26,10 +25,11 @@ import { SignService } from 'auth/auth.service';
 import fastifyCsrf, { CookieSerializeOptions } from '@fastify/csrf-protection';
 import fastifySecuredSession from '@fastify/secure-session';
 import { readFileSync } from 'fs';
-import { hash } from './auth.utils';
+import { hashing } from './auth.utils';
 import { AppMiddleware } from 'app/app.middleware';
 import fastifyCompression from '@fastify/compress';
 import { constants } from 'zlib';
+import { IRefreshResult } from 'auth/guards';
 
 /**
  * Modified fastify interfaces
@@ -43,6 +43,14 @@ declare module 'fastify' {
 		hook: Hook;
 		refresh: IRefreshResult;
 		isMultipart: boolean;
+	}
+
+	/**
+	 * Server response addition fields
+	 */
+	interface FastifyReply {
+		access: string;
+		refresh: string;
 	}
 
 	/**
@@ -83,7 +91,14 @@ export async function registerServerPlugins(
 			brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } },
 		})
 		.register(fastifySecuredSession, {
-			cookieName: await hash((6).string, 'base64url'),
+			cookieName: (
+				await hashing((6).string, {
+					hashLength: 6,
+					timeCost: 2,
+					memoryCost: 6262,
+					parallelism: 2,
+				})
+			).toBase64Url,
 			cookie: { ...cookieOptions, signed: true },
 			secret,
 			key: readFileSync('securedSessionKey'),
@@ -91,7 +106,14 @@ export async function registerServerPlugins(
 		})
 		.register(fastifyCsrf, {
 			sessionKey: name,
-			cookieKey: await hash((6).string, 'base64url'),
+			cookieKey: (
+				await hashing((6).string, {
+					hashLength: 6,
+					timeCost: 2,
+					memoryCost: 6262,
+					parallelism: 2,
+				})
+			).toBase64Url,
 			cookieOpts: cookieOptions,
 			sessionPlugin: '@fastify/secure-session',
 			csrfOpts: { validity: (180).s2ms },

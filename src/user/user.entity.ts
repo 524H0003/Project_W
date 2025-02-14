@@ -6,7 +6,7 @@ import {
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
 } from 'build/models';
-import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
 	IUserEntity,
@@ -17,7 +17,7 @@ import {
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
-import { hash } from 'app/utils/auth.utils';
+import { hashing } from 'app/utils/auth.utils';
 import { BaseUser } from 'app/app.entity';
 import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
@@ -50,20 +50,8 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * The hashed password
 	 */
-	@Column({ name: 'password_hash' }) private hashedPassword: string;
-
-	/**
-	 * Hash the current password
-	 * @return {Promise<string>}
-	 */
-	async hashingPassword(): Promise<string> {
-		if (this.password) {
-			this.hashedPassword = await hash(this.password);
-			delete this.password;
-			return this.hashedPassword;
-		}
-		return this.hashedPassword;
-	}
+	@Column({ name: 'password_hash' })
+	hashedPassword: string;
 
 	// Core Entity
 	/**
@@ -149,6 +137,19 @@ export class User extends BaseEntity implements IUserEntity {
 	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 
 	// Methods
+	/**
+	 * Hash the current password
+	 */
+	@BeforeUpdate()
+	private async hashingPassword() {
+		if (this.password)
+			this.hashedPassword = await hashing(this.password, {
+				parallelism: 3 + (3).random,
+				memoryCost: 60000 + (6000).random,
+				timeCost: 3 + (3).random,
+				hashLength: 60 + (60).random,
+			});
+	}
 	/**
 	 * A function return user's public infomations
 	 * @return {IUserInfo} User's public infomations

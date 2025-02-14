@@ -54,7 +54,7 @@ export class FacultyController extends BaseController {
 
 		return this.responseWithUser(
 			response,
-			await this.svc.faculty.assign(body, avatar),
+			(await this.svc.faculty.assign(body, avatar)).eventCreator.user,
 			mtdt,
 		);
 	}
