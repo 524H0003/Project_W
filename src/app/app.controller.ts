@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { UserRecieve } from 'user/user.entity';
-import { compare } from './utils/auth.utils';
 import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -117,11 +116,9 @@ export class AppController extends BaseController {
 		@Res({ passthrough: true }) response: FastifyReply,
 		@GetRequest('refresh') refresh: IRefreshResult,
 	): Promise<void> {
-		const { sessionId } = refresh;
+		const { rootId } = refresh;
 
-		await this.svc.device.remove({
-			id: (await this.svc.session.id(sessionId)).device.id,
-		});
+		await this.svc.bloc.remove(rootId);
 
 		return this.responseWithUserRecieve(
 			response,
@@ -137,20 +134,11 @@ export class AppController extends BaseController {
 		@GetMetaData() mtdt: MetaData,
 		@GetRequest('refresh') refresh: IRefreshResult,
 	): Promise<void> {
-		const sendBack = (usrRcv: UserRecieve) =>
-				this.responseWithUserRecieve(response, usrRcv),
-			{ sessionId, status, hashedUserAgent } = refresh;
+		const { metaData, rootId, blocHash, blocId } = refresh;
 
-		if (status === 'lockdown') {
-			await this.svc.device.remove({
-				id: (await this.svc.session.id(sessionId)).device.id,
-			});
-			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));
-		} else {
-			if (status === 'success' && compare(mtdt, hashedUserAgent))
-				return sendBack(await this.svc.session.rotateToken(sessionId));
-			else return sendBack(await this.svc.session.addTokens(sessionId));
-		}
+		if (metaData == mtdt)
+			(response.access = blocId), (response.refresh = blocHash);
+		else await this.svc.bloc.remove(rootId);
 	}
 
 	/**

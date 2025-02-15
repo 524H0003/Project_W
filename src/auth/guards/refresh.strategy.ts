@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { IRefreshResult } from '.';
+import { BlocService } from 'auth/bloc/bloc.service';
 
 /**
  * Check the refresh token from client
@@ -13,11 +14,14 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	/**
 	 * Initiate refresh strategy
 	 */
-	constructor(protected cfgSvc: ConfigService) {
+	constructor(
+		protected config: ConfigService,
+		protected bloc: BlocService,
+	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			ignoreExpiration: true,
-			secretOrKey: cfgSvc.get('REFRESH_SECRET'),
+			ignoreExpiration: false,
+			secretOrKey: config.get('REFRESH_SECRET'),
 		});
 	}
 
@@ -26,28 +30,17 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	 * @param {IPayload} payload - the payload from token
 	 * @return {Promise<IRefreshResult>}
 	 */
-	async validate(payload: IPayload): Promise<IRefreshResult> {
-		try {
-			const session = await this.sesSvc.id(payload.id, { deep: 3 });
-			if (session) {
-				if (session.useTimeLeft > 0) {
-					await this.sesSvc.useToken(session.id);
-					return {
-						status: 'success',
-						hashedUserAgent: session.device.hashedUserAgent,
-						sessionId: session.id,
-					};
-				} else {
-					if ((await this.dvcSvc.id(session.device.id)).child === session.id)
-						return { status: 'fail', sessionId: session.id };
-					else return { status: 'lockdown', sessionId: session.id };
-				}
-			}
-		} catch (error) {
-			switch ((error as { name: string }).name) {
-				case 'QueryFailedError':
-					break;
-			}
+	async validate({ payload }: IPayload): Promise<IRefreshResult> {
+		const root = await this.bloc.rootByHash(payload);
+		if (root) {
+			const { prev } = await this.bloc.findOne({ hash: payload }),
+				{ hash, id } = await this.bloc.findOne({ hash: prev });
+			return {
+				blocHash: hash,
+				blocId: id,
+				rootId: root.id,
+				metaData: root.content.metaData,
+			};
 		}
 		throw new ServerException('Invalid', 'Token', '');
 	}

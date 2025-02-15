@@ -1,53 +1,46 @@
 import { AppService } from 'app/app.service';
-import { Device } from './bloc.entity';
 import { execute, initJest } from 'app/utils/test.utils';
+import { Bloc } from './bloc.entity';
+import { User } from 'user/user.entity';
 
 const fileName = curFile(__filename);
 
-let svc: AppService;
+let svc: AppService, bloc: Bloc, user: User;
 
 beforeEach(async () => {
 	const { appSvc } = await initJest();
 
-	svc = appSvc;
+	const rawUser = User.test(fileName);
+
+	(svc = appSvc),
+		(bloc = Bloc.test(fileName)),
+		(user = await svc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null));
 });
 
-it('assign', async () => {
-	const device = Device.test(fileName);
-
-	await execute(() => svc.device.assign(device), {
-		exps: [
-			{ type: 'toBeInstanceOf', params: [Device] },
-			{ type: 'toMatchObject', params: [device] },
-		],
+describe('assign', () => {
+	it('success', async () => {
+		await execute(() => svc.bloc.assign(user, null), {
+			exps: [
+				{ type: 'toBeInstanceOf', params: [Bloc] },
+				{ type: 'toMatchObject', params: [Bloc] },
+			],
+		});
 	});
-});
 
-it('modify', async () => {
-	const rawDevice = Device.test(fileName),
-		device = await svc.device.assign(rawDevice),
-		newMtdt = (5).string + '_' + fileName;
-
-	await execute(() => svc.device.modify(device.id, { child: newMtdt }), {
-		exps: [
-			{ type: 'toBeInstanceOf', params: [Device] },
-			{ type: 'toMatchObject', params: [{ child: newMtdt }] },
-		],
-	});
-	await execute(() => svc.device.findOne(device), {
-		exps: [{ type: 'toBeNull', params: [] }],
+	it('fail', async () => {
+		await execute(() => svc.bloc.assign(null, null), {
+			exps: [{ type: 'toThrow', params: [err('Invalid', 'User', '')] }],
+		});
 	});
 });
 
 it('remove', async () => {
-	const device = Device.test(fileName);
+	bloc = await svc.bloc.assign(user, null);
 
-	await svc.device.assign(device);
-
-	await execute(() => svc.device.remove({ id: device.id }), {
+	await execute(() => svc.bloc.remove(bloc.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
-	await execute(() => svc.device.findOne(device), {
+	await execute(() => svc.bloc.findOne({ id: bloc.id }), {
 		exps: [{ type: 'toBeNull', params: [] }],
 	});
 });

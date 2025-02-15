@@ -317,6 +317,8 @@ type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
  * Server error object type
  */
 type ErrorObject =
+	| 'ID'
+	| 'Hash'
 	| 'CsrfCookie'
 	| 'CsrfToken'
 	| 'User'

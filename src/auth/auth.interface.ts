@@ -16,7 +16,7 @@ export interface IAuthSignUpOption {
  */
 export interface IPayload {
 	/**
-	 * Unique identifier
+	 * Payload content
 	 */
-	id: string;
+	payload: string;
 }

@@ -35,7 +35,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {string} prev - previous bloc hash
 	 */
 	assign(owner: User, prev: string | null, metaData?: MetaData) {
-		if (!owner || !this.svc.baseUser.id(owner.baseUser.id))
+		if (!owner && !this.svc.baseUser.id(owner.baseUser.id))
 			throw new ServerException('Invalid', 'User', '');
 		return this.save({ prev, content: { metaData, lastIssue: currentTime() } });
 	}
@@ -66,5 +66,44 @@ export class BlocService extends DatabaseRequests<Bloc> {
 			refreshToken: refresh(prev.hash),
 			response: user.info,
 		});
+	}
+
+	/**
+	 * Find bloc root by hash
+	 * @param {string} hash - bloc hash
+	 */
+	async rootByHash(hash: string) {
+		if (!hash) throw new ServerException('Invalid', 'Hash', '');
+
+		let bloc = await this.findOne({ hash });
+		while (bloc && bloc.owner == null)
+			bloc = await this.findOne({ hash: bloc.prev });
+
+		return bloc;
+	}
+
+	/**
+	 * Find bloc root by id
+	 * @param {string} id - bloc id
+	 */
+	async rootById(id: string) {
+		if (!id) throw new ServerException('Invalid', 'ID', '');
+
+		let bloc = await this.findOne({ id });
+		while (bloc && bloc.owner == null)
+			bloc = await this.findOne({ hash: bloc.prev });
+
+		return bloc;
+	}
+
+	/**
+	 * Issuing current bloc
+	 * @param {string} hash - bloc hash
+	 */
+	async issue(hash: string) {
+		return await this.update(
+			{ hash },
+			{ content: { lastIssue: currentTime() } },
+		);
 	}
 }

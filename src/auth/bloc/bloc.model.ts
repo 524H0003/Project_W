@@ -9,17 +9,17 @@ export interface IBlocInfo extends IEntityId {
 	/**
 	 * Previous bloc hash
 	 */
-	prev: string;
+	prev?: string;
 
 	/**
 	 * Current bloc hash
 	 */
-	hash: string;
+	hash?: string;
 
 	/**
 	 * Current bloc content
 	 */
-	content: object;
+	content?: object;
 }
 
 /**

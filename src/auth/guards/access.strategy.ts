@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
+import { BlocService } from 'auth/bloc/bloc.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserService } from 'user/user.service';
 
 /**
  * Check the access token from client
@@ -14,12 +14,12 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	 * Initiate access strategy
 	 */
 	constructor(
-		cfgSvc: ConfigService,
-		private usrSvc: UserService,
+		config: ConfigService,
+		private bloc: BlocService,
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			secretOrKey: cfgSvc.get('ACCESS_SECRET'),
+			secretOrKey: config.get('ACCESS_SECRET'),
 			ignoreExpiration: false,
 		});
 	}
@@ -28,9 +28,9 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	 * Validating the access token from client
 	 * @param {IPayload} payload - the payload from token
 	 */
-	async validate(payload: IPayload) {
-		const user = await this.usrSvc.id(payload.id);
-		if (user) return user;
-		throw new ServerException('Forbidden', 'Method', 'Access');
+	async validate({ payload }: IPayload) {
+		const root = await this.bloc.rootById(payload);
+		if (root) return root.owner;
+		throw new ServerException('Invalid', 'ID', '');
 	}
 }

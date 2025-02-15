@@ -26,19 +26,24 @@ export type MetaData = IResult;
  */
 export interface IRefreshResult {
 	/**
-	 * Refresh status
+	 * Bloc hash
 	 */
-	status: 'success' | 'fail' | 'lockdown';
+	blocHash: string;
 
 	/**
-	 * The session's id
+	 * Bloc id
 	 */
-	sessionId: string;
+	blocId: string;
 
 	/**
-	 * Client's user agent
+	 * Root id
 	 */
-	hashedUserAgent?: string;
+	rootId: string;
+
+	/**
+	 * Root meta data
+	 */
+	metaData: MetaData;
 }
 
 /**

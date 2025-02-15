@@ -42,17 +42,17 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Previous bloc hash
 	 */
-	@Column({ default: '', update: false }) prev: string;
+	@Column({ default: '', update: false }) prev?: string;
 
 	/**
 	 * Current bloc hash
 	 */
-	@Column() hash: string;
+	@Column({ nullable: false }) hash?: string;
 
 	/**
 	 * Current bloc content
 	 */
-	@Column({ type: 'jsonb', default: {} }) content: IBlocContent;
+	@Column({ type: 'jsonb', default: {} }) content?: IBlocContent;
 
 	// Methods
 	/**
@@ -75,6 +75,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 		this.hash = hash;
 	}
 
-	// eslint-disable-next-line tsEslint/no-unused-vars
-	static test(from: string) {}
+	static test(from: string) {
+		return new Bloc({ content: { from } });
+	}
 }

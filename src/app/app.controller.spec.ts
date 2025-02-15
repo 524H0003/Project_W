@@ -109,7 +109,7 @@ describe('login', () => {
 
 		await execute(
 			() =>
-				svc.device.find({
+				svc.bloc.find({
 					owner: { baseUser: { email: usr.baseUser.email.lower } },
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
@@ -173,7 +173,7 @@ describe('logout', () => {
 				onFinish: () =>
 					execute(
 						() =>
-							svc.device.find({
+							svc.bloc.find({
 								owner: { baseUser: { email: usr.baseUser.email.lower } },
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
