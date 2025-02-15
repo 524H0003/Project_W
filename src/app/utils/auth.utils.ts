@@ -3,7 +3,6 @@ import { validate } from 'class-validator';
 import { JwtService } from '@nestjs/jwt';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
-import { Injectable } from '@nestjs/common';
 
 export type Argon2Options = Required<
 	Pick<Options, 'hashLength' | 'parallelism' | 'timeCost' | 'memoryCost'>
@@ -47,13 +46,9 @@ export async function hashing(
  * @param {string} input - hashed string
  * @return {boolean}
  */
-export async function compare(
-	origin: string,
-	input: string,
-	encoded: BufferEncoding = 'utf-8',
-): Promise<boolean> {
+export async function compare(origin: string, input: string): Promise<boolean> {
 	try {
-		return await verify(Buffer.from(input, encoded).toString('utf-8'), origin);
+		return verify(input, origin);
 	} catch {
 		return false;
 	}
@@ -62,7 +57,6 @@ export async function compare(
 /**
  * Security service
  */
-@Injectable()
 export class SecurityService {
 	/**
 	 * Encrypt separator
@@ -103,9 +97,8 @@ export class SecurityService {
 	 * @return {string} access token
 	 */
 	access(id: string): string {
-		const { get } = this.config,
-			secret = get('ACCESS_SECRET'),
-			expiresIn = get('ACCESS_EXPIRE');
+		const secret = this.config.get('ACCESS_SECRET'),
+			expiresIn = this.config.get('ACCESS_EXPIRE');
 
 		return this.jwt.sign({ id }, { secret, expiresIn });
 	}
@@ -115,9 +108,8 @@ export class SecurityService {
 	 * @param {string} input - input token
 	 */
 	verify(input: string, type: 'refresh' | 'access' = 'access'): object {
-		const { get } = this.config,
-			access = get('ACCESS_SECRET'),
-			refresh = get('REFRESH_SECRET');
+		const access = this.config.get('ACCESS_SECRET'),
+			refresh = this.config.get('REFRESH_SECRET');
 
 		return this.jwt.verify(input, {
 			secret: type === 'access' ? access : refresh,
