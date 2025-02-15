@@ -28,8 +28,8 @@ export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
 	 * Validating the hook
 	 * @param {IPayload} payload - the payload from token
 	 */
-	async validate({ payload }: IPayload) {
-		const hook = await this.hookSvc.id(payload, { deep: 2 });
+	async validate({ access }: IPayload) {
+		const hook = await this.hookSvc.id(access, { deep: 2 });
 		if (hook) return hook;
 		throw new ServerException('Invalid', 'Hook', '');
 	}

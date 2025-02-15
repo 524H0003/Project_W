@@ -28,8 +28,8 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	 * Validating the access token from client
 	 * @param {IPayload} payload - the payload from token
 	 */
-	async validate({ payload }: IPayload) {
-		const root = await this.bloc.rootById(payload);
+	async validate({ access }: IPayload) {
+		const root = await this.bloc.rootById(access);
 		if (root) return root.owner;
 		throw new ServerException('Invalid', 'ID', '');
 	}

@@ -58,7 +58,7 @@ describe('auth', () => {
 				middleware.verify(
 					req.headers['authorization'].split(' ')[1],
 					'refresh',
-				)['id'],
+				)['refresh'],
 			).toBe(rfsTkn);
 	});
 
@@ -69,7 +69,7 @@ describe('auth', () => {
 		),
 			expect(
 				middleware.verify(req.headers['authorization'].split(' ')[1], 'access')[
-					'id'
+					'access'
 				],
 			).toBe(acsTkn);
 	});

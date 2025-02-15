@@ -3,6 +3,7 @@ import { validate } from 'class-validator';
 import { JwtService } from '@nestjs/jwt';
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 import { ConfigService } from '@nestjs/config';
+import { IPayload } from 'auth/auth.interface';
 
 export type Argon2Options = Required<
 	Pick<Options, 'hashLength' | 'parallelism' | 'timeCost' | 'memoryCost'>
@@ -80,26 +81,24 @@ export class SecurityService {
 
 	/**
 	 * Refresh token signer
-	 * @param {string} id - input id
-	 * @return {string} refresh token
+	 * @param {IPayload} payload - input id
 	 */
-	refresh(id: string): string {
+	refresh(payload: IPayload): string {
 		const secret = this.config.get('REFRESH_SECRET'),
 			expiresIn = this.config.get('REFRESH_EXPIRE');
 
-		return this.jwt.sign({ id }, { secret, expiresIn });
+		return this.jwt.sign(payload, { secret, expiresIn });
 	}
 
 	/**
 	 * Access token signer
-	 * @param {string} id - input id
-	 * @return {string} access token
+	 * @param {IPayload} payload - input id
 	 */
-	access(id: string): string {
+	access(payload: IPayload): string {
 		const secret = this.config.get('ACCESS_SECRET'),
 			expiresIn = this.config.get('ACCESS_EXPIRE');
 
-		return this.jwt.sign({ id }, { secret, expiresIn });
+		return this.jwt.sign(payload, { secret, expiresIn });
 	}
 
 	/**

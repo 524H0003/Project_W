@@ -16,7 +16,12 @@ export interface IAuthSignUpOption {
  */
 export interface IPayload {
 	/**
-	 * Payload content
+	 * Access token
 	 */
-	payload: string;
+	access?: string;
+
+	/**
+	 * Refresh token
+	 */
+	refresh?: string;
 }

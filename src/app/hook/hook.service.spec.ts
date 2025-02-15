@@ -1,9 +1,10 @@
 import { AppService } from 'app/app.service';
 import { execute, initJest } from 'app/utils/test.utils';
-import { User, UserRecieve } from 'user/user.entity';
+import { User } from 'user/user.entity';
 import { Hook } from './hook.entity';
 import { UAParser } from 'ua-parser-js';
 import { MetaData } from 'auth/guards';
+import { BaseUser } from 'app/app.entity';
 
 const fileName = curFile(__filename);
 
@@ -17,37 +18,6 @@ beforeEach(async () => {
 });
 
 it('assign', async () => {
-	let signature: string;
-
-	await execute(
-		() =>
-			svc.hook.assign(mtdt, (s: string) => {
-				signature = s;
-			}),
-		{
-			exps: [{ type: 'toBeInstanceOf', params: [UserRecieve] }],
-			onFinish: async (result: UserRecieve) => {
-				const token: { id: string } = svc.sign.verify(result.accessToken, {
-					type: 'access',
-				}) as { id: string };
-
-				await execute(() => svc.hook.id(token.id), {
-					exps: [
-						{ type: 'toBeDefined', params: [] },
-						{
-							type: 'toMatchObject',
-							params: [
-								new Hook({ signature, mtdt, note: {}, fromBaseUser: null }),
-							],
-						},
-					],
-				});
-			},
-		},
-	);
-});
-
-it('assign with user', async () => {
 	let user: User;
 
 	await execute(
@@ -58,13 +28,9 @@ it('assign with user', async () => {
 					.baseUser;
 			}),
 		{
-			exps: [{ type: 'toBeInstanceOf', params: [UserRecieve] }],
-			onFinish: async (result: UserRecieve) => {
-				const token: { id: string } = svc.sign.verify(result.accessToken, {
-					type: 'access',
-				}) as { id: string };
-
-				await execute(() => svc.hook.id(token.id), {
+			exps: [{ type: 'toBeDefined', params: [] }],
+			onFinish: async ({ id }) => {
+				await execute(() => svc.hook.id(id), {
 					exps: [
 						{ type: 'toBeDefined', params: [] },
 						{ type: 'toBeInstanceOf', params: [Hook] },
@@ -78,13 +44,10 @@ it('assign with user', async () => {
 it('validating', async () => {
 	let signature: string;
 
-	const userRecieve = await svc.hook.assign(mtdt, (s: string) => {
-			signature = s;
-		}),
-		token: { id: string } = svc.sign.verify(userRecieve.accessToken, {
-			type: 'access',
-		}) as { id: string },
-		hook = await svc.hook.id(token.id);
+	const hook = await svc.hook.assign(mtdt, (s: string) => {
+		signature = s;
+		return BaseUser.test(fileName);
+	});
 
 	await execute(() => svc.hook.validating(signature, mtdt, hook), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],

@@ -92,7 +92,7 @@ export class AppMiddleware extends SecurityService {
 				.cookie(
 					(await hashing(this.config.get('ACCESS_SECRET'), this.hashOpts))
 						.redudeArgon2.toBase64Url,
-					this.encrypt(this.access(access), accessKey),
+					this.encrypt(this.access({ access }), accessKey),
 				)
 				.cookie(
 					(
@@ -101,7 +101,7 @@ export class AppMiddleware extends SecurityService {
 							this.hashOpts,
 						)
 					).redudeArgon2.toBase64Url,
-					this.encrypt(this.refresh(refresh)),
+					this.encrypt(this.refresh({ refresh })),
 				)
 				.send({ data });
 		}

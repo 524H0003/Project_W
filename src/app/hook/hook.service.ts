@@ -30,7 +30,7 @@ export class HookService extends DatabaseRequests<Hook> {
 	 */
 	async assign(
 		mtdt: MetaData,
-		func: (signature: string) => Promise<BaseUser | null>,
+		func: (signature: string) => Promise<BaseUser> | BaseUser,
 		note?: object,
 	) {
 		const signature = (128).string,
