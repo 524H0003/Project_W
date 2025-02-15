@@ -8,7 +8,6 @@ import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
 import { OutgoingHttpHeaders } from 'http';
-import { K } from 'handlebars';
 
 const fileName = curFile(__filename);
 
@@ -178,14 +177,15 @@ describe('logout', () => {
 						params: ['headers.set-cookie', expect.arrayContaining([])],
 					},
 				],
-				onFinish: () =>
-					execute(
+				onFinish: async () => {
+					await execute(
 						() =>
 							svc.bloc.find({
 								owner: { baseUser: { email: usr.baseUser.email.lower } },
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
-					),
+					);
+				},
 			},
 		);
 	});

@@ -49,7 +49,7 @@ export async function hashing(
  */
 export async function compare(origin: string, input: string): Promise<boolean> {
 	try {
-		return verify(input, origin);
+		return await verify(input, origin);
 	} catch {
 		return false;
 	}
