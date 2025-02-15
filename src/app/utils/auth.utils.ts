@@ -83,22 +83,22 @@ export class SecurityService {
 	 * Refresh token signer
 	 * @param {IPayload} payload - input id
 	 */
-	refresh(payload: IPayload): string {
+	refresh({ refreshToken }: IPayload): string {
 		const secret = this.config.get('REFRESH_SECRET'),
 			expiresIn = this.config.get('REFRESH_EXPIRE');
 
-		return this.jwt.sign(payload, { secret, expiresIn });
+		return this.jwt.sign({ refreshToken }, { secret, expiresIn });
 	}
 
 	/**
 	 * Access token signer
 	 * @param {IPayload} payload - input id
 	 */
-	access(payload: IPayload): string {
+	access({ accessToken }: IPayload): string {
 		const secret = this.config.get('ACCESS_SECRET'),
 			expiresIn = this.config.get('ACCESS_EXPIRE');
 
-		return this.jwt.sign(payload, { secret, expiresIn });
+		return this.jwt.sign({ accessToken }, { secret, expiresIn });
 	}
 
 	/**

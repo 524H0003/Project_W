@@ -1,7 +1,7 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { BeforeInsert, Column, Entity, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
-import { IBlocEntity, IBlocInfo } from './bloc.model';
+import { IBlocEntity, IBlocInfo, IBlocRelationships } from './bloc.model';
 import { hashing } from 'app/utils/auth.utils';
 import { MetaData } from 'auth/guards';
 
@@ -22,7 +22,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	 * Create device with infomations
 	 * @param {IBlocInfo} payload - the device's infomations
 	 */
-	constructor(payload: IBlocInfo) {
+	constructor(payload: IBlocInfo & Partial<IBlocRelationships>) {
 		super();
 
 		if (payload) Object.assign(this, payload);
