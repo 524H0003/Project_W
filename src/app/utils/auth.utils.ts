@@ -1,6 +1,13 @@
-import { hash as sHash, verify, Options as Argon2Options } from 'argon2';
+import { hash as sHash, verify, Options } from 'argon2';
 import { validate } from 'class-validator';
+import { JwtService } from '@nestjs/jwt';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
+
+export type Argon2Options = Required<
+	Pick<Options, 'hashLength' | 'parallelism' | 'timeCost' | 'memoryCost'>
+>;
 
 /**
  * Validator for class
@@ -29,12 +36,7 @@ export async function validation<T>(
  */
 export async function hashing(
 	input: string,
-	option: Required<
-		Pick<
-			Argon2Options,
-			'hashLength' | 'parallelism' | 'timeCost' | 'memoryCost'
-		>
-	>,
+	option: Argon2Options,
 ): Promise<string> {
 	return sHash(input, option);
 }
@@ -58,17 +60,10 @@ export async function compare(
 }
 
 /**
- * Cryption class
+ * Security service
  */
-export class Cryption {
-	/**
-	 * Initiate server cryption
-	 */
-	constructor(
-		private algorithm: string,
-		private secret: string,
-	) {}
-
+@Injectable()
+export class SecurityService {
 	/**
 	 * Encrypt separator
 	 */
@@ -80,11 +75,61 @@ export class Cryption {
 	private encoding: BufferEncoding = 'base64url';
 
 	/**
+	 * Encrypt algorithm
+	 */
+	private algorithm = this.config.get('AES_ALGO');
+
+	constructor(
+		protected jwt: JwtService,
+		protected config: ConfigService,
+	) {}
+
+	/**
+	 * Refresh token signer
+	 * @param {string} id - input id
+	 * @return {string} refresh token
+	 */
+	refresh(id: string): string {
+		const { get } = this.config,
+			secret = get('REFRESH_SECRET'),
+			expiresIn = get('REFRESH_EXPIRE');
+
+		return this.jwt.sign({ id }, { secret, expiresIn });
+	}
+
+	/**
+	 * Access token signer
+	 * @param {string} id - input id
+	 * @return {string} access token
+	 */
+	access(id: string): string {
+		const { get } = this.config,
+			secret = get('ACCESS_SECRET'),
+			expiresIn = get('ACCESS_EXPIRE');
+
+		return this.jwt.sign({ id }, { secret, expiresIn });
+	}
+
+	/**
+	 * Verify token
+	 * @param {string} input - input token
+	 */
+	verify(input: string, type: 'refresh' | 'access' = 'access'): object {
+		const { get } = this.config,
+			access = get('ACCESS_SECRET'),
+			refresh = get('REFRESH_SECRET');
+
+		return this.jwt.verify(input, {
+			secret: type === 'access' ? access : refresh,
+		});
+	}
+
+	/**
 	 * Convert signature to key
 	 * @param {string} str - the signature to be converted
 	 * @return {string} the key have been converted
 	 */
-	sigToKey(str: string): string {
+	private sigToKey(str: string): string {
 		const first32Chars = str.substring(0, 32);
 		return first32Chars.padStart(32, '0');
 	}
@@ -95,7 +140,10 @@ export class Cryption {
 	 * @param {string} key - The key to encrypt text
 	 * @return {string} The encrypted text
 	 */
-	encrypt(input: string, key: string = this.secret): string {
+	encrypt(
+		input: string,
+		key: string = this.config.get('SERVER_SECRET'),
+	): string {
 		const { encoding, separator, algorithm } = this,
 			iv = randomBytes(10 + (6).random),
 			cipher = createCipheriv(algorithm, this.sigToKey(key), iv),
@@ -109,7 +157,10 @@ export class Cryption {
 	 * @param {string} key - The key to decrypt text
 	 * @return {string} The decrypted text
 	 */
-	decrypt(input: string, key: string = this.secret): string {
+	decrypt(
+		input: string,
+		key: string = this.config.get('SERVER_SECRET'),
+	): string {
 		if (!input) return '';
 		const { encoding, separator, algorithm } = this,
 			[content, header] = input.split(separator),

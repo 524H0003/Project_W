@@ -37,7 +37,13 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	assign(owner: User, prev: string | null, metaData?: MetaData) {
 		if (!owner && !this.svc.baseUser.id(owner.baseUser.id))
 			throw new ServerException('Invalid', 'User', '');
-		return this.save({ prev, content: { metaData, lastIssue: currentTime() } });
+
+		const bloc = new Bloc({
+			prev,
+			content: { metaData, lastIssue: currentTime() },
+		});
+
+		return this.save(bloc);
 	}
 
 	/**
@@ -54,16 +60,14 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {MetaData} mtdt - metadata from client
 	 */
 	async getTokens(user: User, mtdt: MetaData) {
-		const { access, refresh } = this.svc.sign;
-
 		let prev = await this.assign(user, null, mtdt);
 		await this.use.ra(async () => {
 			prev = await this.assign(user, prev.hash);
 		});
 
 		return new UserRecieve({
-			accessToken: access(prev.id),
-			refreshToken: refresh(prev.hash),
+			accessToken: prev.id,
+			refreshToken: prev.hash,
 			response: user.info,
 		});
 	}

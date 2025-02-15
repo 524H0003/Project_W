@@ -4,8 +4,7 @@ import { Global, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { SqlModule } from 'app/module/sql.module';
 import { loadEnv } from './config.module';
-import { JwtModule } from '@nestjs/jwt';
-import { SignService } from 'auth/auth.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AWSRecieve, AWSService } from 'app/aws/aws.service';
@@ -41,7 +40,6 @@ export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 		SqlModule('test'),
 	],
 	providers: [
-		SignService,
 		{ provide: MailerService, useValue: { sendMail: jest.fn() } },
 		{
 			provide: AWSService,
@@ -67,9 +65,9 @@ export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 export class TestModule extends InitServerClass {
 	constructor(
 		protected httpAdapterHost: HttpAdapterHost,
-		protected configService: ConfigService,
-		protected signService: SignService,
+		protected config: ConfigService,
+		protected jwt: JwtService,
 	) {
-		super(httpAdapterHost, configService, signService);
+		super(httpAdapterHost, config, jwt);
 	}
 }

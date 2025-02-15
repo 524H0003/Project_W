@@ -53,7 +53,7 @@ export class EmployeeController extends BaseController {
 		return this.responseWithUserRecieve(
 			response,
 			new UserRecieve({
-				accessToken: this.svc.sign.access(id),
+				accessToken: id,
 				response: err('Success', 'Signature', 'Sent'),
 			}),
 		);

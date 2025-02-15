@@ -49,12 +49,14 @@ async function bootstrap() {
 		config = nest.get(ConfigService),
 		cookie: CookieProps = {
 			name: (6).string,
-			password: await hashing(config.get('SERVER_SECRET'), {
-				hashLength: 6,
-				timeCost: 2,
-				memoryCost: 6262,
-				parallelism: 2,
-			}),
+			password: (
+				await hashing(config.get('SERVER_SECRET'), {
+					hashLength: 6,
+					timeCost: 2,
+					memoryCost: 6262,
+					parallelism: 2,
+				})
+			).redudeArgon2,
 		};
 
 	await registerServerPlugins(fastify, cookie);

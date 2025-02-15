@@ -13,8 +13,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { InitServerClass } from 'app/utils/server.utils';
-import { SignService } from 'auth/auth.service';
 import KeyvRedis from '@keyv/redis';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
 	imports: [
@@ -121,9 +121,9 @@ import KeyvRedis from '@keyv/redis';
 export class MainModule extends InitServerClass {
 	constructor(
 		protected httpAdapterHost: HttpAdapterHost,
-		protected configService: ConfigService,
-		protected signService: SignService,
+		protected config: ConfigService,
+		protected jwt: JwtService,
 	) {
-		super(httpAdapterHost, configService, signService);
+		super(httpAdapterHost, config, jwt);
 	}
 }

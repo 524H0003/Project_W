@@ -9,27 +9,22 @@ import { Notification } from 'notification/notification.entity';
 import { Event } from 'event/event.entity';
 import { EventCreator } from 'event/creator/creator.entity';
 import fastifyHelmet from '@fastify/helmet';
-import {
-	FastifyInstance,
-	FastifyReply,
-	FastifyRequest,
-	FastifyServerOptions,
-} from 'fastify';
+import { FastifyInstance, FastifyServerOptions } from 'fastify';
 import { User } from 'user/user.entity';
 import { Hook } from 'app/hook/hook.entity';
 import { ConfigService } from '@nestjs/config';
 import { AppService } from 'app/app.service';
 import { OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { SignService } from 'auth/auth.service';
 import fastifyCsrf, { CookieSerializeOptions } from '@fastify/csrf-protection';
 import fastifySecuredSession from '@fastify/secure-session';
 import { readFileSync } from 'fs';
-import { hashing } from './auth.utils';
+import { Argon2Options, hashing } from './auth.utils';
 import { AppMiddleware } from 'app/app.middleware';
 import fastifyCompression from '@fastify/compress';
 import { constants } from 'zlib';
 import { IRefreshResult } from 'auth/guards';
+import { JwtService } from '@nestjs/jwt';
 
 /**
  * Modified fastify interfaces
@@ -51,6 +46,7 @@ declare module 'fastify' {
 	interface FastifyReply {
 		access: string;
 		refresh: string;
+		data: any;
 	}
 
 	/**
@@ -81,8 +77,15 @@ export async function registerServerPlugins(
 	const secret = password,
 		cookieOptions: CookieSerializeOptions = {
 			httpOnly: true,
+			signed: true,
 			secure: true,
 			sameSite: 'strict',
+		},
+		hashOptions: Argon2Options = {
+			hashLength: 6,
+			timeCost: 2,
+			memoryCost: 6262,
+			parallelism: 2,
 		};
 
 	await fastify
@@ -91,14 +94,8 @@ export async function registerServerPlugins(
 			brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } },
 		})
 		.register(fastifySecuredSession, {
-			cookieName: (
-				await hashing((6).string, {
-					hashLength: 6,
-					timeCost: 2,
-					memoryCost: 6262,
-					parallelism: 2,
-				})
-			).toBase64Url,
+			cookieName: (await hashing((6).string, hashOptions)).redudeArgon2
+				.toBase64Url,
 			cookie: { ...cookieOptions, signed: true },
 			secret,
 			key: readFileSync('securedSessionKey'),
@@ -106,14 +103,8 @@ export async function registerServerPlugins(
 		})
 		.register(fastifyCsrf, {
 			sessionKey: name,
-			cookieKey: (
-				await hashing((6).string, {
-					hashLength: 6,
-					timeCost: 2,
-					memoryCost: 6262,
-					parallelism: 2,
-				})
-			).toBase64Url,
+			cookieKey: (await hashing((6).string, hashOptions)).redudeArgon2
+				.toBase64Url,
 			cookieOpts: cookieOptions,
 			sessionPlugin: '@fastify/secure-session',
 			csrfOpts: { validity: (180).s2ms },
@@ -207,21 +198,19 @@ export async function initiateAdmin(
 export class InitServerClass implements OnModuleInit {
 	constructor(
 		protected httpAdapterHost: HttpAdapterHost,
-		protected configService: ConfigService,
-		protected signService: SignService,
+		protected config: ConfigService,
+		protected jwt: JwtService,
 	) {}
 
 	onModuleInit() {
 		const adapterInstance: FastifyInstance =
 				this.httpAdapterHost.httpAdapter.getInstance(),
-			middleware = new AppMiddleware(this.configService);
+			middleware = new AppMiddleware(this.jwt, this.config);
 
 		adapterInstance
-			.addHook(
-				'preValidation',
-				(request: FastifyRequest, response: FastifyReply) =>
-					middleware.use(request, response),
-			)
+			.addHook('preValidation', (req, rep) => middleware.auth(req, rep))
+			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
+			.addHook('onSend', async (req, res) => middleware.cookie(req, res))
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {

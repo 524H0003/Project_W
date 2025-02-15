@@ -43,11 +43,7 @@ export class BaseController {
 	): void {
 		reply.access = accessToken;
 		reply.refresh = refreshToken;
-
-		reply.send({
-			user: typeof response === 'object' ? response : undefined,
-			message: typeof response === 'string' ? response : undefined,
-		});
+		reply.data = response;
 	}
 
 	/**
@@ -89,7 +85,7 @@ export class BaseController {
 		return this.responseWithUserRecieve(
 			response,
 			new UserRecieve({
-				accessToken: this.svc.sign.access(id),
+				accessToken: id,
 				response: err('Success', 'Signature', 'Sent'),
 			}),
 		);

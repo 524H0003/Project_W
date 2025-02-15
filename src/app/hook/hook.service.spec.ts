@@ -2,19 +2,21 @@ import { AppService } from 'app/app.service';
 import { execute, initJest } from 'app/utils/test.utils';
 import { User, UserRecieve } from 'user/user.entity';
 import { Hook } from './hook.entity';
+import { UAParser } from 'ua-parser-js';
+import { MetaData } from 'auth/guards';
 
 const fileName = curFile(__filename);
 
-let svc: AppService;
+let svc: AppService, mtdt: MetaData;
 
 beforeEach(async () => {
 	const { appSvc } = await initJest();
 
-	svc = appSvc;
+	(svc = appSvc),
+		(mtdt = new UAParser(fileName + '_' + (20).string).getResult());
 });
 
 it('assign', async () => {
-	const mtdt = fileName + '_' + (20).string;
 	let signature: string;
 
 	await execute(
@@ -46,7 +48,6 @@ it('assign', async () => {
 });
 
 it('assign with user', async () => {
-	const mtdt = fileName + '_' + (20).string;
 	let user: User;
 
 	await execute(
@@ -75,7 +76,6 @@ it('assign with user', async () => {
 });
 
 it('validating', async () => {
-	const mtdt = fileName + '_' + (20).string;
 	let signature: string;
 
 	const userRecieve = await svc.hook.assign(mtdt, (s: string) => {
@@ -92,8 +92,7 @@ it('validating', async () => {
 });
 
 it('validating failed', async () => {
-	const mtdt = fileName + '_' + (20).string,
-		signature = (5).string;
+	const signature = (5).string;
 
 	await execute(
 		() =>

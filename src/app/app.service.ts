@@ -3,7 +3,7 @@ import { DatabaseRequests } from './utils/typeorm.utils';
 import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository, SaveOptions } from 'typeorm';
-import { AuthService, SignService } from 'auth/auth.service';
+import { AuthService } from 'auth/auth.service';
 import { HookService } from './hook/hook.service';
 import { MailService } from './mail/mail.service';
 import { StudentService } from 'university/student/student.service';
@@ -45,7 +45,6 @@ export class AppService {
 		@Inject(forwardRef(() => EventCreatorService))
 		public eventCreator: EventCreatorService,
 		@Inject(forwardRef(() => UserService)) public user: UserService,
-		@Inject(forwardRef(() => SignService)) public sign: SignService,
 		@Inject(forwardRef(() => EventService)) public event: EventService,
 		@Inject(forwardRef(() => EventTagService)) public eventTag: EventTagService,
 		@Inject(forwardRef(() => NotificationService))

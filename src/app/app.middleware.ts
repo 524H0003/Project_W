@@ -1,6 +1,12 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { compare, Cryption } from 'app/utils/auth.utils';
+import { JwtService } from '@nestjs/jwt';
+import {
+	Argon2Options,
+	compare,
+	hashing,
+	SecurityService,
+} from 'app/utils/auth.utils';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 
@@ -8,12 +14,22 @@ import { processRequest } from 'graphql-upload-ts';
  * App middleware
  */
 @Injectable()
-export class AppMiddleware extends Cryption implements NestMiddleware {
+export class AppMiddleware extends SecurityService {
+	private hashOpts: Argon2Options = {
+		hashLength: 6,
+		parallelism: 1,
+		timeCost: 3,
+		memoryCost: 2 << 9,
+	};
+
 	/**
 	 * Initiate auth middleware
 	 */
-	constructor(private config: ConfigService) {
-		super(config.get('AES_ALGO'), config.get('SERVER_SECRET'));
+	constructor(
+		protected jwt: JwtService,
+		protected config: ConfigService,
+	) {
+		super(jwt, config);
 	}
 
 	/**
@@ -22,11 +38,9 @@ export class AppMiddleware extends Cryption implements NestMiddleware {
 	private readonly rfsgrd = /^\/(api\/v1\/)?(logout|refresh){1}$/;
 
 	/**
-	 * App middleware processing request
-	 * @param {FastifyRequest} req - client's request
-	 * @param {FastifyReply} res - server's response
+	 * Authenticate processing
 	 */
-	async use(req: FastifyRequest, res: FastifyReply) {
+	async auth(req: FastifyRequest, res: FastifyReply) {
 		const isRefresh = this.rfsgrd.test(req.url);
 
 		let access: string = '',
@@ -52,7 +66,9 @@ export class AppMiddleware extends Cryption implements NestMiddleware {
 
 		if (access || refresh)
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
+	}
 
+	async graphQl(req: FastifyRequest, res: FastifyReply) {
 		if (
 			typeof req.isMultipart == 'boolean' &&
 			req.isMultipart &&
@@ -61,5 +77,32 @@ export class AppMiddleware extends Cryption implements NestMiddleware {
 			req.body = await processRequest(req.raw, res.raw, {
 				maxFileSize: (50).mb2b,
 			});
+	}
+
+	async cookie(req: FastifyRequest, res: FastifyReply) {
+		const { access = '', refresh = (36).string, data } = res,
+			accessKey = (66).string;
+
+		if (access.length == 36 && refresh.length == 36) {
+			req.session.set<any>('accessKey', accessKey);
+			res
+				.cookie(
+					(await hashing(this.config.get('ACCESS_SECRET'), this.hashOpts))
+						.redudeArgon2.toBase64Url,
+					this.encrypt(this.access(access), accessKey),
+				)
+				.cookie(
+					(
+						await hashing(
+							this.config.get('REFRESH_SECRET') + '!',
+							this.hashOpts,
+						)
+					).redudeArgon2.toBase64Url,
+					this.encrypt(this.refresh(refresh)),
+				)
+				.send({ data });
+		}
+
+		delete res.access, res.refresh, res.data;
 	}
 }

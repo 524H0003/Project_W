@@ -230,6 +230,14 @@ declare global {
 		 * Convert to base64url
 		 */
 		readonly toBase64Url: string;
+		/**
+		 * Convert from base64url
+		 */
+		readonly fromBase64Url: string;
+		/**
+		 * Reducing argon2 hash ouptut
+		 */
+		readonly redudeArgon2: string;
 	}
 
 	/**
@@ -457,6 +465,20 @@ try {
 Object.defineProperty(String.prototype, 'toBase64Url', {
 	get: function () {
 		return Buffer.from(this as string, 'utf8').toString('base64url');
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'fromBase64Url', {
+	get: function () {
+		return Buffer.from(this as string, 'base64url').toString('utf8');
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'redudeArgon2', {
+	get: function () {
+		return (this as string).split('$').slice(-2).join('$');
 	},
 	enumerable: true,
 	configurable: true,

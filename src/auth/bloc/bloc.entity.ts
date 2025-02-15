@@ -1,5 +1,5 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
-import { BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IBlocEntity, IBlocInfo } from './bloc.model';
 import { hashing } from 'app/utils/auth.utils';
@@ -42,7 +42,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Previous bloc hash
 	 */
-	@Column({ default: '', update: false }) prev?: string;
+	@Column({ nullable: true, update: false }) prev?: string;
 
 	/**
 	 * Current bloc hash
@@ -58,13 +58,13 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Hashing bloc
 	 */
-	@BeforeUpdate()
+	@BeforeInsert()
 	private async hashBloc() {
 		const { prev, id } = this,
 			hash = (
 				await hashing(JSON.stringify({ ...this.content, prev, id }), {
 					parallelism: 2,
-					memoryCost: 600,
+					memoryCost: 2 << 9,
 					timeCost: 2,
 					hashLength: 27,
 				})
