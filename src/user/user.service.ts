@@ -1,10 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
-import { UserRole } from './user.model';
+import { IUserAuthentication, IUserSensitive, UserRole } from './user.model';
 import { AppService } from 'app/app.service';
+import { IBaseUserInfo } from 'app/app.model';
 
 /**
  * Services for user
@@ -23,17 +24,15 @@ export class UserService extends DatabaseRequests<User> {
 
 	/**
 	 * Assign new user
-	 * @param {DeepPartial<User>} entity - the assigning user
-	 * @param {SaveOptions} options - function's option
-	 * @return {Promise<User>}
+	 * @param {User} entity - the assigning user
 	 */
 	async assign(
-		entity: DeepPartial<User>,
-		options?: SaveOptions,
+		entity: IUserAuthentication & IBaseUserInfo & IUserSensitive,
 	): Promise<User> {
-		const baseUser = await this.svc.baseUser.assign(entity.baseUser),
-			result = await this.save({ ...entity, baseUser }, options);
-		return new User({ ...result, ...result.baseUser });
+		const baseUser = await this.svc.baseUser.assign(entity),
+			user = new User({ ...entity, ...baseUser });
+
+		return await this.save(user);
 	}
 
 	/**
@@ -59,7 +58,7 @@ export class UserService extends DatabaseRequests<User> {
 	 */
 	async remove(entityId: string) {
 		await this.delete({ baseUser: { id: entityId } });
-		await this.svc.baseUser.remove(entityId);
+		this.svc.baseUser.remove(entityId);
 	}
 
 	/**

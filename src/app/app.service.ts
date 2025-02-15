@@ -110,4 +110,11 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	email(input: string): Promise<BaseUser> {
 		return this.findOne({ email: input.lower });
 	}
+
+	/**
+	 * Remove base user by id
+	 */
+	remove(id: string) {
+		return this.delete({ id });
+	}
 }

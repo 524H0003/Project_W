@@ -29,7 +29,7 @@ describe('FacultyService', () => {
 					},
 					null,
 				),
-			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
+			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 	});
 

@@ -49,7 +49,11 @@ export class AuthService extends Cryption {
 
 		try {
 			return validation(rawUser, async () => {
-				const { id } = await this.usrSvc.assign({ ...rawUser, role });
+				const { id } = await this.usrSvc.assign({
+					...rawUser,
+					...rawUser.baseUser,
+					role,
+				});
 				return await this.usrSvc.modify(
 					id,
 					avatar

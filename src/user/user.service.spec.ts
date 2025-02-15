@@ -13,13 +13,12 @@ beforeAll(async () => {
 	svc = appSvc;
 });
 
-beforeEach(async () => {
+beforeEach(() => {
 	user = User.test(fileName);
-	await user.hashingPassword();
 });
 
 it('assign', async () => {
-	await execute(() => svc.user.assign(user), {
+	await execute(() => svc.user.assign({ ...user, ...user.baseUser }), {
 		exps: [{ type: 'toBeInstanceOf', params: [User] }],
 		onFinish: async (result: User) => {
 			await execute(() => svc.baseUser.find(result.baseUser), {
@@ -46,7 +45,7 @@ it('assign', async () => {
 });
 
 it('modify', async () => {
-	const dbUser = await svc.user.assign(user),
+	const dbUser = await svc.user.assign({ ...user, ...user.baseUser }),
 		newName = (20).string;
 
 	await execute(
@@ -61,7 +60,7 @@ it('modify', async () => {
 });
 
 it('remove', async () => {
-	const dbUser = await svc.user.assign(user);
+	const dbUser = await svc.user.assign({ ...user, ...user.baseUser });
 
 	await execute(() => svc.user.remove(dbUser.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
@@ -72,7 +71,7 @@ it('remove', async () => {
 });
 
 it('updateRole', async () => {
-	const dbUser = await svc.user.assign(user);
+	const dbUser = await svc.user.assign({ ...user, ...user.baseUser });
 
 	await execute(() => svc.user.updateRole(dbUser.id, UserRole.admin), {
 		exps: [
