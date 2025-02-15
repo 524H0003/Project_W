@@ -1,59 +1,76 @@
 import { ConfigService } from '@nestjs/config';
-import { hashing } from 'app/utils/auth.utils';
 import { AppMiddleware } from './app.middleware';
 import { initJest } from 'app/utils/test.utils';
-import { expect } from '@jest/globals';
+import { expect, it } from '@jest/globals';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { AuthService } from 'auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
-const acsTkn = '..access-token',
-	rfsTkn = '..refresh-token';
+const acsTkn = (35).string + '@',
+	rfsTkn = (35).string + '!';
 
 let req: Request,
 	res: Response,
-	authMdw: AppMiddleware,
-	authSvc: AuthService,
-	cfgSvc: ConfigService,
-	acsKey: string,
-	rfsKey: string;
+	middleware: AppMiddleware,
+	session: Map<string, any> = new Map();
 
 beforeEach(async () => {
-	const { module } = await initJest();
+	const { module } = await initJest(),
+		jwt = module.get(JwtService),
+		config = module.get(ConfigService);
 
-	(authSvc = module.get(AuthService)),
-		(cfgSvc = module.get(ConfigService)),
-		(authMdw = new AppMiddleware(cfgSvc));
+	middleware = new AppMiddleware(jwt, config);
 
-	(req = createRequest()),
-		(res = createResponse()),
-		(acsKey = cfgSvc.get('ACCESS_SECRET')),
-		(rfsKey = cfgSvc.get('REFRESH_SECRET'));
+	(req = createRequest()), (res = createResponse());
 });
 
-describe('use', () => {
+describe('auth', () => {
 	beforeEach(async () => {
-		req['cookies'][`${await hashing(rfsKey + '!', 'base64url')}`] =
-			authSvc.encrypt(rfsTkn, acsTkn.split('.').at(-1));
-		req['cookies'][`${await hashing(acsKey, 'base64url')}`] =
-			authSvc.encrypt(acsTkn);
+		res['refresh'] = rfsTkn;
+		res['access'] = acsTkn;
+		req['session'] = Object.assign(
+			{},
+			{
+				set: (key: string, value: any) => session.set(key, value),
+				get: (key: string) => session.get(key),
+			},
+		);
+		req['cookies'] = {};
+		res['cookie'] = (key: string, value: string) => {
+			req['cookies'][key] = value;
+			return res;
+		};
+
+		await middleware.cookie(
+			req as unknown as FastifyRequest,
+			res as unknown as FastifyReply,
+		);
 	});
 
 	it('refresh', async () => {
-		Object.assign(req, { url: '/refresh' });
+		req['ur' + 'l'] = '/refresh';
 
-		await authMdw.use(
+		await middleware.auth(
 			req as unknown as FastifyRequest,
 			res as unknown as FastifyReply,
 		),
-			expect(req.headers['authorization']).toBe(`Bearer ${rfsTkn}`);
+			expect(
+				middleware.verify(
+					req.headers['authorization'].split(' ')[1],
+					'refresh',
+				)['id'],
+			).toBe(rfsTkn);
 	});
 
 	it('access', async () => {
-		await authMdw.use(
+		await middleware.auth(
 			req as unknown as FastifyRequest,
 			res as unknown as FastifyReply,
 		),
-			expect(req.headers['authorization']).toBe(`Bearer ${acsTkn}`);
+			expect(
+				middleware.verify(req.headers['authorization'].split(' ')[1], 'access')[
+					'id'
+				],
+			).toBe(acsTkn);
 	});
 });

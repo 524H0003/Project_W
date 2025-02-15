@@ -29,8 +29,6 @@ export const loadEnv =
 			SERVER_PORT: Joi.number().default(3000),
 			SERVER_PUBLIC: Joi.string().default('./public/'),
 			SERVER_FILE_SIZE_LIMIT: Joi.number().default(256),
-			// AES
-			AES_ALGO: Joi.string().default('aes-256-ctr'),
 			// ADMIN
 			ADMIN_EMAIL: Joi.string().default('admin'),
 			// AWS

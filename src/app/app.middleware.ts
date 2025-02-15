@@ -41,7 +41,10 @@ export class AppMiddleware extends SecurityService {
 	 * Authenticate processing
 	 */
 	async auth(req: FastifyRequest, res: FastifyReply) {
-		const isRefresh = this.rfsgrd.test(req.url);
+		const isRefresh = this.rfsgrd.test(req.url),
+			{ memoryCost, parallelism, timeCost } = this.hashOpts,
+			argon2Header = `$argon2id$v=19$m=${memoryCost},t=${timeCost},p=${parallelism}$`,
+			accessKey = req.session.get<any>('accessKey');
 
 		let access: string = '',
 			refresh: string = '';
@@ -49,20 +52,20 @@ export class AppMiddleware extends SecurityService {
 			if (
 				await compare(
 					this.config.get('REFRESH_SECRET') + '!',
-					cookie,
-					'base64url',
+					argon2Header + cookie.fromBase64Url,
 				)
 			) {
-				refresh = req.cookies[cookie];
+				refresh = this.decrypt(req.cookies[cookie]);
 				res.clearCookie(cookie);
 			} else if (
-				await compare(this.config.get('ACCESS_SECRET'), cookie, 'base64url')
+				await compare(
+					this.config.get('ACCESS_SECRET'),
+					argon2Header + cookie.fromBase64Url,
+				)
 			) {
-				access = this.decrypt(req.cookies[cookie]);
+				access = this.decrypt(req.cookies[cookie], accessKey);
 				res.clearCookie(cookie);
 			}
-
-		refresh = this.decrypt(refresh, access.split('.').at(-1));
 
 		if (access || refresh)
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;

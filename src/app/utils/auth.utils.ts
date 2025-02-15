@@ -1,7 +1,7 @@
 import { hash as sHash, verify, Options } from 'argon2';
 import { validate } from 'class-validator';
 import { JwtService } from '@nestjs/jwt';
-import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 import { ConfigService } from '@nestjs/config';
 
 export type Argon2Options = Required<
@@ -71,7 +71,7 @@ export class SecurityService {
 	/**
 	 * Encrypt algorithm
 	 */
-	private algorithm = this.config.get('AES_ALGO');
+	private algorithm = 'aes-256-cbc';
 
 	constructor(
 		protected jwt: JwtService,
@@ -84,9 +84,8 @@ export class SecurityService {
 	 * @return {string} refresh token
 	 */
 	refresh(id: string): string {
-		const { get } = this.config,
-			secret = get('REFRESH_SECRET'),
-			expiresIn = get('REFRESH_EXPIRE');
+		const secret = this.config.get('REFRESH_SECRET'),
+			expiresIn = this.config.get('REFRESH_EXPIRE');
 
 		return this.jwt.sign({ id }, { secret, expiresIn });
 	}
@@ -119,11 +118,9 @@ export class SecurityService {
 	/**
 	 * Convert signature to key
 	 * @param {string} str - the signature to be converted
-	 * @return {string} the key have been converted
 	 */
-	private sigToKey(str: string): string {
-		const first32Chars = str.substring(0, 32);
-		return first32Chars.padStart(32, '0');
+	private sigToKey(str: string): Buffer {
+		return Buffer.from(str.substring(0, 32).padStart(32, '0'));
 	}
 
 	/**
@@ -137,7 +134,7 @@ export class SecurityService {
 		key: string = this.config.get('SERVER_SECRET'),
 	): string {
 		const { encoding, separator, algorithm } = this,
-			iv = randomBytes(10 + (6).random),
+			iv = randomBytes(16),
 			cipher = createCipheriv(algorithm, this.sigToKey(key), iv),
 			encrypted = Buffer.concat([cipher.update(input), cipher.final()]);
 		return encrypted.toString(encoding) + separator + iv.toString(encoding);
