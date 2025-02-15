@@ -9,6 +9,7 @@ import {
 } from 'app/utils/auth.utils';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
+import { UserRecieve } from 'user/user.entity';
 
 /**
  * App middleware
@@ -82,30 +83,31 @@ export class AppMiddleware extends SecurityService {
 			});
 	}
 
-	async cookie(req: FastifyRequest, res: FastifyReply) {
-		const { access = '', refresh = (36).string, data } = res,
+	async cookie(req: FastifyRequest, res: FastifyReply, payload: UserRecieve) {
+		if (!(payload instanceof UserRecieve)) return payload;
+
+		const { accessToken = '', refreshToken = (36).string, response } = payload,
 			accessKey = (66).string;
 
-		if (access.length == 36 && refresh.length == 36) {
+		if (accessToken.length == 36 && refreshToken.length == 36) {
 			req.session.set<any>('accessKey', accessKey);
 			res
-				.cookie(
+				.setCookie(
 					(await hashing(this.config.get('ACCESS_SECRET'), this.hashOpts))
 						.redudeArgon2.toBase64Url,
-					this.encrypt(this.access({ access }), accessKey),
+					this.encrypt(this.access({ accessToken }), accessKey),
 				)
-				.cookie(
+				.setCookie(
 					(
 						await hashing(
 							this.config.get('REFRESH_SECRET') + '!',
 							this.hashOpts,
 						)
 					).redudeArgon2.toBase64Url,
-					this.encrypt(this.refresh({ refresh })),
-				)
-				.send({ data });
+					this.encrypt(this.refresh({ refreshToken })),
+				);
 		}
 
-		delete res.access, res.refresh, res.data;
+		return response;
 	}
 }

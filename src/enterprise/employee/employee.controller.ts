@@ -50,13 +50,10 @@ export class EmployeeController extends BaseController {
 	) {
 		const { id } = await this.svc.employee.hook(body, mtdt);
 
-		return this.responseWithUserRecieve(
-			response,
-			new UserRecieve({
-				accessToken: id,
-				response: err('Success', 'Signature', 'Sent'),
-			}),
-		);
+		return new UserRecieve({
+			accessToken: id,
+			response: err('Success', 'Signature', 'Sent'),
+		});
 	}
 
 	/**
@@ -71,7 +68,7 @@ export class EmployeeController extends BaseController {
 		@GetMetaData() mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 		@GetRequest('hook') hook: Hook,
-	): Promise<void> {
+	): Promise<UserRecieve> {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
 		const { user } = (
@@ -83,6 +80,6 @@ export class EmployeeController extends BaseController {
 			)
 		).eventCreator;
 
-		return this.responseWithUser(response, user, mtdt);
+		return this.svc.bloc.getTokens(user, mtdt);
 	}
 }

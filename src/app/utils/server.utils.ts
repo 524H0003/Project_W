@@ -10,7 +10,7 @@ import { Event } from 'event/event.entity';
 import { EventCreator } from 'event/creator/creator.entity';
 import fastifyHelmet from '@fastify/helmet';
 import { FastifyInstance, FastifyServerOptions } from 'fastify';
-import { User } from 'user/user.entity';
+import { User, UserRecieve } from 'user/user.entity';
 import { Hook } from 'app/hook/hook.entity';
 import { ConfigService } from '@nestjs/config';
 import { AppService } from 'app/app.service';
@@ -31,7 +31,7 @@ import { JwtService } from '@nestjs/jwt';
  */
 declare module 'fastify' {
 	/**
-	 * Server request addition fields
+	 * Server request
 	 */
 	interface FastifyRequest {
 		user: User;
@@ -41,12 +41,10 @@ declare module 'fastify' {
 	}
 
 	/**
-	 * Server response addition fields
+	 * Server reply
 	 */
 	interface FastifyReply {
-		access: string;
-		refresh: string;
-		data: any;
+		body: UserRecieve;
 	}
 
 	/**
@@ -210,7 +208,11 @@ export class InitServerClass implements OnModuleInit {
 		adapterInstance
 			.addHook('preValidation', (req, rep) => middleware.auth(req, rep))
 			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
-			.addHook('onSend', async (req, res) => middleware.cookie(req, res))
+			.addHook(
+				'preSerialization',
+				async (request, reply, payload: UserRecieve) =>
+					middleware.cookie(request, reply, payload),
+			)
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {

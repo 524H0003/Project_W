@@ -18,10 +18,10 @@ export interface IPayload {
 	/**
 	 * Access token
 	 */
-	access?: string;
+	accessToken?: string;
 
 	/**
 	 * Refresh token
 	 */
-	refresh?: string;
+	refreshToken?: string;
 }

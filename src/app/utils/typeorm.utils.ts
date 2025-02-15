@@ -227,6 +227,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @return {Promise<T>} found entity
 	 */
 	id(id: string, options?: FindOptionsWithCustom<T>): Promise<T> {
+		if (!id) throw new ServerException('Invalid', 'ID', '');
 		return this.findOne({ id, ...options });
 	}
 }

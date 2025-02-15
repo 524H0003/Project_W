@@ -1,9 +1,7 @@
 import { AppService } from 'app/app.service';
-import { IUserRecieve } from 'user/user.model';
-import { User, UserRecieve } from 'user/user.entity';
+import { UserRecieve } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
 import { BaseUserEmail } from 'app/app.dto';
 import { UserAuthencation } from 'user/user.dto';
 import { Hook } from 'app/hook/hook.entity';
@@ -32,46 +30,13 @@ export class BaseController {
 	) {}
 
 	/**
-	 * Send client user's recieve infomations
-	 * @param {FastifyReply} reply - server's response
-	 * @param {IUserRecieve} usrRcv - user's recieve infomations
-	 * @return {Promise<void>}
-	 */
-	protected responseWithUserRecieve(
-		reply: FastifyReply,
-		{ accessToken, refreshToken, response }: IUserRecieve,
-	): void {
-		reply.access = accessToken;
-		reply.refresh = refreshToken;
-		reply.data = response;
-	}
-
-	/**
-	 * Send client user's recieve infomations
-	 * @param {FastifyReply} response - server's response
-	 * @param {IUser} user - user's recieve infomations
-	 * @return {Promise<void>}
-	 */
-	protected async responseWithUser(
-		response: FastifyReply,
-		user: User,
-		mtdt: MetaData,
-	): Promise<void> {
-		return this.responseWithUserRecieve(
-			response,
-			await this.svc.bloc.getTokens(user, mtdt),
-		);
-	}
-
-	/**
 	 * Send signature to email
 	 */
 	protected async resetPasswordViaEmail(
-		response: FastifyReply,
 		hostname: string,
 		{ email }: BaseUserEmail,
 		mtdt: MetaData,
-	): Promise<void> {
+	): Promise<UserRecieve> {
 		const { id } = await this.svc.hook.assign(mtdt, async (s: string) => {
 			const user = await this.svc.baseUser.email(email);
 
@@ -82,13 +47,10 @@ export class BaseController {
 			});
 		});
 
-		return this.responseWithUserRecieve(
-			response,
-			new UserRecieve({
-				accessToken: id,
-				response: err('Success', 'Signature', 'Sent'),
-			}),
-		);
+		return new UserRecieve({
+			accessToken: id,
+			response: err('Success', 'Signature', 'Sent'),
+		});
 	}
 
 	/**
@@ -96,27 +58,20 @@ export class BaseController {
 	 */
 	protected async changePassword(
 		signature: string,
-		response: FastifyReply,
 		{ password }: UserAuthencation,
 		mtdt: MetaData,
 		hook: Hook,
-	): Promise<void> {
-		try {
-			await this.svc.hook.validating(signature, mtdt, hook);
+	): Promise<UserRecieve> {
+		await this.svc.hook.validating(signature, mtdt, hook);
 
-			const user = await this.svc.user.findOne({
-				baseUser: { email: hook.fromBaseUser.email },
+		const user = await this.svc.user.findOne({
+			baseUser: { email: hook.fromBaseUser.email },
+		});
+
+		if (await this.svc.auth.changePassword(user, password))
+			return new UserRecieve({
+				response: err('Success', 'Password', 'Implementation'),
 			});
-
-			if (await this.svc.auth.changePassword(user, password)) {
-				return this.responseWithUserRecieve(
-					response,
-					new UserRecieve({ response: 'Success_Change_Password' }),
-				);
-			}
-		} catch (error) {
-			throw error;
-		}
 	}
 }
 

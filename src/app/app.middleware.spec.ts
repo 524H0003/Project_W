@@ -5,6 +5,7 @@ import { expect, it } from '@jest/globals';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { JwtService } from '@nestjs/jwt';
+import { UserRecieve } from 'user/user.entity';
 
 const acsTkn = (35).string + '@',
 	rfsTkn = (35).string + '!';
@@ -26,8 +27,6 @@ beforeEach(async () => {
 
 describe('auth', () => {
 	beforeEach(async () => {
-		res['refresh'] = rfsTkn;
-		res['access'] = acsTkn;
 		req['session'] = Object.assign(
 			{},
 			{
@@ -36,7 +35,7 @@ describe('auth', () => {
 			},
 		);
 		req['cookies'] = {};
-		res['cookie'] = (key: string, value: string) => {
+		res['setCookie'] = (key: string, value: string) => {
 			req['cookies'][key] = value;
 			return res;
 		};
@@ -44,6 +43,10 @@ describe('auth', () => {
 		await middleware.cookie(
 			req as unknown as FastifyRequest,
 			res as unknown as FastifyReply,
+			new UserRecieve({
+				refreshToken: rfsTkn,
+				accessToken: acsTkn,
+			}),
 		);
 	});
 
@@ -55,10 +58,8 @@ describe('auth', () => {
 			res as unknown as FastifyReply,
 		),
 			expect(
-				middleware.verify(
-					req.headers['authorization'].split(' ')[1],
-					'refresh',
-				)['refresh'],
+				middleware.verify(req.headers['authorization'].split(' ')[1], 'refresh')
+					.refreshToken,
 			).toBe(rfsTkn);
 	});
 
@@ -68,9 +69,8 @@ describe('auth', () => {
 			res as unknown as FastifyReply,
 		),
 			expect(
-				middleware.verify(req.headers['authorization'].split(' ')[1], 'access')[
-					'access'
-				],
+				middleware.verify(req.headers['authorization'].split(' ')[1], 'access')
+					.accessToken,
 			).toBe(acsTkn);
 	});
 });

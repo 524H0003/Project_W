@@ -105,7 +105,7 @@ export class SecurityService {
 	 * Verify token
 	 * @param {string} input - input token
 	 */
-	verify(input: string, type: 'refresh' | 'access' = 'access'): object {
+	verify(input: string, type: 'refresh' | 'access' = 'access'): IPayload {
 		const access = this.config.get('ACCESS_SECRET'),
 			refresh = this.config.get('REFRESH_SECRET');
 

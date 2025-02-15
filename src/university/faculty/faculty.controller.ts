@@ -3,12 +3,10 @@ import {
 	Controller,
 	Injectable,
 	Post,
-	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -44,7 +42,6 @@ export class FacultyController extends BaseController {
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
-		@Res() response: FastifyReply,
 		@Body() { signature, ...body }: FacultyAssign,
 		@GetMetaData() mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
@@ -52,8 +49,7 @@ export class FacultyController extends BaseController {
 	) {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
-		return this.responseWithUser(
-			response,
+		return this.svc.bloc.getTokens(
 			(await this.svc.faculty.assign(body, avatar)).eventCreator.user,
 			mtdt,
 		);
