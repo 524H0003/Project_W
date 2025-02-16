@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/524H0003/Project_W/compare/v1.2.0...v1.2.1) (2025-02-16)
+
+
+### Bug Fixes
+
+* **server-response:** a quick update of server response and fix adminjs problems ([#129](https://github.com/524H0003/Project_W/issues/129)) ([edbbcb7](https://github.com/524H0003/Project_W/commit/edbbcb77ebc876adc57169357204ac48a56b9540))
+
 # [1.2.0](https://github.com/524H0003/Project_W/compare/v1.1.0...v1.2.0) (2025-02-16)
 
 
