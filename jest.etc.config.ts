@@ -11,11 +11,7 @@ const config: Config = {
 		'!**/?(*.)+(resolver.spec).ts',
 		'!**/?(*.)+(service.spec).ts',
 	],
-	reporters: [
-		'default',
-		['github-actions', { silent: false }],
-		['jest-junit', { outputDirectory: 'reports', outputName: 'etc.xml' }],
-	],
+	reporters: ['default', ['github-actions', { silent: false }]],
 };
 
 export default config;
