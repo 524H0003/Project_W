@@ -46,7 +46,6 @@ export class StudentService extends DatabaseRequests<Student> {
 			{ role: UserRole.student },
 		);
 
-		await student.hashingPassword();
 		await this.save({
 			user: student,
 			enrollmentYear: Number('20' + email.toString().slice(1, 3)),

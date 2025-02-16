@@ -3,6 +3,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { IHook } from './hook.model';
 import { BlackBox } from 'app/utils/model.utils';
 import { BaseUser } from 'app/app.entity';
+import { MetaData } from 'auth/guards';
 
 /**
  * Hook entity
@@ -34,7 +35,7 @@ export class Hook extends SensitiveInfomations implements IHook {
 	/**
 	 * Client's metadata
 	 */
-	@Column() mtdt: string;
+	@Column({ type: 'jsonb' }) mtdt: MetaData;
 
 	/**
 	 * Addition infomations

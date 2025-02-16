@@ -2,14 +2,12 @@ import {
 	Body,
 	Controller,
 	Post,
-	Req,
 	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { GetRequest, MetaData } from 'auth/guards/access.guard';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -17,10 +15,12 @@ import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-import { HookGuard } from 'auth/guards/hook.guard';
+import { HookGuard } from 'auth/guards';
 import { EmployeeHook, EmployeeSignUp } from './employee.dto';
 import { Hook } from 'app/hook/hook.entity';
 import { IEmployeeSignUp } from './employee.model';
+import { GetMetaData, GetRequest, MetaData } from 'auth/guards';
+import { UserRecieve } from 'user/user.entity';
 
 /**
  * Employee controller
@@ -44,16 +44,16 @@ export class EmployeeController extends BaseController {
 	 * Employee request hook
 	 */
 	@Post('hook') @UseInterceptors(FileInterceptor()) async employeeHook(
-		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: EmployeeHook,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 	) {
-		return this.responseWithUserRecieve(
-			request,
-			response,
-			await this.svc.employee.hook(body, mtdt),
-		);
+		const { id } = await this.svc.employee.hook(body, mtdt);
+
+		return new UserRecieve({
+			accessToken: id,
+			response: err('Success', 'Signature', 'Sent'),
+		});
 	}
 
 	/**
@@ -63,13 +63,12 @@ export class EmployeeController extends BaseController {
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
-		@Req() request: FastifyRequest,
 		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() { signature, password }: EmployeeSignUp,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 		@GetRequest('hook') hook: Hook,
-	): Promise<void> {
+	): Promise<UserRecieve> {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
 		const { user } = (
@@ -81,6 +80,6 @@ export class EmployeeController extends BaseController {
 			)
 		).eventCreator;
 
-		return this.responseWithUser(request, response, user, mtdt);
+		return this.svc.bloc.getTokens(user, mtdt);
 	}
 }

@@ -56,6 +56,13 @@ describe('signUp', () => {
 				},
 			],
 		});
+		await execute(
+			() =>
+				svc.bloc.find({
+					owner: { baseUser: { email: usr.baseUser.email.lower } },
+				}),
+			{ exps: [{ type: 'toHaveLength', params: [1] }] },
+		);
 	});
 
 	it('fail due to email already exist', async () => {
@@ -109,7 +116,7 @@ describe('login', () => {
 
 		await execute(
 			() =>
-				svc.device.find({
+				svc.bloc.find({
 					owner: { baseUser: { email: usr.baseUser.email.lower } },
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
@@ -170,14 +177,15 @@ describe('logout', () => {
 						params: ['headers.set-cookie', expect.arrayContaining([])],
 					},
 				],
-				onFinish: () =>
-					execute(
+				onFinish: async () => {
+					await execute(
 						() =>
-							svc.device.find({
+							svc.bloc.find({
 								owner: { baseUser: { email: usr.baseUser.email.lower } },
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
-					),
+					);
+				},
 			},
 		);
 	});

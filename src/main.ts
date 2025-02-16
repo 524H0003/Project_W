@@ -16,11 +16,11 @@ import {
 	registerServerPlugins,
 } from 'app/utils/server.utils';
 import Fastify from 'fastify';
-import { hash } from 'app/utils/auth.utils';
 import { createServer, Server } from 'http';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { join } from 'path';
 import fastifyStatic from '@fastify/static';
+import { hashing } from 'app/utils/auth.utils';
 
 async function bootstrap() {
 	let server: Server;
@@ -49,7 +49,14 @@ async function bootstrap() {
 		config = nest.get(ConfigService),
 		cookie: CookieProps = {
 			name: (6).string,
-			password: await hash(config.get('SERVER_SECRET')),
+			password: (
+				await hashing(config.get('SERVER_SECRET'), {
+					hashLength: 6,
+					timeCost: 2,
+					memoryCost: 6262,
+					parallelism: 2,
+				})
+			).redudeArgon2,
 		};
 
 	await registerServerPlugins(fastify, cookie);

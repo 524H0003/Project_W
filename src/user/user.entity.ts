@@ -1,28 +1,37 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { Device } from 'auth/device/device.entity';
 import {
 	IBaseUserInfoKeys,
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
+	IUserSensitiveKeys,
 } from 'build/models';
-import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
+import {
+	BaseEntity,
+	BeforeInsert,
+	BeforeUpdate,
+	Column,
+	Entity,
+	OneToMany,
+} from 'typeorm';
 import {
 	IUserAuthentication,
 	IUserEntity,
 	UserRole,
 	IUserInfo,
 	IUserRecieve,
+	IUserSensitive,
 } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
-import { hash } from 'app/utils/auth.utils';
+import { hashing } from 'app/utils/auth.utils';
 import { BaseUser } from 'app/app.entity';
 import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
+import { Bloc } from 'auth/bloc/bloc.entity';
 
 /**
  * User entity
@@ -33,7 +42,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
-	constructor(payload: IUserAuthentication & IBaseUserInfo) {
+	constructor(payload: IUserAuthentication & IUserSensitive & IBaseUserInfo) {
 		super();
 
 		if (payload) {
@@ -42,7 +51,10 @@ export class User extends BaseEntity implements IUserEntity {
 			);
 			Object.assign(
 				this,
-				InterfaceCasting.quick(payload, IUserAuthenticationKeys),
+				InterfaceCasting.quick(payload, [
+					...IUserAuthenticationKeys,
+					...IUserSensitiveKeys,
+				]),
 			);
 		}
 	}
@@ -50,20 +62,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * The hashed password
 	 */
-	@Column({ name: 'password_hash' }) private hashedPassword: string;
-
-	/**
-	 * Hash the current password
-	 * @return {Promise<string>}
-	 */
-	async hashingPassword(): Promise<string> {
-		if (this.password) {
-			this.hashedPassword = await hash(this.password);
-			delete this.password;
-			return this.hashedPassword;
-		}
-		return this.hashedPassword;
-	}
+	@Column({ name: 'password_hash' }) hashedPassword: string;
 
 	// Core Entity
 	/**
@@ -75,8 +74,8 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * User's device logged in
 	 */
-	@OneToMany(() => Device, (_: Device) => _.owner, { onDelete: 'CASCADE' })
-	devices: Device[];
+	@OneToMany(() => Bloc, (_: Bloc) => _.owner, { onDelete: 'CASCADE' })
+	authBloc: Bloc[];
 
 	/**
 	 * User uploaded files
@@ -150,6 +149,20 @@ export class User extends BaseEntity implements IUserEntity {
 
 	// Methods
 	/**
+	 * Hash the current password
+	 */
+	@BeforeInsert() @BeforeUpdate() private async hashingPassword() {
+		if (this.password)
+			this.hashedPassword = await hashing(this.password, {
+				parallelism: 3 + (3).random,
+				memoryCost: 60000 + (6000).random,
+				timeCost: 3 + (3).random,
+				hashLength: 60 + (60).random,
+			});
+
+		delete this.password;
+	}
+	/**
 	 * A function return user's public infomations
 	 * @return {IUserInfo} User's public infomations
 	 */
@@ -176,7 +189,11 @@ export class User extends BaseEntity implements IUserEntity {
 			from,
 			options?.email || (20).string + '@lmao.com',
 		);
-		return new User({ ...baseUser, password: from + (20).string + 'aA1!' });
+		return new User({
+			...baseUser,
+			password: from + (20).string + 'aA1!',
+			role: UserRole.undefined,
+		});
 	}
 }
 
@@ -195,17 +212,17 @@ export class UserRecieve implements IUserRecieve {
 	/**
 	 * User access token
 	 */
-	accessToken: string = '';
+	accessToken: string;
 
 	/**
 	 * User refresh token
 	 */
-	refreshToken: string = '';
+	refreshToken: string;
 
 	/**
 	 * Server's response
 	 */
-	response: string | IUserInfo = '';
+	response: string | IUserInfo;
 
 	/**
 	 * Jwt payload

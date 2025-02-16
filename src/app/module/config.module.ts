@@ -18,19 +18,17 @@ export const loadEnv =
 			POSTGRES_PASS: Joi.string().default('postgres'),
 			POSTGRES_SSL: Joi.string().default(false),
 			// Access token
-			ACCESS_SECRET: Joi.string().default((10).string),
+			ACCESS_SECRET: Joi.string().default('access'),
 			ACCESS_EXPIRE: Joi.string().default('6m'),
 			// Refresh token
-			REFRESH_SECRET: Joi.string().default((10).string),
+			REFRESH_SECRET: Joi.string().default('refresh'),
 			REFRESH_EXPIRE: Joi.string().default('66d'),
-			REFRESH_USE: Joi.number().default(6),
+			REFRESH_USE: Joi.number().default(60),
 			// Server config
 			SERVER_SECRET: Joi.string().default((64).alpha),
 			SERVER_PORT: Joi.number().default(3000),
 			SERVER_PUBLIC: Joi.string().default('./public/'),
 			SERVER_FILE_SIZE_LIMIT: Joi.number().default(256),
-			// AES
-			AES_ALGO: Joi.string().default('aes-256-ctr'),
 			// ADMIN
 			ADMIN_EMAIL: Joi.string().default('admin'),
 			// AWS

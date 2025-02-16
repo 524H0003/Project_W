@@ -158,6 +158,45 @@ jobs:
             ./reports/controller.xml
             ./coverage/controller.txt
 
+  Test_etc:
+    needs: changes
+    if: ${{ needs.changes.outputs.project == 'true' }}
+
+    name: 'Test the rest'
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 3
+
+    permissions:
+      contents: write
+      actions: write
+      checks: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: ikalnytskyi/action-setup-postgres@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          cache: 'pnpm'
+
+      - run: npm run prebuild:dev && npm run test:etc
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: etc
+          path: |
+            ./reports/etc.xml
+
   Test_web:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
@@ -203,6 +242,7 @@ jobs:
       - Test_resolver
       - Test_controller
       - Test_web
+      - Test_etc
 
     name: 'Format & Lint'
 
@@ -247,32 +287,29 @@ jobs:
       - uses: actions/download-artifact@v4
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
 
-      - name: Controller coverage
+      - name: Controller
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: MishaKav/jest-coverage-comment@main
         with:
-          title: Controller coverage
-          coverage-title: Coverage result
+          title: Controller test result
           coverage-path: ./controller/coverage/controller.txt
           create-new-comment: true
           junitxml-path: ./controller/reports/controller.xml
 
-      - name: Resolver coverage
+      - name: Resolver
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: MishaKav/jest-coverage-comment@main
         with:
-          title: Resolver coverage
-          coverage-title: Coverage result
+          title: Resolver test result
           coverage-path: ./resolver/coverage/resolver.txt
           create-new-comment: true
           junitxml-path: ./resolver/reports/resolver.xml
 
-      - name: Service coverage
+      - name: Service
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: MishaKav/jest-coverage-comment@main
         with:
-          title: Service coverage
-          coverage-title: Coverage result
+          title: Service test result
           coverage-path: ./service/coverage/service.txt
           create-new-comment: true
           junitxml-path: ./service/reports/service.xml

@@ -13,7 +13,7 @@ export interface IHook extends ISignature {
 	/**
 	 * Client's metadata
 	 */
-	mtdt: string;
+	mtdt: object;
 
 	/**
 	 * Addition infomations

@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { AppService } from 'app/app.service';
 import { User } from 'user/user.entity';
-import { GetRequest, AccessGuard, Allow } from 'auth/guards/access.guard';
+import { GetRequest, AccessGuard, Allow } from 'auth/guards';
 import { UserRole } from 'user/user.model';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Event } from './event.entity';

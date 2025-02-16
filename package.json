@@ -32,6 +32,7 @@
 		"test:controller": "jest --config=jest.controller.config.ts",
 		"test:resolver": "jest --config=jest.resolver.config.ts",
 		"test:service": "jest --config=jest.service.config.ts",
+		"test:etc": "jest --config=jest.etc.config.ts",
 		"test:debug": "jest --debug"
 	},
 	"dependencies": {
@@ -63,6 +64,7 @@
 		"@nestjs/passport": "^11.0.5",
 		"@nestjs/platform-fastify": "^11.0.9",
 		"@nestjs/swagger": "^11.0.3",
+		"@nestjs/terminus": "^11.0.0",
 		"@nestjs/throttler": "^6.4.0",
 		"@nestjs/typeorm": "^11.0.0",
 		"adminjs": "^7.8.15",

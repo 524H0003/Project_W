@@ -6,30 +6,41 @@ import {
 	Inject,
 	Param,
 	Post,
-	Req,
 	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { GetRequest, MetaData } from 'auth/guards/access.guard';
 import { AppService } from './app.service';
 import { UserRecieve } from 'user/user.entity';
-import { compare } from './utils/auth.utils';
 import { AvatarFileUpload, BaseController } from './utils/controller.utils';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-import { RefreshGuard } from 'auth/guards/refresh.guard';
-import { LocalhostGuard } from 'auth/guards/localhost.guard';
 import { UserAuthencation, UserLogIn, UserSignUp } from 'user/user.dto';
 import { Throttle } from '@nestjs/throttler';
 import { BaseUserEmail } from './app.dto';
 import { Hook } from './hook/hook.entity';
-import { HookGuard } from 'auth/guards/hook.guard';
+import {
+	DiskHealthIndicator,
+	HealthCheck,
+	HealthCheckService,
+	MemoryHealthIndicator,
+	TypeOrmHealthIndicator,
+} from '@nestjs/terminus';
+import { join } from 'path';
+import {
+	GetMetaData,
+	GetRequest,
+	HookGuard,
+	IRefreshResult,
+	LocalhostGuard,
+	MetaData,
+	RefreshGuard,
+} from 'auth/guards';
+import { FastifyReply } from 'fastify';
 
 /**
  * Application Controller
@@ -53,26 +64,20 @@ export class AppController extends BaseController {
 	 * Login request
 	 */
 	@Post('login') @UseInterceptors(FileInterceptor()) async login(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: UserLogIn,
-		@MetaData() mtdt: string,
-	): Promise<void> {
+		@GetMetaData() mtdt: MetaData,
+		@GetRequest('hostname') hostname: string,
+	): Promise<UserRecieve> {
 		try {
 			await this.svc.student.signUp(body);
 		} catch (error) {
 			const { message } = error as ServerException;
 			switch (true) {
 				case message.includes(err('Invalid', 'User', 'SignUp')):
-					return this.responseWithUser(
-						request,
-						response,
-						await this.svc.auth.login(body),
-						mtdt,
-					);
+					return this.svc.bloc.getTokens(await this.svc.auth.login(body), mtdt);
 
 				case message.includes(err('Success', 'User', 'SignUp')):
-					return this.resetPasswordViaEmail(request, response, body, mtdt);
+					return this.resetPasswordViaEmail(hostname, body, mtdt);
 
 				default:
 					throw error;
@@ -87,15 +92,11 @@ export class AppController extends BaseController {
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: UserSignUp,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
-	): Promise<void> {
-		return this.responseWithUser(
-			request,
-			response,
+	): Promise<UserRecieve> {
+		return this.svc.bloc.getTokens(
 			await this.svc.auth.signUp(body, avatar || null),
 			mtdt,
 		);
@@ -103,49 +104,32 @@ export class AppController extends BaseController {
 
 	/**
 	 * Logout request
-	 * @param {FastifyRequest} request - client's request
-	 * @param {FastifyReply} response - server's response
-	 * @return {Promise<void>}
 	 */
 	@Post('logout') @UseGuards(RefreshGuard) async logout(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-	): Promise<void> {
-		const { sessionId } = request.refresh;
+		@GetRequest('refresh') refresh: IRefreshResult,
+	): Promise<UserRecieve> {
+		const { rootId } = refresh;
 
-		await this.svc.device.remove({
-			id: (await this.svc.session.id(sessionId)).device.id,
-		});
+		await this.svc.bloc.remove(rootId);
 
-		return this.responseWithUserRecieve(
-			request,
-			response,
-			new UserRecieve({ response: err('Success', 'User', 'LogOut') }),
-		);
+		return new UserRecieve({ response: err('Success', 'User', 'LogOut') });
 	}
 
 	/**
 	 * Refreshing tokens request
 	 */
 	@Post('refresh') @UseGuards(RefreshGuard) async refresh(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
-		@MetaData() mtdt: string,
-	): Promise<void> {
-		const sendBack = (usrRcv: UserRecieve) =>
-				this.responseWithUserRecieve(request, response, usrRcv),
-			{ sessionId, status, hashedUserAgent } = request.refresh;
+		@GetMetaData() mtdt: MetaData,
+		@GetRequest('refresh') refresh: IRefreshResult,
+	): Promise<UserRecieve> {
+		const { metaData, rootId, blocHash, blocId } = refresh;
 
-		if (status === 'lockdown') {
-			await this.svc.device.remove({
-				id: (await this.svc.session.id(sessionId)).device.id,
-			});
-			return sendBack(new UserRecieve({ response: 'LockdownAccount' }));
-		} else {
-			if (status === 'success' && compare(mtdt, hashedUserAgent))
-				return sendBack(await this.svc.session.rotateToken(sessionId));
-			else return sendBack(await this.svc.session.addTokens(sessionId));
+		if (metaData !== mtdt) {
+			await this.svc.bloc.remove(rootId);
+			return new UserRecieve({ response: err('Invalid', 'Signature', '') });
 		}
+
+		return new UserRecieve({ accessToken: blocId, refreshToken: blocHash });
 	}
 
 	/**
@@ -154,25 +138,25 @@ export class AppController extends BaseController {
 	@Throttle({ requestSignature: { limit: 1, ttl: 600000 } })
 	@Post('request-signature')
 	protected async requestSignatureViaConsole(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() { email }: BaseUserEmail,
-		@MetaData() mtdt: string,
-	): Promise<void> {
-		if (email == this.cfg.get('ADMIN_EMAIL'))
-			return this.responseWithUserRecieve(
-				request,
-				response,
-				await this.svc.hook.assign(mtdt, (signature: string) =>
-					this.svc.mail.send(
-						this.svc.cfg.get('ADMIN_EMAIL'),
-						'Signature request',
-						'sendSignatureAdmin',
-						{ signature },
-					),
-				),
-			);
-		throw new ServerException('Invalid', 'Email', '');
+		@GetMetaData() mtdt: MetaData,
+	): Promise<UserRecieve> {
+		if (email !== this.cfg.get('ADMIN_EMAIL'))
+			throw new ServerException('Invalid', 'Email', '');
+
+		const { id } = await this.svc.hook.assign(mtdt, (signature: string) =>
+			this.svc.mail.send(
+				this.svc.cfg.get('ADMIN_EMAIL'),
+				'Signature request',
+				'sendSignatureAdmin',
+				{ signature },
+			),
+		);
+
+		return new UserRecieve({
+			accessToken: id,
+			response: err('Success', 'Signature', 'Sent'),
+		});
 	}
 
 	/**
@@ -181,22 +165,13 @@ export class AppController extends BaseController {
 	@Throttle({ changePassword: { limit: 3, ttl: 240000 } })
 	@Post('change-password/:token')
 	@UseGuards(HookGuard)
-	protected async changePassword(
+	protected changePassword(
 		@Param('token') signature: string,
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() { password }: UserAuthencation,
-		@MetaData() mtdt: string,
+		@GetMetaData() mtdt: MetaData,
 		@GetRequest('hook') hook: Hook,
-	): Promise<void> {
-		await super.changePassword(
-			signature,
-			request,
-			response,
-			{ password },
-			mtdt,
-			hook,
-		);
+	): Promise<UserRecieve> {
+		return super.changePassword(signature, { password }, mtdt, hook);
 	}
 
 	/**
@@ -205,12 +180,11 @@ export class AppController extends BaseController {
 	@Throttle({ changePasswordRequest: { limit: 1, ttl: 300000 } })
 	@Post('change-password')
 	protected async resetPasswordViaEmail(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
+		@GetRequest('hostname') hostname: string,
 		@Body() { email }: BaseUserEmail,
-		@MetaData() mtdt: string,
-	): Promise<void> {
-		return super.resetPasswordViaEmail(request, response, { email }, mtdt);
+		@GetMetaData() mtdt: MetaData,
+	): Promise<UserRecieve> {
+		return super.resetPasswordViaEmail(hostname, { email }, mtdt);
 	}
 
 	/**
@@ -219,15 +193,29 @@ export class AppController extends BaseController {
 	@Get('csrf-token') getCsrfToken(
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		response.send({ token: response.generateCsrf() });
+		return new UserRecieve({ response: response.generateCsrf() });
 	}
+}
 
-	/**
-	 * Check server status
-	 */
-	@Get('status') serverStatus(
-		@Res({ passthrough: true }) response: FastifyReply,
-	) {
-		response.send({ status: 'OK' });
+@Controller('health')
+export class HealthController {
+	constructor(
+		private health: HealthCheckService,
+		private db: TypeOrmHealthIndicator,
+		private readonly disk: DiskHealthIndicator,
+		private memory: MemoryHealthIndicator,
+	) {}
+
+	@Get() @HealthCheck() check() {
+		return this.health.check([
+			() => this.db.pingCheck('database'),
+			() =>
+				this.disk.checkStorage('storage', {
+					path: join(__dirname),
+					thresholdPercent: 0.75,
+				}),
+			() => this.memory.checkHeap('memory_heap', (365).mb2b),
+			() => this.memory.checkRSS('memory_rss', (128).mb2b),
+		]);
 	}
 }

@@ -8,7 +8,7 @@ import {
 	IUserAuthenticationKeys,
 } from 'build/models';
 import { IsString } from 'class-validator';
-import { IUserSignUp } from 'user/user.model';
+import { IUserSignUp, UserRole } from 'user/user.model';
 
 /**
  * Faculty entity
@@ -22,12 +22,13 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 		super();
 
 		if (payload) {
-			this.eventCreator = new EventCreator(
-				InterfaceCasting.quick(payload, [
+			this.eventCreator = new EventCreator({
+				...InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,
 					...IBaseUserInfoKeys,
 				]),
-			);
+				role: UserRole.faculty,
+			});
 			Object.assign(this, InterfaceCasting.quick(payload, IFacultyInfoKeys));
 		}
 	}

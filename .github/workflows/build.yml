@@ -36,6 +36,19 @@ jobs:
 
       - run: pnpm install
 
+      - run: npx semantic-release
+        if: github.ref == 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - uses: leigholiver/commit-with-deploy-key@v1.0.4
+        if: github.ref == 'refs/heads/master'
+        with:
+          source: .
+          destination_branch: master
+          destination_repo: 524H0003/Project_W
+          deploy_key: ${{ secrets.DEPLOY_KEY }}
+
       - run: 'npm run build & npm run doc'
 
       - run: 'cp README.md LICENSE ./types'
@@ -55,16 +68,3 @@ jobs:
           publish_dir: documentation
           publish_branch: documentation
           force_orphan: true
-
-      - run: npx semantic-release
-        if: github.ref == 'refs/heads/master'
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - uses: leigholiver/commit-with-deploy-key@v1.0.4
-        if: github.ref == 'refs/heads/master'
-        with:
-          source: .
-          destination_branch: master
-          destination_repo: 524H0003/Project_W
-          deploy_key: ${{ secrets.DEPLOY_KEY }}

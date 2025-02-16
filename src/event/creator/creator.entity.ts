@@ -1,9 +1,13 @@
 import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
-import { IUserSignUp } from 'user/user.model';
+import { IUserSensitive, IUserSignUp } from 'user/user.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserInfoKeys, IUserAuthenticationKeys } from 'build/models';
+import {
+	IBaseUserInfoKeys,
+	IUserAuthenticationKeys,
+	IUserSensitiveKeys,
+} from 'build/models';
 import { IEventCreatorEntity } from './creator.model';
 
 /**
@@ -14,7 +18,7 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 	/**
 	 * Create event creator entity with infomations
 	 */
-	constructor(payload: IUserSignUp) {
+	constructor(payload: IUserSignUp & IUserSensitive) {
 		super();
 
 		if (payload) {
@@ -22,6 +26,7 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 				InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,
 					...IBaseUserInfoKeys,
+					...IUserSensitiveKeys,
 				]),
 			);
 		}

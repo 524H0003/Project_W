@@ -226,6 +226,18 @@ declare global {
 		 * To uncapitalize
 		 */
 		readonly uncapitalize: string;
+		/**
+		 * Convert to base64url
+		 */
+		readonly toBase64Url: string;
+		/**
+		 * Convert from base64url
+		 */
+		readonly fromBase64Url: string;
+		/**
+		 * Reducing argon2 hash ouptut
+		 */
+		readonly redudeArgon2: string;
 	}
 
 	/**
@@ -297,6 +309,11 @@ declare global {
 	 * @return {number}
 	 */
 	function errorStatus(error: any): number;
+
+	/**
+	 * Get current time
+	 */
+	function currentTime(): number;
 }
 
 /**
@@ -308,6 +325,8 @@ type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
  * Server error object type
  */
 type ErrorObject =
+	| 'ID'
+	| 'Hash'
 	| 'CsrfCookie'
 	| 'CsrfToken'
 	| 'User'
@@ -415,6 +434,7 @@ try {
 		error instanceof HttpException
 			? error.getStatus()
 			: HttpStatus.INTERNAL_SERVER_ERROR;
+	global.currentTime = () => Math.floor(new Date().getTime() / 1000);
 	global.err = (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
 		type + '_' + object + (action ? '_' : '') + action;
 	global.disableDescribe = (
@@ -442,6 +462,27 @@ try {
 	};
 } catch {}
 // String.prototype
+Object.defineProperty(String.prototype, 'toBase64Url', {
+	get: function () {
+		return Buffer.from(this as string, 'utf8').toString('base64url');
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'fromBase64Url', {
+	get: function () {
+		return Buffer.from(this as string, 'base64url').toString('utf8');
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(String.prototype, 'redudeArgon2', {
+	get: function () {
+		return (this as string).split('$').slice(-2).join('$');
+	},
+	enumerable: true,
+	configurable: true,
+});
 Object.defineProperty(String.prototype, 'randomChar', {
 	get: function () {
 		return (this as string).charAt((this as string).length.random);

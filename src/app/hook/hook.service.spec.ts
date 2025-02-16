@@ -1,52 +1,23 @@
 import { AppService } from 'app/app.service';
 import { execute, initJest } from 'app/utils/test.utils';
-import { User, UserRecieve } from 'user/user.entity';
+import { User } from 'user/user.entity';
 import { Hook } from './hook.entity';
+import { UAParser } from 'ua-parser-js';
+import { MetaData } from 'auth/guards';
+import { BaseUser } from 'app/app.entity';
 
 const fileName = curFile(__filename);
 
-let svc: AppService;
+let svc: AppService, mtdt: MetaData;
 
 beforeEach(async () => {
 	const { appSvc } = await initJest();
 
-	svc = appSvc;
+	(svc = appSvc),
+		(mtdt = new UAParser(fileName + '_' + (20).string).getResult());
 });
 
 it('assign', async () => {
-	const mtdt = fileName + '_' + (20).string;
-	let signature: string;
-
-	await execute(
-		() =>
-			svc.hook.assign(mtdt, (s: string) => {
-				signature = s;
-			}),
-		{
-			exps: [{ type: 'toBeInstanceOf', params: [UserRecieve] }],
-			onFinish: async (result: UserRecieve) => {
-				const token: { id: string } = svc.sign.verify(result.accessToken, {
-					type: 'access',
-				}) as { id: string };
-
-				await execute(() => svc.hook.id(token.id), {
-					exps: [
-						{ type: 'toBeDefined', params: [] },
-						{
-							type: 'toMatchObject',
-							params: [
-								new Hook({ signature, mtdt, note: {}, fromBaseUser: null }),
-							],
-						},
-					],
-				});
-			},
-		},
-	);
-});
-
-it('assign with user', async () => {
-	const mtdt = fileName + '_' + (20).string;
 	let user: User;
 
 	await execute(
@@ -57,13 +28,9 @@ it('assign with user', async () => {
 					.baseUser;
 			}),
 		{
-			exps: [{ type: 'toBeInstanceOf', params: [UserRecieve] }],
-			onFinish: async (result: UserRecieve) => {
-				const token: { id: string } = svc.sign.verify(result.accessToken, {
-					type: 'access',
-				}) as { id: string };
-
-				await execute(() => svc.hook.id(token.id), {
+			exps: [{ type: 'toBeDefined', params: [] }],
+			onFinish: async ({ id }) => {
+				await execute(() => svc.hook.id(id), {
 					exps: [
 						{ type: 'toBeDefined', params: [] },
 						{ type: 'toBeInstanceOf', params: [Hook] },
@@ -75,16 +42,12 @@ it('assign with user', async () => {
 });
 
 it('validating', async () => {
-	const mtdt = fileName + '_' + (20).string;
 	let signature: string;
 
-	const userRecieve = await svc.hook.assign(mtdt, (s: string) => {
-			signature = s;
-		}),
-		token: { id: string } = svc.sign.verify(userRecieve.accessToken, {
-			type: 'access',
-		}) as { id: string },
-		hook = await svc.hook.id(token.id);
+	const hook = await svc.hook.assign(mtdt, (s: string) => {
+		signature = s;
+		return BaseUser.test(fileName);
+	});
 
 	await execute(() => svc.hook.validating(signature, mtdt, hook), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
@@ -92,8 +55,7 @@ it('validating', async () => {
 });
 
 it('validating failed', async () => {
-	const mtdt = fileName + '_' + (20).string,
-		signature = (5).string;
+	const signature = (5).string;
 
 	await execute(
 		() =>

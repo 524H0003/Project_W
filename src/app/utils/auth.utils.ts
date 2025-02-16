@@ -1,6 +1,13 @@
-import { hash as sHash, verify } from 'argon2';
+import { hash as sHash, verify, Options } from 'argon2';
 import { validate } from 'class-validator';
-import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { JwtService } from '@nestjs/jwt';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { ConfigService } from '@nestjs/config';
+import { IPayload } from 'auth/auth.interface';
+
+export type Argon2Options = Required<
+	Pick<Options, 'hashLength' | 'parallelism' | 'timeCost' | 'memoryCost'>
+>;
 
 /**
  * Validator for class
@@ -24,13 +31,14 @@ export async function validation<T>(
 /**
  * Hash function
  * @param {string} input - The string need to hash
+ * @param {Argon2Options} option - the option for hash
  * @return {string} Hashed string
  */
-export async function hash(
+export async function hashing(
 	input: string,
-	encoded: BufferEncoding = 'utf-8',
+	option: Argon2Options,
 ): Promise<string> {
-	return Buffer.from(await sHash(input), 'utf-8').toString(encoded);
+	return sHash(input, option);
 }
 
 /**
@@ -39,38 +47,79 @@ export async function hash(
  * @param {string} input - hashed string
  * @return {boolean}
  */
-export async function compare(
-	origin: string,
-	input: string,
-	encoded: BufferEncoding = 'utf-8',
-): Promise<boolean> {
+export async function compare(origin: string, input: string): Promise<boolean> {
 	try {
-		return await verify(Buffer.from(input, encoded).toString('utf-8'), origin);
+		return await verify(input, origin);
 	} catch {
 		return false;
 	}
 }
 
 /**
- * Cryption class
+ * Security service
  */
-export class Cryption {
+export class SecurityService {
 	/**
-	 * Initiate server cryption
+	 * Encrypt separator
 	 */
+	private separator = '%';
+
+	/**
+	 * Encrypt encoding
+	 */
+	private encoding: BufferEncoding = 'base64url';
+
+	/**
+	 * Encrypt algorithm
+	 */
+	private algorithm = 'aes-256-cbc';
+
 	constructor(
-		private algorithm: string,
-		private secret: string,
+		protected jwt: JwtService,
+		protected config: ConfigService,
 	) {}
+
+	/**
+	 * Refresh token signer
+	 * @param {IPayload} payload - input id
+	 */
+	refresh({ refreshToken }: IPayload): string {
+		const secret = this.config.get('REFRESH_SECRET'),
+			expiresIn = this.config.get('REFRESH_EXPIRE');
+
+		return this.jwt.sign({ refreshToken }, { secret, expiresIn });
+	}
+
+	/**
+	 * Access token signer
+	 * @param {IPayload} payload - input id
+	 */
+	access({ accessToken }: IPayload): string {
+		const secret = this.config.get('ACCESS_SECRET'),
+			expiresIn = this.config.get('ACCESS_EXPIRE');
+
+		return this.jwt.sign({ accessToken }, { secret, expiresIn });
+	}
+
+	/**
+	 * Verify token
+	 * @param {string} input - input token
+	 */
+	verify(input: string, type: 'refresh' | 'access' = 'access'): IPayload {
+		const access = this.config.get('ACCESS_SECRET'),
+			refresh = this.config.get('REFRESH_SECRET');
+
+		return this.jwt.verify(input, {
+			secret: type === 'access' ? access : refresh,
+		});
+	}
 
 	/**
 	 * Convert signature to key
 	 * @param {string} str - the signature to be converted
-	 * @return {string} the key have been converted
 	 */
-	sigToKey(str: string): string {
-		const first32Chars = str.substring(0, 32);
-		return first32Chars.padStart(32, '0');
+	private sigToKey(str: string): Buffer {
+		return Buffer.from(str.substring(0, 32).padStart(32, '0'));
 	}
 
 	/**
@@ -79,11 +128,15 @@ export class Cryption {
 	 * @param {string} key - The key to encrypt text
 	 * @return {string} The encrypted text
 	 */
-	encrypt(input: string, key: string = this.secret): string {
-		const iv = randomBytes(16),
-			cipher = createCipheriv(this.algorithm, this.sigToKey(key), iv),
+	encrypt(
+		input: string,
+		key: string = this.config.get('SERVER_SECRET'),
+	): string {
+		const { encoding, separator, algorithm } = this,
+			iv = randomBytes(16),
+			cipher = createCipheriv(algorithm, this.sigToKey(key), iv),
 			encrypted = Buffer.concat([cipher.update(input), cipher.final()]);
-		return iv.toString('hex') + encrypted.toString('hex');
+		return encrypted.toString(encoding) + separator + iv.toString(encoding);
 	}
 
 	/**
@@ -92,12 +145,22 @@ export class Cryption {
 	 * @param {string} key - The key to decrypt text
 	 * @return {string} The decrypted text
 	 */
-	decrypt(input: string, key: string = this.secret): string {
+	decrypt(
+		input: string,
+		key: string = this.config.get('SERVER_SECRET'),
+	): string {
 		if (!input) return '';
-		const iv = Buffer.from(input.substring(0, 32), 'hex'),
-			encrypted = Buffer.from(input.substring(32), 'hex'),
-			decipher = createDecipheriv(this.algorithm, this.sigToKey(key), iv),
-			decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+		const { encoding, separator, algorithm } = this,
+			[content, header] = input.split(separator),
+			decipher = createDecipheriv(
+				algorithm,
+				this.sigToKey(key),
+				Buffer.from(header, encoding),
+			),
+			decrypted = Buffer.concat([
+				decipher.update(Buffer.from(content, encoding)),
+				decipher.final(),
+			]);
 		return decrypted.toString();
 	}
 }

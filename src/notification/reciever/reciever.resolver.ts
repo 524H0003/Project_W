@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Reciever } from './reciever.entity';
 import { UseGuards } from '@nestjs/common';
-import { GetRequest, AccessGuard, Allow } from 'auth/guards/access.guard';
+import { GetRequest, AccessGuard, Allow } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { User } from 'user/user.entity';

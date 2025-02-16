@@ -105,8 +105,7 @@ describe('assignRecieverMany', () => {
 	beforeEach(async () => {
 		for (let i = 0; i < 5; i++) {
 			const tUser = User.test(fileName);
-			await tUser.hashingPassword();
-			usersId.push((await svc.user.assign(tUser)).id);
+			usersId.push((await svc.user.assign({ ...tUser, ...tUser.baseUser })).id);
 		}
 	});
 

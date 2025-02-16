@@ -125,7 +125,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Finding an object
+	 * Finding an entity
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>}
 	 */
@@ -167,53 +167,67 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Saving an object
-	 * @param {DeepPartial<T>} entity - the saving object
+	 * Saving an entity
+	 * @param {DeepPartial<T>} entity - the saving entity
 	 * @param {SaveOptions} options - function's option
-	 * @return {Promise<T>} the object from database
+	 * @return {Promise<T>} the entity from database
 	 */
 	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
 		return this.repo.save(entity, options) as Promise<T>;
 	}
 
 	/**
-	 * Deleting an object
-	 * @param {FindOptionsWhere<T>} criteria - the deleting object
+	 * Assign an entity
 	 */
-	protected async delete(criteria: FindOptionsWhere<T>) {
-		await this.repo.delete(criteria);
+	// eslint-disable-next-line tsEslint/no-unused-vars
+	assign(...args: any): Promise<T> {
+		throw new ServerException('Invalid', 'Method', 'Implementation');
 	}
 
 	/**
-	 * Updating object
-	 * @param {DeepPartial<T>} entity - the updating object
+	 * Deleting an entity
+	 * @param {FindOptionsWhere<T>} criteria - the deleting entity
+	 */
+	protected delete(criteria: FindOptionsWhere<T>) {
+		return this.repo.delete(criteria);
+	}
+
+	/**
+	 * Removing an entity
+	 */
+	// eslint-disable-next-line tsEslint/no-unused-vars
+	remove(...args: any) {
+		throw new ServerException('Invalid', 'Method', 'Implementation');
+	}
+
+	/**
+	 * Updating entity
+	 * @param {DeepPartial<T>} entity - the updating entity
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
-	protected async update(
+	protected update(
 		entity: DeepPartial<T>,
 		updatedEntity?: QueryDeepPartialEntity<T>,
 	) {
-		await this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
+		return this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
 	}
 
 	/**
-	 * Modifying object
-	 * @param {string} entityId - Entity's id
-	 * @param {DeepPartial<T>} updatedEntity - Modified entity
-	 * @return {Promise<T>}
+	 * Modifying entity
 	 */
 	// eslint-disable-next-line tsEslint/no-unused-vars
-	modify(entityId: string, updatedEntity: DeepPartial<T>): Promise<T> {
+	modify(...args: any): Promise<T> {
 		throw new ServerException('Fatal', 'Method', 'Implementation');
 	}
 
 	/**
-	 * Get object from id
-	 * @param {string} id - the object's id
+	 * Get entity from id
+	 * @param {string} id - the entity's id
 	 * @param {FindOptionsWithCustom<T>} options - function's option
-	 * @return {Promise<T>} found object
+	 * @return {Promise<T>} found entity
 	 */
 	id(id: string, options?: FindOptionsWithCustom<T>): Promise<T> {
+		if (!id) throw new ServerException('Invalid', 'ID', '');
 		return this.findOne({ id, ...options });
 	}
 }

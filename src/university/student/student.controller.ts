@@ -3,20 +3,17 @@ import {
 	Controller,
 	Injectable,
 	Post,
-	Req,
-	Res,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { MetaData } from 'auth/guards/access.guard';
+import { GetMetaData, GetRequest, LocalhostGuard, MetaData } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
-import { LocalhostGuard } from 'auth/guards/localhost.guard';
 import { BaseController } from 'app/utils/controller.utils';
 import { StudentSignUp } from './student.dto';
+import { UserRecieve } from 'user/user.entity';
 
 /**
  * Student controller
@@ -42,18 +39,17 @@ export class StudentController extends BaseController {
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor())
 	async signUp(
-		@Req() request: FastifyRequest,
-		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: StudentSignUp,
-		@MetaData() mtdt: string,
-	): Promise<void> {
+		@GetMetaData() mtdt: MetaData,
+		@GetRequest('hostname') hostname: string,
+	): Promise<UserRecieve> {
 		try {
 			await this.svc.student.signUp(body);
 		} catch (error) {
 			const { message } = error as ServerException;
 			switch (true) {
 				case message.includes(err('Success', 'User', 'SignUp')):
-					return this.resetPasswordViaEmail(request, response, body, mtdt);
+					return this.resetPasswordViaEmail(hostname, body, mtdt);
 
 				default:
 					throw error;
