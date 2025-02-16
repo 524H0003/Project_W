@@ -305,15 +305,6 @@ jobs:
           create-new-comment: true
           junitxml-path: ./resolver/reports/resolver.xml
 
-      - name: Etc
-        if: steps.auto-commit-action.outputs.changes_detected == 'false'
-        uses: MishaKav/jest-coverage-comment@main
-        with:
-          title: The rest test result
-          create-new-comment: true
-          junitxml-path: ./etc/reports/etc.xml
-			
-      
       - name: Service
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: MishaKav/jest-coverage-comment@main
