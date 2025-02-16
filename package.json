@@ -32,6 +32,7 @@
 		"test:controller": "jest --config=jest.controller.config.ts",
 		"test:resolver": "jest --config=jest.resolver.config.ts",
 		"test:service": "jest --config=jest.service.config.ts",
+		"test:etc": "jest --config=jest.etc.config.ts",
 		"test:debug": "jest --debug"
 	},
 	"dependencies": {
