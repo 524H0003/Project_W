@@ -38,19 +38,47 @@ export async function hookRequest(signature: string, password: string) {
   return response.data;
 }
 
-export async function assignEvent(input: IEventInfo) {
-  const response = await axios.post(`${API_URL}/event/assign`, input);
-  return response.data;
-}
+export async function action(
+  type: 'EventUpdate',
+  input: IEventInfo & IEntityId,
+): Promise<object>;
+export async function action(
+  type: 'EventAssign',
+  input: IEventInfo,
+): Promise<object>;
+export async function action(
+  type: 'EnterpriseAssign',
+  input: IEnterpriseAssign,
+): Promise<object>;
+export async function action(
+  type: 'EventAssign' | 'EventUpdate' | 'EnterpriseAssign',
+  input: IEventInfo | (IEventInfo & IEntityId) | IEnterpriseAssign,
+): Promise<object> {
+  let url = API_URL;
 
-export async function updateEvent(input: IEventInfo & IEntityId) {
-  const response = await axios.post(`${API_URL}/event/update`, input);
-  return response.data;
-}
+  switch (type) {
+    case 'EventAssign':
+      url += '/event/assign';
+      break;
 
-export async function assignEnterprise(input: IEnterpriseAssign) {
-  const response = await axios.post(`${API_URL}/enterprise/assign`, input);
-  return response.data;
+    case 'EventUpdate':
+      url += '/event/update';
+      break;
+
+    case 'EnterpriseAssign':
+      url += '/enterprise/assign';
+      break;
+
+    default:
+      throw new Error('Unimplement_Type');
+  }
+
+  const { token } = (await axios.get(`${API_URL}/csrf-token`)).data,
+    { data } = await axios.post(url, input, {
+      headers: { 'csrf-token': token },
+    });
+
+  return data;
 }
 
 export async function assignFaculty(input: IFacultyAssign) {
