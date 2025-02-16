@@ -74,7 +74,6 @@ export async function registerServerPlugins(
 	const secret = password,
 		cookieOptions: CookieSerializeOptions = {
 			httpOnly: true,
-			signed: true,
 			secure: true,
 			sameSite: 'strict',
 		};
