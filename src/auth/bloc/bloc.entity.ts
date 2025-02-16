@@ -58,8 +58,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Hashing bloc
 	 */
-	@BeforeInsert()
-	private async hashBloc() {
+	@BeforeInsert() private async hashBloc() {
 		const { prev, id } = this,
 			hash = (
 				await hashing(JSON.stringify({ ...this.content, prev, id }), {

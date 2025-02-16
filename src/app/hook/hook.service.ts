@@ -36,12 +36,7 @@ export class HookService extends DatabaseRequests<Hook> {
 		const signature = (128).string,
 			fromBaseUser = await func(signature);
 
-		return this.save({
-			signature,
-			mtdt,
-			note,
-			fromBaseUser,
-		});
+		return this.save({ signature, mtdt, note, fromBaseUser });
 	}
 
 	/**

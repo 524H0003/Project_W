@@ -62,8 +62,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * The hashed password
 	 */
-	@Column({ name: 'password_hash' })
-	hashedPassword: string;
+	@Column({ name: 'password_hash' }) hashedPassword: string;
 
 	// Core Entity
 	/**
@@ -152,9 +151,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * Hash the current password
 	 */
-	@BeforeInsert()
-	@BeforeUpdate()
-	private async hashingPassword() {
+	@BeforeInsert() @BeforeUpdate() private async hashingPassword() {
 		if (this.password)
 			this.hashedPassword = await hashing(this.password, {
 				parallelism: 3 + (3).random,

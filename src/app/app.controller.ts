@@ -206,9 +206,7 @@ export class HealthController {
 		private memory: MemoryHealthIndicator,
 	) {}
 
-	@Get()
-	@HealthCheck()
-	check() {
+	@Get() @HealthCheck() check() {
 		return this.health.check([
 			() => this.db.pingCheck('database'),
 			() =>
