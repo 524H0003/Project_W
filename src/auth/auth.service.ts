@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { compare, SecurityService, validation } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { FileService } from 'file/file.service';
-import { IUserRelationshipKeys, IUserSignUpKeys } from 'build/models';
+import { IUserSignUpKeys } from 'build/models';
 import { User } from 'user/user.entity';
 import { IUserLogIn, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
@@ -44,7 +44,7 @@ export class AuthService extends SecurityService {
 
 		const user = await this.usrSvc.email(input.email),
 			{ role = UserRole.undefined } = options || {},
-			rawUser = new User({ ...input, email: input.email.lower });
+			rawUser = new User({ ...input, email: input.email.lower, role });
 
 		if (user) throw new ServerException('Invalid', 'User', 'SignUp');
 
@@ -53,7 +53,6 @@ export class AuthService extends SecurityService {
 				const { id } = await this.usrSvc.assign({
 					...rawUser,
 					...rawUser.baseUser,
-					role,
 				});
 				return await this.usrSvc.modify(
 					id,
@@ -99,11 +98,11 @@ export class AuthService extends SecurityService {
 	 * @return {Promise<User>} updated user
 	 */
 	async changePassword(
-		{ id, baseUser }: User,
+		{ id, baseUser, role }: User,
 		password: string,
 	): Promise<User> {
 		const { name, email } = baseUser;
 
-		return this.usrSvc.modify(id, new User({ password, name, email }));
+		return this.usrSvc.modify(id, new User({ password, name, email, role }));
 	}
 }

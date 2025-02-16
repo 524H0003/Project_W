@@ -7,7 +7,7 @@ import {
 import { EventCreator } from 'event/creator/creator.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { User } from 'user/user.entity';
-import { IUserAuthentication } from 'user/user.model';
+import { IUserAuthentication, UserRole } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'build/models';
@@ -24,7 +24,10 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 		super();
 
 		if (payload) {
-			this.eventCreator = new EventCreator(payload);
+			this.eventCreator = new EventCreator({
+				...payload,
+				role: UserRole.enterprise,
+			});
 			Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));
 		}
 	}

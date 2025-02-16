@@ -8,7 +8,7 @@ import {
 	IStudentInfoKeys,
 	IUserAuthenticationKeys,
 } from 'build/models';
-import { IUserSignUp } from 'user/user.model';
+import { IUserSignUp, UserRole } from 'user/user.model';
 
 /**
  * Student entity
@@ -22,12 +22,13 @@ export class Student extends BaseEntity implements IStudentEntity {
 		super();
 
 		if (payload) {
-			this.user = new User(
-				InterfaceCasting.quick(payload, [
+			this.user = new User({
+				...InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,
 					...IBaseUserInfoKeys,
 				]),
-			);
+				role: UserRole.student,
+			});
 			Object.assign(this, InterfaceCasting.quick(payload, IStudentInfoKeys));
 		}
 	}

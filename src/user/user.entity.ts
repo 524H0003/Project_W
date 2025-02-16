@@ -5,6 +5,7 @@ import {
 	IBaseUserInfoKeys,
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
+	IUserSensitiveKeys,
 } from 'build/models';
 import {
 	BaseEntity,
@@ -20,6 +21,7 @@ import {
 	UserRole,
 	IUserInfo,
 	IUserRecieve,
+	IUserSensitive,
 } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
@@ -40,7 +42,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
-	constructor(payload: IUserAuthentication & IBaseUserInfo) {
+	constructor(payload: IUserAuthentication & IUserSensitive & IBaseUserInfo) {
 		super();
 
 		if (payload) {
@@ -49,7 +51,10 @@ export class User extends BaseEntity implements IUserEntity {
 			);
 			Object.assign(
 				this,
-				InterfaceCasting.quick(payload, IUserAuthenticationKeys),
+				InterfaceCasting.quick(payload, [
+					...IUserAuthenticationKeys,
+					...IUserSensitiveKeys,
+				]),
 			);
 		}
 	}
@@ -187,7 +192,11 @@ export class User extends BaseEntity implements IUserEntity {
 			from,
 			options?.email || (20).string + '@lmao.com',
 		);
-		return new User({ ...baseUser, password: from + (20).string + 'aA1!' });
+		return new User({
+			...baseUser,
+			password: from + (20).string + 'aA1!',
+			role: UserRole.undefined,
+		});
 	}
 }
 
