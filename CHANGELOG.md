@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/524H0003/Project_W/compare/v1.1.0...v1.2.0) (2025-02-16)
+
+
+### Features
+
+* **optimize:** better server controller endpoint ([#128](https://github.com/524H0003/Project_W/issues/128)) ([704f4d0](https://github.com/524H0003/Project_W/commit/704f4d0f5731da4c4137cb2f29c8d5694c6bc2bb))
+
 # [1.1.0](https://github.com/524H0003/Project_W/compare/v1.0.1...v1.1.0) (2025-02-13)
 
 
