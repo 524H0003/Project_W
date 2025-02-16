@@ -119,7 +119,9 @@ export type SendGQLType<T, K> = (
  * Get headers cookie
  */
 export function getCookie(headers: string | string[]) {
-	return (Array.isArray(headers) ? headers : [headers]).join(';');
+	return (Array.isArray(headers) ? headers : [headers])
+		.filter(Boolean)
+		.join(';');
 }
 
 /**

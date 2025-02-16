@@ -98,12 +98,12 @@ export class AuthService extends SecurityService {
 	 * @param {string} password - new password
 	 * @return {Promise<User>} updated user
 	 */
-	async changePassword(user: User, password: string): Promise<User> {
-		let newUser = await this.usrSvc.id(user.id);
-		newUser.password = password;
-		return validation(newUser, async () => {
-			newUser = InterfaceCasting.delete(newUser, IUserRelationshipKeys);
-			return this.usrSvc.modify(user.id, newUser);
-		});
+	async changePassword(
+		{ id, baseUser }: User,
+		password: string,
+	): Promise<User> {
+		const { name, email } = baseUser;
+
+		return this.usrSvc.modify(id, new User({ password, name, email }));
 	}
 }

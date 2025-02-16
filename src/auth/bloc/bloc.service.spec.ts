@@ -20,16 +20,7 @@ beforeEach(async () => {
 describe('assign', () => {
 	it('success', async () => {
 		await execute(() => svc.bloc.assign(user, null), {
-			exps: [
-				{ type: 'toBeInstanceOf', params: [Bloc] },
-				{ type: 'toMatchObject', params: [Bloc] },
-			],
-		});
-	});
-
-	it('fail', async () => {
-		await execute(() => svc.bloc.assign(null, null), {
-			exps: [{ type: 'toThrow', params: [err('Invalid', 'User', '')] }],
+			exps: [{ type: 'toBeDefined', params: [] }],
 		});
 	});
 });

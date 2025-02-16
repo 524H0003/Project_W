@@ -45,9 +45,10 @@ export class UserService extends DatabaseRequests<User> {
 		entityId: string,
 		updatedEntity: DeepPartial<User>,
 	): Promise<User> {
-		const id = (
-			await this.svc.baseUser.modify(entityId, updatedEntity.baseUser)
-		).id;
+		const { id } = await this.svc.baseUser.modify(
+			entityId,
+			updatedEntity.baseUser,
+		);
 		await this.update({ baseUser: { id } }, updatedEntity);
 		return this.id(entityId);
 	}
@@ -58,7 +59,7 @@ export class UserService extends DatabaseRequests<User> {
 	 */
 	async remove(entityId: string) {
 		await this.delete({ baseUser: { id: entityId } });
-		this.svc.baseUser.remove(entityId);
+		await this.svc.baseUser.remove(entityId);
 	}
 
 	/**

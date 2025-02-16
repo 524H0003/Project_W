@@ -6,7 +6,14 @@ import {
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
 } from 'build/models';
-import { BaseEntity, BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import {
+	BaseEntity,
+	BeforeInsert,
+	BeforeUpdate,
+	Column,
+	Entity,
+	OneToMany,
+} from 'typeorm';
 import {
 	IUserAuthentication,
 	IUserEntity,
@@ -141,6 +148,7 @@ export class User extends BaseEntity implements IUserEntity {
 	 * Hash the current password
 	 */
 	@BeforeInsert()
+	@BeforeUpdate()
 	private async hashingPassword() {
 		if (this.password)
 			this.hashedPassword = await hashing(this.password, {
@@ -149,6 +157,8 @@ export class User extends BaseEntity implements IUserEntity {
 				timeCost: 3 + (3).random,
 				hashLength: 60 + (60).random,
 			});
+
+		delete this.password;
 	}
 	/**
 	 * A function return user's public infomations
@@ -196,17 +206,17 @@ export class UserRecieve implements IUserRecieve {
 	/**
 	 * User access token
 	 */
-	accessToken: string = '';
+	accessToken: string;
 
 	/**
 	 * User refresh token
 	 */
-	refreshToken: string = '';
+	refreshToken: string;
 
 	/**
 	 * Server's response
 	 */
-	response: string | IUserInfo = '';
+	response: string | IUserInfo;
 
 	/**
 	 * Jwt payload
