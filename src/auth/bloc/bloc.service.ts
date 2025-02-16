@@ -66,7 +66,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		return new UserRecieve({
 			accessToken: prev.id,
 			refreshToken: prev.hash,
-			response: user.info,
+			response: { user: user.info },
 		});
 	}
 

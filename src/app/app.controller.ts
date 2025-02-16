@@ -112,7 +112,9 @@ export class AppController extends BaseController {
 
 		await this.svc.bloc.remove(rootId);
 
-		return new UserRecieve({ response: err('Success', 'User', 'LogOut') });
+		return new UserRecieve({
+			response: { message: err('Success', 'User', 'LogOut') },
+		});
 	}
 
 	/**
@@ -126,7 +128,9 @@ export class AppController extends BaseController {
 
 		if (metaData !== mtdt) {
 			await this.svc.bloc.remove(rootId);
-			return new UserRecieve({ response: err('Invalid', 'Signature', '') });
+			return new UserRecieve({
+				response: { message: err('Invalid', 'Signature', '') },
+			});
 		}
 
 		return new UserRecieve({ accessToken: blocId, refreshToken: blocHash });
@@ -155,7 +159,7 @@ export class AppController extends BaseController {
 
 		return new UserRecieve({
 			accessToken: id,
-			response: err('Success', 'Signature', 'Sent'),
+			response: { message: err('Success', 'Signature', 'Sent') },
 		});
 	}
 
@@ -193,7 +197,7 @@ export class AppController extends BaseController {
 	@Get('csrf-token') getCsrfToken(
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		return new UserRecieve({ response: response.generateCsrf() });
+		return new UserRecieve({ response: { token: response.generateCsrf() } });
 	}
 }
 

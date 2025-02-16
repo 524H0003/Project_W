@@ -49,6 +49,8 @@ export class EnterpriseController extends BaseController {
 	): Promise<UserRecieve> {
 		await this.svc.hook.validating(signature, mtdt, hook);
 		await this.svc.enterprise.assign(body, avatar);
-		return new UserRecieve({ response: 'Success_Assign_Enterprise' });
+		return new UserRecieve({
+			response: { message: err('Success', 'Enterprise', 'Assign') },
+		});
 	}
 }

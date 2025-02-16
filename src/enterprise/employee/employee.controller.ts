@@ -52,7 +52,7 @@ export class EmployeeController extends BaseController {
 
 		return new UserRecieve({
 			accessToken: id,
-			response: err('Success', 'Signature', 'Sent'),
+			response: { message: err('Success', 'Signature', 'Sent') },
 		});
 	}
 
