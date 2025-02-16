@@ -19,7 +19,8 @@ import React, { useEffect, useState } from 'react';
 
 let email: string;
 
-const Wrapper = styled(Box)<BoxProps>`
+const csrfUrl = '../api/v1/csrf-token',
+	Wrapper = styled(Box)<BoxProps>`
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
@@ -55,9 +56,7 @@ const Wrapper = styled(Box)<BoxProps>`
 		margin-top: 0;
 	`,
 	handleRequest = async () => {
-		const { token } = await (
-			await fetch('../csrf-token', { method: 'GET' })
-		).json();
+		const { token } = await (await fetch(csrfUrl, { method: 'GET' })).json();
 
 		return fetch('../api/v1/request-signature', {
 			method: 'POST',
@@ -68,7 +67,7 @@ const Wrapper = styled(Box)<BoxProps>`
 			body: JSON.stringify({ email }),
 		});
 	};
-	
+
 export type LoginProps = {
 	message?: string;
 	action: string;
@@ -82,9 +81,7 @@ export const Login: React.FC = () => {
 
 	useEffect(() => {
 		async function getToken() {
-			const { token } = await (
-				await fetch('../csrf-token', { method: 'GET' })
-			).json();
+			const { token } = await (await fetch(csrfUrl, { method: 'GET' })).json();
 			setToken(token);
 		}
 		getToken();

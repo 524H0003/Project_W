@@ -75,6 +75,15 @@ export interface IUserEntity
 }
 
 /**
+ * Server response interface
+ */
+export interface IResponse {
+	message?: string;
+	token?: string;
+	user?: IUserInfo;
+}
+
+/**
  * Fields about user's recieved properties
  */
 export interface IUserRecieve {
@@ -91,7 +100,7 @@ export interface IUserRecieve {
 	/**
 	 * Server's response
 	 */
-	response: string | IUserInfo;
+	response: IResponse;
 }
 
 /**

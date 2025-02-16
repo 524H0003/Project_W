@@ -357,6 +357,7 @@ type ErrorAction =
 	| 'Upload'
 	| 'Download'
 	| 'SignUp'
+	| 'Assign'
 	| 'LogOut'
 	| 'Access';
 

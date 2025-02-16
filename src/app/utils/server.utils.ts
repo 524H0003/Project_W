@@ -19,7 +19,6 @@ import { HttpAdapterHost } from '@nestjs/core';
 import fastifyCsrf, { CookieSerializeOptions } from '@fastify/csrf-protection';
 import fastifySecuredSession from '@fastify/secure-session';
 import { readFileSync } from 'fs';
-import { Argon2Options, hashing } from './auth.utils';
 import { AppMiddleware } from 'app/app.middleware';
 import fastifyCompression from '@fastify/compress';
 import { constants } from 'zlib';
@@ -78,12 +77,6 @@ export async function registerServerPlugins(
 			signed: true,
 			secure: true,
 			sameSite: 'strict',
-		},
-		hashOptions: Argon2Options = {
-			hashLength: 6,
-			timeCost: 2,
-			memoryCost: 6262,
-			parallelism: 2,
 		};
 
 	await fastify
@@ -92,8 +85,7 @@ export async function registerServerPlugins(
 			brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } },
 		})
 		.register(fastifySecuredSession, {
-			cookieName: (await hashing((6).string, hashOptions)).redudeArgon2
-				.toBase64Url,
+			cookieName: (6).numeric.toBase64Url,
 			cookie: { ...cookieOptions, signed: true },
 			secret,
 			key: readFileSync('securedSessionKey'),
@@ -101,8 +93,7 @@ export async function registerServerPlugins(
 		})
 		.register(fastifyCsrf, {
 			sessionKey: name,
-			cookieKey: (await hashing((6).string, hashOptions)).redudeArgon2
-				.toBase64Url,
+			cookieKey: (6).alpha.toBase64Url,
 			cookieOpts: cookieOptions,
 			sessionPlugin: '@fastify/secure-session',
 			csrfOpts: { validity: (180).s2ms },

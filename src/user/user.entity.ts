@@ -22,6 +22,7 @@ import {
 	IUserInfo,
 	IUserRecieve,
 	IUserSensitive,
+	IResponse,
 } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
@@ -222,7 +223,7 @@ export class UserRecieve implements IUserRecieve {
 	/**
 	 * Server's response
 	 */
-	response: string | IUserInfo;
+	response: IResponse;
 
 	/**
 	 * Jwt payload
