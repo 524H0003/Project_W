@@ -47,7 +47,7 @@ export class AppMiddleware extends SecurityService {
 			argon2Header = `$argon2id$v=19$m=${memoryCost},t=${timeCost},p=${parallelism}$`,
 			accessKey = this.decrypt(
 				req.session.get<any>('accessKey'),
-				req.ips.join(';') || req.ip,
+				req.ips?.join(';') || req.ip,
 			);
 
 		let access: string = '',
@@ -95,7 +95,7 @@ export class AppMiddleware extends SecurityService {
 		if (accessToken.length == 36 && refreshToken.length == 36) {
 			req.session.set<any>(
 				'accessKey',
-				this.encrypt(accessKey, req.ips.join(';') || req.ip),
+				this.encrypt(accessKey, req.ips?.join(';') || req.ip),
 			);
 			res
 				.setCookie(
