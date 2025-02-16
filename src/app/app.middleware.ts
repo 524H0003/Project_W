@@ -45,7 +45,10 @@ export class AppMiddleware extends SecurityService {
 		const isRefresh = this.rfsgrd.test(req.url),
 			{ memoryCost, parallelism, timeCost } = this.hashOpts,
 			argon2Header = `$argon2id$v=19$m=${memoryCost},t=${timeCost},p=${parallelism}$`,
-			accessKey = req.session.get<any>('accessKey');
+			accessKey = this.decrypt(
+				req.session.get<any>('accessKey'),
+				req.ips.join(';') || req.ip,
+			);
 
 		let access: string = '',
 			refresh: string = '';
@@ -90,7 +93,10 @@ export class AppMiddleware extends SecurityService {
 			accessKey = (66).string;
 
 		if (accessToken.length == 36 && refreshToken.length == 36) {
-			req.session.set<any>('accessKey', accessKey);
+			req.session.set<any>(
+				'accessKey',
+				this.encrypt(accessKey, req.ips.join(';') || req.ip),
+			);
 			res
 				.setCookie(
 					(await hashing(this.config.get('ACCESS_SECRET'), this.hashOpts))
