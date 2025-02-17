@@ -64,7 +64,7 @@ export class FileService extends DatabaseRequests<File> {
 						await this.assign(
 							{ stream: createReadStream(filePath), originalname: file },
 							null,
-							file.split('.').slice(0, -2).join(''),
+							file.split('.')[0],
 						);
 					} catch {}
 				}
@@ -102,7 +102,7 @@ export class FileService extends DatabaseRequests<File> {
 
 		const title = originalname,
 			path = serverFileName
-				? serverFileName + `.server.${extname(title)}`
+				? serverFileName + `.server${extname(title)}`
 				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(buffer).digest('base64url')}${extname(title)}`;
 
 		await this.svc.aws.upload(path, buffer);
