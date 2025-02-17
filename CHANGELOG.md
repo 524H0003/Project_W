@@ -1,3 +1,15 @@
+## [1.2.5](https://github.com/524H0003/Project_W/compare/v1.2.4...v1.2.5) (2025-02-17)
+
+
+### Bug Fixes
+
+* **response:** fix request timeout ([#136](https://github.com/524H0003/Project_W/issues/136)) ([08e35e3](https://github.com/524H0003/Project_W/commit/08e35e35d730b4e119e8180c3d75600ff7a9203a))
+
+
+### Reverts
+
+* **cookie-name:** remove hashing and random cookie key ([#135](https://github.com/524H0003/Project_W/issues/135)) ([392cefe](https://github.com/524H0003/Project_W/commit/392cefe552e80a6ebc6b6a62cec7806da6fbf60d))
+
 ## [1.2.4](https://github.com/524H0003/Project_W/compare/v1.2.3...v1.2.4) (2025-02-17)
 
 
