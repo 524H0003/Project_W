@@ -193,8 +193,8 @@ export class InitServerClass implements OnModuleInit {
 				middleware.auth(req, rep, done),
 			)
 			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
-			.addHook('preSerialization', (req, rep, payload: UserRecieve, done) => {
-				middleware.cookie(req, rep, payload, done);
+			.addHook('preSerialization', async (req, rep, payload: UserRecieve) => {
+				return middleware.cookie(req, rep, payload);
 			})
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
