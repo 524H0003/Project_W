@@ -228,7 +228,7 @@ declare global {
 			type: ErrorType,
 			object: ErrorObject,
 			action: ErrorAction,
-			err?: ErrorExtender,
+			err?: any,
 		);
 	}
 }
