@@ -64,25 +64,33 @@ export class AppMiddleware extends SecurityService {
 			});
 	}
 
-	cookie(req: FastifyRequest, res: FastifyReply, payload: UserRecieve) {
-		if (!(payload instanceof UserRecieve)) return payload;
+	cookie(
+		req: FastifyRequest,
+		res: FastifyReply,
+		payload: UserRecieve,
+		done: DoneFuncWithErrOrRes,
+	) {
+		if (payload instanceof UserRecieve) {
+			const {
+					accessToken = '',
+					refreshToken = (36).string,
+					response,
+				} = payload,
+				accessKey = (66).string;
 
-		const { accessToken = '', refreshToken = (36).string, response } = payload,
-			accessKey = (66).string;
-
-		if (accessToken.length == 36 && refreshToken.length == 36) {
-			req.session.set<any>(
-				'accessKey',
-				this.encrypt(accessKey, req.ips?.join(';') || req.ip),
-			);
-			res
-				.setCookie(
-					'access',
-					this.encrypt(this.access({ accessToken }), accessKey),
-				)
-				.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
-		}
-
-		return response;
+			if (accessToken.length == 36 && refreshToken.length == 36) {
+				req.session.set<any>(
+					'accessKey',
+					this.encrypt(accessKey, req.ips?.join(';') || req.ip),
+				);
+				res
+					.setCookie(
+						'access',
+						this.encrypt(this.access({ accessToken }), accessKey),
+					)
+					.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
+			}
+			done(null, response);
+		} else done();
 	}
 }

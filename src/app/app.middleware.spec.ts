@@ -44,6 +44,7 @@ describe('auth', () => {
 			req as unknown as FastifyRequest,
 			res as unknown as FastifyReply,
 			new UserRecieve({ refreshToken: rfsTkn, accessToken: acsTkn }),
+			() => ({}),
 		);
 	});
 
