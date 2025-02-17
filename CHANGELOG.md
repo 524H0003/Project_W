@@ -1,3 +1,13 @@
+## [1.2.3](https://github.com/524H0003/Project_W/compare/v1.2.2...v1.2.3) (2025-02-17)
+
+
+### Bug Fixes
+
+* **aws-s3:** fix unusual file name upload ([ddf8e86](https://github.com/524H0003/Project_W/commit/ddf8e86ba5e4a6a33750ccf8e1f5309eb8bba09b))
+* **aws-s3:** fix unusual file name upload ([#132](https://github.com/524H0003/Project_W/issues/132)) ([13b943a](https://github.com/524H0003/Project_W/commit/13b943a3d2eda379b1dfe8575d42871e812d7cca))
+* **regular-express:** fix server file regular express ([0587854](https://github.com/524H0003/Project_W/commit/0587854d5b864fc734013f5ee177f8a808a3c22a))
+* **typescript:** stricter boolean expression ([3d5c102](https://github.com/524H0003/Project_W/commit/3d5c102109468654136ce148cfcb1209157b6e43))
+
 ## [1.2.2](https://github.com/524H0003/Project_W/compare/v1.2.1...v1.2.2) (2025-02-17)
 
 
