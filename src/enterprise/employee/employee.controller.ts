@@ -2,12 +2,10 @@ import {
 	Body,
 	Controller,
 	Post,
-	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
 import { AppService } from 'app/app.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
@@ -44,7 +42,6 @@ export class EmployeeController extends BaseController {
 	 * Employee request hook
 	 */
 	@Post('hook') @UseInterceptors(FileInterceptor()) async employeeHook(
-		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() body: EmployeeHook,
 		@GetMetaData() mtdt: MetaData,
 	) {
@@ -63,7 +60,6 @@ export class EmployeeController extends BaseController {
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
-		@Res({ passthrough: true }) response: FastifyReply,
 		@Body() { signature, password }: EmployeeSignUp,
 		@GetMetaData() mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,

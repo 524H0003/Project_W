@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import {
-	Argon2Options,
-	compare,
-	hashing,
-	SecurityService,
-} from 'app/utils/auth.utils';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { SecurityService } from 'app/utils/auth.utils';
+import { DoneFuncWithErrOrRes, FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 import { UserRecieve } from 'user/user.entity';
 
@@ -16,13 +11,6 @@ import { UserRecieve } from 'user/user.entity';
  */
 @Injectable()
 export class AppMiddleware extends SecurityService {
-	private hashOpts: Argon2Options = {
-		hashLength: 6,
-		parallelism: 1,
-		timeCost: 3,
-		memoryCost: 2 << 9,
-	};
-
 	/**
 	 * Initiate auth middleware
 	 */
@@ -41,10 +29,8 @@ export class AppMiddleware extends SecurityService {
 	/**
 	 * Authenticate processing
 	 */
-	async auth(req: FastifyRequest, res: FastifyReply) {
+	auth(req: FastifyRequest, res: FastifyReply, done: DoneFuncWithErrOrRes) {
 		const isRefresh = this.rfsgrd.test(req.url),
-			{ memoryCost, parallelism, timeCost } = this.hashOpts,
-			argon2Header = `$argon2id$v=19$m=${memoryCost},t=${timeCost},p=${parallelism}$`,
 			accessKey = this.decrypt(
 				req.session.get<any>('accessKey'),
 				req.ips?.join(';') || req.ip,
@@ -53,26 +39,18 @@ export class AppMiddleware extends SecurityService {
 		let access: string = '',
 			refresh: string = '';
 		for (const cookie in req.cookies)
-			if (
-				await compare(
-					this.config.get('REFRESH_SECRET') + '!',
-					argon2Header + cookie.fromBase64Url,
-				)
-			) {
+			if ('refresh' == cookie) {
+				res.clearCookie(cookie);
 				refresh = this.decrypt(req.cookies[cookie]);
+			} else if ('access' == cookie) {
 				res.clearCookie(cookie);
-			} else if (
-				await compare(
-					this.config.get('ACCESS_SECRET'),
-					argon2Header + cookie.fromBase64Url,
-				)
-			) {
 				access = this.decrypt(req.cookies[cookie], accessKey);
-				res.clearCookie(cookie);
 			}
 
 		if (access || refresh)
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
+
+		done();
 	}
 
 	async graphQl(req: FastifyRequest, res: FastifyReply) {
@@ -86,7 +64,7 @@ export class AppMiddleware extends SecurityService {
 			});
 	}
 
-	async cookie(req: FastifyRequest, res: FastifyReply, payload: UserRecieve) {
+	cookie(req: FastifyRequest, res: FastifyReply, payload: UserRecieve) {
 		if (!(payload instanceof UserRecieve)) return payload;
 
 		const { accessToken = '', refreshToken = (36).string, response } = payload,
@@ -99,19 +77,10 @@ export class AppMiddleware extends SecurityService {
 			);
 			res
 				.setCookie(
-					(await hashing(this.config.get('ACCESS_SECRET'), this.hashOpts))
-						.redudeArgon2.toBase64Url,
+					'access',
 					this.encrypt(this.access({ accessToken }), accessKey),
 				)
-				.setCookie(
-					(
-						await hashing(
-							this.config.get('REFRESH_SECRET') + '!',
-							this.hashOpts,
-						)
-					).redudeArgon2.toBase64Url,
-					this.encrypt(this.refresh({ refreshToken })),
-				);
+				.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
 		}
 
 		return response;

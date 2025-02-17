@@ -26,7 +26,7 @@ beforeEach(async () => {
 });
 
 describe('auth', () => {
-	beforeEach(async () => {
+	beforeEach(() => {
 		req['session'] = Object.assign(
 			{},
 			{
@@ -40,19 +40,20 @@ describe('auth', () => {
 			return res;
 		};
 
-		await middleware.cookie(
+		middleware.cookie(
 			req as unknown as FastifyRequest,
 			res as unknown as FastifyReply,
 			new UserRecieve({ refreshToken: rfsTkn, accessToken: acsTkn }),
 		);
 	});
 
-	it('refresh', async () => {
+	it('refresh', () => {
 		req['ur' + 'l'] = '/refresh';
 
-		await middleware.auth(
+		middleware.auth(
 			req as unknown as FastifyRequest,
 			res as unknown as FastifyReply,
+			() => ({}),
 		),
 			expect(
 				middleware.verify(req.headers['authorization'].split(' ')[1], 'refresh')
@@ -60,10 +61,11 @@ describe('auth', () => {
 			).toBe(rfsTkn);
 	});
 
-	it('access', async () => {
-		await middleware.auth(
+	it('access', () => {
+		middleware.auth(
 			req as unknown as FastifyRequest,
 			res as unknown as FastifyReply,
+			() => ({}),
 		),
 			expect(
 				middleware.verify(req.headers['authorization'].split(' ')[1], 'access')

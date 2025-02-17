@@ -40,13 +40,6 @@ declare module 'fastify' {
 	}
 
 	/**
-	 * Server reply
-	 */
-	interface FastifyReply {
-		body: UserRecieve;
-	}
-
-	/**
 	 * Server session addition fields
 	 */
 	interface Session {
@@ -84,7 +77,7 @@ export async function registerServerPlugins(
 			brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } },
 		})
 		.register(fastifySecuredSession, {
-			cookieName: (18).random.alpha.toBase64Url,
+			cookieName: 'session',
 			cookie: { ...cookieOptions, signed: true },
 			secret,
 			key: readFileSync('securedSessionKey'),
@@ -92,7 +85,7 @@ export async function registerServerPlugins(
 		})
 		.register(fastifyCsrf, {
 			sessionKey: name,
-			cookieKey: (18 + (18).random).alpha.toBase64Url,
+			cookieKey: 'csrf',
 			cookieOpts: cookieOptions,
 			sessionPlugin: '@fastify/secure-session',
 			csrfOpts: { validity: (180).s2ms },
@@ -196,13 +189,13 @@ export class InitServerClass implements OnModuleInit {
 			middleware = new AppMiddleware(this.jwt, this.config);
 
 		adapterInstance
-			.addHook('preValidation', (req, rep) => middleware.auth(req, rep))
-			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
-			.addHook(
-				'preSerialization',
-				async (request, reply, payload: UserRecieve) =>
-					middleware.cookie(request, reply, payload),
+			.addHook('preValidation', (req, rep, done) =>
+				middleware.auth(req, rep, done),
 			)
+			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
+			.addHook('preSerialization', async (req, rep, payload: UserRecieve) => {
+				return middleware.cookie(req, rep, payload);
+			})
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {
