@@ -74,7 +74,7 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Server file regular expression
 	 */
-	private serverFilesReg = /^[^.]+\.server\.[^.]+$/g;
+	private serverFilesReg = /[^.]+\.server\.[^.]+/;
 
 	/**
 	 * Assign file to server
@@ -143,15 +143,7 @@ export class FileService extends DatabaseRequests<File> {
 	async isOwner(path: string, ownerId: string): Promise<boolean> {
 		const file = await this.findOne({ path, deep: 2 });
 
-		console.log(
-			this.serverFilesReg.test(`${path}`) || file?.fileCreatedBy.id == ownerId,
-			path,
-			this.serverFilesReg.test(`${path}`),
-		);
-
-		return (
-			this.serverFilesReg.test(`${path}`) || file?.fileCreatedBy.id == ownerId
-		);
+		return this.serverFilesReg.test(path) || file?.fileCreatedBy.id == ownerId;
 	}
 
 	/**
