@@ -1,3 +1,11 @@
+## [1.2.4](https://github.com/524H0003/Project_W/compare/v1.2.3...v1.2.4) (2025-02-17)
+
+
+### Bug Fixes
+
+* **cookie:** change cookie name from numeric to alpha ([b0ed8ad](https://github.com/524H0003/Project_W/commit/b0ed8ad7f55be1b5e9534546b97c9fb0fe321818))
+* **cookie:** change cookie name from numeric to alpha ([#133](https://github.com/524H0003/Project_W/issues/133)) ([93ddda0](https://github.com/524H0003/Project_W/commit/93ddda00a3f78784711ce61abcb9aba2d89fb75b))
+
 ## [1.2.3](https://github.com/524H0003/Project_W/compare/v1.2.2...v1.2.3) (2025-02-17)
 
 
