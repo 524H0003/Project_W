@@ -189,13 +189,13 @@ export class InitServerClass implements OnModuleInit {
 			middleware = new AppMiddleware(this.jwt, this.config);
 
 		adapterInstance
-			.addHook('preValidation', (req, rep) => middleware.auth(req, rep))
-			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
-			.addHook(
-				'preSerialization',
-				async (request, reply, payload: UserRecieve) =>
-					middleware.cookie(request, reply, payload),
+			.addHook('preValidation', (req, rep, done) =>
+				middleware.auth(req, rep, done),
 			)
+			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
+			.addHook('preSerialization', (req, rep, payload: UserRecieve, done) => {
+				middleware.cookie(req, rep, payload, done);
+			})
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {

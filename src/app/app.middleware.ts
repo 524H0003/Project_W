@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { SecurityService } from 'app/utils/auth.utils';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { DoneFuncWithErrOrRes, FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 import { UserRecieve } from 'user/user.entity';
 
@@ -29,7 +29,7 @@ export class AppMiddleware extends SecurityService {
 	/**
 	 * Authenticate processing
 	 */
-	auth(req: FastifyRequest, res: FastifyReply) {
+	auth(req: FastifyRequest, res: FastifyReply, done: DoneFuncWithErrOrRes) {
 		const isRefresh = this.rfsgrd.test(req.url),
 			accessKey = this.decrypt(
 				req.session.get<any>('accessKey'),
@@ -49,6 +49,8 @@ export class AppMiddleware extends SecurityService {
 
 		if (access || refresh)
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
+
+		done();
 	}
 
 	async graphQl(req: FastifyRequest, res: FastifyReply) {
@@ -62,7 +64,12 @@ export class AppMiddleware extends SecurityService {
 			});
 	}
 
-	cookie(req: FastifyRequest, res: FastifyReply, payload: UserRecieve) {
+	cookie(
+		req: FastifyRequest,
+		res: FastifyReply,
+		payload: UserRecieve,
+		done: DoneFuncWithErrOrRes,
+	) {
 		if (!(payload instanceof UserRecieve)) return payload;
 
 		const { accessToken = '', refreshToken = (36).string, response } = payload,
@@ -81,6 +88,6 @@ export class AppMiddleware extends SecurityService {
 				.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
 		}
 
-		return response;
+		done(null, response);
 	}
 }
