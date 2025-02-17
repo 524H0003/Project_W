@@ -1,6 +1,7 @@
 /* eslint-disable tsEslint/no-unused-vars */
 
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { any } from 'joi';
 import pc from 'picocolors';
 import { Colors } from 'picocolors/types';
 
@@ -425,24 +426,21 @@ interface ColorLogOptions {
 }
 
 // Global functions
-try {
-	(global as any).ServerException = ServerException;
-	global.color = (args: ColorLogOptions) =>
+const globFuncs = {
+	ServerException,
+	color: (args: ColorLogOptions) =>
 		(args.bg ? pc['bg' + args.bg.capitalize] : String)(
 			(args.font ? pc[args.font] : String)(args.msg),
-		);
-	global.errorStatus = (error: any) =>
+		),
+	errorStatus: (error: any) =>
 		error instanceof HttpException
 			? error.getStatus()
-			: HttpStatus.INTERNAL_SERVER_ERROR;
-	global.currentTime = () => Math.floor(new Date().getTime() / 1000);
-	global.err = (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
-		type + '_' + object + (action ? '_' : '') + action;
-	global.disableDescribe = (
-		_name: string,
-		_func: () => void | Promise<void>,
-	) => {};
-	global.curFile = (file: string, cut = 2) =>
+			: HttpStatus.INTERNAL_SERVER_ERROR,
+	currentTime: () => Math.floor(new Date().getTime() / 1000),
+	err: (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
+		type + '_' + object + (action ? '_' : '') + action,
+	disableDescribe: (_name: string, _func: () => void | Promise<void>) => {},
+	curFile: (file: string, cut = 2) =>
 		file
 			.split(/\/|\\/)
 			.lastElement.split('.')
@@ -450,18 +448,20 @@ try {
 			.slice(0, cut)
 			.join('') +
 		'_' +
-		(5).string;
-	global.array = (length: number, initValue: any = '') =>
+		(5).string,
+	array: (length: number, initValue: any = '') =>
 		Array(length)
 			.join()
 			.split(',')
-			.map(() => initValue);
-	global.delay = async (ms: number) => {
+			.map(() => initValue),
+	delay: async (ms: number) => {
 		await new Promise<void>((resolve) => setTimeout(() => resolve(), ms)).then(
 			() => console.log('fired'),
 		);
-	};
-} catch {}
+	},
+};
+Object.assign(global, globFuncs);
+export { globFuncs };
 // String.prototype
 Object.defineProperty(String.prototype, 'toBase64Url', {
 	get: function () {

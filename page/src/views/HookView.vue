@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <template>
   <FormContainerComp
     btn-label="Confirm"
@@ -26,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { apiErrorHandler, hookRequest, alert } from '@/auth.service';
+import { alert } from '@/auth.service';
 import FormContainerComp from '@/components/FormContainerComp.vue';
 import FormTextInputComp from '@/components/FormTextInputComp.vue';
 import { IUserAuthentication } from 'project-w-backend';
@@ -37,8 +38,5 @@ const route = useRoute(),
   input = reactive<IUserAuthentication>({
     password: '',
   }),
-  handleHook = () =>
-    apiErrorHandler(
-      hookRequest(route.params.signature as string, input.password),
-    );
+  handleHook = () => ({});
 </script>

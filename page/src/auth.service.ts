@@ -1,11 +1,13 @@
 import axios from 'axios';
 import {
+  globFuncs,
   IEmployeeHook,
   IEmployeeSignUp,
   IEnterpriseAssign,
   IEntityId,
   IEventInfo,
   IFacultyAssign,
+  IResponse,
   IUserAuthentication,
   IUserInfo,
   IUserRecieve,
@@ -16,44 +18,58 @@ const API_URL = '/api/v1';
 
 export const alert = reactive<IAlert>({ message: '', type: 'none' }),
   state = reactive<AuthState>({ user: null, token: null });
+
 interface AuthState {
   user: null | IUserInfo | string;
   token: null | IUserRecieve;
 }
 
-export async function authRequest(
+export async function action(
   type: 'login' | 'signup' | 'logout' | 'change-password' | 'request-signature',
-  user?: Required<IUserAuthentication>,
-) {
-  const response = await axios.post(`${API_URL}/${type}`, user);
-  state.user = response.data.user;
-  saveTokens(response.data.session);
-  return response.data.user;
-}
-
-export async function hookRequest(signature: string, password: string) {
-  const response = await axios.post(`${API_URL}/change-password/${signature}`, {
-    password,
-  });
-  return response.data;
-}
-
+  input: Required<IUserAuthentication>,
+): Promise<IResponse>;
 export async function action(
   type: 'EventUpdate',
   input: IEventInfo & IEntityId,
-): Promise<object>;
+): Promise<IResponse>;
 export async function action(
   type: 'EventAssign',
   input: IEventInfo,
-): Promise<object>;
+): Promise<IResponse>;
 export async function action(
   type: 'EnterpriseAssign',
   input: IEnterpriseAssign,
-): Promise<object>;
+): Promise<IResponse>;
 export async function action(
-  type: 'EventAssign' | 'EventUpdate' | 'EnterpriseAssign',
-  input: IEventInfo | (IEventInfo & IEntityId) | IEnterpriseAssign,
-): Promise<object> {
+  type: 'FacultyAssign',
+  input: IFacultyAssign,
+): Promise<IResponse>;
+export async function action(
+  type: 'EmployeeSignUp',
+  input: IEmployeeSignUp,
+): Promise<IResponse>;
+export async function action(
+  type:
+    | 'login'
+    | 'signup'
+    | 'logout'
+    | 'change-password'
+    | 'request-signature'
+    | 'EmployeeHook'
+    | 'EventAssign'
+    | 'EventUpdate'
+    | 'EnterpriseAssign'
+    | 'FacultyAssign'
+    | 'EmployeeSignUp',
+  input:
+    | IEmployeeHook
+    | IEmployeeSignUp
+    | IEventInfo
+    | (IEventInfo & IEntityId)
+    | IEnterpriseAssign
+    | IFacultyAssign
+    | Required<IUserAuthentication>,
+): Promise<IResponse> {
   let url = API_URL;
 
   switch (type) {
@@ -69,8 +85,21 @@ export async function action(
       url += '/enterprise/assign';
       break;
 
+    case 'FacultyAssign':
+      url += '/faculty/assign';
+      break;
+
+    case 'EmployeeSignUp':
+      url += '/employee/signup';
+      break;
+
+    case 'EmployeeHook':
+      url += '/employee/hook';
+      break;
+
     default:
-      throw new Error('Unimplement_Type');
+      url += '/' + type;
+      break;
   }
 
   const { token } = (await axios.get(`${API_URL}/csrf-token`)).data,
@@ -79,32 +108,6 @@ export async function action(
     });
 
   return data;
-}
-
-export async function assignFaculty(input: IFacultyAssign) {
-  const response = await axios.post(`${API_URL}/faculty/assign`, input);
-  return response.data;
-}
-
-export async function assignEnterpriseUser(input: IEmployeeSignUp) {
-  const response = await axios.post(`${API_URL}/employee/signup`, input);
-  return response.data;
-}
-
-export async function requestConsole() {
-  const response = await axios.post(`${API_URL}/console`);
-  return response.data;
-}
-
-export async function requestFromEmployee(input: IEmployeeHook) {
-  const response = await axios.post(`${API_URL}/employee/hook`, input);
-  return response.data;
-}
-
-function saveTokens(input: IUserRecieve) {
-  state.token = input;
-  localStorage.setItem('acsTkn', state.token!.accessToken);
-  localStorage.setItem('rfsTkn', state.token!.refreshToken);
 }
 
 export type IObject =
@@ -121,16 +124,13 @@ export interface IAlert {
   object?: IObject;
 }
 
-export async function apiErrorHandler<T extends { message: string }>(
-  func: Promise<T>,
-) {
+export async function apiErrorHandler(response: Promise<IResponse>) {
   alert.message = '';
   alert.type = 'processing';
 
   try {
-    const response = await func;
-    switch (response.message) {
-      case 'Sent_Signature_Email':
+    switch ((await response).message) {
+      case globFuncs.err('Success', 'Signature', 'Sent'):
         alert.message =
           'An email has sent to your email address, please check inbox and spam';
         alert.type = 'error';

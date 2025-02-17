@@ -1,9 +1,3 @@
-<template>
-  <div v-html="markdown.render(`../../ReadMe.md`)"></div>
-</template>
+<template><div /></template>
 
-<script setup lang="ts">
-import MarkdownIt from 'markdown-it';
-
-const markdown = new MarkdownIt();
-</script>
+<script setup lang="ts"></script>
