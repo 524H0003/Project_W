@@ -81,7 +81,7 @@ export async function execute<
 			executed instanceof Promise ? executed : (async () => await executed)(),
 		);
 
-	if (numOfRun - 1) await numOfRun.ra(func);
+	if (numOfRun - 1) await numOfRun.range(func);
 	if (!exps.length)
 		throw new ServerException('Fatal', 'Method', 'Implementation');
 

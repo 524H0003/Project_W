@@ -73,7 +73,7 @@ export class AppMiddleware extends SecurityService {
 					refreshToken = (36).string,
 					response,
 				} = payload,
-				accessKey = (66).string;
+				accessKey = (32).string;
 
 			if (accessToken.length == 36 && refreshToken.length == 36) {
 				req.session.set<any>(

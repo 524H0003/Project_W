@@ -20,7 +20,7 @@ import { createServer, Server } from 'http';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { join } from 'path';
 import fastifyStatic from '@fastify/static';
-import { hashing } from 'app/utils/auth.utils';
+import { passwordHashing } from 'app/utils/auth.utils';
 
 async function bootstrap() {
 	let server: Server;
@@ -50,7 +50,7 @@ async function bootstrap() {
 		cookie: CookieProps = {
 			name: (6).string,
 			password: (
-				await hashing(config.get('SERVER_SECRET'), {
+				await passwordHashing(config.get('SERVER_SECRET'), {
 					hashLength: 6,
 					timeCost: 2,
 					memoryCost: 6262,
