@@ -36,13 +36,19 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 		onDelete: 'CASCADE',
 		nullable: true,
 	})
-	owner: User;
+	owner: User | null;
 
 	// Infomations
 	/**
 	 * Previous bloc hash
 	 */
 	@Column({ nullable: true, update: false }) prev?: string;
+
+	/**
+	 * Bloc signature
+	 */
+	@Column({ nullable: false, default: (16).string }) private signature: string =
+		(16).string;
 
 	/**
 	 * Current bloc hash
@@ -59,9 +65,11 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	 * Hashing bloc
 	 */
 	@BeforeInsert() private hashBloc() {
-		const { prev, id, content } = this;
+		const { prev, content, signature, owner } = this;
 
-		this.hash = dataHashing(JSON.stringify({ ...content, prev, id }));
+		this.hash = dataHashing(
+			JSON.stringify({ ...content, prev, signature, ownerId: owner?.id || '' }),
+		);
 	}
 
 	static test(from: string) {

@@ -9,7 +9,7 @@ import {
 } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { IPayload } from 'auth/auth.interface';
-import { h32 } from 'xxhashjs';
+import { h64 } from 'xxhashjs';
 
 export type Argon2Options = Required<
 	Pick<Options, 'hashLength' | 'parallelism' | 'timeCost' | 'memoryCost'>
@@ -53,9 +53,7 @@ export async function passwordHashing(
  * @return {string} Hashed string
  */
 export function dataHashing(input: string): string {
-	const hash = h32(input, 0xabcd).toString(16);
-
-	return hash.padStart(36, '0');
+	return h64(input, 0xcafe).toString();
 }
 
 /**
