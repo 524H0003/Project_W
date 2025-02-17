@@ -33,28 +33,11 @@
       v-model="input.description"
       type="text"
     />
-    <FormTextInputComp
-      name="Signature"
-      placeholder="Please send request to console"
-      icon="signature"
-      type="text"
-      v-model="input.signature"
-      :alert="alert"
-      object="signature"
-      :sub-btn-click="request"
-    >
-      Request signature from console
-    </FormTextInputComp>
   </FormContainerComp>
 </template>
 
 <script setup lang="ts">
-import {
-  alert,
-  apiErrorHandler,
-  assignEnterprise,
-  requestConsole,
-} from '@/auth.service';
+import { action, alert, apiErrorHandler } from '@/auth.service';
 import FormContainerComp from '@/components/FormContainerComp.vue';
 import FormTextInputComp from '@/components/FormTextInputComp.vue';
 import { reactive } from 'vue';
@@ -67,6 +50,5 @@ const input = reactive<IEnterpriseAssign & ISignature>({
     name: '',
     email: '',
   }),
-  handleAssign = () => apiErrorHandler(assignEnterprise(input)),
-  request = () => apiErrorHandler(requestConsole());
+  handleAssign = () => apiErrorHandler(action('EnterpriseAssign', input));
 </script>

@@ -43,7 +43,7 @@ export class BaseController {
 			if (!user) throw new ServerException('Invalid', 'Email', '');
 			return this.svc.mail.send(email, 'Change password?', 'forgetPassword', {
 				name: user.name,
-				url: `${hostname}/hook/${s}`,
+				url: `${hostname}/change-password/${s}`,
 			});
 		});
 

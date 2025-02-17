@@ -59,13 +59,17 @@ for (const file of IKeysFiles) {
 IKeysOut.saveSync();
 
 const modelsProject = new Project(),
-	modelsFiles = modelsProject.addSourceFilesAtPaths(['src/**/*model.ts']),
+	modelsFiles = modelsProject.addSourceFilesAtPaths([
+		'src/**/*.model.ts',
+		'src/build/models.ts',
+		'src/app/utils/utils.ts',
+	]),
 	modelsOut = modelsProject.createSourceFile('./src/build/types.ts', '', {
 		overwrite: true,
 	});
 for (const file of modelsFiles) {
 	modelsOut.addExportDeclaration({
-		moduleSpecifier: `../${file.getFilePath().split('src')[1].slice(1, -3)}`,
+		moduleSpecifier: `../${file.getFilePath().split('src')[1].slice(1, -3)}.js`,
 	});
 }
 modelsOut.saveSync();

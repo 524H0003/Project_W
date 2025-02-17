@@ -31,10 +31,7 @@ export class AppMiddleware extends SecurityService {
 	 */
 	auth(req: FastifyRequest, res: FastifyReply, done: DoneFuncWithErrOrRes) {
 		const isRefresh = this.rfsgrd.test(req.url),
-			accessKey = this.decrypt(
-				req.session.get<any>('accessKey'),
-				req.ips?.join(';') || req.ip,
-			);
+			accessKey = this.decrypt(req.session.get<any>('accessKey'), req.ip);
 
 		let access: string = '',
 			refresh: string = '';

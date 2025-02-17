@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { alert, apiErrorHandler, updateEvent } from '@/auth.service';
+import { action, alert, apiErrorHandler } from '@/auth.service';
 import FormContainerComp from '@/components/FormContainerComp.vue';
 import FormDateInputComp from '@/components/FormDateInputComp.vue';
 import FormSelectInputComp from '@/components/FormSelectInputComp.vue';
@@ -96,6 +96,6 @@ const input = reactive<IEventInfo>({
     additionalFields: {},
   }),
   handleAssign = () => {
-    apiErrorHandler(updateEvent({ ...input }));
+    apiErrorHandler(action('EventUpdate', input));
   };
 </script>

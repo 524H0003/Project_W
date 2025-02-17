@@ -53,7 +53,7 @@
       v-model="input.signature"
       :alert="alert"
       object="signature"
-      :sub-btn-click="request"
+      :sub-btn-click="signatureRequest"
     >
       Request signature
     </FormTextInputComp>
@@ -61,12 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  alert,
-  apiErrorHandler,
-  assignEnterpriseUser,
-  requestFromEmployee,
-} from '@/auth.service';
+import { action, alert, apiErrorHandler } from '@/auth.service';
 import FormContainerComp from '@/components/FormContainerComp.vue';
 import FormSelectInputComp from '@/components/FormSelectInputComp.vue';
 import FormTextInputComp from '@/components/FormTextInputComp.vue';
@@ -91,10 +86,10 @@ const input = reactive<IEmployeeSignUp & ISignature>({
     name: '',
     position: EmployeePosition['Other'],
   }),
-  handleSignUp = () => apiErrorHandler(assignEnterpriseUser(input)),
-  request = () =>
+  handleSignUp = () => apiErrorHandler(action('EmployeeSignUp', input)),
+  signatureRequest = () =>
     apiErrorHandler(
-      requestFromEmployee({
+      action('EmployeeHook', {
         ...inputRequest,
         email: input.email,
         name: input.name,

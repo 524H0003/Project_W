@@ -92,6 +92,7 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"rxjs": "^7.8.1",
+		"smtp-tester": "^2.1.0",
 		"start-server-and-test": "^2.0.10",
 		"typeorm": "^0.3.20",
 		"typeorm-extension": "^3.6.3",

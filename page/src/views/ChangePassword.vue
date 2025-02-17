@@ -1,7 +1,8 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <template>
   <FormContainerComp
     btn-label="Confirm"
-    :btn-handle="handleHook"
+    :btn-handle="handleRequest"
     :alert="alert"
     name="Change password"
   >
@@ -26,19 +27,14 @@
 </template>
 
 <script setup lang="ts">
-import { apiErrorHandler, hookRequest, alert } from '@/auth.service';
+import { action, alert, apiErrorHandler } from '@/auth.service';
 import FormContainerComp from '@/components/FormContainerComp.vue';
 import FormTextInputComp from '@/components/FormTextInputComp.vue';
 import { IUserAuthentication } from 'project-w-backend';
 import { reactive } from 'vue';
-import { useRoute } from 'vue-router';
 
-const route = useRoute(),
-  input = reactive<IUserAuthentication>({
+const input = reactive<IUserAuthentication>({
     password: '',
   }),
-  handleHook = () =>
-    apiErrorHandler(
-      hookRequest(route.params.signature as string, input.password),
-    );
+  handleRequest = () => apiErrorHandler(action('change-password', input));
 </script>
