@@ -59,7 +59,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 */
 	async getTokens(user: User, mtdt: MetaData) {
 		let prev = await this.assign(user, null, mtdt);
-		await this.use.ra(async () => {
+		await this.use.range(async () => {
 			prev = await this.assign(null, prev.hash);
 		});
 

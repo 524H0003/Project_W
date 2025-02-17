@@ -25,7 +25,7 @@ export const loadEnv =
 			REFRESH_EXPIRE: Joi.string().default('66d'),
 			REFRESH_USE: Joi.number().default(60),
 			// Server config
-			SERVER_SECRET: Joi.string().default((64).alpha),
+			SERVER_SECRET: Joi.string().default('project-w'),
 			SERVER_PORT: Joi.number().default(3000),
 			SERVER_PUBLIC: Joi.string().default('./public/'),
 			SERVER_FILE_SIZE_LIMIT: Joi.number().default(256),

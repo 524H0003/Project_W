@@ -68,25 +68,19 @@ export class AppMiddleware extends SecurityService {
 		done: DoneFuncWithErrOrRes,
 	) {
 		if (payload instanceof UserRecieve) {
-			const {
-					accessToken = '',
-					refreshToken = (36).string,
-					response,
-				} = payload,
-				accessKey = (66).string;
+			const { accessToken = '', refreshToken = '', response } = payload,
+				accessKey = (32).string;
 
-			if (accessToken.length == 36 && refreshToken.length == 36) {
-				req.session.set<any>(
-					'accessKey',
-					this.encrypt(accessKey, req.ips?.join(';') || req.ip),
-				);
-				res
-					.setCookie(
-						'access',
-						this.encrypt(this.access({ accessToken }), accessKey),
-					)
-					.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
-			}
+			req.session.set<any>(
+				'accessKey',
+				this.encrypt(accessKey, req.ips?.join(';') || req.ip),
+			);
+			res
+				.setCookie(
+					'access',
+					this.encrypt(this.access({ accessToken }), accessKey),
+				)
+				.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
 			done(null, response);
 		} else done();
 	}

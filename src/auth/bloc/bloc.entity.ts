@@ -2,8 +2,8 @@ import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { BeforeInsert, Column, Entity, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IBlocEntity, IBlocInfo, IBlocRelationships } from './bloc.model';
-import { hashing } from 'app/utils/auth.utils';
 import { MetaData } from 'auth/guards';
+import { dataHashing } from 'app/utils/auth.utils';
 
 /**
  * Bloc Content
@@ -36,13 +36,19 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 		onDelete: 'CASCADE',
 		nullable: true,
 	})
-	owner: User;
+	owner: User | null;
 
 	// Infomations
 	/**
 	 * Previous bloc hash
 	 */
 	@Column({ nullable: true, update: false }) prev?: string;
+
+	/**
+	 * Bloc signature
+	 */
+	@Column({ nullable: false, default: (16).string }) private signature: string =
+		(16).string;
 
 	/**
 	 * Current bloc hash
@@ -58,20 +64,12 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Hashing bloc
 	 */
-	@BeforeInsert() private async hashBloc() {
-		const { prev, id } = this,
-			hash = (
-				await hashing(JSON.stringify({ ...this.content, prev, id }), {
-					parallelism: 2,
-					memoryCost: 2 << 9,
-					timeCost: 2,
-					hashLength: 27,
-				})
-			)
-				.split('$')
-				.at(-1);
+	@BeforeInsert() private hashBloc() {
+		const { prev, content, signature, owner } = this;
 
-		this.hash = hash;
+		this.hash = dataHashing(
+			JSON.stringify({ ...content, prev, signature, ownerId: owner?.id || '' }),
+		);
 	}
 
 	static test(from: string) {

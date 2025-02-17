@@ -27,7 +27,7 @@ import {
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
-import { hashing } from 'app/utils/auth.utils';
+import { passwordHashing } from 'app/utils/auth.utils';
 import { BaseUser } from 'app/app.entity';
 import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
@@ -154,7 +154,7 @@ export class User extends BaseEntity implements IUserEntity {
 	 */
 	@BeforeInsert() @BeforeUpdate() private async hashingPassword() {
 		if (this.password)
-			this.hashedPassword = await hashing(this.password, {
+			this.hashedPassword = await passwordHashing(this.password, {
 				parallelism: 3 + (3).random,
 				memoryCost: 60000 + (6000).random,
 				timeCost: 3 + (3).random,

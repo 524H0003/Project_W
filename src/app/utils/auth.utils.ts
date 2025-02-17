@@ -9,6 +9,7 @@ import {
 } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { IPayload } from 'auth/auth.interface';
+import { h64 } from 'xxhashjs';
 
 export type Argon2Options = Required<
 	Pick<Options, 'hashLength' | 'parallelism' | 'timeCost' | 'memoryCost'>
@@ -34,16 +35,25 @@ export async function validation<T>(
 }
 
 /**
- * Hash function
+ * Password hash function
  * @param {string} input - The string need to hash
  * @param {Argon2Options} option - the option for hash
  * @return {string} Hashed string
  */
-export async function hashing(
+export async function passwordHashing(
 	input: string,
 	option: Argon2Options,
 ): Promise<string> {
 	return sHash(input, option);
+}
+
+/**
+ * Password hash function
+ * @param {string} input - The string need to hash
+ * @return {string} Hashed string
+ */
+export function dataHashing(input: string): string {
+	return h64(input, 0xcafe).toString();
 }
 
 /**
