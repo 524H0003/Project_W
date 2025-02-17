@@ -49,12 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  alert,
-  apiErrorHandler,
-  assignEnterprise,
-  requestConsole,
-} from '@/auth.service';
+import { action, alert, apiErrorHandler } from '@/auth.service';
 import FormContainerComp from '@/components/FormContainerComp.vue';
 import FormTextInputComp from '@/components/FormTextInputComp.vue';
 import { reactive } from 'vue';
@@ -67,6 +62,6 @@ const input = reactive<IEnterpriseAssign & ISignature>({
     name: '',
     email: '',
   }),
-  handleAssign = () => apiErrorHandler(assignEnterprise(input)),
+  handleAssign = () => apiErrorHandler(action('EnterpriseAssign', input)),
   request = () => apiErrorHandler(requestConsole());
 </script>
