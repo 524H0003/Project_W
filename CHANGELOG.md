@@ -1,3 +1,16 @@
+## [1.2.2](https://github.com/524H0003/Project_W/compare/v1.2.1...v1.2.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* **encryption:** fix encrypt and decrypt functions ([8d04df5](https://github.com/524H0003/Project_W/commit/8d04df520342dafcf98f4bb308038a3f60731376))
+* **encryption:** fix encrypt and decrypt functions ([#131](https://github.com/524H0003/Project_W/issues/131)) ([b0f026b](https://github.com/524H0003/Project_W/commit/b0f026be606f6d36b740715af21a3d3826862852))
+
+
+### Reverts
+
+* **cookie:** remove signed cookie feature ([#130](https://github.com/524H0003/Project_W/issues/130)) ([324a63b](https://github.com/524H0003/Project_W/commit/324a63b622ca2d32f53fd25a74c3adf0815a3c2a))
+
 ## [1.2.1](https://github.com/524H0003/Project_W/compare/v1.2.0...v1.2.1) (2025-02-16)
 
 
