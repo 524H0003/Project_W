@@ -301,8 +301,4 @@ type KeepBgKeys<T> = {
 /**
  * Assign server functions
  */
-Object.assign(global, {
-	ServerException,
-	color,
-	errorStatus,
-});
+Object.assign(global, { ServerException, color, errorStatus });
