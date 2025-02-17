@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/524H0003/Project_W/compare/v1.2.5...v1.2.6) (2025-02-17)
+
+
+### Bug Fixes
+
+* **front-end:** add csrf request to all request ([#137](https://github.com/524H0003/Project_W/issues/137)) ([e1c9def](https://github.com/524H0003/Project_W/commit/e1c9def6772544c35f6224d3d76da63c46da03c9)), closes [#134](https://github.com/524H0003/Project_W/issues/134)
+
 ## [1.2.5](https://github.com/524H0003/Project_W/compare/v1.2.4...v1.2.5) (2025-02-17)
 
 
