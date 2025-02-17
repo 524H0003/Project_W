@@ -11,7 +11,7 @@ import { createPostgresDatabase } from 'typeorm-extension';
  */
 function readSslCa(): TlsOptions | boolean {
 	try {
-		return { rejectUnauthorized: true, ca: readFileSync(`./secrets/ca.cert`) };
+		return { rejectUnauthorized: false, ca: readFileSync(`./secrets/ca.cert`) };
 	} catch {
 		return false;
 	}
