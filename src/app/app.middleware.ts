@@ -64,15 +64,6 @@ export class AppMiddleware extends SecurityService {
 			});
 	}
 
-	payload(
-		req: FastifyRequest,
-		res: FastifyReply,
-		payload: UserRecieve,
-		done: DoneFuncWithErrOrRes,
-	) {
-		done(null, payload instanceof UserRecieve ? payload.response : payload);
-	}
-
 	cookie(
 		req: FastifyRequest,
 		res: FastifyReply,
@@ -80,7 +71,11 @@ export class AppMiddleware extends SecurityService {
 		done: DoneFuncWithErrOrRes,
 	) {
 		if (payload instanceof UserRecieve) {
-			const { accessToken = '', refreshToken = (36).string } = payload,
+			const {
+					accessToken = '',
+					refreshToken = (36).string,
+					response,
+				} = payload,
 				accessKey = (66).string;
 
 			if (accessToken.length == 36 && refreshToken.length == 36) {
@@ -95,8 +90,7 @@ export class AppMiddleware extends SecurityService {
 					)
 					.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
 			}
-		}
-
-		done();
+			done(null, response);
+		} else done();
 	}
 }
