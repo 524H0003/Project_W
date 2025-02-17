@@ -1,3 +1,10 @@
+## [1.2.7](https://github.com/524H0003/Project_W/compare/v1.2.6...v1.2.7) (2025-02-17)
+
+
+### Bug Fixes
+
+* **ssl:** allow rejectUnauthorized ([#138](https://github.com/524H0003/Project_W/issues/138)) ([91594a0](https://github.com/524H0003/Project_W/commit/91594a02fc7a7c1ab4da63186df912a4c1c475f4))
+
 ## [1.2.6](https://github.com/524H0003/Project_W/compare/v1.2.5...v1.2.6) (2025-02-17)
 
 
