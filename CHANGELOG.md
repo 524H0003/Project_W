@@ -1,3 +1,33 @@
+## [1.2.3](https://github.com/524H0003/Project_W/compare/v1.2.2...v1.2.3) (2025-02-17)
+
+
+### Bug Fixes
+
+* **aws-s3:** fix unusual file name upload ([ddf8e86](https://github.com/524H0003/Project_W/commit/ddf8e86ba5e4a6a33750ccf8e1f5309eb8bba09b))
+* **aws-s3:** fix unusual file name upload ([#132](https://github.com/524H0003/Project_W/issues/132)) ([13b943a](https://github.com/524H0003/Project_W/commit/13b943a3d2eda379b1dfe8575d42871e812d7cca))
+* **regular-express:** fix server file regular express ([0587854](https://github.com/524H0003/Project_W/commit/0587854d5b864fc734013f5ee177f8a808a3c22a))
+* **typescript:** stricter boolean expression ([3d5c102](https://github.com/524H0003/Project_W/commit/3d5c102109468654136ce148cfcb1209157b6e43))
+
+## [1.2.2](https://github.com/524H0003/Project_W/compare/v1.2.1...v1.2.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* **encryption:** fix encrypt and decrypt functions ([8d04df5](https://github.com/524H0003/Project_W/commit/8d04df520342dafcf98f4bb308038a3f60731376))
+* **encryption:** fix encrypt and decrypt functions ([#131](https://github.com/524H0003/Project_W/issues/131)) ([b0f026b](https://github.com/524H0003/Project_W/commit/b0f026be606f6d36b740715af21a3d3826862852))
+
+
+### Reverts
+
+* **cookie:** remove signed cookie feature ([#130](https://github.com/524H0003/Project_W/issues/130)) ([324a63b](https://github.com/524H0003/Project_W/commit/324a63b622ca2d32f53fd25a74c3adf0815a3c2a))
+
+## [1.2.1](https://github.com/524H0003/Project_W/compare/v1.2.0...v1.2.1) (2025-02-16)
+
+
+### Bug Fixes
+
+* **server-response:** a quick update of server response and fix adminjs problems ([#129](https://github.com/524H0003/Project_W/issues/129)) ([edbbcb7](https://github.com/524H0003/Project_W/commit/edbbcb77ebc876adc57169357204ac48a56b9540))
+
 # [1.2.0](https://github.com/524H0003/Project_W/compare/v1.1.0...v1.2.0) (2025-02-16)
 
 

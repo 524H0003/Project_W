@@ -58,13 +58,13 @@ export class FileService extends DatabaseRequests<File> {
 			}
 
 			for (const file of files)
-				if (this.serverFilesReg.test(file)) {
+				if (this.serverFilesReg.test(`${file}`)) {
 					const filePath = join(cfg.get('SERVER_PUBLIC'), file);
 					try {
 						await this.assign(
 							{ stream: createReadStream(filePath), originalname: file },
 							null,
-							file.split('.').slice(0, -2).join(''),
+							file.split('.')[0],
 						);
 					} catch {}
 				}
@@ -74,7 +74,7 @@ export class FileService extends DatabaseRequests<File> {
 	/**
 	 * Server file regular expression
 	 */
-	private serverFilesReg = /^[^.]+\.server\.[^.]+$/g;
+	private serverFilesReg = /^[^.]+\.server\.[^.]+$/;
 
 	/**
 	 * Assign file to server
@@ -102,7 +102,7 @@ export class FileService extends DatabaseRequests<File> {
 
 		const title = originalname,
 			path = serverFileName
-				? serverFileName + `.server.${extname(title)}`
+				? serverFileName + `.server${extname(title)}`
 				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(buffer).digest('base64url')}${extname(title)}`;
 
 		await this.svc.aws.upload(path, buffer);
@@ -143,7 +143,9 @@ export class FileService extends DatabaseRequests<File> {
 	async isOwner(path: string, ownerId: string): Promise<boolean> {
 		const file = await this.findOne({ path, deep: 2 });
 
-		return this.serverFilesReg.test(path) || file?.fileCreatedBy.id == ownerId;
+		return (
+			this.serverFilesReg.test(`${path}`) || file?.fileCreatedBy.id == ownerId
+		);
 	}
 
 	/**

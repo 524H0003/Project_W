@@ -13,7 +13,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: read
+      contents: write
     outputs:
       project: ${{ steps.filter.outputs.project }}
     steps:
@@ -27,7 +27,23 @@ jobs:
               echo "test='HEAD'" >> "$GITHUB_OUTPUT"
           fi
 
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          cache: 'pnpm'
+
+      - run: pnpm i && npm run format && npm run lint
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        id: auto-commit-action
+        with:
+          skip_dirty_check: false
+          
+
       - uses: dorny/paths-filter@v3
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
         id: filter
         with:
           base: ${{ steps.getBranch.outputs.test }}
@@ -47,13 +63,6 @@ jobs:
     runs-on: ubuntu-latest
 
     timeout-minutes: 3
-
-    permissions:
-      contents: write
-      actions: write
-      checks: write
-      issues: write
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -88,13 +97,6 @@ jobs:
 
     timeout-minutes: 3
 
-    permissions:
-      contents: write
-      actions: write
-      checks: write
-      issues: write
-      pull-requests: write
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -127,13 +129,6 @@ jobs:
     runs-on: ubuntu-latest
 
     timeout-minutes: 3
-
-    permissions:
-      contents: write
-      actions: write
-      checks: write
-      issues: write
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -168,13 +163,6 @@ jobs:
 
     timeout-minutes: 3
 
-    permissions:
-      contents: write
-      actions: write
-      checks: write
-      issues: write
-      pull-requests: write
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -206,13 +194,6 @@ jobs:
     runs-on: ubuntu-latest
 
     timeout-minutes: 3
-
-    permissions:
-      contents: write
-      actions: write
-      checks: write
-      issues: write
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -250,34 +231,8 @@ jobs:
 
     timeout-minutes: 3
 
-    permissions:
-      contents: write
-      actions: write
-      checks: write
-      issues: write
-      pull-requests: write
-
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 23
-          cache: 'pnpm'
-
-      - run: pnpm i && npm run format && npm run lint
-
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        id: auto-commit-action
-        with:
-          skip_dirty_check: false
-
       - name: Delete GitHub Actions Comments
-        if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: izhangzhihao/delete-comment@master
         with:
           github_token: ${{ github.token }}
@@ -285,10 +240,8 @@ jobs:
           issue_number: ${{ github.event.number }}
 
       - uses: actions/download-artifact@v4
-        if: steps.auto-commit-action.outputs.changes_detected == 'false'
 
       - name: Controller
-        if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: MishaKav/jest-coverage-comment@main
         with:
           title: Controller test result
@@ -297,7 +250,6 @@ jobs:
           junitxml-path: ./controller/reports/controller.xml
 
       - name: Resolver
-        if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: MishaKav/jest-coverage-comment@main
         with:
           title: Resolver test result
@@ -306,7 +258,6 @@ jobs:
           junitxml-path: ./resolver/reports/resolver.xml
 
       - name: Service
-        if: steps.auto-commit-action.outputs.changes_detected == 'false'
         uses: MishaKav/jest-coverage-comment@main
         with:
           title: Service test result

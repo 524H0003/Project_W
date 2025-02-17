@@ -1,7 +1,12 @@
 import { hash as sHash, verify, Options } from 'argon2';
 import { validate } from 'class-validator';
 import { JwtService } from '@nestjs/jwt';
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import {
+	CipherGCMTypes,
+	createCipheriv,
+	createDecipheriv,
+	randomBytes,
+} from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { IPayload } from 'auth/auth.interface';
 
@@ -60,11 +65,6 @@ export async function compare(origin: string, input: string): Promise<boolean> {
  */
 export class SecurityService {
 	/**
-	 * Encrypt separator
-	 */
-	private separator = '%';
-
-	/**
 	 * Encrypt encoding
 	 */
 	private encoding: BufferEncoding = 'base64url';
@@ -72,7 +72,17 @@ export class SecurityService {
 	/**
 	 * Encrypt algorithm
 	 */
-	private algorithm = 'aes-256-cbc';
+	private algorithm: CipherGCMTypes = 'aes-256-gcm';
+
+	/**
+	 * Server secret
+	 */
+	private serverSecret = this.config.get('SERVER_SECRET');
+
+	/**
+	 * Encoding separator
+	 */
+	private separator = '$$';
 
 	constructor(
 		protected jwt: JwtService,
@@ -117,26 +127,35 @@ export class SecurityService {
 	/**
 	 * Convert signature to key
 	 * @param {string} str - the signature to be converted
+	 * @param {number} length - key length
 	 */
-	private sigToKey(str: string): Buffer {
-		return Buffer.from(str.substring(0, 32).padStart(32, '0'));
+	private sigToKey(str: string, length: number): string {
+		return str.substring(0, length).padStart(length, '0');
 	}
 
 	/**
 	 * Encrypt text
-	 * @param {string} input - The text need to be encrypted
-	 * @param {string} key - The key to encrypt text
+	 * @param {string} content - The text need to be encrypted
+	 * @param {string} signature - The signature to encrypt text
 	 * @return {string} The encrypted text
 	 */
-	encrypt(
-		input: string,
-		key: string = this.config.get('SERVER_SECRET'),
-	): string {
-		const { encoding, separator, algorithm } = this,
+	encrypt(content: string, signature: string = this.serverSecret): string {
+		const { encoding, algorithm, separator } = this,
 			iv = randomBytes(16),
-			cipher = createCipheriv(algorithm, this.sigToKey(key), iv),
-			encrypted = Buffer.concat([cipher.update(input), cipher.final()]);
-		return encrypted.toString(encoding) + separator + iv.toString(encoding);
+			cipher = createCipheriv(
+				algorithm,
+				this.sigToKey(signature, ~~algorithm.split('-')[1] / 8),
+				iv,
+			),
+			encrypted = Buffer.concat([cipher.update(content), cipher.final()]),
+			authTag = cipher.getAuthTag();
+		return (
+			iv.toString(encoding) +
+			separator +
+			encrypted.toString(encoding) +
+			separator +
+			authTag.toString(encoding)
+		);
 	}
 
 	/**
@@ -145,22 +164,23 @@ export class SecurityService {
 	 * @param {string} key - The key to decrypt text
 	 * @return {string} The decrypted text
 	 */
-	decrypt(
-		input: string,
-		key: string = this.config.get('SERVER_SECRET'),
-	): string {
-		if (!input) return '';
-		const { encoding, separator, algorithm } = this,
-			[content, header] = input.split(separator),
+	decrypt(input: string, key: string = this.serverSecret): string {
+		if (!input || !key) return '';
+		const { encoding, algorithm, separator } = this,
+			[iv, encrypted, authTag] = input.split(separator),
 			decipher = createDecipheriv(
 				algorithm,
-				this.sigToKey(key),
-				Buffer.from(header, encoding),
-			),
-			decrypted = Buffer.concat([
-				decipher.update(Buffer.from(content, encoding)),
-				decipher.final(),
-			]);
+				this.sigToKey(key, ~~algorithm.split('-')[1] / 8),
+				Buffer.from(iv, encoding),
+			);
+
+		decipher.setAuthTag(Buffer.from(authTag, encoding));
+
+		const decrypted = Buffer.concat([
+			decipher.update(Buffer.from(encrypted, encoding)),
+			decipher.final(),
+		]);
+
 		return decrypted.toString();
 	}
 }

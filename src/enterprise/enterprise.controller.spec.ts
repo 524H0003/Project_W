@@ -50,7 +50,7 @@ describe('assign', () => {
 						} as IEnterpriseAssign)
 						.end()
 				).body,
-			{ exps: [{ type: 'toContain', params: ['Success_Assign_Enterprise'] }] },
+			{ exps: [{ type: 'toContain', params: ['Success_Enterprise_Assign'] }] },
 		);
 		await execute(
 			() =>
