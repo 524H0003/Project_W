@@ -84,7 +84,7 @@ export async function registerServerPlugins(
 			brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } },
 		})
 		.register(fastifySecuredSession, {
-			cookieName: (6).numeric.toBase64Url,
+			cookieName: (18).random.alpha.toBase64Url,
 			cookie: { ...cookieOptions, signed: true },
 			secret,
 			key: readFileSync('securedSessionKey'),
@@ -92,7 +92,7 @@ export async function registerServerPlugins(
 		})
 		.register(fastifyCsrf, {
 			sessionKey: name,
-			cookieKey: (6).alpha.toBase64Url,
+			cookieKey: (18 + (18).random).alpha.toBase64Url,
 			cookieOpts: cookieOptions,
 			sessionPlugin: '@fastify/secure-session',
 			csrfOpts: { validity: (180).s2ms },
