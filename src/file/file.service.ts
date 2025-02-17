@@ -146,7 +146,6 @@ export class FileService extends DatabaseRequests<File> {
 		console.log(
 			this.serverFilesReg.test(`${path}`) || file?.fileCreatedBy.id == ownerId,
 			path,
-			file?.fileCreatedBy.id == ownerId,
 			this.serverFilesReg.test(`${path}`),
 		);
 
