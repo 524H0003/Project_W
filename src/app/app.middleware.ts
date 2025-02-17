@@ -39,12 +39,12 @@ export class AppMiddleware extends SecurityService {
 		let access: string = '',
 			refresh: string = '';
 		for (const cookie in req.cookies)
-			if ('refresh' == cookie.fromBase64Url) {
+			if ('refresh' == cookie) {
+				res.clearCookie(cookie);
 				refresh = this.decrypt(req.cookies[cookie]);
+			} else if ('access' == cookie) {
 				res.clearCookie(cookie);
-			} else if ('access' == cookie.fromBase64Url) {
 				access = this.decrypt(req.cookies[cookie], accessKey);
-				res.clearCookie(cookie);
 			}
 
 		if (access || refresh)
