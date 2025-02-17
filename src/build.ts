@@ -69,7 +69,7 @@ const modelsProject = new Project(),
 	});
 for (const file of modelsFiles) {
 	modelsOut.addExportDeclaration({
-		moduleSpecifier: `../${file.getFilePath().split('src')[1].slice(1, -3)}`,
+		moduleSpecifier: `../${file.getFilePath().split('src')[1].slice(1, -3)}.js`,
 	});
 }
 modelsOut.saveSync();

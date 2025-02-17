@@ -53,7 +53,7 @@
       v-model="input.signature"
       :alert="alert"
       object="signature"
-      :sub-btn-click="request"
+      :sub-btn-click="signatureRequest"
     >
       Request signature
     </FormTextInputComp>
@@ -86,10 +86,10 @@ const input = reactive<IEmployeeSignUp & ISignature>({
     name: '',
     position: EmployeePosition['Other'],
   }),
-  handleSignUp = () => apiErrorHandler(action(input)),
-  request = () =>
+  handleSignUp = () => apiErrorHandler(action('EmployeeSignUp', input)),
+  signatureRequest = () =>
     apiErrorHandler(
-      action('EmployeeSignUp', {
+      action('EmployeeHook', {
         ...inputRequest,
         email: input.email,
         name: input.name,

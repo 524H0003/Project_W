@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-  globFuncs,
+  funcs,
   IEmployeeHook,
   IEmployeeSignUp,
   IEnterpriseAssign,
@@ -47,6 +47,10 @@ export async function action(
 export async function action(
   type: 'EmployeeSignUp',
   input: IEmployeeSignUp,
+): Promise<IResponse>;
+export async function action(
+  type: 'EmployeeHook',
+  input: IEmployeeHook,
 ): Promise<IResponse>;
 export async function action(
   type:
@@ -130,7 +134,7 @@ export async function apiErrorHandler(response: Promise<IResponse>) {
 
   try {
     switch ((await response).message) {
-      case globFuncs.err('Success', 'Signature', 'Sent'):
+      case funcs.err('Success', 'Signature', 'Sent'):
         alert.message =
           'An email has sent to your email address, please check inbox and spam';
         alert.type = 'error';

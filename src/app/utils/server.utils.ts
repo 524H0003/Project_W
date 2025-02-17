@@ -24,6 +24,10 @@ import fastifyCompression from '@fastify/compress';
 import { constants } from 'zlib';
 import { IRefreshResult } from 'auth/guards';
 import { JwtService } from '@nestjs/jwt';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import pc from 'picocolors';
+import { Colors } from 'picocolors/types';
+import { ErrorType, ErrorObject, ErrorAction } from './utils';
 
 /**
  * Modified fastify interfaces
@@ -214,3 +218,99 @@ export class InitServerClass implements OnModuleInit {
 			);
 	}
 }
+
+declare global {
+	/**
+	 * Server exception class
+	 */
+	class ServerException extends HttpException {
+		constructor(
+			type: ErrorType,
+			object: ErrorObject,
+			action: ErrorAction,
+			err?: ErrorExtender,
+		);
+	}
+}
+
+const color = (args: ColorLogOptions) =>
+		(args.bg ? pc['bg' + args.bg.capitalize] : String)(
+			(args.font ? pc[args.font] : String)(args.msg),
+		),
+	errorStatus = (error: any) =>
+		error instanceof HttpException
+			? error.getStatus()
+			: HttpStatus.INTERNAL_SERVER_ERROR;
+
+/**
+ * Server exception class
+ */
+class ServerException extends HttpException {
+	constructor(
+		type: ErrorType,
+		object: ErrorObject,
+		action: ErrorAction,
+		private err: ErrorExtender = new Error() as ErrorExtender,
+	) {
+		super(
+			(6).string + '_' + type + '_' + object + (action ? '_' : '') + action,
+			+(err.statusCode || 400),
+		);
+	}
+
+	terminalLogging() {
+		const { cause, message, stack, statusCode } = this.err,
+			title = `${'-'.repeat(6)}${this.message}-${statusCode || 400}${'-'.repeat(6)}`;
+
+		console.error(
+			color({ bg: 'red', msg: title }) +
+				'\n' +
+				color({
+					font: 'yellow',
+					msg: `\tCause: ${cause || 'unknown'}\n\tMessage: ${message || 'N/A'}\n\tStack: ${stack}`,
+				}) +
+				'\n' +
+				color({ bg: 'red', msg: '-'.repeat(title.length) }),
+		);
+	}
+}
+
+/**
+ * Colored logging options
+ */
+interface ColorLogOptions {
+	msg: string;
+	bg?: keyof KeepBgKeys<Colors> | '';
+	font?: keyof Omit<RemoveBgKeys<Colors>, 'isColorSupported'> | '';
+}
+
+/**
+ * Server error extender
+ */
+type ErrorExtender = Error & { statusCode: string | number };
+
+/**
+ * Removing properties have prefix bg
+ */
+type RemoveBgKeys<T> = {
+	// eslint-disable-next-line tsEslint/no-unused-vars
+	[K in keyof T as K extends `bg${infer _}` ? never : K]: T[K];
+};
+
+/**
+ * Keep properties have prefix bg
+ */
+type KeepBgKeys<T> = {
+	[K in keyof T as K extends `bg${infer Rest}`
+		? Uncapitalize<Rest>
+		: never]: T[K];
+};
+
+/**
+ * Assign server functions
+ */
+Object.assign(global, {
+	ServerException,
+	color,
+	errorStatus,
+});

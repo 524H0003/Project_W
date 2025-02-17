@@ -1,10 +1,3 @@
-/* eslint-disable tsEslint/no-unused-vars */
-
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { any } from 'joi';
-import pc from 'picocolors';
-import { Colors } from 'picocolors/types';
-
 /**
  * Casting object to interface
  */
@@ -273,18 +266,6 @@ declare global {
 	function delay(ms: number): Promise<void>;
 
 	/**
-	 * Server exception
-	 */
-	class ServerException extends HttpException {
-		constructor(
-			type: ErrorType,
-			object: ErrorObject,
-			action: ErrorAction,
-			extend?: Error,
-		);
-	}
-
-	/**
 	 * Error code generator
 	 * @param {ErrorType} type - type of error
 	 * @param {ErrorObject} object - object of error
@@ -296,13 +277,6 @@ declare global {
 		object: ErrorObject,
 		action: ErrorAction,
 	): string;
-
-	/**
-	 * Console log with color
-	 * @param {ColorLogOptions} args - functions arguments
-	 * @return {string}
-	 */
-	function color(args: ColorLogOptions): string;
 
 	/**
 	 * Get http exception status code
@@ -320,12 +294,17 @@ declare global {
 /**
  * Server error type
  */
-type ErrorType = 'Invalid' | 'Success' | 'Fatal' | 'Forbidden' | 'Unauthorized';
+export type ErrorType =
+	| 'Invalid'
+	| 'Success'
+	| 'Fatal'
+	| 'Forbidden'
+	| 'Unauthorized';
 
 /**
  * Server error object type
  */
-type ErrorObject =
+export type ErrorObject =
 	| 'ID'
 	| 'Hash'
 	| 'CsrfCookie'
@@ -350,7 +329,7 @@ type ErrorObject =
 /**
  * Server error action type
  */
-type ErrorAction =
+export type ErrorAction =
 	| ''
 	| 'Read'
 	| 'Sent'
@@ -362,83 +341,12 @@ type ErrorAction =
 	| 'LogOut'
 	| 'Access';
 
-/**
- * Server error extender
- */
-type ErrorExtender = Error & { statusCode: string | number };
-
-/**
- * Server exception class
- */
-class ServerException extends HttpException {
-	constructor(
-		type: ErrorType,
-		object: ErrorObject,
-		action: ErrorAction,
-		private err: ErrorExtender = new Error() as ErrorExtender,
-	) {
-		super(
-			(6).string + '_' + type + '_' + object + (action ? '_' : '') + action,
-			+(err.statusCode || 400),
-		);
-	}
-
-	terminalLogging() {
-		const { cause, message, stack, statusCode } = this.err,
-			title = `${'-'.repeat(6)}${this.message}-${statusCode || 400}${'-'.repeat(6)}`;
-
-		console.error(
-			color({ bg: 'red', msg: title }) +
-				'\n' +
-				color({
-					font: 'yellow',
-					msg: `\tCause: ${cause || 'unknown'}\n\tMessage: ${message || 'N/A'}\n\tStack: ${stack}`,
-				}) +
-				'\n' +
-				color({ bg: 'red', msg: '-'.repeat(title.length) }),
-		);
-	}
-}
-
-/**
- * Removing properties have prefix bg
- */
-type RemoveBgKeys<T> = {
-	[K in keyof T as K extends `bg${infer _}` ? never : K]: T[K];
-};
-
-/**
- * Keep properties have prefix bg
- */
-type KeepBgKeys<T> = {
-	[K in keyof T as K extends `bg${infer Rest}`
-		? Uncapitalize<Rest>
-		: never]: T[K];
-};
-
-/**
- * Colored logging options
- */
-interface ColorLogOptions {
-	msg: string;
-	bg?: keyof KeepBgKeys<Colors> | '';
-	font?: keyof Omit<RemoveBgKeys<Colors>, 'isColorSupported'> | '';
-}
-
 // Global functions
-const globFuncs = {
-	ServerException,
-	color: (args: ColorLogOptions) =>
-		(args.bg ? pc['bg' + args.bg.capitalize] : String)(
-			(args.font ? pc[args.font] : String)(args.msg),
-		),
-	errorStatus: (error: any) =>
-		error instanceof HttpException
-			? error.getStatus()
-			: HttpStatus.INTERNAL_SERVER_ERROR,
+export const funcs = {
 	currentTime: () => Math.floor(new Date().getTime() / 1000),
 	err: (type: ErrorType, object: ErrorObject, action: ErrorAction) =>
 		type + '_' + object + (action ? '_' : '') + action,
+	// eslint-disable-next-line tsEslint/no-unused-vars
 	disableDescribe: (_name: string, _func: () => void | Promise<void>) => {},
 	curFile: (file: string, cut = 2) =>
 		file
@@ -460,8 +368,7 @@ const globFuncs = {
 		);
 	},
 };
-Object.assign(global, globFuncs);
-export { globFuncs };
+Object.assign(globalThis, funcs);
 // String.prototype
 Object.defineProperty(String.prototype, 'toBase64Url', {
 	get: function () {

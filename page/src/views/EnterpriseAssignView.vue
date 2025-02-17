@@ -33,18 +33,6 @@
       v-model="input.description"
       type="text"
     />
-    <FormTextInputComp
-      name="Signature"
-      placeholder="Please send request to console"
-      icon="signature"
-      type="text"
-      v-model="input.signature"
-      :alert="alert"
-      object="signature"
-      :sub-btn-click="request"
-    >
-      Request signature from console
-    </FormTextInputComp>
   </FormContainerComp>
 </template>
 
@@ -62,6 +50,5 @@ const input = reactive<IEnterpriseAssign & ISignature>({
     name: '',
     email: '',
   }),
-  handleAssign = () => apiErrorHandler(action('EnterpriseAssign', input)),
-  request = () => apiErrorHandler(requestConsole());
+  handleAssign = () => apiErrorHandler(action('EnterpriseAssign', input));
 </script>
