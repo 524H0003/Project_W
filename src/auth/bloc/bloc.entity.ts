@@ -56,7 +56,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Bloc last issue time
 	 */
-	@Column({ nullable: true }) lastIssue: number;
+	@Column({ nullable: false }) lastIssue: number = currentTime();
 
 	/**
 	 * Current bloc content

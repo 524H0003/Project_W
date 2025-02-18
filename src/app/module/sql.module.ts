@@ -18,17 +18,17 @@ function readSslCa(): TlsOptions | boolean {
 }
 
 /**
- * @ignore
+ * Server sql configuration
  */
-const sqlOptions = (
+export const sqlOptions = (
 	type: 'deploy' | 'test',
 	cfgSvc: ConfigService,
 ): DataSourceOptions => ({
 	type: 'postgres',
-	host: cfgSvc.get('POSTGRES_HOST'),
-	port: cfgSvc.get('POSTGRES_PORT'),
-	username: cfgSvc.get('POSTGRES_USER'),
-	password: cfgSvc.get('POSTGRES_PASS'),
+	host: cfgSvc.get<string>('POSTGRES_HOST'),
+	port: cfgSvc.get<number>('POSTGRES_PORT'),
+	username: cfgSvc.get<string>('POSTGRES_USER'),
+	password: cfgSvc.get<string>('POSTGRES_PASS'),
 	database: type === 'deploy' ? cfgSvc.get('POSTGRES_DB') : type,
 	synchronize: true,
 	ssl: cfgSvc.get('POSTGRES_SSL') ? readSslCa() : false,
