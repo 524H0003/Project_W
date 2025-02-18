@@ -53,7 +53,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Current bloc hash
 	 */
-	@Column({ nullable: false }) hash?: string;
+	@Column({ nullable: false, name: 'hash' }) private _hash: string;
 
 	/**
 	 * Current bloc content
@@ -67,9 +67,14 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	@BeforeInsert() private hashBloc() {
 		const { prev, content, signature, owner } = this;
 
-		this.hash = dataHashing(
+		this._hash = dataHashing(
 			JSON.stringify({ ...content, prev, signature, ownerId: owner?.id || '' }),
 		);
+	}
+
+	get hash(): string {
+		this.hashBloc();
+		return this._hash;
 	}
 
 	static test(from: string) {

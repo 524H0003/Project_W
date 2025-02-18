@@ -34,14 +34,14 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {User} owner - the owner of bloc
 	 * @param {string} prev - previous bloc hash
 	 */
-	assign(owner: User | null, prev: string | null, metaData?: MetaData) {
+	new(owner: User | null, prev: string | null, metaData?: MetaData) {
 		const bloc = new Bloc({
 			owner,
 			prev,
 			content: { metaData, lastIssue: currentTime() },
 		});
 
-		return this.save(bloc);
+		return bloc;
 	}
 
 	/**
@@ -58,10 +58,16 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {MetaData} mtdt - metadata from client
 	 */
 	async getTokens(user: User, mtdt: MetaData) {
-		let prev = await this.assign(user, null, mtdt);
-		await this.use.range(async () => {
-			prev = await this.assign(null, prev.hash);
+		const blocs: Bloc[] = [];
+
+		let prev = this.new(user, null, mtdt);
+
+		await this.use.range(() => {
+			blocs.push(prev);
+			prev = this.new(null, prev.hash);
 		});
+
+		await this.save(blocs);
 
 		return new UserRecieve({
 			accessToken: prev.id,
