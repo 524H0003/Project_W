@@ -1,3 +1,10 @@
+## [1.2.8](https://github.com/524H0003/Project_W/compare/v1.2.7...v1.2.8) (2025-02-17)
+
+
+### Bug Fixes
+
+* **hash:** change from argon2 to xxhash for data hashing ([#139](https://github.com/524H0003/Project_W/issues/139)) ([5c9e60c](https://github.com/524H0003/Project_W/commit/5c9e60cde87036c9054d951c36e8db2b52813e79))
+
 ## [1.2.7](https://github.com/524H0003/Project_W/compare/v1.2.6...v1.2.7) (2025-02-17)
 
 
