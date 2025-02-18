@@ -91,7 +91,7 @@ describe('removeTree', () => {
 
 	it('success when root bloc deleted', async () => {
 		await svc.bloc.removeBloc(rootId);
-		
+
 		await execute(() => svc.bloc.removeTree(childId), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
