@@ -33,7 +33,11 @@
 		"test:resolver": "jest --config=jest.resolver.config.ts",
 		"test:service": "jest --config=jest.service.config.ts",
 		"test:etc": "jest --config=jest.etc.config.ts",
-		"test:debug": "jest --debug"
+		"test:debug": "jest --debug",
+		"migration:generate": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate -d ./src/app/typeorm/typeorm.config.ts ./src/app/typeorm/migrations/migration",
+		"migration:create": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:create ./src/app/typeorm/migrations/migration",
+		"migration:run": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ./src/app/typeorm/typeorm.config.ts",
+		"migration:revert": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d ./src/app/typeorm/typeorm.config.ts"
 	},
 	"dependencies": {
 		"@adminjs/design-system": "^4.1.1",

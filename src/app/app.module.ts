@@ -39,7 +39,7 @@ const modules = [
 @Module({
 	imports: [
 		TerminusModule.forRoot({
-			errorLogStyle: 'pretty',
+			errorLogStyle: 'json',
 			gracefulShutdownTimeoutMs: (30).s2ms,
 		}),
 		TypeOrmModule.forFeature([BaseUser]),

@@ -10,7 +10,6 @@ import { dataHashing } from 'app/utils/auth.utils';
  */
 interface IBlocContent {
 	metaData: MetaData;
-	lastIssue: number;
 }
 
 /**
@@ -55,6 +54,11 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	@Column({ nullable: false }) hash: string;
 
 	/**
+	 * Bloc last issue time
+	 */
+	@Column({ nullable: false }) lastIssue: number = currentTime();
+
+	/**
 	 * Current bloc content
 	 */
 	@Column({ type: 'jsonb', default: {} }) content?: IBlocContent;
@@ -64,10 +68,16 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	 * Hashing bloc
 	 */
 	@BeforeInsert() hashBloc() {
-		const { prev, content, signature, owner } = this;
+		const { prev, content, signature, owner, lastIssue } = this;
 
 		return (this.hash = dataHashing(
-			JSON.stringify({ ...content, prev, signature, ownerId: owner?.id || '' }),
+			JSON.stringify({
+				...content,
+				lastIssue,
+				prev,
+				signature,
+				ownerId: owner?.id || '',
+			}),
 		));
 	}
 

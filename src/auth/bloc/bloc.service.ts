@@ -45,10 +45,49 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	}
 
 	/**
-	 * Remove bloc
-	 * @param {string} id - bloc id
+	 * Remove stray tree by id
+	 * @param {string} deleteId - bloc id
 	 */
-	remove(id: string) {
+	async removeStrayTree(deleteId: string): Promise<Boolean> {
+		if (!deleteId) throw new ServerException('Invalid', 'ID', '');
+
+		const { prev } = await this.findOne({ id: deleteId });
+
+		if (prev) {
+			const prevBloc = await this.findOne({ hash: prev });
+
+			if (!prevBloc || (await this.removeStrayTree(prevBloc.id))) {
+				await this.removeBloc(deleteId);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Remove tree by id
+	 * @param {string} deleteId - bloc id
+	 */
+	async removeTree(deleteId: string): Promise<void> {
+		if (!deleteId) throw new ServerException('Invalid', 'ID', '');
+
+		const { prev } = await this.findOne({ id: deleteId });
+
+		if (prev) {
+			const prevBloc = await this.findOne({ hash: prev });
+
+			if (prevBloc) await this.removeTree(prevBloc.id);
+		}
+
+		await this.removeBloc(deleteId);
+	}
+
+	/**
+	 * Remove bloc by id
+	 * @param {string} id - deleting bloc
+	 */
+	removeBloc(id: string) {
 		return this.delete({ id });
 	}
 
@@ -81,28 +120,28 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * Find bloc root by hash
 	 * @param {string} hash - bloc hash
 	 */
-	async rootByHash(hash: string) {
+	async findRootByHash(hash: string) {
 		if (!hash) throw new ServerException('Invalid', 'Hash', '');
 
 		let bloc = await this.findOne({ hash });
 		while (bloc && bloc.owner == null)
 			bloc = await this.findOne({ hash: bloc.prev });
 
-		return bloc;
+		return bloc.owner !== null ? bloc : null;
 	}
 
 	/**
 	 * Find bloc root by id
 	 * @param {string} id - bloc id
 	 */
-	async rootById(id: string) {
+	async findRootById(id: string) {
 		if (!id) throw new ServerException('Invalid', 'ID', '');
 
 		let bloc = await this.findOne({ id });
 		while (bloc && bloc.owner == null)
 			bloc = await this.findOne({ hash: bloc.prev });
 
-		return bloc;
+		return bloc.owner !== null ? bloc : null;
 	}
 
 	/**
@@ -110,9 +149,6 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {string} hash - bloc hash
 	 */
 	async issue(hash: string) {
-		return await this.update(
-			{ hash },
-			{ content: { lastIssue: currentTime() } },
-		);
+		return await this.update({ hash }, { lastIssue: currentTime() });
 	}
 }
