@@ -185,12 +185,13 @@ export class SecurityService {
 			);
 
 		decipher.setAuthTag(Buffer.from(authTag, encoding));
-
-		const decrypted = Buffer.concat([
-			decipher.update(Buffer.from(encrypted, encoding)),
-			decipher.final(),
-		]);
-
-		return decrypted.toString();
+		try {
+			return Buffer.concat([
+				decipher.update(Buffer.from(encrypted, encoding)),
+				decipher.final(),
+			]).toString();
+		} catch {
+			return '';
+		}
 	}
 }

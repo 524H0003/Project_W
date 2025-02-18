@@ -80,7 +80,7 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 		options?: SaveOptions,
 	): Promise<BaseUser> {
 		return new BaseUser(
-			await super.save({ ...entity, email: entity.email.lower }, options),
+			await this.save({ ...entity, email: entity.email.lower }, options),
 		);
 	}
 

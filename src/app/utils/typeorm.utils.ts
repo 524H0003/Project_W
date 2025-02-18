@@ -22,6 +22,18 @@ export type FindOptionsWithCustom<T> = DeepPartial<T> & {
 };
 
 /**
+ * Non function properties
+ */
+type NonFunctionProperties<T> = DeepPartial<
+	Pick<
+		T,
+		{
+			[K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
+		}[keyof T]
+	>
+>;
+
+/**
  * Convert type from an array to a non array property
  */
 export type NonArray<T> = T extends (infer U)[] ? U : T;
@@ -167,13 +179,34 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Saving an entity
-	 * @param {DeepPartial<T>} entity - the saving entity
+	 * Saving entities
+	 * @param {NonFunctionProperties<T>[]} entities - the saving entity
 	 * @param {SaveOptions} options - function's option
-	 * @return {Promise<T>} the entity from database
 	 */
-	protected save(entity: DeepPartial<T>, options?: SaveOptions): Promise<T> {
-		return this.repo.save(entity, options) as Promise<T>;
+	protected saveMany(
+		entities: NonFunctionProperties<T>[],
+		options?: SaveOptions,
+	): Promise<T[]> {
+		return this.repo.save(entities as DeepPartial<T>[], options);
+	}
+
+	/**
+	 * Saving an entity
+	 * @param {NonFunctionProperties<T>} entity - the saving entity
+	 * @param {SaveOptions} options - function's option
+	 */
+	protected save(
+		entity: NonFunctionProperties<T>,
+		options?: SaveOptions,
+	): Promise<T> {
+		return this.repo.save(entity as DeepPartial<T>, options);
+	}
+
+	/**
+	 * Create an entity
+	 */
+	protected create(entity: T): T {
+		return this.repo.create(entity);
 	}
 
 	/**

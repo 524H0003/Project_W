@@ -1,11 +1,11 @@
 import { AppService } from 'app/app.service';
 import { execute, initJest } from 'app/utils/test.utils';
-import { Bloc } from './bloc.entity';
 import { User } from 'user/user.entity';
+import { IResult, UAParser } from 'ua-parser-js';
 
 const fileName = curFile(__filename);
 
-let svc: AppService, bloc: Bloc, user: User;
+let svc: AppService, user: User, mtdt: IResult;
 
 beforeEach(async () => {
 	const { appSvc } = await initJest();
@@ -13,25 +13,25 @@ beforeEach(async () => {
 	const rawUser = User.test(fileName);
 
 	(svc = appSvc),
-		(bloc = Bloc.test(fileName)),
+		(mtdt = new UAParser(fileName + '_' + (20).string).getResult()),
 		(user = await svc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null));
 });
 
-describe('assign', () => {
+describe('getTokens', () => {
 	it('success', async () => {
-		await execute(() => svc.bloc.assign(user, null), {
+		await execute(() => svc.bloc.getTokens(user, mtdt), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 		});
 	});
 });
 
 it('remove', async () => {
-	bloc = await svc.bloc.assign(user, null);
+	const id = (await svc.bloc.getTokens(user, mtdt)).accessToken;
 
-	await execute(() => svc.bloc.remove(bloc.id), {
+	await execute(() => svc.bloc.remove(id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
-	await execute(() => svc.bloc.findOne({ id: bloc.id }), {
+	await execute(() => svc.bloc.findOne({ id }), {
 		exps: [{ type: 'toBeNull', params: [] }],
 	});
 });
