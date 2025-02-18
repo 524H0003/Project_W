@@ -1,3 +1,10 @@
+## [1.2.10](https://github.com/524H0003/Project_W/compare/v1.2.9...v1.2.10) (2025-02-18)
+
+
+### Bug Fixes
+
+* **auth-bloc:** fix logout ([#141](https://github.com/524H0003/Project_W/issues/141)) ([040f0a0](https://github.com/524H0003/Project_W/commit/040f0a0008ac9634e86f176d9433328fc1db164c))
+
 ## [1.2.9](https://github.com/524H0003/Project_W/compare/v1.2.8...v1.2.9) (2025-02-18)
 
 
