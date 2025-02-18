@@ -66,6 +66,24 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	}
 
 	/**
+	 * Remove tree by id
+	 * @param {string} deleteId - bloc id
+	 */
+	async removeTree(deleteId: string): Promise<void> {
+		if (!deleteId) throw new ServerException('Invalid', 'ID', '');
+
+		const { prev } = await this.findOne({ id: deleteId });
+
+		if (prev) {
+			const prevBloc = await this.findOne({ hash: prev });
+
+			if (prevBloc) await this.removeTree(prevBloc.id);
+		}
+
+		await this.removeBloc(deleteId);
+	}
+
+	/**
 	 * Remove bloc by id
 	 * @param {string} id - deleting bloc
 	 */

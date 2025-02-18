@@ -110,7 +110,7 @@ export class AppController extends BaseController {
 	): Promise<UserRecieve> {
 		const { rootId } = refresh;
 
-		await this.svc.bloc.remove(rootId);
+		await this.svc.bloc.removeTree(rootId);
 
 		return new UserRecieve({
 			response: { message: err('Success', 'User', 'LogOut') },
