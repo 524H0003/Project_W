@@ -64,14 +64,15 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 		await this.use.range(() => {
 			blocs.push(prev);
-			prev = this.new(null, prev.hash);
+			prev = this.new(null, prev.hashBloc());
 		});
 
-		await this.save(blocs);
+		await this.saveMany(blocs);
+		const { id, hash } = await this.save(prev);
 
 		return new UserRecieve({
-			accessToken: prev.id,
-			refreshToken: prev.hash,
+			accessToken: id,
+			refreshToken: hash,
 			response: { user: user.info },
 		});
 	}

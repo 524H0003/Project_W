@@ -183,10 +183,12 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {NonFunctionProperties<T>[]} entities - the saving entity
 	 * @param {SaveOptions} options - function's option
 	 */
-	protected save(
-		entity: NonFunctionProperties<T>[],
+	protected saveMany(
+		entities: NonFunctionProperties<T>[],
 		options?: SaveOptions,
-	): Promise<T[]>;
+	): Promise<T[]> {
+		return this.repo.save(entities as DeepPartial<T>[], options);
+	}
 
 	/**
 	 * Saving an entity
@@ -196,18 +198,15 @@ export class DatabaseRequests<T extends BaseEntity> {
 	protected save(
 		entity: NonFunctionProperties<T>,
 		options?: SaveOptions,
-	): Promise<T>;
+	): Promise<T> {
+		return this.repo.save(entity as DeepPartial<T>, options);
+	}
 
 	/**
-	 * @ignore
+	 * Create an entity
 	 */
-	protected save(
-		entity: NonFunctionProperties<T>[] | NonFunctionProperties<T>,
-		options?: SaveOptions,
-	): Promise<DeepPartial<T> | DeepPartial<T>[]> {
-		if (Array.isArray(entity))
-			return this.repo.save(entity as DeepPartial<T>[], options);
-		return this.repo.save(entity as DeepPartial<T>, options);
+	protected create(entity: T): T {
+		return this.repo.create(entity);
 	}
 
 	/**

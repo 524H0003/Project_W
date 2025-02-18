@@ -47,13 +47,12 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Bloc signature
 	 */
-	@Column({ nullable: false, default: (16).string }) private signature: string =
-		(16).string;
+	@Column({ nullable: false }) private signature: string = (16).string;
 
 	/**
 	 * Current bloc hash
 	 */
-	@Column({ nullable: false, name: 'hash' }) private _hash: string;
+	@Column({ nullable: false }) hash: string;
 
 	/**
 	 * Current bloc content
@@ -64,17 +63,12 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Hashing bloc
 	 */
-	@BeforeInsert() private hashBloc() {
+	@BeforeInsert() hashBloc() {
 		const { prev, content, signature, owner } = this;
 
-		this._hash = dataHashing(
+		return (this.hash = dataHashing(
 			JSON.stringify({ ...content, prev, signature, ownerId: owner?.id || '' }),
-		);
-	}
-
-	get hash(): string {
-		this.hashBloc();
-		return this._hash;
+		));
 	}
 
 	static test(from: string) {
