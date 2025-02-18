@@ -1,3 +1,10 @@
+## [1.2.9](https://github.com/524H0003/Project_W/compare/v1.2.8...v1.2.9) (2025-02-18)
+
+
+### Performance Improvements
+
+* **typeorm:** better blockchain save ([#140](https://github.com/524H0003/Project_W/issues/140)) ([f3f9111](https://github.com/524H0003/Project_W/commit/f3f911138090f6336016706b9c8b8f8b6e2d4a55))
+
 ## [1.2.8](https://github.com/524H0003/Project_W/compare/v1.2.7...v1.2.8) (2025-02-17)
 
 
