@@ -25,13 +25,45 @@ describe('getTokens', () => {
 	});
 });
 
-it('remove', async () => {
-	const id = (await svc.bloc.getTokens(user, mtdt)).accessToken;
+describe('removeStrayTree', () => {
+	let childId: string, rootId: string;
 
-	await execute(() => svc.bloc.remove(id), {
-		exps: [{ type: 'toThrow', not: true, params: [] }],
+	beforeEach(async () => {
+		(childId = (await svc.bloc.getTokens(user, mtdt)).accessToken),
+			(rootId = (await svc.bloc.findRootById(childId)).id);
 	});
-	await execute(() => svc.bloc.findOne({ id }), {
-		exps: [{ type: 'toBeNull', params: [] }],
+
+	it('success', async () => {
+		await svc.bloc.removeBloc(rootId);
+
+		await execute(() => svc.bloc.removeStrayTree(childId), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+		});
+
+		await execute(() => svc.bloc.findOne({ id: childId }), {
+			exps: [{ type: 'toBeNull', params: [] }],
+		});
+		await execute(() => svc.bloc.findOne({ id: rootId }), {
+			exps: [{ type: 'toBeNull', params: [] }],
+		});
+	});
+
+	it('fail when root bloc not deleted', async () => {
+		await execute(() => svc.bloc.removeStrayTree(childId), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+		});
+
+		await execute(() => svc.bloc.findOne({ id: childId }), {
+			exps: [{ type: 'toBeDefined', params: [] }],
+		});
+		await execute(() => svc.bloc.findOne({ id: rootId }), {
+			exps: [{ type: 'toBeDefined', params: [] }],
+		});
+	});
+
+	it('fail due to invalid id', async () => {
+		await execute(() => svc.bloc.removeStrayTree(null), {
+			exps: [{ type: 'toThrow', params: [err('Invalid', 'ID', '')] }],
+		});
 	});
 });

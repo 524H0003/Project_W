@@ -20,6 +20,11 @@ export interface IBlocInfo extends IEntityId {
 	 * Current bloc content
 	 */
 	content?: object;
+
+	/**
+	 * Bloc last issue time
+	 */
+	lastIssue?: number;
 }
 
 /**
