@@ -1,3 +1,10 @@
+## [1.2.12](https://github.com/524H0003/Project_W/compare/v1.2.11...v1.2.12) (2025-02-19)
+
+
+### Bug Fixes
+
+* update app.controller.ts and sql.module.ts ([#146](https://github.com/524H0003/Project_W/issues/146)) ([926ae00](https://github.com/524H0003/Project_W/commit/926ae00b167d8e30c98c39ec6305010c14fb027c))
+
 ## [1.2.11](https://github.com/524H0003/Project_W/compare/v1.2.10...v1.2.11) (2025-02-19)
 
 
