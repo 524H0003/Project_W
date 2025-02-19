@@ -163,4 +163,12 @@ describe('randomRemoveTree', () => {
 			exps: [{ type: 'toBeUndefined', params: [] }],
 		});
 	});
+
+	it('success when there is no bloc', async () => {
+		jest.spyOn(bloc, 'find').mockReturnValueOnce(Promise.resolve([]));
+
+		await execute(() => svc.bloc.randomRemoveTree(), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+		});
+	});
 });

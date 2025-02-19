@@ -154,10 +154,13 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		return await this.update({ hash }, { lastIssue: currentTime() });
 	}
 
-	@Cron('* * * * *')
+	@Cron('0 * * * * *')
 	async randomRemoveTree() {
-		const blocs = await this.find(),
-			{ id, lastIssue } = blocs[blocs.length.random],
+		const blocs = await this.find();
+
+		if (!blocs.length) return;
+
+		const { id, lastIssue } = blocs[blocs.length.random],
 			allowUsage = toMs(this.svc.cfg.get('REFRESH_EXPIRE')) / 1000;
 
 		if (currentTime() - lastIssue > allowUsage) await this.removeTree(id);
