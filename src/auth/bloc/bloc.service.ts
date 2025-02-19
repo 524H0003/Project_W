@@ -154,8 +154,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		return await this.update({ hash }, { lastIssue: currentTime() });
 	}
 
-	@Cron('0 * * * * *')
-	async randomRemoveTree() {
+	@Cron('0 * * * * *') async randomRemoveTree() {
 		const blocs = await this.find();
 
 		if (!blocs.length) return;
