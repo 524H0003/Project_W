@@ -222,7 +222,7 @@ export class HealthController {
 					thresholdPercent: 0.75,
 				}),
 			() => this.memory.checkHeap('memory_heap', (365).mb2b),
-			() => this.memory.checkRSS('memory_rss', (128).mb2b),
+			() => this.memory.checkRSS('memory_rss', (256).mb2b),
 		]);
 	}
 }

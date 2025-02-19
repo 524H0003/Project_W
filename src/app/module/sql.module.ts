@@ -32,6 +32,7 @@ export const sqlOptions = (
 	database: type === 'deploy' ? cfgSvc.get('POSTGRES_DB') : type,
 	synchronize: true,
 	ssl: cfgSvc.get('POSTGRES_SSL') ? readSslCa() : false,
+	cache: true,
 });
 
 /**
