@@ -289,6 +289,11 @@ declare global {
 	 * Get current time
 	 */
 	function currentTime(): number;
+
+	/**
+	 * Sorting object keys
+	 */
+	function sortObjectKeys(input: object): object;
 }
 
 /**
@@ -367,6 +372,13 @@ export const funcs = {
 			() => console.log('fired'),
 		);
 	},
+	sortObjectKeys: (input: object) =>
+		Object.keys(input)
+			.sort()
+			.reduce((obj, key) => {
+				obj[key] = input[key];
+				return obj;
+			}, {}),
 };
 Object.assign(globalThis, funcs);
 // String.prototype
