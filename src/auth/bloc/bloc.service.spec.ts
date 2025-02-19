@@ -141,7 +141,7 @@ describe('randomRemoveTree', () => {
 		});
 
 		await execute(() => svc.bloc.findOne({ id: childBloc.id }), {
-			exps: [{ type: 'toBeUndefined', params: [] }],
+			exps: [{ type: 'toBeNull', params: [] }],
 		});
 	});
 
@@ -157,10 +157,10 @@ describe('randomRemoveTree', () => {
 		});
 
 		await execute(() => svc.bloc.findOne({ id: childBloc.id }), {
-			exps: [{ type: 'toBeUndefined', params: [] }],
+			exps: [{ type: 'toBeNull', params: [] }],
 		});
 		await execute(() => svc.bloc.findOne({ id: rootId }), {
-			exps: [{ type: 'toBeUndefined', params: [] }],
+			exps: [{ type: 'toBeNull', params: [] }],
 		});
 	});
 

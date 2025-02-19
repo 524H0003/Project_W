@@ -164,7 +164,6 @@ export class BlocService extends DatabaseRequests<Bloc> {
 			allowUsage = toMs(this.svc.cfg.get('REFRESH_EXPIRE')) / 1000;
 
 		if (currentTime() - lastIssue > allowUsage) await this.removeTree(id);
-
-		await this.removeStrayTree(id);
+		else await this.removeStrayTree(id);
 	}
 }
