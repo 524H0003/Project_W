@@ -13,6 +13,14 @@ import { RequireOnlyOne } from 'app/utils/model.utils';
 import { Not, IsNull } from 'typeorm';
 
 /**
+ * Bloc identifier
+ */
+interface IdOrHash {
+	id: string;
+	hash: string;
+}
+
+/**
  * Bloc service
  */
 @Injectable()
@@ -121,27 +129,13 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	}
 
 	/**
-	 * Find bloc root by hash
-	 * @param {string} hash - bloc hash
+	 * Find bloc root
+	 * @param {object} identifier - bloc indentifier
 	 */
-	async findRootByHash(hash: string) {
-		if (!hash) throw new ServerException('Invalid', 'Hash', '');
+	async findRoot({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
+		if (!id && !hash) throw new ServerException('Invalid', 'Token', '');
 
-		let bloc = await this.findOne({ hash });
-		while (bloc && bloc.owner == null)
-			bloc = await this.findOne({ hash: bloc.prev });
-
-		return bloc.owner !== null ? bloc : null;
-	}
-
-	/**
-	 * Find bloc root by id
-	 * @param {string} id - bloc id
-	 */
-	async findRootById(id: string) {
-		if (!id) throw new ServerException('Invalid', 'ID', '');
-
-		let bloc = await this.findOne({ id });
+		let bloc = await this.findOne({ id, hash });
 		while (bloc && bloc.owner == null)
 			bloc = await this.findOne({ hash: bloc.prev });
 
@@ -150,12 +144,9 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 	/**
 	 * Issuing current bloc
-	 * @param {string} hash - bloc hash
+	 * @param {object} identifier - bloc indentifier
 	 */
-	async issue({
-		id,
-		hash,
-	}: RequireOnlyOne<{ hash: string; id: string }, 'hash' | 'id'>) {
+	async issue({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
 		return await this.update({ hash, id }, { lastIssue: currentTime() });
 	}
 

@@ -31,7 +31,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	 * @return {Promise<IRefreshResult>}
 	 */
 	async validate({ refreshToken }: IPayload): Promise<IRefreshResult> {
-		const root = await this.bloc.findRootByHash(refreshToken);
+		const root = await this.bloc.findRoot({ hash: refreshToken });
 		if (root && refreshToken != root.hash) {
 			const { prev } = await this.bloc.findOne({ hash: refreshToken }),
 				{ hash, id } = await this.bloc.findOne({ hash: prev });
