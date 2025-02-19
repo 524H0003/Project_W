@@ -49,8 +49,6 @@ jobs:
           destination_repo: 524H0003/Project_W
           deploy_key: ${{ secrets.DEPLOY_KEY }}
 
-      - run: 'npm run build & npm run doc'
-
       - run: 'cp README.md LICENSE ./types'
 
       - uses: peaceiris/actions-gh-pages@v4
@@ -59,12 +57,4 @@ jobs:
           github_token: ${{ github.token }}
           publish_dir: types
           publish_branch: package
-          force_orphan: true
-
-      - uses: peaceiris/actions-gh-pages@v4
-        if: github.ref == 'refs/heads/master'
-        with:
-          github_token: ${{ github.token }}
-          publish_dir: documentation
-          publish_branch: documentation
           force_orphan: true
