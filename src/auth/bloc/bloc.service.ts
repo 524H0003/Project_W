@@ -7,6 +7,8 @@ import { User, UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
 import { MetaData } from 'auth/guards';
+import { Cron } from '@nestjs/schedule';
+import { toMs } from 'ms-typescript';
 
 /**
  * Bloc service
@@ -150,5 +152,17 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 */
 	async issue(hash: string) {
 		return await this.update({ hash }, { lastIssue: currentTime() });
+	}
+
+	@Cron('0 * * * * *') async randomRemoveTree() {
+		const blocs = await this.find();
+
+		if (!blocs.length) return;
+
+		const { id, lastIssue } = blocs[blocs.length.random],
+			allowUsage = toMs(this.svc.cfg.get('REFRESH_EXPIRE')) / 1000;
+
+		if (currentTime() - lastIssue > allowUsage) await this.removeTree(id);
+		else await this.removeStrayTree(id);
 	}
 }

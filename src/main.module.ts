@@ -15,6 +15,7 @@ import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { InitServerClass } from 'app/utils/server.utils';
 import KeyvRedis from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
 	imports: [
@@ -86,6 +87,8 @@ import { JwtService } from '@nestjs/jwt';
 		SqlModule('deploy'),
 		// Application modules
 		AppModule,
+		// Schedule mmodule
+		ScheduleModule.forRoot(),
 		// Request caching
 		CacheModule.registerAsync({
 			isGlobal: true,
