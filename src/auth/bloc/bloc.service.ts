@@ -10,6 +10,7 @@ import { MetaData } from 'auth/guards';
 import { Cron } from '@nestjs/schedule';
 import { toMs } from 'ms-typescript';
 import { RequireOnlyOne } from 'app/utils/model.utils';
+import { Not, IsNull } from 'typeorm';
 
 /**
  * Bloc service
@@ -159,14 +160,13 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	}
 
 	@Cron('0 0 * * * *') async randomRemoveTree() {
-		const blocs = await this.find();
+		const blocs = await this.find({ lastIssue: Not(IsNull()) });
 
-		if (!blocs.length) return;
+		for (const { id, lastIssue } of blocs) {
+			const allowUsage = toMs(this.svc.cfg.get('REFRESH_EXPIRE')) / 1000;
 
-		const { id, lastIssue } = blocs[blocs.length.random],
-			allowUsage = toMs(this.svc.cfg.get('REFRESH_EXPIRE')) / 1000;
-
-		if (currentTime() - lastIssue > allowUsage) await this.removeTree(id);
-		else await this.removeStrayTree(id);
+			if (currentTime() - lastIssue > allowUsage) await this.removeTree(id);
+			else await this.removeStrayTree(id);
+		}
 	}
 }

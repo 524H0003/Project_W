@@ -13,7 +13,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 /**
  * Modified find option
  */
-export type FindOptionsWithCustom<T> = DeepPartial<T> & {
+export type FindOptionsWithCustom<T> = FindOptionsWhere<T> & {
 	deep?: number;
 	take?: number;
 	skip?: number;
