@@ -8,15 +8,16 @@ import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
 import { OutgoingHttpHeaders } from 'http';
+import { ConfigService } from '@nestjs/config';
 
 const fileName = curFile(__filename);
 
-let req: RequesterType, usr: User, rfsTms: number, svc: AppService;
+let req: RequesterType, usr: User, config: ConfigService, svc: AppService;
 
 beforeAll(async () => {
-	const { appSvc, requester } = await initJest();
+	const { appSvc, requester, module } = await initJest();
 
-	(svc = appSvc), (req = requester);
+	(svc = appSvc), (req = requester), (config = module.get(ConfigService));
 });
 
 beforeEach(() => {
@@ -245,34 +246,33 @@ describe('refresh', () => {
 		});
 	});
 
-	it('success in generate new key', async () => {
-		await execute(
-			async () =>
-				await req()
-					.post('/refresh')
-					.headers({ cookie: getCookie(headers['set-cookie']) }),
-			{
-				numOfRun: rfsTms * 1.2,
-				exps: [
-					{
-						type: 'toHaveProperty',
-						not: true,
-						params: [
-							'headers.set-cookie',
-							expect.arrayContaining(headers['set-cookie'] as unknown[]),
-						],
+	it(
+		'success in throw invalid token due to out of refresh token usage',
+		async () => {
+			await execute(
+				async () =>
+					await req()
+						.post('/refresh')
+						.headers({ cookie: getCookie(headers['set-cookie']) }),
+				{
+					handleLoop: async (func) => {
+						headers = (await func()).headers;
 					},
-					{
-						type: 'toHaveProperty',
-						params: [
-							'headers.set-cookie',
-							expect.arrayContaining([expect.anything(), expect.anything()]),
-						],
-					},
-				],
-			},
-		);
-	});
+					numOfRun: config.get('REFRESH_USE'),
+					exps: [
+						{
+							type: 'toHaveProperty',
+							params: [
+								'body',
+								expect.stringContaining(err('Invalid', 'Token', '')),
+							],
+						},
+					],
+				},
+			);
+		},
+		(60000).s2ms,
+	);
 });
 
 describe('change-password', () => {
