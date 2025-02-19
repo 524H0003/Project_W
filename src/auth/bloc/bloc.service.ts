@@ -39,11 +39,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {string} prev - previous bloc hash
 	 */
 	new(owner: User | null, prev: string | null, metaData?: MetaData) {
-		const bloc = new Bloc({
-			owner,
-			prev,
-			content: { metaData },
-		});
+		const bloc = new Bloc({ owner, prev, content: { metaData } });
 
 		return bloc;
 	}
