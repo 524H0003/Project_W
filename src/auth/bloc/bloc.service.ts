@@ -9,6 +9,16 @@ import { ConfigService } from '@nestjs/config';
 import { MetaData } from 'auth/guards';
 import { Cron } from '@nestjs/schedule';
 import { toMs } from 'ms-typescript';
+import { RequireOnlyOne } from 'app/utils/model.utils';
+import { Not, IsNull } from 'typeorm';
+
+/**
+ * Bloc identifier
+ */
+interface IdOrHash {
+	id: string;
+	hash: string;
+}
 
 /**
  * Bloc service
@@ -18,7 +28,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	/**
 	 * Refresh token use time
 	 */
-	private use: number = this.cfg.get('REFRESH_USE');
+	private use: number = this.config.get('REFRESH_USE');
 
 	/**
 	 * Initiate bloc service
@@ -26,7 +36,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	constructor(
 		@InjectRepository(Bloc) repo: Repository<Bloc>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
-		private cfg: ConfigService,
+		private config: ConfigService,
 	) {
 		super(repo);
 	}
@@ -37,11 +47,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {string} prev - previous bloc hash
 	 */
 	new(owner: User | null, prev: string | null, metaData?: MetaData) {
-		const bloc = new Bloc({
-			owner,
-			prev,
-			content: { metaData, lastIssue: currentTime() },
-		});
+		const bloc = new Bloc({ owner, prev, content: { metaData } });
 
 		return bloc;
 	}
@@ -119,27 +125,13 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	}
 
 	/**
-	 * Find bloc root by hash
-	 * @param {string} hash - bloc hash
+	 * Find bloc root
+	 * @param {object} identifier - bloc indentifier
 	 */
-	async findRootByHash(hash: string) {
-		if (!hash) throw new ServerException('Invalid', 'Hash', '');
+	async findRoot({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
+		if (!id && !hash) throw new ServerException('Invalid', 'Token', '');
 
-		let bloc = await this.findOne({ hash });
-		while (bloc && bloc.owner == null)
-			bloc = await this.findOne({ hash: bloc.prev });
-
-		return bloc.owner !== null ? bloc : null;
-	}
-
-	/**
-	 * Find bloc root by id
-	 * @param {string} id - bloc id
-	 */
-	async findRootById(id: string) {
-		if (!id) throw new ServerException('Invalid', 'ID', '');
-
-		let bloc = await this.findOne({ id });
+		let bloc = await this.findOne({ id, hash });
 		while (bloc && bloc.owner == null)
 			bloc = await this.findOne({ hash: bloc.prev });
 
@@ -148,21 +140,20 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 	/**
 	 * Issuing current bloc
-	 * @param {string} hash - bloc hash
+	 * @param {object} identifier - bloc indentifier
 	 */
-	async issue(hash: string) {
-		return await this.update({ hash }, { lastIssue: currentTime() });
+	async issue({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
+		return await this.update({ hash, id }, { lastIssue: currentTime() });
 	}
 
-	@Cron('0 * * * * *') async randomRemoveTree() {
-		const blocs = await this.find();
+	@Cron('0 0 * * * *') async randomRemoveTree() {
+		const blocs = await this.find({ lastIssue: Not(IsNull()) });
 
-		if (!blocs.length) return;
+		for (const { id, lastIssue } of blocs) {
+			const allowUsage = toMs(this.svc.cfg.get('REFRESH_EXPIRE')) / 1000;
 
-		const { id, lastIssue } = blocs[blocs.length.random],
-			allowUsage = toMs(this.svc.cfg.get('REFRESH_EXPIRE')) / 1000;
-
-		if (currentTime() - lastIssue > allowUsage) await this.removeTree(id);
-		else await this.removeStrayTree(id);
+			if (currentTime() - lastIssue > allowUsage) await this.removeTree(id);
+			else await this.removeStrayTree(id);
+		}
 	}
 }

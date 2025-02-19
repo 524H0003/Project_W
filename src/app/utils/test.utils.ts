@@ -25,6 +25,7 @@ import {
 	ReadStream,
 	writeFileSync,
 } from 'fs';
+import { isAsyncFunction } from 'util/types';
 
 /**
  * requester type
@@ -60,6 +61,20 @@ interface Expectation<T, K extends keyof jest.Matchers<T>> {
 }
 
 /**
+ * Execute options
+ */
+type ExecuteOptions<
+	K extends keyof jest.Matchers<(...args: any[]) => Promise<R>>,
+	R,
+	F,
+> = {
+	numOfRun?: number;
+	exps: Expectation<F, K>[];
+	onFinish?: (result: R) => void | Promise<void>;
+	handleLoop?: (func: F) => void | Promise<void>;
+};
+
+/**
  * A function run async functions and catch both throw errors and results
  * @param {T} func - the function to test
  * @param {object} options - the options to execute
@@ -69,21 +84,23 @@ export async function execute<
 	K extends keyof jest.Matchers<(...args: any[]) => Promise<R>>,
 >(
 	func: (...args: any[]) => Promise<R> | R,
-	options: {
-		numOfRun?: number;
-		exps: Expectation<typeof func, K>[];
-		onFinish?: (result: R) => void | Promise<void>;
-	},
+	{
+		numOfRun = 1,
+		exps,
+		onFinish = null,
+		handleLoop = null,
+	}: ExecuteOptions<K, R, typeof func>,
 ) {
-	const { numOfRun = 1, exps, onFinish = null } = options,
-		executed = func(),
+	if (!exps.length)
+		throw new ServerException('Fatal', 'Method', 'Implementation');
+
+	if (isAsyncFunction(func) && numOfRun - 1 > 0 && handleLoop)
+		await numOfRun.range(() => handleLoop(func));
+
+	const executed = func(),
 		l1 = expect(
 			executed instanceof Promise ? executed : (async () => await executed)(),
 		);
-
-	if (numOfRun - 1) await numOfRun.range(func);
-	if (!exps.length)
-		throw new ServerException('Fatal', 'Method', 'Implementation');
 
 	for (const exp of exps) {
 		const l2 =

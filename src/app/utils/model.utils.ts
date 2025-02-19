@@ -16,6 +16,15 @@ interface IRecordTime {
 }
 
 /**
+ * Only required specified keys and optional for remains
+ */
+export type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
+	| {
+			[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
+	  }[Keys]
+	| Partial<Pick<T, Keys>>;
+
+/**
  * Time record entity
  */
 export class BlackBox implements IRecordTime {

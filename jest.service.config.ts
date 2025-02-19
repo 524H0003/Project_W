@@ -13,7 +13,7 @@ const config: Config = {
 	],
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'service.txt' }]],
-	collectCoverageFrom: ['src/**/*.service.ts'],
+	collectCoverageFrom: ['src/**/*.service.ts', '!**/aws.service.ts'],
 };
 
 export default config;

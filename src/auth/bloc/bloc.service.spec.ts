@@ -40,7 +40,7 @@ describe('removeStrayTree', () => {
 
 	beforeEach(async () => {
 		(childId = (await svc.bloc.getTokens(user, mtdt)).accessToken),
-			(rootId = (await svc.bloc.findRootById(childId)).id);
+			(rootId = (await svc.bloc.findRoot({ id: childId })).id);
 	});
 
 	it('success', async () => {
@@ -83,7 +83,7 @@ describe('removeTree', () => {
 
 	beforeEach(async () => {
 		(childId = (await svc.bloc.getTokens(user, mtdt)).accessToken),
-			(rootId = (await svc.bloc.findRootById(childId)).id);
+			(rootId = (await svc.bloc.findRoot({ id: childId })).id);
 	});
 
 	it('success', async () => {
@@ -128,7 +128,7 @@ describe('randomRemoveTree', () => {
 		(childBloc = await svc.bloc.findOne({
 			id: (await svc.bloc.getTokens(user, mtdt)).accessToken,
 		})),
-			(rootId = (await svc.bloc.findRootById(childBloc.id)).id);
+			(rootId = (await svc.bloc.findRoot({ id: childBloc.id })).id);
 	});
 
 	it('success', async () => {

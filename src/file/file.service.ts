@@ -11,15 +11,7 @@ import { AWSRecieve } from 'app/aws/aws.service';
 import { FileUpload } from 'graphql-upload-ts';
 import { createHmac } from 'node:crypto';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-
-/**
- * Only required specified keys and optional for remains
- */
-type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
-	| {
-			[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
-	  }[Keys]
-	| Partial<Pick<T, Keys>>;
+import { RequireOnlyOne } from 'app/utils/model.utils';
 
 /**
  * Convert a stream to buffer

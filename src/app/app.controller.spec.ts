@@ -8,15 +8,16 @@ import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
 import { OutgoingHttpHeaders } from 'http';
+import { ConfigService } from '@nestjs/config';
 
 const fileName = curFile(__filename);
 
-let req: RequesterType, usr: User, rfsTms: number, svc: AppService;
+let req: RequesterType, usr: User, config: ConfigService, svc: AppService;
 
 beforeAll(async () => {
-	const { appSvc, requester } = await initJest();
+	const { appSvc, requester, module } = await initJest();
 
-	(svc = appSvc), (req = requester);
+	(svc = appSvc), (req = requester), (config = module.get(ConfigService));
 });
 
 beforeEach(() => {
@@ -245,30 +246,45 @@ describe('refresh', () => {
 		});
 	});
 
-	it('success in generate new key', async () => {
+	it('success in throw invalid token due to out of refresh token usage', async () => {
 		await execute(
 			async () =>
 				await req()
 					.post('/refresh')
 					.headers({ cookie: getCookie(headers['set-cookie']) }),
 			{
-				numOfRun: rfsTms * 1.2,
+				handleLoop: async (func) => {
+					headers = (await func()).headers;
+				},
+				numOfRun: config.get('REFRESH_USE'),
 				exps: [
 					{
 						type: 'toHaveProperty',
-						not: true,
 						params: [
-							'headers.set-cookie',
-							expect.arrayContaining(headers['set-cookie'] as unknown[]),
+							'body',
+							expect.stringContaining(err('Invalid', 'Token', '')),
 						],
 					},
-					{
-						type: 'toHaveProperty',
-						params: [
-							'headers.set-cookie',
-							expect.arrayContaining([expect.anything(), expect.anything()]),
-						],
-					},
+				],
+			},
+		);
+	});
+
+	it('fail when meta data not match', async () => {
+		await execute(
+			async () =>
+				(
+					await req()
+						.post('/refresh')
+						.headers({
+							cookie: getCookie(headers['set-cookie']),
+							'user-agent': (18).string,
+						})
+						.end()
+				).body,
+			{
+				exps: [
+					{ type: 'toContain', params: [err('Invalid', 'Signature', '')] },
 				],
 			},
 		);
@@ -328,5 +344,30 @@ describe('request-signature', () => {
 				],
 			},
 		);
+	});
+
+	it('fail due to invalid admin email', async () => {
+		await execute(
+			async () =>
+				(await req().post('/request-signature').body({ email: (18).string }))
+					.body,
+			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
+		);
+	});
+});
+
+describe('csrf-token', () => {
+	it('success', async () => {
+		await execute(async () => (await req().get('/csrf-token').end()).body, {
+			exps: [{ type: 'toContain', params: ['token'] }],
+		});
+	});
+});
+
+describe('health', () => {
+	it('success', async () => {
+		await execute(async () => (await req().get('/health').end()).body, {
+			exps: [{ type: 'toBeDefined', params: [] }],
+		});
 	});
 });
