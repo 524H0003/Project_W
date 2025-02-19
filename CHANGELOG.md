@@ -1,3 +1,10 @@
+## [1.2.11](https://github.com/524H0003/Project_W/compare/v1.2.10...v1.2.11) (2025-02-19)
+
+
+### Bug Fixes
+
+* **auth-bloc:** reduce amount of bloc if bloc out of usage time or lost root ([#143](https://github.com/524H0003/Project_W/issues/143)) ([f1c9948](https://github.com/524H0003/Project_W/commit/f1c99488301c2baa009cdbf8792e1e99633db725))
+
 ## [1.2.10](https://github.com/524H0003/Project_W/compare/v1.2.9...v1.2.10) (2025-02-18)
 
 
