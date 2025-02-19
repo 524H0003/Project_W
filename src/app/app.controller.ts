@@ -126,7 +126,7 @@ export class AppController extends BaseController {
 	): Promise<UserRecieve> {
 		const { metaData, rootId, blocHash, blocId } = refresh;
 
-		if (metaData.toString() !== mtdt.toString()) {
+		if (JSON.stringify(metaData) !== JSON.stringify(mtdt)) {
 			await this.svc.bloc.removeTree(rootId);
 			return new UserRecieve({
 				response: { message: err('Invalid', 'Signature', '') },

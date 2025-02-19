@@ -246,33 +246,49 @@ describe('refresh', () => {
 		});
 	});
 
-	it(
-		'success in throw invalid token due to out of refresh token usage',
-		async () => {
-			await execute(
-				async () =>
+	it('success in throw invalid token due to out of refresh token usage', async () => {
+		await execute(
+			async () =>
+				await req()
+					.post('/refresh')
+					.headers({ cookie: getCookie(headers['set-cookie']) }),
+			{
+				handleLoop: async (func) => {
+					headers = (await func()).headers;
+				},
+				numOfRun: config.get('REFRESH_USE'),
+				exps: [
+					{
+						type: 'toHaveProperty',
+						params: [
+							'body',
+							expect.stringContaining(err('Invalid', 'Token', '')),
+						],
+					},
+				],
+			},
+		);
+	});
+
+	it('fail when meta data not match', async () => {
+		await execute(
+			async () =>
+				(
 					await req()
 						.post('/refresh')
-						.headers({ cookie: getCookie(headers['set-cookie']) }),
-				{
-					handleLoop: async (func) => {
-						headers = (await func()).headers;
-					},
-					numOfRun: config.get('REFRESH_USE'),
-					exps: [
-						{
-							type: 'toHaveProperty',
-							params: [
-								'body',
-								expect.stringContaining(err('Invalid', 'Token', '')),
-							],
-						},
-					],
-				},
-			);
-		},
-		(60000).s2ms,
-	);
+						.headers({
+							cookie: getCookie(headers['set-cookie']),
+							'user-agent': (18).string,
+						})
+						.end()
+				).body,
+			{
+				exps: [
+					{ type: 'toContain', params: [err('Invalid', 'Signature', '')] },
+				],
+			},
+		);
+	});
 });
 
 describe('change-password', () => {
@@ -328,5 +344,32 @@ describe('request-signature', () => {
 				],
 			},
 		);
+	});
+
+	it('fail due to invalid admin email', async () => {
+		await execute(
+			async () =>
+				(await req().post('/request-signature').body({ email: (18).string }))
+					.body,
+			{
+				exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }],
+			},
+		);
+	});
+});
+
+describe('csrf-token', () => {
+	it('success', async () => {
+		await execute(async () => (await req().get('/csrf-token').end()).body, {
+			exps: [{ type: 'toContain', params: ['token'] }],
+		});
+	});
+});
+
+describe('health', () => {
+	it('success', async () => {
+		await execute(async () => (await req().get('/health').end()).body, {
+			exps: [{ type: 'toBeDefined', params: [] }],
+		});
 	});
 });
