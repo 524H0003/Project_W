@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { MetaData } from 'auth/guards';
 import { Cron } from '@nestjs/schedule';
 import { toMs } from 'ms-typescript';
+import { RequireOnlyOne } from 'app/utils/model.utils';
 
 /**
  * Bloc service
@@ -18,7 +19,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	/**
 	 * Refresh token use time
 	 */
-	private use: number = this.cfg.get('REFRESH_USE');
+	private use: number = this.config.get('REFRESH_USE');
 
 	/**
 	 * Initiate bloc service
@@ -26,7 +27,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	constructor(
 		@InjectRepository(Bloc) repo: Repository<Bloc>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
-		private cfg: ConfigService,
+		private config: ConfigService,
 	) {
 		super(repo);
 	}
@@ -40,7 +41,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		const bloc = new Bloc({
 			owner,
 			prev,
-			content: { metaData, lastIssue: currentTime() },
+			content: { metaData },
 		});
 
 		return bloc;
@@ -150,11 +151,14 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * Issuing current bloc
 	 * @param {string} hash - bloc hash
 	 */
-	async issue(hash: string) {
-		return await this.update({ hash }, { lastIssue: currentTime() });
+	async issue({
+		id,
+		hash,
+	}: RequireOnlyOne<{ hash: string; id: string }, 'hash' | 'id'>) {
+		return await this.update({ hash, id }, { lastIssue: currentTime() });
 	}
 
-	@Cron('0 * * * * *') async randomRemoveTree() {
+	@Cron('0 0 * * * *') async randomRemoveTree() {
 		const blocs = await this.find();
 
 		if (!blocs.length) return;
