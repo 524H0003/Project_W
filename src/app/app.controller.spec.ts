@@ -351,9 +351,7 @@ describe('request-signature', () => {
 			async () =>
 				(await req().post('/request-signature').body({ email: (18).string }))
 					.body,
-			{
-				exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }],
-			},
+			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
 	});
 });
