@@ -8,12 +8,12 @@ import {
 import { IEnterpriseAssign } from './enterprise.model';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
+import { getAdminSignature } from 'app/app.controller.spec.utils';
 
 const fileName = curFile(__filename);
 
 let req: RequesterType,
 	enterprise: Enterprise,
-	signature: string,
 	svc: AppService,
 	mailerSvc: MailerService;
 
@@ -29,13 +29,7 @@ beforeEach(() => {
 
 describe('assign', () => {
 	it('success', async () => {
-		const { headers } = await req()
-			.post('/request-signature')
-			.body({ email: svc.cfg.get('ADMIN_EMAIL') });
-
-		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0]['context'][
-			'signature'
-		];
+		const { headers, signature } = await getAdminSignature(req, svc, mailerSvc);
 
 		await execute(
 			async () =>
