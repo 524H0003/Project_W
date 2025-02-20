@@ -102,6 +102,6 @@ export class UserService extends DatabaseRequests<User> {
 
 		if (!student && !employee) return (await this.id(id)).info;
 
-		return {...student.info, ...employee}
+		return { ...student.info, ...employee };
 	}
 }
