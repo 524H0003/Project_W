@@ -58,9 +58,13 @@ describe('signUp', () => {
 			],
 		});
 		await execute(
-			() =>
+			async () =>
 				svc.bloc.find({
-					owner: { baseUser: { email: usr.baseUser.email.lower } },
+					ownerId: (
+						await svc.user.findOne({
+							baseUser: { email: usr.baseUser.email.lower },
+						})
+					).id,
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [1] }] },
 		);
@@ -116,9 +120,13 @@ describe('login', () => {
 		);
 
 		await execute(
-			() =>
+			async () =>
 				svc.bloc.find({
-					owner: { baseUser: { email: usr.baseUser.email.lower } },
+					ownerId: (
+						await svc.user.findOne({
+							baseUser: { email: usr.baseUser.email.lower },
+						})
+					).id,
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
 		);
@@ -180,9 +188,13 @@ describe('logout', () => {
 				],
 				onFinish: async () => {
 					await execute(
-						() =>
+						async () =>
 							svc.bloc.find({
-								owner: { baseUser: { email: usr.baseUser.email.lower } },
+								ownerId: (
+									await svc.user.findOne({
+										baseUser: { email: usr.baseUser.email.lower },
+									})
+								).id,
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
 					);

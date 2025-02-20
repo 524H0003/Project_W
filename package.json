@@ -99,6 +99,7 @@
 		"react-dom": "^19.0.0",
 		"rxjs": "^7.8.1",
 		"smtp-tester": "^2.1.0",
+		"sqlite3": "^5.1.7",
 		"start-server-and-test": "^2.0.10",
 		"typeorm": "^0.3.20",
 		"typeorm-extension": "^3.6.3",
@@ -159,7 +160,10 @@
 			"@fastify/session": "11.1.0",
 			"@fastify/formbody": "8.0.2",
 			"@fastify/multipart": "9.0.3"
-		}
+		},
+		"onlyBuiltDependencies": [
+			"sqlite3"
+		]
 	},
 	"engines": {
 		"node": "23.x"

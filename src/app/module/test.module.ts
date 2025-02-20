@@ -2,7 +2,7 @@
 import { ApolloDriver } from '@nestjs/apollo';
 import { Global, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { SqlModule } from 'app/module/sql.module';
+import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { loadEnv } from './config.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -37,7 +37,8 @@ export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 		CacheModule.register({ isGlobal: true, ttl: 0 }),
 		JwtModule.register({ global: true }),
 		loadEnv,
-		SqlModule('test'),
+		PostgresModule('test'),
+		SqliteModule('test'),
 	],
 	providers: [
 		{ provide: MailerService, useValue: { sendMail: jest.fn() } },

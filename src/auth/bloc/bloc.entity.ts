@@ -1,16 +1,7 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
-import { BeforeInsert, Column, Entity, ManyToOne } from 'typeorm';
-import { User } from 'user/user.entity';
-import { IBlocEntity, IBlocInfo, IBlocRelationships } from './bloc.model';
-import { MetaData } from 'auth/guards';
+import { BeforeInsert, Column, Entity } from 'typeorm';
+import { IBlocEntity, IBlocInfo } from './bloc.model';
 import { dataHashing } from 'app/utils/auth.utils';
-
-/**
- * Bloc Content
- */
-interface IBlocContent {
-	metaData: MetaData;
-}
 
 /**
  * Bloc entity
@@ -21,23 +12,18 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	 * Create device with infomations
 	 * @param {IBlocInfo} payload - the device's infomations
 	 */
-	constructor(payload: IBlocInfo & Partial<IBlocRelationships>) {
+	constructor(payload: IBlocInfo) {
 		super();
 
 		if (payload) Object.assign(this, payload);
 	}
 
-	// Relationships
-	/**
-	 * Bloc owner
-	 */
-	@ManyToOne(() => User, (_) => _.authBloc, {
-		onDelete: 'CASCADE',
-		nullable: true,
-	})
-	owner: User | null;
-
 	// Infomations
+	/**
+	 * Bloc owner id
+	 */
+	@Column({ nullable: true, update: false }) ownerId: string | null;
+
 	/**
 	 * Previous bloc hash
 	 */
@@ -61,27 +47,21 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Current bloc content
 	 */
-	@Column({ type: 'jsonb', default: {} }) content?: IBlocContent;
+	@Column({ nullable: true }) metaData?: string;
 
 	// Methods
 	/**
 	 * Hashing bloc
 	 */
-	@BeforeInsert() hashBloc() {
-		const { prev, content, signature, owner, lastIssue } = this;
+	@BeforeInsert() private hashBloc() {
+		const { prev, metaData, signature, ownerId, lastIssue } = this;
 
 		return (this.hash = dataHashing(
-			JSON.stringify({
-				...content,
-				lastIssue,
-				prev,
-				signature,
-				ownerId: owner?.id || '',
-			}),
+			JSON.stringify({ metaData, lastIssue, prev, signature, ownerId }),
 		));
 	}
 
 	static test(from: string) {
-		return new Bloc({ content: { from } });
+		return new Bloc({ metaData: from });
 	}
 }

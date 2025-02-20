@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { IPayload } from 'auth/auth.interface';
 import { BlocService } from 'auth/bloc/bloc.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { UserService } from 'user/user.service';
 
 /**
  * Check the access token from client
@@ -16,6 +17,7 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	constructor(
 		config: ConfigService,
 		private bloc: BlocService,
+		private user: UserService,
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -31,7 +33,7 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	async validate({ accessToken }: IPayload) {
 		await this.bloc.issue({ id: accessToken });
 		const root = await this.bloc.findRoot({ id: accessToken });
-		if (root) return root.owner;
+		if (root) return this.user.id(root.ownerId);
 		throw new ServerException('Invalid', 'ID', '');
 	}
 }

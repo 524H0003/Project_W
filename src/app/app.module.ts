@@ -39,8 +39,8 @@ const modules = [
 @Module({
 	imports: [
 		TerminusModule.forRoot({
-			errorLogStyle: 'json',
 			gracefulShutdownTimeoutMs: (30).s2ms,
+			logger: false,
 		}),
 		TypeOrmModule.forFeature([BaseUser]),
 		...modules.map((i) => forwardRef(() => i)),

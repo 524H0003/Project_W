@@ -1,6 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { readFileSync } from 'fs';
+import { join } from 'path';
 import { TlsOptions } from 'tls';
 import { DataSourceOptions } from 'typeorm';
 import { createPostgresDatabase } from 'typeorm-extension';
@@ -18,10 +19,15 @@ function readSslCa(): TlsOptions | boolean {
 }
 
 /**
- * Server sql configuration
+ * Sql type
  */
-export const sqlOptions = (
-	type: 'deploy' | 'test',
+type SqlType = 'deploy' | 'test';
+
+/**
+ * Server postgresql configuration
+ */
+export const postgresConfig = (
+	type: SqlType,
 	cfgSvc: ConfigService,
 ): DataSourceOptions => ({
 	type: 'postgres',
@@ -36,23 +42,43 @@ export const sqlOptions = (
 });
 
 /**
- * @ignore
+ * Server postgresql module
  */
-export const SqlModule = (type: 'deploy' | 'test') =>
+export const PostgresModule = (type: SqlType) =>
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],
 		inject: [ConfigService],
 		useFactory: async (cfgSvc: ConfigService) => {
 			try {
 				await createPostgresDatabase({
-					options: sqlOptions(type, cfgSvc),
+					options: postgresConfig(type, cfgSvc),
 					ifNotExist: true,
 				});
 			} catch {}
 			return {
-				...sqlOptions(type, cfgSvc),
+				...postgresConfig(type, cfgSvc),
 				autoLoadEntities: true,
 				synchronize: true,
 			};
 		},
+	});
+
+/**
+ * Server sqlite module
+ */
+export const SqliteModule = (type: SqlType) =>
+	TypeOrmModule.forRootAsync({
+		name: 'sqlite_db',
+		imports: [ConfigModule],
+		inject: [ConfigService],
+		useFactory: (config: ConfigService) => ({
+			type: 'sqlite',
+			database: join(
+				__dirname,
+				(type === 'deploy' ? config.get<string>('POSTGRES_DB') : type) +
+					'.sqlite',
+			),
+			synchronize: true,
+			autoLoadEntities: true,
+		}),
 	});
