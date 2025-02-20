@@ -21,7 +21,7 @@ beforeEach(async () => {
 	const rawUser = User.test(fileName);
 
 	(svc = appSvc),
-		(repo = module.get(getRepositoryToken(Bloc))),
+		(repo = module.get(getRepositoryToken(Bloc, 'sqlite_db'))),
 		(bloc = module.get(BlocService)),
 		(mtdt = new UAParser(fileName + '_' + (20).string).getResult()),
 		(user = await svc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null));

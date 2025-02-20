@@ -79,5 +79,6 @@ export const SqliteModule = (type: SqlType) =>
 					'.sqlite',
 			),
 			synchronize: true,
+			autoLoadEntities: true,
 		}),
 	});

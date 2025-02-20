@@ -16,9 +16,9 @@ export interface IBlocInfo extends IEntityId {
 	hash?: string;
 
 	/**
-	 * Current bloc content
+	 * Current bloc meta data
 	 */
-	content?: object;
+	metaData?: string;
 
 	/**
 	 * Bloc last issue time

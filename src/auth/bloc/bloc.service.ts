@@ -34,7 +34,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * Initiate bloc service
 	 */
 	constructor(
-		@InjectRepository(Bloc) repo: Repository<Bloc>,
+		@InjectRepository(Bloc, 'sqlite_db') repo: Repository<Bloc>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 		private config: ConfigService,
 	) {
@@ -50,7 +50,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		const bloc = new Bloc({
 			ownerId: owner ? owner.id : null,
 			prev,
-			content: { metaData },
+			metaData: metaData ? JSON.stringify(sortObjectKeys(metaData)) : null,
 		});
 
 		return this.save(bloc);

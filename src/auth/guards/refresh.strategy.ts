@@ -39,7 +39,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 				blocHash: hash,
 				blocId: id,
 				rootId: root.id,
-				metaData: root.content.metaData,
+				metaData: root.metaData,
 			};
 		}
 		throw new ServerException('Invalid', 'Token', '');

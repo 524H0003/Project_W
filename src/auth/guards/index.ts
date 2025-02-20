@@ -43,7 +43,7 @@ export interface IRefreshResult {
 	/**
 	 * Root meta data
 	 */
-	metaData: MetaData;
+	metaData: string;
 }
 
 /**

@@ -1,15 +1,7 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { IBlocEntity, IBlocInfo } from './bloc.model';
-import { MetaData } from 'auth/guards';
 import { dataHashing } from 'app/utils/auth.utils';
-
-/**
- * Bloc Content
- */
-interface IBlocContent {
-	metaData: MetaData;
-}
 
 /**
  * Bloc entity
@@ -55,18 +47,18 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Current bloc content
 	 */
-	@Column({ type: 'jsonb', default: {} }) content?: IBlocContent;
+	@Column({ nullable: true }) metaData?: string;
 
 	// Methods
 	/**
 	 * Hashing bloc
 	 */
 	@BeforeInsert() private hashBloc() {
-		const { prev, content, signature, ownerId, lastIssue } = this;
+		const { prev, metaData, signature, ownerId, lastIssue } = this;
 
 		return (this.hash = dataHashing(
 			JSON.stringify({
-				...content,
+				metaData,
 				lastIssue,
 				prev,
 				signature,
@@ -76,6 +68,6 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	}
 
 	static test(from: string) {
-		return new Bloc({ content: { from } });
+		return new Bloc({ metaData: from });
 	}
 }
