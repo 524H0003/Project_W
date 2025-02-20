@@ -57,13 +57,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 		const { prev, metaData, signature, ownerId, lastIssue } = this;
 
 		return (this.hash = dataHashing(
-			JSON.stringify({
-				metaData,
-				lastIssue,
-				prev,
-				signature,
-				ownerId,
-			}),
+			JSON.stringify({ metaData, lastIssue, prev, signature, ownerId }),
 		));
 	}
 
