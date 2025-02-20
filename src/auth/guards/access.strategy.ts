@@ -33,7 +33,7 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	async validate({ accessToken }: IPayload) {
 		await this.bloc.issue({ id: accessToken });
 		const root = await this.bloc.findRoot({ id: accessToken });
-		if (root) return await this.user.findOne({ id: root.ownerId });
+		if (root) return this.user.id(root.ownerId);
 		throw new ServerException('Invalid', 'ID', '');
 	}
 }
