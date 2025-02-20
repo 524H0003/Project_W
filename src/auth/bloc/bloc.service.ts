@@ -46,10 +46,14 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {User} owner - the owner of bloc
 	 * @param {string} prev - previous bloc hash
 	 */
-	new(owner: User | null, prev: string | null, metaData?: MetaData) {
-		const bloc = new Bloc({ owner, prev, content: { metaData } });
+	assign(owner: User | null, prev: string | null, metaData?: MetaData) {
+		const bloc = new Bloc({
+			ownerId: owner ? owner.id : null,
+			prev,
+			content: { metaData },
+		});
 
-		return bloc;
+		return this.save(bloc);
 	}
 
 	/**
@@ -105,16 +109,12 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {MetaData} mtdt - metadata from client
 	 */
 	async getTokens(user: User, mtdt: MetaData) {
-		const blocs: Bloc[] = [];
+		let prev = await this.assign(user, null, mtdt);
 
-		let prev = this.new(user, null, mtdt);
-
-		await this.use.range(() => {
-			blocs.push(prev);
-			prev = this.new(null, prev.hashBloc());
+		await this.use.range(async () => {
+			prev = await this.assign(null, prev.hash);
 		});
 
-		await this.saveMany(blocs);
 		const { id, hash } = await this.save(prev);
 
 		return new UserRecieve({
@@ -132,10 +132,10 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		if (!id && !hash) throw new ServerException('Invalid', 'Token', '');
 
 		let bloc = await this.findOne({ id, hash });
-		while (bloc && bloc.owner == null)
+		while (bloc && bloc.ownerId == null)
 			bloc = await this.findOne({ hash: bloc.prev });
 
-		return bloc.owner !== null ? bloc : null;
+		return bloc.ownerId !== null ? bloc : null;
 	}
 
 	/**

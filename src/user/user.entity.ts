@@ -32,7 +32,6 @@ import { BaseUser } from 'app/app.entity';
 import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
-import { Bloc } from 'auth/bloc/bloc.entity';
 
 /**
  * User entity
@@ -72,11 +71,6 @@ export class User extends BaseEntity implements IUserEntity {
 	@Column(() => BaseUser, { prefix: false }) baseUser: BaseUser;
 
 	// Relationships
-	/**
-	 * User's device logged in
-	 */
-	@OneToMany(() => Bloc, (_: Bloc) => _.owner, { onDelete: 'CASCADE' })
-	authBloc: Bloc[];
 
 	/**
 	 * User uploaded files

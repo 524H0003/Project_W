@@ -1,7 +1,6 @@
 import { SensitiveInfomations } from 'app/utils/typeorm.utils';
-import { BeforeInsert, Column, Entity, ManyToOne } from 'typeorm';
-import { User } from 'user/user.entity';
-import { IBlocEntity, IBlocInfo, IBlocRelationships } from './bloc.model';
+import { BeforeInsert, Column, Entity } from 'typeorm';
+import { IBlocEntity, IBlocInfo } from './bloc.model';
 import { MetaData } from 'auth/guards';
 import { dataHashing } from 'app/utils/auth.utils';
 
@@ -21,23 +20,18 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	 * Create device with infomations
 	 * @param {IBlocInfo} payload - the device's infomations
 	 */
-	constructor(payload: IBlocInfo & Partial<IBlocRelationships>) {
+	constructor(payload: IBlocInfo) {
 		super();
 
 		if (payload) Object.assign(this, payload);
 	}
 
-	// Relationships
-	/**
-	 * Bloc owner
-	 */
-	@ManyToOne(() => User, (_) => _.authBloc, {
-		onDelete: 'CASCADE',
-		nullable: true,
-	})
-	owner: User | null;
-
 	// Infomations
+	/**
+	 * Bloc owner id
+	 */
+	@Column({ nullable: true, update: false }) ownerId: string | null;
+
 	/**
 	 * Previous bloc hash
 	 */
@@ -67,8 +61,8 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Hashing bloc
 	 */
-	@BeforeInsert() hashBloc() {
-		const { prev, content, signature, owner, lastIssue } = this;
+	@BeforeInsert() private hashBloc() {
+		const { prev, content, signature, ownerId, lastIssue } = this;
 
 		return (this.hash = dataHashing(
 			JSON.stringify({
@@ -76,7 +70,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 				lastIssue,
 				prev,
 				signature,
-				ownerId: owner?.id || '',
+				ownerId,
 			}),
 		));
 	}

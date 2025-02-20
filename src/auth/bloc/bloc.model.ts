@@ -1,5 +1,4 @@
 import { IEntityId } from 'app/app.model';
-import { IUserEntity } from 'user/user.model';
 
 // Interfaces
 /**
@@ -25,16 +24,14 @@ export interface IBlocInfo extends IEntityId {
 	 * Bloc last issue time
 	 */
 	lastIssue?: number;
-}
 
-/**
- * Bloc relationships
- */
-export interface IBlocRelationships {
-	owner: IUserEntity;
+	/**
+	 * Bloc owner id
+	 */
+	ownerId?: string;
 }
 
 /**
  * Bloc entity
  */
-export interface IBlocEntity extends IBlocInfo, IBlocRelationships {}
+export interface IBlocEntity extends IBlocInfo {}

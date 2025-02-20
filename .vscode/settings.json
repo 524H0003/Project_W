@@ -43,7 +43,8 @@
 		"types": true,
 		"graphql": true,
 		"securedSessionKey": true,
-		"src/schema.gql": true
+		"src/schema.gql": true,
+		"**/*.sqlite": true
 	},
 	"jest.outputConfig": { "clearOnRun": "terminal" },
 	"jest.runMode": {

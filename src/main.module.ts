@@ -4,7 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { loadEnv } from 'app/module/config.module';
-import { SqlModule } from 'app/module/sql.module';
+import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { AppModule } from 'app/app.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
@@ -84,7 +84,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 		}),
 		// Core modules
 		loadEnv,
-		SqlModule('deploy'),
+		PostgresModule('deploy'),
+		SqliteModule('deploy'),
 		// Application modules
 		AppModule,
 		// Schedule mmodule
