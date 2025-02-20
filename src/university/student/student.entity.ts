@@ -8,7 +8,8 @@ import {
 	IStudentInfoKeys,
 	IUserAuthenticationKeys,
 } from 'build/models';
-import { IUserSignUp, UserRole } from 'user/user.model';
+import { IUserInfo, IUserSignUp, UserRole } from 'user/user.model';
+import { IBaseUserInfo } from 'app/app.model';
 
 /**
  * Student entity
@@ -67,6 +68,17 @@ export class Student extends BaseEntity implements IStudentEntity {
 	 * Student enrollment year
 	 */
 	@Column({ name: 'enrollment_year' }) enrollmentYear: number;
+
+	// Methods
+	/**
+	 * A function return user's public infomations
+	 */
+	get info(): IStudentInfo & IUserInfo & IBaseUserInfo {
+		return {
+			...InterfaceCasting.quick(this, IStudentInfoKeys),
+			...this.user.info,
+		};
+	}
 
 	/**
 	 * @ignore

@@ -29,7 +29,7 @@ beforeEach(async () => {
 
 describe('getTokens', () => {
 	it('success', async () => {
-		await execute(() => svc.bloc.getTokens(user, mtdt), {
+		await execute(() => svc.bloc.getTokens(user.id, mtdt), {
 			exps: [{ type: 'toBeDefined', params: [] }],
 		});
 	});
@@ -39,7 +39,7 @@ describe('removeStrayTree', () => {
 	let childId: string, rootId: string;
 
 	beforeEach(async () => {
-		(childId = (await svc.bloc.getTokens(user, mtdt)).accessToken),
+		(childId = (await svc.bloc.getTokens(user.id, mtdt)).accessToken),
 			(rootId = (await svc.bloc.findRoot({ id: childId })).id);
 	});
 
@@ -82,7 +82,7 @@ describe('removeTree', () => {
 	let childId: string, rootId: string;
 
 	beforeEach(async () => {
-		(childId = (await svc.bloc.getTokens(user, mtdt)).accessToken),
+		(childId = (await svc.bloc.getTokens(user.id, mtdt)).accessToken),
 			(rootId = (await svc.bloc.findRoot({ id: childId })).id);
 	});
 
@@ -126,7 +126,7 @@ describe('randomRemoveTree', () => {
 
 	beforeEach(async () => {
 		(childBloc = await svc.bloc.findOne({
-			id: (await svc.bloc.getTokens(user, mtdt)).accessToken,
+			id: (await svc.bloc.getTokens(user.id, mtdt)).accessToken,
 		})),
 			(rootId = (await svc.bloc.findRoot({ id: childBloc.id })).id);
 	});

@@ -1,4 +1,9 @@
-import { IBaseUserEntity, IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
+import {
+	IBaseUserEntity,
+	IBaseUserEmail,
+	IBaseUserInfo,
+	IEntityId,
+} from 'app/app.model';
 import { IEventParticipatorEntiy } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';
@@ -109,7 +114,10 @@ export interface IUserLogIn extends IUserAuthentication, IBaseUserEmail {}
 /**
  * Sign up fields
  */
-export interface IUserSignUp extends IUserAuthentication, IBaseUserInfo {}
+export interface IUserSignUp
+	extends IUserAuthentication,
+		IBaseUserInfo,
+		IEntityId {}
 
 // Enums
 /**

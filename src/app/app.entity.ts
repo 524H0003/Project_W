@@ -47,6 +47,13 @@ export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
 	avatarPath?: string;
 
 	// Methods
+	/**
+	 * A function return user's public infomations
+	 */
+	get info(): IBaseUserInfo {
+		return InterfaceCasting.quick(this, IBaseUserInfoKeys);
+	}
+
 	static test(from: string, email?: string) {
 		return new BaseUser({
 			email: email || (20).string + '@lmao.com',

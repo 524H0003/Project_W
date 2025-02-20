@@ -157,14 +157,14 @@ export class User extends BaseEntity implements IUserEntity {
 
 		delete this.password;
 	}
+
 	/**
 	 * A function return user's public infomations
-	 * @return {IUserInfo} User's public infomations
 	 */
-	get info(): IUserInfo {
+	get info(): IUserInfo & IBaseUserInfo {
 		return {
 			...InterfaceCasting.quick(this, IUserInfoKeys),
-			...InterfaceCasting.quick(this.baseUser, IBaseUserInfoKeys),
+			...this.baseUser.info,
 		};
 	}
 

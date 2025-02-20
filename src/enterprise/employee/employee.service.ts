@@ -1,5 +1,8 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import {
+	DatabaseRequests,
+	FindOptionsWithCustom,
+} from 'app/utils/typeorm.utils';
 import { Employee } from './employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -78,6 +81,19 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			eventCreator,
 			enterprise,
 			...InterfaceCasting.quick(input, IEmployeeInfoKeys),
+		});
+	}
+
+	/**
+	 *  Find employee base on id
+	 * @param {string} id - employee id
+	 * @param {FindOptionsWithCustom<Employee>} options - function options
+	 */
+	id(id: string, options?: FindOptionsWithCustom<Employee>): Promise<Employee> {
+		if (!id) throw new ServerException('Invalid', 'ID', '');
+		return this.findOne({
+			eventCreator: { user: { baseUser: { id } } },
+			...options,
 		});
 	}
 }

@@ -47,6 +47,13 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 
 	// Methods
 	/**
+	 * Get entity id
+	 */
+	get id(): string {
+		return this.user.id;
+	}
+
+	/**
 	 * @ignore
 	 */
 	static test(from: string, options?: { user?: User }) {

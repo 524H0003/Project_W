@@ -89,4 +89,19 @@ export class UserService extends DatabaseRequests<User> {
 	updateRole(id: string, updateRole: UserRole): Promise<User> {
 		return this.modify(id, { role: updateRole });
 	}
+
+	/**
+	 * Find full user infomations
+	 * @param {string} id - user id
+	 */
+	async info(id: string): Promise<object> {
+		if (!id) throw new ServerException('Invalid', 'ID', '');
+
+		const student = await this.svc.student.id(id),
+			employee = await this.svc.employee.id(id);
+
+		if (!student && !employee) return (await this.id(id)).info;
+
+		return {...student.info, ...employee}
+	}
 }

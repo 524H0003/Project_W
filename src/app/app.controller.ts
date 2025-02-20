@@ -74,7 +74,10 @@ export class AppController extends BaseController {
 			const { message } = error as ServerException;
 			switch (true) {
 				case message.includes(err('Invalid', 'User', 'SignUp')):
-					return this.svc.bloc.getTokens(await this.svc.auth.login(body), mtdt);
+					return this.svc.bloc.getTokens(
+						(await this.svc.auth.login(body)).id,
+						mtdt,
+					);
 
 				case message.includes(err('Success', 'User', 'SignUp')):
 					return this.resetPasswordViaEmail(hostname, body, mtdt);
@@ -97,7 +100,7 @@ export class AppController extends BaseController {
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<UserRecieve> {
 		return this.svc.bloc.getTokens(
-			await this.svc.auth.signUp(body, avatar || null),
+			(await this.svc.auth.signUp(body, avatar || null)).id,
 			mtdt,
 		);
 	}

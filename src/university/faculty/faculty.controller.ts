@@ -50,7 +50,7 @@ export class FacultyController extends BaseController {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
 		return this.svc.bloc.getTokens(
-			(await this.svc.faculty.assign(body, avatar)).eventCreator.user,
+			(await this.svc.faculty.assign(body, avatar)).id,
 			mtdt,
 		);
 	}

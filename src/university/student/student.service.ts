@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRole } from 'user/user.model';
 import { Student } from './student.entity';
 import { Repository } from 'typeorm';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import {
+	DatabaseRequests,
+	FindOptionsWithCustom,
+} from 'app/utils/typeorm.utils';
 import { IStudentSignUp } from './student.model';
 import { AppService } from 'app/app.service';
 
@@ -52,5 +55,15 @@ export class StudentService extends DatabaseRequests<Student> {
 		});
 
 		throw new ServerException('Success', 'User', 'SignUp');
+	}
+
+	/**
+	 * Find student base on id
+	 * @param {string} id - student id
+	 * @param {FindOptionsWithCustom<Student>} options - function options
+	 */
+	id(id: string, options?: FindOptionsWithCustom<Student>): Promise<Student> {
+		if (!id) throw new ServerException('Invalid', 'ID', '');
+		return this.findOne({ user: { baseUser: { id } }, ...options });
 	}
 }

@@ -7,7 +7,7 @@ import {
 import { EventCreator } from 'event/creator/creator.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { User } from 'user/user.entity';
-import { IUserAuthentication, UserRole } from 'user/user.model';
+import { IUserAuthentication, IUserInfo, UserRole } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'build/models';
@@ -61,6 +61,23 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	position: EmployeePosition;
 
 	// Methods
+	/**
+	 * A function return user's public infomations
+	 */
+	get info(): IEmployeeInfo & IUserInfo & IBaseUserInfo {
+		return {
+			...InterfaceCasting.quick(this, IEmployeeInfoKeys),
+			...this.eventCreator.user.info,
+		};
+	}
+
+	/**
+	 * Get entity id
+	 */
+	get id(): string {
+		return this.eventCreator.id;
+	}
+
 	/**
 	 * @ignore
 	 */
