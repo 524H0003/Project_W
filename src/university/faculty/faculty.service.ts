@@ -44,10 +44,12 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 				),
 			);
 
-			return await this.save({
+			await this.save({
 				eventCreator,
 				...InterfaceCasting.quick(input, IFacultyInfoKeys),
 			});
+
+			return this.id(eventCreator.id);
 		});
 	}
 

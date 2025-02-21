@@ -3,6 +3,7 @@ import { BlackBox } from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import {
 	IBaseUserInfoKeys,
+	IEntityIdKeys,
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
 	IUserSensitiveKeys,
@@ -29,7 +30,7 @@ import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
 import { passwordHashing } from 'app/utils/auth.utils';
 import { BaseUser } from 'app/app.entity';
-import { IBaseUserInfo } from 'app/app.model';
+import { IBaseUserInfo, IEntityId } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
 
@@ -42,12 +43,17 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * @param {object} payload - the user's infomations
 	 */
-	constructor(payload: IUserAuthentication & IUserSensitive & IBaseUserInfo) {
+	constructor(
+		payload: IUserAuthentication & IUserSensitive & IBaseUserInfo & IEntityId,
+	) {
 		super();
 
 		if (payload) {
 			this.baseUser = new BaseUser(
-				InterfaceCasting.quick(payload, IBaseUserInfoKeys),
+				InterfaceCasting.quick(payload, [
+					...IBaseUserInfoKeys,
+					...IEntityIdKeys,
+				]),
 			);
 			Object.assign(
 				this,
