@@ -1,4 +1,4 @@
-import {  Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
