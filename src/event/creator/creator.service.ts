@@ -19,7 +19,7 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
-		super(repo);
+		super(repo, EventCreator);
 	}
 
 	/**

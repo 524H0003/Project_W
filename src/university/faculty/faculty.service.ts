@@ -23,7 +23,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		@InjectRepository(Faculty) repo: Repository<Faculty>,
 		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 	) {
-		super(repo);
+		super(repo, Faculty);
 	}
 
 	/**
@@ -44,12 +44,10 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 				),
 			);
 
-			await this.save({
+			return this.save({
 				eventCreator,
 				...InterfaceCasting.quick(input, IFacultyInfoKeys),
 			});
-
-			return this.id(eventCreator.id);
 		});
 	}
 

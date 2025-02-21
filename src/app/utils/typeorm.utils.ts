@@ -72,7 +72,10 @@ export class DatabaseRequests<T extends BaseEntity> {
 	/**
 	 * Initiate database for entity
 	 */
-	constructor(protected repo: Repository<T>) {
+	constructor(
+		protected repo: Repository<T>,
+		private ctor: new (...args: any[]) => T,
+	) {
 		this.relations = [].concat(
 			...this.repo.metadata.relations.map((i) => this.exploreEntityMetadata(i)),
 		);
@@ -116,7 +119,7 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T[]>} array of found objects
 	 */
-	find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
+	async find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
 		const {
 				deep = 1,
 				relations = [''],
@@ -130,13 +133,15 @@ export class DatabaseRequests<T extends BaseEntity> {
 				.filter((i) => relations.some((j) => i.includes(j)))
 				.filter((value, index, self) => self.indexOf(value) === index);
 
-		return this.repo.find({
-			where: <FindOptionsWhere<T>>newOptions,
-			take,
-			skip,
-			order,
-			relations: findRelations,
-		});
+		return (
+			await this.repo.find({
+				where: <FindOptionsWhere<T>>newOptions,
+				take,
+				skip,
+				order,
+				relations: findRelations,
+			})
+		).map((i) => new this.ctor(i));
 	}
 
 	/**
@@ -144,17 +149,61 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>}
 	 */
-	findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
+	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
 		const { deep = 1, relations = [''], ...newOptions } = options || {};
-		return this.repo.findOne({
-			where: <FindOptionsWhere<T>>newOptions,
-			relations: deep
-				? this.relations
-						.map((i) => i.split('.').slice(0, deep).join('.'))
-						.filter((i) => relations.some((j) => i.includes(j)))
-						.filter((value, index, self) => self.indexOf(value) === index)
-				: undefined,
-		});
+		return new this.ctor(
+			await this.repo.findOne({
+				where: <FindOptionsWhere<T>>newOptions,
+				relations: deep
+					? this.relations
+							.map((i) => i.split('.').slice(0, deep).join('.'))
+							.filter((i) => relations.some((j) => i.includes(j)))
+							.filter((value, index, self) => self.indexOf(value) === index)
+					: undefined,
+			}),
+		);
+	}
+
+	/**
+	 * Saving entities
+	 * @param {NonFunctionProperties<T>[]} entities - the saving entity
+	 * @param {SaveOptions} options - function's option
+	 */
+	protected saveMany(
+		entities: NonFunctionProperties<T>[],
+		options?: SaveOptions,
+	): Promise<T[]> {
+		return this.repo.save(entities as DeepPartial<T>[], options);
+	}
+
+	/**
+	 * Saving an entity
+	 * @param {NonFunctionProperties<T>} entity - the saving entity
+	 * @param {SaveOptions} options - function's option
+	 */
+	protected async save(
+		entity: NonFunctionProperties<T>,
+		options?: SaveOptions,
+	): Promise<T> {
+		return new this.ctor(
+			await this.repo.save(entity as DeepPartial<T>, options),
+		);
+	}
+
+	/**
+	 * Assign an entity
+	 */
+	// eslint-disable-next-line tsEslint/no-unused-vars
+	assign(...args: any): Promise<T> {
+		throw new ServerException('Invalid', 'Method', 'Implementation');
+	}
+
+	/**
+	 * Deleting an entity
+	 * @param {FindOptionsWhere<T>} criteria - the deleting entity
+	 */
+	protected async delete(criteria: FindOptionsWhere<T>) {
+		await this.repo.delete(criteria);
 	}
 
 	/**
@@ -182,53 +231,6 @@ export class DatabaseRequests<T extends BaseEntity> {
 	}
 
 	/**
-	 * Saving entities
-	 * @param {NonFunctionProperties<T>[]} entities - the saving entity
-	 * @param {SaveOptions} options - function's option
-	 */
-	protected saveMany(
-		entities: NonFunctionProperties<T>[],
-		options?: SaveOptions,
-	): Promise<T[]> {
-		return this.repo.save(entities as DeepPartial<T>[], options);
-	}
-
-	/**
-	 * Saving an entity
-	 * @param {NonFunctionProperties<T>} entity - the saving entity
-	 * @param {SaveOptions} options - function's option
-	 */
-	protected save(
-		entity: NonFunctionProperties<T>,
-		options?: SaveOptions,
-	): Promise<T> {
-		return this.repo.save(entity as DeepPartial<T>, options);
-	}
-
-	/**
-	 * Create an entity
-	 */
-	protected create(entity: T): T {
-		return this.repo.create(entity);
-	}
-
-	/**
-	 * Assign an entity
-	 */
-	// eslint-disable-next-line tsEslint/no-unused-vars
-	assign(...args: any): Promise<T> {
-		throw new ServerException('Invalid', 'Method', 'Implementation');
-	}
-
-	/**
-	 * Deleting an entity
-	 * @param {FindOptionsWhere<T>} criteria - the deleting entity
-	 */
-	protected delete(criteria: FindOptionsWhere<T>) {
-		return this.repo.delete(criteria);
-	}
-
-	/**
 	 * Removing an entity
 	 */
 	// eslint-disable-next-line tsEslint/no-unused-vars
@@ -241,11 +243,11 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {DeepPartial<T>} entity - the updating entity
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
-	protected update(
+	protected async update(
 		entity: DeepPartial<T>,
 		updatedEntity?: QueryDeepPartialEntity<T>,
 	) {
-		return this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
+		await this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
 	}
 
 	/**

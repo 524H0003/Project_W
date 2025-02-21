@@ -38,7 +38,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 		private config: ConfigService,
 	) {
-		super(repo);
+		super(repo, Bloc);
 	}
 
 	/**

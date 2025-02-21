@@ -19,7 +19,7 @@ export class UserService extends DatabaseRequests<User> {
 		@InjectRepository(User) repo: Repository<User>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
-		super(repo);
+		super(repo, User);
 	}
 
 	/**
@@ -32,7 +32,7 @@ export class UserService extends DatabaseRequests<User> {
 		const baseUser = await this.svc.baseUser.assign(entity),
 			user = new User({ ...entity, ...baseUser });
 
-		return await this.save(user);
+		return this.save(user);
 	}
 
 	/**

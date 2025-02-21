@@ -66,7 +66,7 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 * Initiate base user service
 	 */
 	constructor(repo: Repository<BaseUser>) {
-		super(repo);
+		super(repo, BaseUser);
 	}
 
 	/**
@@ -98,7 +98,7 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 			if (updatedEntity.email) updatedEntity.email = updatedEntity.email.lower;
 			await super.update({ id: entityId }, updatedEntity);
 		}
-		return new BaseUser(await this.id(entityId));
+		return this.id(entityId);
 	}
 
 	/**

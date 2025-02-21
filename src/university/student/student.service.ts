@@ -22,7 +22,7 @@ export class StudentService extends DatabaseRequests<Student> {
 		@InjectRepository(Student) repo: Repository<Student>,
 		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 	) {
-		super(repo);
+		super(repo, Student);
 	}
 	/**
 	 * @ignore
