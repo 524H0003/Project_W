@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import {
-	BaseEntity,
+	BaseEntity as TypeOrmBaseEntity,
 	DeepPartial,
 	FindOptionsWhere,
 	PrimaryGeneratedColumn,
@@ -45,7 +45,7 @@ export type NonArray<T> = T extends (infer U)[] ? U : T;
  * Sensitive infomations in entity
  */
 @ObjectType()
-export class SensitiveInfomations extends BaseEntity {
+export class SensitiveInfomations extends TypeOrmBaseEntity {
 	/**
 	 * Initiate sensitive infomation
 	 */
@@ -60,10 +60,16 @@ export class SensitiveInfomations extends BaseEntity {
 	@Field() @PrimaryGeneratedColumn('uuid') id: string;
 }
 
+export class BaseEntity extends TypeOrmBaseEntity {
+	isNull() {
+		return Object.keys(this).length != 0;
+	}
+}
+
 /**
  * Generic database requests
  */
-export class DatabaseRequests<T extends BaseEntity> {
+export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	/**
 	 * Entity relationships
 	 */

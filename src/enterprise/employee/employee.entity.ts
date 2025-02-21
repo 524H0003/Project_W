@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import {
 	EmployeePosition,
 	IEmployeeEntity,
@@ -11,6 +11,7 @@ import { IUserAuthentication, IUserInfo, UserRole } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'build/models';
+import { BaseEntity } from 'app/utils/typeorm.utils';
 
 /**
  * Employee entity

@@ -8,14 +8,7 @@ import {
 	IUserInfoKeys,
 	IUserSensitiveKeys,
 } from 'build/models';
-import {
-	BaseEntity,
-	BeforeInsert,
-	BeforeUpdate,
-	Column,
-	Entity,
-	OneToMany,
-} from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserAuthentication,
 	IUserEntity,
@@ -33,6 +26,7 @@ import { BaseUser } from 'app/app.entity';
 import { IBaseUserInfo, IEntityId } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
+import { BaseEntity } from 'app/utils/typeorm.utils';
 
 /**
  * User entity

@@ -99,8 +99,8 @@ export class AppController extends BaseController {
 		@GetMetaData() mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<UserRecieve> {
-		const result = await this.svc.auth.signUp(body, avatar || null);
-		return this.svc.bloc.getTokens(result.id, mtdt);
+		const { id } = await this.svc.auth.signUp(body, avatar || null);
+		return this.svc.bloc.getTokens(id, mtdt);
 	}
 
 	/**

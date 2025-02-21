@@ -1,12 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
-import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { IEnterprise, IEnterpriseAssign } from './enterprise.model';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { BaseUser } from 'app/app.entity';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IBaseUserInfoKeys, IEnterpriseInfoKeys } from 'build/models';
+import { BaseEntity } from 'app/utils/typeorm.utils';
 
 /**
  * Enterprise entity

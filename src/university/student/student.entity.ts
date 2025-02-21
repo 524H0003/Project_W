@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import {  Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
@@ -10,6 +10,7 @@ import {
 } from 'build/models';
 import { IUserInfo, IUserSignUp, UserRole } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
+import { BaseEntity } from 'app/utils/typeorm.utils';
 
 /**
  * Student entity

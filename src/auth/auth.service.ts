@@ -46,7 +46,7 @@ export class AuthService extends SecurityService {
 			{ role = UserRole.undefined } = options || {},
 			rawUser = new User({ ...input, email: input.email.lower, role });
 
-		if (user) throw new ServerException('Invalid', 'User', 'SignUp');
+		if (user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
 
 		try {
 			return validation(rawUser, async () => {

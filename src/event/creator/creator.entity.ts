@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IUserSensitive, IUserSignUp } from 'user/user.model';
@@ -9,6 +9,7 @@ import {
 	IUserSensitiveKeys,
 } from 'build/models';
 import { IEventCreatorEntity } from './creator.model';
+import { BaseEntity } from 'app/utils/typeorm.utils';
 
 /**
  * Event creator model

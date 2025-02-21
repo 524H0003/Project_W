@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { IFacultyEntity, IFacultyInfo } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { InterfaceCasting } from 'app/utils/utils';
@@ -9,6 +9,7 @@ import {
 } from 'build/models';
 import { IsString } from 'class-validator';
 import { IUserSignUp, UserRole } from 'user/user.model';
+import { BaseEntity } from 'app/utils/typeorm.utils';
 
 /**
  * Faculty entity
