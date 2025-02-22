@@ -13,9 +13,7 @@ export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
 	constructor(payload: IBaseUserInfo) {
 		super();
 		if (payload) {
-			payload = InterfaceCasting.quick(payload, [
-				...IBaseUserInfoKeys,
-			]) as BaseUser;
+			payload = InterfaceCasting.quick(payload, IBaseUserInfoKeys) as BaseUser;
 			Object.assign(this, payload);
 		}
 	}

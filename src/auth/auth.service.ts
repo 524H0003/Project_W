@@ -50,12 +50,10 @@ export class AuthService extends SecurityService {
 
 		try {
 			return validation(rawUser, async () => {
-				const id = (
-					await this.usrSvc.assign({
-						...rawUser,
-						...rawUser.baseUser,
-					})
-				).id;
+				const { id } = await this.usrSvc.assign({
+					...rawUser,
+					...rawUser.baseUser,
+				});
 				return await this.usrSvc.modify(
 					id,
 					avatar
