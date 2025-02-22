@@ -62,7 +62,7 @@ export class SensitiveInfomations extends TypeOrmBaseEntity {
 
 export class BaseEntity extends TypeOrmBaseEntity {
 	isNull() {
-		return Object.keys(this).length != 0;
+		return Object.keys(this).length == 0;
 	}
 }
 

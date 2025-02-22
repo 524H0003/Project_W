@@ -1,21 +1,20 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { SensitiveInfomations } from './utils/typeorm.utils';
-import { IBaseUserEntity, IBaseUserInfo, IEntityId } from './app.model';
+import { IBaseUserEntity, IBaseUserInfo } from './app.model';
 import { InterfaceCasting } from './utils/utils';
 import { Hook } from './hook/hook.entity';
-import { IBaseUserInfoKeys, IEntityIdKeys } from 'build/models';
+import { IBaseUserInfoKeys } from 'build/models';
 
 /**
  * Base user
  */
 @Entity({ name: 'app_user' })
 export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
-	constructor(payload: IBaseUserInfo & IEntityId) {
+	constructor(payload: IBaseUserInfo) {
 		super();
 		if (payload) {
 			payload = InterfaceCasting.quick(payload, [
 				...IBaseUserInfoKeys,
-				...IEntityIdKeys,
 			]) as BaseUser;
 			Object.assign(this, payload);
 		}
@@ -62,5 +61,9 @@ export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
 			email: email || (20).string + '@lmao.com',
 			name: from + '_' + (5).string,
 		});
+	}
+
+	isNull() {
+		return Object.keys(this).length != 0;
 	}
 }

@@ -100,7 +100,7 @@ export class UserService extends DatabaseRequests<User> {
 		const student = await this.svc.student.id(id),
 			employee = await this.svc.employee.id(id);
 
-		if (student.isNull() && employee.isNull) return (await this.id(id)).info;
+		if (student.isNull() && employee.isNull()) return (await this.id(id)).info;
 
 		return {
 			...(student.isNull() ? {} : student.info),

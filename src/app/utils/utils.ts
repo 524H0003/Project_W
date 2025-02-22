@@ -294,6 +294,11 @@ declare global {
 	 * Sorting object keys
 	 */
 	function sortObjectKeys(input: object): object;
+
+	/**
+	 * Flattening objects
+	 */
+	function flattenObject<T>(object: T): T;
 }
 
 /**
@@ -379,6 +384,28 @@ export const funcs = {
 				obj[key] = input[key];
 				return obj;
 			}, {}),
+	flattenObject: <T extends Object>(ob: T) => {
+		if (!ob) return false;
+
+		var toReturn = {};
+
+		for (var i in ob) {
+			if (!ob.hasOwnProperty(i)) continue;
+
+			if (typeof ob[i] == 'object' && ob[i] !== null) {
+				var flatObject = flattenObject(ob[i]);
+				for (var x in flatObject) {
+					if (!flatObject.hasOwnProperty(x)) continue;
+
+					// @ts-ignore
+					toReturn[x] = flatObject[x];
+				}
+				// @ts-ignore
+			} else toReturn[i] = ob[i];
+		}
+
+		return toReturn;
+	},
 };
 Object.assign(globalThis, funcs);
 // String.prototype

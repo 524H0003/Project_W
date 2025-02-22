@@ -39,7 +39,8 @@ export class StudentService extends DatabaseRequests<Student> {
 	}: Required<Pick<IStudentSignUp, 'email'>>): Promise<void> {
 		const existedUser = await this.svc.baseUser.email(email);
 
-		if (existedUser) throw new ServerException('Invalid', 'User', 'SignUp');
+		if (existedUser.isNull())
+			throw new ServerException('Invalid', 'User', 'SignUp');
 		if (!email.match(this.studentMailRex))
 			throw new ServerException('Invalid', 'Email', '');
 

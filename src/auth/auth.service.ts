@@ -46,14 +46,16 @@ export class AuthService extends SecurityService {
 			{ role = UserRole.undefined } = options || {},
 			rawUser = new User({ ...input, email: input.email.lower, role });
 
-		if (user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
+		if (!user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
 
 		try {
 			return validation(rawUser, async () => {
-				const { id } = await this.usrSvc.assign({
-					...rawUser,
-					...rawUser.baseUser,
-				});
+				const id = (
+					await this.usrSvc.assign({
+						...rawUser,
+						...rawUser.baseUser,
+					})
+				).id;
 				return await this.usrSvc.modify(
 					id,
 					avatar
