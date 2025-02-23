@@ -41,8 +41,9 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 				await this.svc.auth.signUp(
 					InterfaceCasting.quick(input, IUserSignUpKeys),
 					avatar,
-					{ role: UserRole.faculty },
+					{ role: UserRole.faculty, raw: true },
 				),
+				{ raw: true },
 			);
 
 			return this.save({

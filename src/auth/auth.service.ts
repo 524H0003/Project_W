@@ -10,6 +10,7 @@ import { UserService } from 'user/user.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IAuthSignUpOption } from './auth.interface';
 import { JwtService } from '@nestjs/jwt';
+import { ExtendOptions } from 'app/utils/typeorm.utils';
 
 /**
  * Auth service
@@ -38,12 +39,12 @@ export class AuthService extends SecurityService {
 	async signUp(
 		input: IUserSignUp,
 		avatar: MulterFile,
-		options?: IAuthSignUpOption,
+		options?: IAuthSignUpOption & ExtendOptions,
 	): Promise<User> {
 		input = InterfaceCasting.quick(input, IUserSignUpKeys);
 
 		const user = await this.usrSvc.email(input.email),
-			{ role = UserRole.undefined } = options || {},
+			{ role = UserRole.undefined, raw = false } = options || {},
 			rawUser = new User({ ...input, email: input.email.lower, role });
 
 		if (!user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
@@ -63,6 +64,7 @@ export class AuthService extends SecurityService {
 								},
 							}
 						: {},
+					{ raw },
 				);
 			});
 		} catch (error) {

@@ -62,6 +62,6 @@ export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
 	}
 
 	isNull() {
-		return Object.keys(this).length != 0;
+		return Object.keys(this).length == 0;
 	}
 }

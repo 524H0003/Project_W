@@ -65,8 +65,8 @@ it('remove', async () => {
 	await execute(() => svc.user.remove(dbUser.id), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
-	await execute(() => svc.user.id(dbUser.id), {
-		exps: [{ type: 'toBeNull', params: [] }],
+	await execute(async () => (await svc.user.id(dbUser.id)).isNull(), {
+		exps: [{ type: 'toBe', params: [true] }],
 	});
 });
 

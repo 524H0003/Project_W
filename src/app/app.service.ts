@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests } from './utils/typeorm.utils';
+import { DatabaseRequests, ExtendOptions } from './utils/typeorm.utils';
 import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository, SaveOptions } from 'typeorm';
@@ -77,7 +77,7 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 */
 	async assign(
 		entity: DeepPartial<BaseUser>,
-		options?: SaveOptions,
+		options?: SaveOptions & ExtendOptions,
 	): Promise<BaseUser> {
 		return new BaseUser(
 			await this.save({ ...entity, email: entity.email.lower }, options),

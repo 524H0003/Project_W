@@ -22,7 +22,7 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 	constructor(payload: Omit<IEnterpriseAssign, 'signature'>) {
 		super();
 
-		if (payload) {
+		if ((payload = flattenObject(payload))) {
 			const baseUsrInfo = InterfaceCasting.quick(
 					payload!,
 					IBaseUserInfoKeys,

@@ -41,7 +41,7 @@ export class User extends BaseEntity implements IUserEntity {
 
 		if ((payload = flattenObject(payload))) {
 			this.baseUser = new BaseUser(
-				InterfaceCasting.quick(payload, [...IBaseUserInfoKeys]),
+				InterfaceCasting.quick(payload, IBaseUserInfoKeys),
 			);
 			Object.assign(
 				this,

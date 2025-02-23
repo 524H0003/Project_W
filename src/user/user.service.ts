@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import { DatabaseRequests, ExtendOptions } from 'app/utils/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { IUserAuthentication, IUserSensitive, UserRole } from './user.model';
@@ -28,8 +28,9 @@ export class UserService extends DatabaseRequests<User> {
 	 */
 	async assign(
 		entity: IUserAuthentication & IBaseUserInfo & IUserSensitive,
+		options?: ExtendOptions,
 	): Promise<User> {
-		const baseUser = await this.svc.baseUser.assign(entity),
+		const baseUser = await this.svc.baseUser.assign(entity, options),
 			user = new User({ ...entity, ...baseUser });
 
 		return this.save(user);
@@ -39,18 +40,19 @@ export class UserService extends DatabaseRequests<User> {
 	 * Modify user
 	 * @param {string} entityId - user's id
 	 * @param {DeepPartial<User>} updatedEntity - modified user
-	 * @return {Promise<User>}
+	 * @param {ExtendOptions} options - function options
 	 */
 	async modify(
 		entityId: string,
 		updatedEntity: DeepPartial<User>,
+		options?: ExtendOptions,
 	): Promise<User> {
 		const { id } = await this.svc.baseUser.modify(
 			entityId,
 			updatedEntity.baseUser,
 		);
 		await this.update({ baseUser: { id } }, updatedEntity);
-		return this.id(entityId);
+		return this.id(entityId, options);
 	}
 
 	/**
@@ -74,10 +76,11 @@ export class UserService extends DatabaseRequests<User> {
 	/**
 	 * Find user by id
 	 * @param {string} id - user's id
+	 * @param {ExtendOptions} options - function options
 	 * @return {Promise<User>}
 	 */
-	id(id: string): Promise<User> {
-		return this.findOne({ baseUser: { id }, deep: 2 });
+	id(id: string, options?: ExtendOptions): Promise<User> {
+		return this.findOne({ baseUser: { id }, deep: 2, ...options });
 	}
 
 	/**

@@ -22,7 +22,12 @@ export type FindOptionsWithCustom<T> = (
 	skip?: number;
 	order?: object;
 	relations?: string[];
-};
+} & ExtendOptions;
+
+/**
+ * Custom save options
+ */
+export type ExtendOptions = { raw?: boolean };
 
 /**
  * Non function properties
@@ -132,6 +137,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				take = 50,
 				skip = 0,
 				order = undefined,
+				raw = false,
 				...newOptions
 			} = options || {},
 			findRelations = this.relations
@@ -147,7 +153,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				order,
 				relations: findRelations,
 			})
-		).map((i) => new this.ctor(i));
+		).map((i) => (raw ? i : new this.ctor(i)));
 	}
 
 	/**
@@ -156,9 +162,13 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @return {Promise<T>}
 	 */
 	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
-		const { deep = 1, relations = [''], ...newOptions } = options || {};
-		return new this.ctor(
-			await this.repo.findOne({
+		const {
+				deep = 1,
+				relations = [''],
+				raw = false,
+				...newOptions
+			} = options || {},
+			result = await this.repo.findOne({
 				where: <FindOptionsWhere<T>>newOptions,
 				relations: deep
 					? this.relations
@@ -166,8 +176,8 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 							.filter((i) => relations.some((j) => i.includes(j)))
 							.filter((value, index, self) => self.indexOf(value) === index)
 					: undefined,
-			}),
-		);
+			});
+		return raw ? result : new this.ctor(result);
 	}
 
 	/**
@@ -189,11 +199,12 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 */
 	protected async save(
 		entity: NonFunctionProperties<T>,
-		options?: SaveOptions,
+		options?: SaveOptions & ExtendOptions,
 	): Promise<T> {
-		return new this.ctor(
-			await this.repo.save(entity as DeepPartial<T>, options),
-		);
+		const { raw = false, ...rest } = options || {},
+			result = await this.repo.save(entity as DeepPartial<T>, rest);
+
+		return raw ? result : new this.ctor(result);
 	}
 
 	/**

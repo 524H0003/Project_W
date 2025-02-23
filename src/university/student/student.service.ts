@@ -47,7 +47,7 @@ export class StudentService extends DatabaseRequests<Student> {
 		const student = await this.svc.auth.signUp(
 			{ email, name: email, password: (32).string + '!1Aa' },
 			null,
-			{ role: UserRole.student },
+			{ role: UserRole.student, raw: true },
 		);
 
 		await this.save({

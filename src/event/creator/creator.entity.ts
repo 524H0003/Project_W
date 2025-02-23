@@ -22,7 +22,7 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 	constructor(payload: IUserSignUp & IUserSensitive) {
 		super();
 
-		if (payload) {
+		if ((payload = flattenObject(payload))) {
 			this.user = new User(
 				InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,
