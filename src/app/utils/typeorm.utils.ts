@@ -47,10 +47,19 @@ type NonFunctionProperties<T> = DeepPartial<
 export type NonArray<T> = T extends (infer U)[] ? U : T;
 
 /**
+ * Server entity base
+ */
+export class BaseEntity extends TypeOrmBaseEntity {
+	isNull() {
+		return Object.keys(this).length == 0;
+	}
+}
+
+/**
  * Sensitive infomations in entity
  */
 @ObjectType()
-export class SensitiveInfomations extends TypeOrmBaseEntity {
+export class SensitiveInfomations extends BaseEntity {
 	/**
 	 * Initiate sensitive infomation
 	 */
@@ -63,12 +72,6 @@ export class SensitiveInfomations extends TypeOrmBaseEntity {
 	 * Unique identifier
 	 */
 	@Field() @PrimaryGeneratedColumn('uuid') id: string;
-}
-
-export class BaseEntity extends TypeOrmBaseEntity {
-	isNull() {
-		return Object.keys(this).length == 0;
-	}
 }
 
 /**

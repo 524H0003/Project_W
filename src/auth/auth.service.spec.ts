@@ -42,7 +42,9 @@ describe('AuthService', () => {
 	describe('login', () => {
 		let dbUser: User;
 		beforeEach(async () => {
-			dbUser = await svc.auth.signUp({ ...user, ...user.baseUser }, null);
+			dbUser = await svc.auth.signUp({ ...user, ...user.baseUser }, null, {
+				raw: true,
+			});
 		});
 
 		it('success', async () => {

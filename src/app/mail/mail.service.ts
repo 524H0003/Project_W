@@ -33,7 +33,7 @@ export class MailService {
 	): Promise<BaseUser> {
 		const baseUser = await this.svc.baseUser.email(email);
 
-		if (!baseUser && email !== this.svc.cfg.get('ADMIN_EMAIL'))
+		if (baseUser.isNull() && email !== this.svc.cfg.get('ADMIN_EMAIL'))
 			throw new ServerException('Invalid', 'Email', '');
 
 		await this.mailerService.sendMail({

@@ -84,7 +84,7 @@ export class AuthService extends SecurityService {
 	 * @return {Promise<User>} user's recieve infomations
 	 */
 	async login({ email, password }: IUserLogIn): Promise<User> {
-		const user = await this.usrSvc.email(email);
+		const user = await this.usrSvc.email(email, { raw: true });
 
 		if (user) {
 			if (await compare(password, user.hashedPassword)) return user;

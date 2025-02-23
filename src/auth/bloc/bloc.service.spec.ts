@@ -51,10 +51,10 @@ describe('removeStrayTree', () => {
 		});
 
 		await execute(() => svc.bloc.findOne({ id: childId }), {
-			exps: [{ type: 'toBeNull', params: [] }],
+			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 		await execute(() => svc.bloc.findOne({ id: rootId }), {
-			exps: [{ type: 'toBeNull', params: [] }],
+			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});
 
@@ -92,10 +92,10 @@ describe('removeTree', () => {
 		});
 
 		await execute(() => svc.bloc.findOne({ id: childId }), {
-			exps: [{ type: 'toBeNull', params: [] }],
+			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 		await execute(() => svc.bloc.findOne({ id: rootId }), {
-			exps: [{ type: 'toBeNull', params: [] }],
+			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});
 
@@ -141,7 +141,7 @@ describe('randomRemoveTree', () => {
 		});
 
 		await execute(() => svc.bloc.findOne({ id: childBloc.id }), {
-			exps: [{ type: 'toBeNull', params: [] }],
+			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});
 
@@ -157,10 +157,10 @@ describe('randomRemoveTree', () => {
 		});
 
 		await execute(() => svc.bloc.findOne({ id: childBloc.id }), {
-			exps: [{ type: 'toBeNull', params: [] }],
+			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 		await execute(() => svc.bloc.findOne({ id: rootId }), {
-			exps: [{ type: 'toBeNull', params: [] }],
+			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});
 

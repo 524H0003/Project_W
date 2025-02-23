@@ -69,7 +69,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		if (prev) {
 			const prevBloc = await this.findOne({ hash: prev });
 
-			if (!prevBloc || (await this.removeStrayTree(prevBloc.id))) {
+			if (prevBloc.isNull() || (await this.removeStrayTree(prevBloc.id))) {
 				await this.removeBloc(deleteId);
 				return true;
 			}
@@ -90,7 +90,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		if (prev) {
 			const prevBloc = await this.findOne({ hash: prev });
 
-			if (prevBloc) await this.removeTree(prevBloc.id);
+			if (!prevBloc.isNull()) await this.removeTree(prevBloc.id);
 		}
 
 		await this.removeBloc(deleteId);
