@@ -32,13 +32,11 @@ export type ExtendOptions = { raw?: boolean };
 /**
  * Non function properties
  */
-type NonFunctionProperties<T> = DeepPartial<
-	Pick<
-		T,
-		{
-			[K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
-		}[keyof T]
-	>
+export type NonFunctionProperties<T> = Pick<
+	T,
+	{
+		[K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
+	}[keyof T]
 >;
 
 /**
@@ -201,7 +199,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {SaveOptions} options - function's option
 	 */
 	protected async save(
-		entity: NonFunctionProperties<T>,
+		entity: DeepPartial<NonFunctionProperties<T>>,
 		options?: SaveOptions & ExtendOptions,
 	): Promise<T> {
 		const { raw = false, ...rest } = options || {},
