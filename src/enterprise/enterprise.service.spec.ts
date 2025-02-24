@@ -26,9 +26,7 @@ describe('EnterpriseService', () => {
 				onFinish: async ({ description }: Enterprise) => {
 					await execute(
 						() => svc.enterprise.findOne({ description, raw: true }),
-						{
-							exps: [{ type: 'toBeDefined', params: [] }],
-						},
+						{ exps: [{ type: 'toBeDefined', params: [] }] },
 					);
 				},
 			},

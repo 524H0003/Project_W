@@ -41,11 +41,7 @@ export class AuthService extends SecurityService {
 	): Promise<User> {
 		const user = await this.usrSvc.email(email),
 			{ role = UserRole.undefined, raw = false } = options || {},
-			rawUser = new User({
-				password,
-				baseUser: { email, name },
-				role,
-			});
+			rawUser = new User({ password, baseUser: { email, name }, role });
 
 		if (!user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
 

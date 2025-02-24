@@ -66,10 +66,7 @@ export class Enterprise extends BaseEntity implements IEnterpriseEntity {
 		return new Enterprise({
 			description: (20).string,
 			industry: (20).string,
-			baseUser: {
-				email: (30).string + '@lmao.uk',
-				name: from,
-			},
+			baseUser: { email: (30).string + '@lmao.uk', name: from },
 		});
 	}
 
