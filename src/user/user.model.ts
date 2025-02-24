@@ -29,7 +29,7 @@ export interface IUserTimeRecord {
 	/**
 	 * User's last login date
 	 */
-	lastLogin: Date;
+	lastLogin?: Date;
 }
 
 /**
@@ -39,7 +39,7 @@ export interface IUserStatus {
 	/**
 	 * Is user active
 	 */
-	isActive: boolean;
+	isActive?: boolean;
 }
 
 /**
@@ -57,9 +57,9 @@ export interface IUserSensitive {
  */
 export interface IUserRelationship {
 	baseUser: IBaseUserEntity;
-	recievedNotifications: IRecieverEntity[];
-	uploadFiles: IFile[];
-	participatedEvents: IEventParticipatorEntiy[];
+	recievedNotifications?: IRecieverEntity[];
+	uploadFiles?: IFile[];
+	participatedEvents?: IEventParticipatorEntiy[];
 }
 
 /**
@@ -68,9 +68,7 @@ export interface IUserRelationship {
 export interface IUserEntity
 	extends IUserAuthentication,
 		IUserInfo,
-		IUserRelationship {
-	readonly info: IUserInfo;
-}
+		IUserRelationship {}
 
 /**
  * Server response interface

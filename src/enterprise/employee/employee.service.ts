@@ -79,7 +79,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			}),
 			eventCreator = await this.svc.eventCreator.assign(user, { raw: true });
 
-		return await this.save({
+		return this.save({
 			eventCreator,
 			enterprise,
 			...InterfaceCasting.quick(input, IEmployeeInfoKeys),

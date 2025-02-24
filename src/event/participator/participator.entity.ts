@@ -3,13 +3,13 @@ import {
 	EventParticipatorRole,
 	EventParticipatorStatus,
 	IEventParticipatorEntiy,
-	IEventParticipatorInfo,
 } from './participator.model';
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import {
+	NonFunctionProperties,
+	SensitiveInfomations,
+} from 'app/utils/typeorm.utils';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
-import { InterfaceCasting } from 'app/utils/utils';
-import { IEventParticipatorInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
 
@@ -24,16 +24,12 @@ export class EventParticipator
 {
 	/**
 	 * Initiate event participator entity
-	 * @param {IEventParticipatorInfo} input - entity input
+	 * @param {NonFunctionProperties<IEventParticipatorEntiy>} payload - entity payload
 	 */
-	constructor(input: IEventParticipatorInfo) {
+	constructor(payload: NonFunctionProperties<IEventParticipatorEntiy>) {
 		super();
 
-		if (input)
-			Object.assign(
-				this,
-				InterfaceCasting.quick(input, IEventParticipatorInfoKeys),
-			);
+		if (payload) Object.assign(this, payload);
 	}
 
 	// Relationships

@@ -30,7 +30,7 @@ export interface IBaseUserEmail {
  * Base user relationships
  */
 export interface IBaseUserRelationships {
-	hooks: IHook[];
+	hooks?: IHook[];
 }
 
 /**

@@ -1,15 +1,8 @@
 import { Column, Entity } from 'typeorm';
-import { IFacultyEntity, IFacultyInfo } from './faculty.model';
+import { IFacultyEntity } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
-import { InterfaceCasting } from 'app/utils/utils';
-import {
-	IBaseUserInfoKeys,
-	IFacultyInfoKeys,
-	IUserAuthenticationKeys,
-} from 'build/models';
 import { IsString } from 'class-validator';
-import { IUserSignUp, UserRole } from 'user/user.model';
-import { BaseEntity } from 'app/utils/typeorm.utils';
+import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
 
 /**
  * Faculty entity
@@ -19,20 +12,10 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 	/**
 	 * Initiate faculty object
 	 */
-	constructor(payload: IFacultyInfo & IUserSignUp) {
+	constructor(payload: NonFunctionProperties<IFacultyEntity>) {
 		super();
 
-		if (payload instanceof Faculty) Object.assign(this, payload);
-		else if (payload) {
-			this.eventCreator = new EventCreator({
-				...InterfaceCasting.quick(payload, [
-					...IUserAuthenticationKeys,
-					...IBaseUserInfoKeys,
-				]),
-				role: UserRole.faculty,
-			});
-			Object.assign(this, InterfaceCasting.quick(payload, IFacultyInfoKeys));
-		}
+		if (payload) Object.assign(this, payload);
 	}
 
 	// Core Entity
@@ -58,11 +41,6 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 	static test(from: string, options?: { department?: string }) {
 		const { department = (10).string } = options || {},
 			eventCreator = EventCreator.test(from);
-		return new Faculty({
-			department,
-			...eventCreator,
-			...eventCreator.user,
-			...eventCreator.user.baseUser,
-		});
+		return new Faculty({ department, eventCreator });
 	}
 }

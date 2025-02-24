@@ -14,7 +14,7 @@ export interface IEventCreatorRelationship {
 	/**
 	 * Created events
 	 */
-	createdEvents: IEventEntity[];
+	createdEvents?: IEventEntity[];
 }
 
 /**

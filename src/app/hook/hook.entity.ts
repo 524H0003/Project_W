@@ -1,4 +1,7 @@
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import {
+	NonFunctionProperties,
+	SensitiveInfomations,
+} from 'app/utils/typeorm.utils';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { IHook } from './hook.model';
 import { BlackBox } from 'app/utils/model.utils';
@@ -12,11 +15,12 @@ import { MetaData } from 'auth/guards';
 export class Hook extends SensitiveInfomations implements IHook {
 	/**
 	 * Create hook with infomations
-	 * @param {IHook} input - the hook's infomations
+	 * @param {NonFunctionProperties<IHook>} input - the hook's infomations
 	 */
-	constructor(input: IHook) {
+	constructor(input: NonFunctionProperties<IHook>) {
 		super();
-		Object.assign(this, input);
+
+		if (input) Object.assign(this, input);
 	}
 
 	// Relationships

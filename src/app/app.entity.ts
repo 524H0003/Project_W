@@ -1,5 +1,8 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { SensitiveInfomations } from './utils/typeorm.utils';
+import {
+	NonFunctionProperties,
+	SensitiveInfomations,
+} from './utils/typeorm.utils';
 import { IBaseUserEntity, IBaseUserInfo } from './app.model';
 import { InterfaceCasting } from './utils/utils';
 import { Hook } from './hook/hook.entity';
@@ -10,12 +13,13 @@ import { IBaseUserInfoKeys } from 'build/models';
  */
 @Entity({ name: 'app_user' })
 export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
-	constructor(payload: IBaseUserInfo) {
+	/**
+	 * @param {NonFunctionProperties<IBaseUserEntity>} payload - entity payload
+	 */
+	constructor(payload: NonFunctionProperties<IBaseUserEntity>) {
 		super();
-		if (payload) {
-			payload = InterfaceCasting.quick(payload, IBaseUserInfoKeys) as BaseUser;
-			Object.assign(this, payload);
-		}
+
+		if (payload) Object.assign(this, payload);
 	}
 
 	// Relationships
