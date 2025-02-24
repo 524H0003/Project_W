@@ -21,7 +21,7 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	/**
 	 * Create employee entity with infomations
 	 */
-	constructor(payload: NonFunctionProperties<Employee>) {
+	constructor(payload: NonFunctionProperties<IEmployeeEntity>) {
 		super();
 
 		if (payload) Object.assign(this, payload);
