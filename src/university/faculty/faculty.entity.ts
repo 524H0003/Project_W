@@ -22,7 +22,8 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 	constructor(payload: IFacultyInfo & IUserSignUp) {
 		super();
 
-		if ((payload = flattenObject(payload))) {
+		if (payload instanceof Faculty) Object.assign(this, payload);
+		else if (payload) {
 			this.eventCreator = new EventCreator({
 				...InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,

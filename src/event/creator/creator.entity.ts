@@ -22,7 +22,8 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 	constructor(payload: IUserSignUp & IUserSensitive) {
 		super();
 
-		if ((payload = flattenObject(payload))) {
+		if (payload instanceof EventCreator) Object.assign(this, payload);
+		else if (payload) {
 			this.user = new User(
 				InterfaceCasting.quick(payload, [
 					...IUserAuthenticationKeys,

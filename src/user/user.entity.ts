@@ -39,7 +39,8 @@ export class User extends BaseEntity implements IUserEntity {
 	constructor(payload: IUserAuthentication & IUserSensitive & IBaseUserInfo) {
 		super();
 
-		if ((payload = flattenObject(payload))) {
+		if (payload instanceof User) Object.assign(this, payload);
+		else if (payload) {
 			this.baseUser = new BaseUser(
 				InterfaceCasting.quick(payload, IBaseUserInfoKeys),
 			);

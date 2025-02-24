@@ -24,7 +24,8 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	constructor(payload: IEmployeeInfo & IUserAuthentication & IBaseUserInfo) {
 		super();
 
-		if (payload) {
+		if (payload instanceof Employee) Object.assign(this, payload);
+		else if (payload) {
 			this.eventCreator = new EventCreator({
 				...payload,
 				role: UserRole.enterprise,
