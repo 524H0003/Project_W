@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { compare, SecurityService, validation } from 'app/utils/auth.utils';
-import { InterfaceCasting } from 'app/utils/utils';
 import { FileService } from 'file/file.service';
-import { IUserSignUpKeys } from 'build/models';
 import { User } from 'user/user.entity';
 import { IUserLogIn, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
@@ -37,24 +35,24 @@ export class AuthService extends SecurityService {
 	 * @return {Promise<User>} user's recieve infomations
 	 */
 	async signUp(
-		input: IUserSignUp,
+		{ name, email, password }: IUserSignUp,
 		avatar: MulterFile,
 		options?: IAuthSignUpOption & ExtendOptions,
 	): Promise<User> {
-		input = InterfaceCasting.quick(input, IUserSignUpKeys);
-
-		const user = await this.usrSvc.email(input.email),
+		const user = await this.usrSvc.email(email),
 			{ role = UserRole.undefined, raw = false } = options || {},
-			rawUser = new User({ ...input, email: input.email.lower, role });
+			rawUser = new User({
+				password,
+				baseUser: { email, name },
+				role,
+			});
 
 		if (!user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
 
 		try {
 			return validation(rawUser, async () => {
-				const { id } = await this.usrSvc.assign({
-					...rawUser,
-					...rawUser.baseUser,
-				});
+				const { id } = await this.usrSvc.assign(rawUser);
+
 				return await this.usrSvc.modify(
 					id,
 					avatar
@@ -105,6 +103,9 @@ export class AuthService extends SecurityService {
 	): Promise<User> {
 		const { name, email } = baseUser;
 
-		return this.usrSvc.modify(id, new User({ password, name, email, role }));
+		return this.usrSvc.modify(
+			id,
+			new User({ password, baseUser: { name, email }, role }),
+		);
 	}
 }

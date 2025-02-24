@@ -70,7 +70,7 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	 * Get entity id
 	 */
 	get id(): string {
-		return this.eventCreator.id;
+		return this.eventCreator.user.baseUser.id;
 	}
 
 	/**

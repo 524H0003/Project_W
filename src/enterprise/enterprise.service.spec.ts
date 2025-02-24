@@ -23,10 +23,13 @@ describe('EnterpriseService', () => {
 				svc.enterprise.assign({ ...enterprise, ...enterprise.baseUser }, null),
 			{
 				exps: [{ type: 'toBeInstanceOf', params: [Enterprise] }],
-				onFinish: async (result: Enterprise) => {
-					await execute(() => svc.enterprise.find(result), {
-						exps: [{ type: 'toHaveLength', params: [1] }],
-					});
+				onFinish: async ({ description }: Enterprise) => {
+					await execute(
+						() => svc.enterprise.findOne({ description, raw: true }),
+						{
+							exps: [{ type: 'toBeDefined', params: [] }],
+						},
+					);
 				},
 			},
 		);

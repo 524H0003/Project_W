@@ -35,7 +35,7 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 	 * Get entity id
 	 */
 	get id(): string {
-		return this.eventCreator.id;
+		return this.eventCreator.user.baseUser.id;
 	}
 
 	static test(from: string, options?: { department?: string }) {

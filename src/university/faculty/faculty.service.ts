@@ -1,15 +1,15 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import {
+	DatabaseRequests,
+	NonFunctionProperties,
+} from 'app/utils/typeorm.utils';
 import { Faculty } from './faculty.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { InterfaceCasting } from 'app/utils/utils';
-import { IFacultyInfoKeys, IUserSignUpKeys } from 'build/models';
-import { IFacultyAssign } from './faculty.model';
 import { validation } from 'app/utils/auth.utils';
-import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { IFacultyEntity } from './faculty.model';
 
 /**
  * Faculty service
@@ -29,27 +29,29 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 	/**
 	 * Create faculty
 	 */
-	async assign(input: IFacultyAssign, avatar: MulterFile): Promise<Faculty> {
-		const existedUser = await this.svc.baseUser.email(input.email),
-			rawFaculty = new Faculty(input);
+	async assign(
+		{ eventCreator, department }: NonFunctionProperties<IFacultyEntity>,
+		avatar: MulterFile,
+	): Promise<Faculty> {
+		const { user } = eventCreator,
+			{ baseUser, password, role } = user,
+			{ email, name } = baseUser,
+			existedUser = await this.svc.baseUser.email(email),
+			rawFaculty = new Faculty({ eventCreator, department });
 
 		if (!existedUser.isNull())
 			throw new ServerException('Invalid', 'Email', '');
 
 		return validation<Faculty>(rawFaculty, async () => {
 			const eventCreator = await this.svc.eventCreator.assign(
-				await this.svc.auth.signUp(
-					InterfaceCasting.quick(input, IUserSignUpKeys),
-					avatar,
-					{ role: UserRole.faculty, raw: true },
-				),
+				await this.svc.auth.signUp({ name, email, password }, avatar, {
+					role,
+					raw: true,
+				}),
 				{ raw: true },
 			);
 
-			return this.save({
-				eventCreator,
-				...InterfaceCasting.quick(input, IFacultyInfoKeys),
-			});
+			return this.save({ eventCreator, department });
 		});
 	}
 

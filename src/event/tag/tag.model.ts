@@ -9,7 +9,7 @@ export interface ITagRelationships {
 	/**
 	 * Tag to event
 	 */
-	toEvents: IEventEntity[];
+	toEvents?: IEventEntity[];
 }
 
 /**

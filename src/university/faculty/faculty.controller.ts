@@ -17,6 +17,7 @@ import { memoryStorage } from 'fastify-multer';
 import { Hook } from 'app/hook/hook.entity';
 import { FacultyAssign } from './faculty.dto';
 import { GetMetaData, GetRequest, HookGuard, MetaData } from 'auth/guards';
+import { UserRole } from 'user/user.model';
 
 /**
  * Faculty controller
@@ -42,7 +43,7 @@ export class FacultyController extends BaseController {
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
-		@Body() { signature, ...body }: FacultyAssign,
+		@Body() { signature, department, password, ...body }: FacultyAssign,
 		@GetMetaData() mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 		@GetRequest('hook') hook: Hook,
@@ -50,7 +51,17 @@ export class FacultyController extends BaseController {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
 		return this.svc.bloc.getTokens(
-			(await this.svc.faculty.assign(body, avatar)).id,
+			(
+				await this.svc.faculty.assign(
+					{
+						eventCreator: {
+							user: { baseUser: body, password, role: UserRole['faculty'] },
+						},
+						department,
+					},
+					avatar,
+				)
+			).id,
 			mtdt,
 		);
 	}

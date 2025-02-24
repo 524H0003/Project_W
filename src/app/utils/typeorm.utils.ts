@@ -229,7 +229,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {NonArray<T[K]>} entity - the push entity
 	 */
 	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
-		const obj = await this.id(id);
+		const obj = await this.id(id, { raw: true } as any);
 		obj[field as unknown as string].push(entity);
 		return this.save(obj);
 	}

@@ -1,5 +1,5 @@
 import { IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
-import { IEnterprise } from 'enterprise/enterprise.model';
+import { IEnterpriseEntity } from 'enterprise/enterprise.model';
 import { IEventCreatorEntity } from 'event/creator/creator.model';
 import { IUserSignUp } from 'user/user.model';
 
@@ -19,7 +19,7 @@ export interface IEmployeeInfo {
  */
 export interface IEmployeeRelationship {
 	eventCreator: IEventCreatorEntity;
-	enterprise: IEnterprise;
+	enterprise: IEnterpriseEntity;
 }
 /**
  * @ignore

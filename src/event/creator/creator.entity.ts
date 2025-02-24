@@ -37,7 +37,7 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 	 * Get entity id
 	 */
 	get id(): string {
-		return this.user.id;
+		return this.user.baseUser.id;
 	}
 
 	/**

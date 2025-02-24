@@ -68,9 +68,7 @@ export class EmployeeController extends BaseController {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
 		const { id } = await this.svc.employee.assign(
-			{ password, ...hook.note } as unknown as IEmployeeSignUp & {
-				enterpriseId: string;
-			},
+			{ password, ...hook.note } as IEmployeeSignUp,
 			avatar,
 		);
 

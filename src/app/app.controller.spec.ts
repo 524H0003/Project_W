@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
 
 const fileName = curFile(__filename);
 
-let req: RequesterType, usr: User, config: ConfigService, svc: AppService;
+let req: RequesterType, user: User, config: ConfigService, svc: AppService;
 
 beforeAll(async () => {
 	const { appSvc, requester, module } = await initJest();
@@ -21,7 +21,7 @@ beforeAll(async () => {
 });
 
 beforeEach(() => {
-	usr = User.test(fileName);
+	user = User.test(fileName);
 });
 
 describe('signUp', () => {
@@ -30,7 +30,7 @@ describe('signUp', () => {
 			() =>
 				req()
 					.post('/sign-up')
-					.body({ ...usr, ...usr.baseUser }),
+					.body({ ...user, ...user.baseUser }),
 			{
 				exps: [
 					{
@@ -44,15 +44,15 @@ describe('signUp', () => {
 			},
 		);
 
-		delete usr.password;
+		delete user.password;
 
-		await execute(() => svc.user.email(usr.baseUser.email), {
+		await execute(() => svc.user.email(user.baseUser.email), {
 			exps: [
 				{ type: 'toBeInstanceOf', params: [User] },
 				{
 					type: 'toMatchObject',
 					params: [
-						{ ...usr, baseUser: { email: usr.baseUser.email.toLowerCase() } },
+						{ ...user, baseUser: { email: user.baseUser.email.toLowerCase() } },
 					],
 				},
 			],
@@ -62,7 +62,7 @@ describe('signUp', () => {
 				svc.bloc.find({
 					ownerId: (
 						await svc.user.findOne({
-							baseUser: { email: usr.baseUser.email.lower },
+							baseUser: { email: user.baseUser.email.lower },
 						})
 					).id,
 				}),
@@ -73,14 +73,14 @@ describe('signUp', () => {
 	it('fail due to email already exist', async () => {
 		await req()
 			.post('/sign-up')
-			.body({ ...usr, ...usr.baseUser });
+			.body({ ...user, ...user.baseUser });
 
 		await execute(
 			async () =>
 				(
 					await req()
 						.post('/sign-up')
-						.body({ ...usr, ...usr.baseUser })
+						.body({ ...user, ...user.baseUser })
 				).body,
 			{
 				exps: [
@@ -96,7 +96,7 @@ describe('login', () => {
 		async () =>
 			await req()
 				.post('/sign-up')
-				.body({ ...usr, ...usr.baseUser }),
+				.body({ ...user, ...user.baseUser }),
 	);
 
 	it('success', async () => {
@@ -105,7 +105,7 @@ describe('login', () => {
 				(
 					await req()
 						.post('/login')
-						.body({ ...usr, ...usr.baseUser })
+						.body({ ...user, ...user.baseUser })
 				).headers['set-cookie'],
 			{
 				exps: [
@@ -124,7 +124,7 @@ describe('login', () => {
 				svc.bloc.find({
 					ownerId: (
 						await svc.user.findOne({
-							baseUser: { email: usr.baseUser.email.lower },
+							baseUser: { email: user.baseUser.email.lower },
 						})
 					).id,
 				}),
@@ -133,14 +133,14 @@ describe('login', () => {
 	});
 
 	it('fail due to wrong password', async () => {
-		usr = new User({ ...usr, ...usr.baseUser, password: (12).string });
+		user = new User({ ...user, password: (12).string });
 
 		await execute(
 			async () =>
 				(
 					await req()
 						.post('/login')
-						.body({ ...usr, ...usr.baseUser })
+						.body({ ...user, ...user.baseUser })
 				).body,
 			{
 				exps: [{ type: 'toContain', params: [err('Invalid', 'Password', '')] }],
@@ -149,14 +149,17 @@ describe('login', () => {
 	});
 
 	it('fail due to invalid email', async () => {
-		usr = new User({ ...usr, ...usr.baseUser, email: (20).string });
+		user = new User({
+			...user,
+			baseUser: { ...user.baseUser, email: (20).string },
+		});
 
 		await execute(
 			async () =>
 				(
 					await req()
 						.post('/login')
-						.body({ ...usr, ...usr.baseUser })
+						.body({ ...user, ...user.baseUser })
 				).body,
 			{ exps: [{ type: 'toContain', params: [err('Invalid', 'Email', '')] }] },
 		);
@@ -170,7 +173,7 @@ describe('logout', () => {
 		async () =>
 			({ headers } = await req()
 				.post('/sign-up')
-				.body({ ...usr, ...usr.baseUser })),
+				.body({ ...user, ...user.baseUser })),
 	);
 
 	it('success', async () => {
@@ -192,7 +195,7 @@ describe('logout', () => {
 							svc.bloc.find({
 								ownerId: (
 									await svc.user.findOne({
-										baseUser: { email: usr.baseUser.email.lower },
+										baseUser: { email: user.baseUser.email.lower },
 									})
 								).id,
 							}),
@@ -219,7 +222,7 @@ describe('refresh', () => {
 		async () =>
 			({ headers } = await req()
 				.post('/sign-up')
-				.body({ ...usr, ...usr.baseUser })),
+				.body({ ...user, ...user.baseUser })),
 	);
 
 	it('success', async () => {

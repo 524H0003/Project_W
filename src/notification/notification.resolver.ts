@@ -32,7 +32,7 @@ export class NotificationResolver {
 	async updateNotification(@Args('input') input: NotificationUpdate) {
 		const notification = await this.svc.notification.findOne({ id: input.id });
 
-		if (!notification) throw new ServerException('Invalid', 'Notification', '');
+		if (notification.isNull()) throw new ServerException('Invalid', 'Notification', '');
 
 		return this.svc.notification.modify(notification.id, input);
 	}

@@ -1,11 +1,14 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseRequests, ExtendOptions } from 'app/utils/typeorm.utils';
+import {
+	DatabaseRequests,
+	ExtendOptions,
+	NonFunctionProperties,
+} from 'app/utils/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
-import { IUserAuthentication, IUserSensitive, UserRole } from './user.model';
+import { IUserEntity, UserRole } from './user.model';
 import { AppService } from 'app/app.service';
-import { IBaseUserInfo } from 'app/app.model';
 
 /**
  * Services for user
@@ -27,11 +30,11 @@ export class UserService extends DatabaseRequests<User> {
 	 * @param {User} entity - the assigning user
 	 */
 	async assign(
-		entity: IUserAuthentication & IBaseUserInfo & IUserSensitive,
+		{ baseUser, role, password }: NonFunctionProperties<IUserEntity>,
 		options?: ExtendOptions,
 	): Promise<User> {
-		const baseUser = await this.svc.baseUser.assign(entity, options),
-			user = new User({ ...entity, ...baseUser });
+		const assignedBaseUser = await this.svc.baseUser.assign(baseUser, options),
+			user = new User({ baseUser: assignedBaseUser, role, password });
 
 		return this.save(user);
 	}
