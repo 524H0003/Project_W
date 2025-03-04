@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import { DatabaseRequests, ExtendOptions } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
@@ -19,16 +19,16 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
-		super(repo);
+		super(repo, EventCreator);
 	}
 
 	/**
 	 * Assign event creator
 	 * @param {User} user - the user assign for event creator
-	 * @return {Promise<EventCreator>}
+	 * @param {ExtendOptions} options - function options
 	 */
-	async assign(user: User): Promise<EventCreator> {
-		return await this.save({ user });
+	assign(user: User, options?: ExtendOptions): Promise<EventCreator> {
+		return this.save({ user }, options);
 	}
 
 	/**

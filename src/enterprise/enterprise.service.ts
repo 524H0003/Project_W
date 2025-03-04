@@ -2,17 +2,12 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
 	DatabaseRequests,
 	FindOptionsWithCustom,
+	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
 import { Enterprise } from './enterprise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository, SaveOptions } from 'typeorm';
-import { IEnterpriseAssign } from './enterprise.model';
-import { InterfaceCasting } from 'app/utils/utils';
-import {
-	IBaseUserInfoKeys,
-	IEnterpriseAssignKeys,
-	IEnterpriseKeys,
-} from 'build/models';
+import { IEnterpriseAssign, IEnterpriseEntity } from './enterprise.model';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
@@ -28,7 +23,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 		@InjectRepository(Enterprise) repo: Repository<Enterprise>,
 		@Inject(forwardRef(() => AppService)) public svc: AppService,
 	) {
-		super(repo);
+		super(repo, Enterprise);
 	}
 
 	/**
@@ -38,40 +33,34 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	 * @return {Promise<Enterprise>}
 	 */
 	async assign(
-		input: IEnterpriseAssign,
+		{ name, industry, email, description }: IEnterpriseAssign,
 		avatar: MulterFile,
 	): Promise<Enterprise> {
 		const save = async (
-			entity: DeepPartial<Enterprise>,
+			entity: NonFunctionProperties<IEnterpriseEntity>,
 			options?: SaveOptions,
 		): Promise<Enterprise> => {
-			entity = InterfaceCasting.quick(entity, IEnterpriseKeys);
 			const baseUser = await this.svc.baseUser.assign(entity.baseUser);
 			return this.save({ ...entity, baseUser }, options);
 		};
 
-		input = InterfaceCasting.quick(input, [
-			...IEnterpriseAssignKeys,
-			...IBaseUserInfoKeys,
-		]);
-
-		const result = await save({
-			...input,
+		return save({
 			baseUser: {
-				...InterfaceCasting.quick(input, IBaseUserInfoKeys),
+				name,
+				email,
 				avatarPath: avatar
 					? (
 							await this.svc.file.assign(
 								avatar,
 								null,
-								`${input.name}.${input.industry}.logo`,
+								`${name}.${industry}.logo`,
 							)
 						).path
 					: undefined,
 			},
+			industry,
+			description,
 		});
-
-		return new Enterprise({ ...result, ...result.baseUser });
 	}
 
 	/**

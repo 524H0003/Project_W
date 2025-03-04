@@ -1,35 +1,26 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
-import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
-import { IEnterprise, IEnterpriseAssign } from './enterprise.model';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { IEnterpriseEntity } from './enterprise.model';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { BaseUser } from 'app/app.entity';
-import { InterfaceCasting } from 'app/utils/utils';
-import { IBaseUserInfoKeys, IEnterpriseInfoKeys } from 'build/models';
+import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
 
 /**
  * Enterprise entity
  */
 @ObjectType()
 @Entity({ name: 'Enterprise' })
-export class Enterprise extends BaseEntity implements IEnterprise {
+export class Enterprise extends BaseEntity implements IEnterpriseEntity {
 	/**
 	 * Create enterprise with infomations
-	 * @param {IEnterprise} payload - the infomations
+	 * @param {NonFunctionProperties<IEnterpriseEntity>} payload - the infomations
 	 */
-	constructor(payload: Omit<IEnterpriseAssign, 'signature'>) {
+	constructor(payload: NonFunctionProperties<IEnterpriseEntity>) {
 		super();
 
-		if (payload) {
-			const baseUsrInfo = InterfaceCasting.quick(
-					payload!,
-					IBaseUserInfoKeys,
-				) as unknown as BaseUser,
-				usrInfo = InterfaceCasting.quick(payload!, IEnterpriseInfoKeys);
-			Object.assign(this, usrInfo);
-			this.baseUser = baseUsrInfo;
-		}
+		if (payload) Object.assign(this, payload);
 	}
 
 	// Core Entity
@@ -73,10 +64,9 @@ export class Enterprise extends BaseEntity implements IEnterprise {
 	 */
 	static test(from: string) {
 		return new Enterprise({
-			name: from,
 			description: (20).string,
 			industry: (20).string,
-			email: (30).string + '@lmao.uk',
+			baseUser: { email: (30).string + '@lmao.uk', name: from },
 		});
 	}
 

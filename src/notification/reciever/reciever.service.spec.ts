@@ -18,7 +18,7 @@ beforeAll(async () => {
 	const rawUser = User.test(fileName);
 
 	(notification = await svc.notification.assign(Notification.test(fileName))),
-		(user = await svc.user.assign({ ...rawUser, ...rawUser.baseUser }));
+		(user = await svc.user.assign({ ...rawUser }));
 });
 
 describe('assign', () => {

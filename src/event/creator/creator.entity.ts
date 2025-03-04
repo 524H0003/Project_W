@@ -1,14 +1,8 @@
-import { BaseEntity, Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
-import { IUserSensitive, IUserSignUp } from 'user/user.model';
-import { InterfaceCasting } from 'app/utils/utils';
-import {
-	IBaseUserInfoKeys,
-	IUserAuthenticationKeys,
-	IUserSensitiveKeys,
-} from 'build/models';
 import { IEventCreatorEntity } from './creator.model';
+import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
 
 /**
  * Event creator model
@@ -17,19 +11,12 @@ import { IEventCreatorEntity } from './creator.model';
 export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 	/**
 	 * Create event creator entity with infomations
+	 * @param {NonFunctionProperties<IEventCreatorEntity>} payload - entity payload
 	 */
-	constructor(payload: IUserSignUp & IUserSensitive) {
+	constructor(payload: NonFunctionProperties<IEventCreatorEntity>) {
 		super();
 
-		if (payload) {
-			this.user = new User(
-				InterfaceCasting.quick(payload, [
-					...IUserAuthenticationKeys,
-					...IBaseUserInfoKeys,
-					...IUserSensitiveKeys,
-				]),
-			);
-		}
+		if (payload) Object.assign(this, payload);
 	}
 
 	// Core Entity
@@ -47,10 +34,17 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 
 	// Methods
 	/**
+	 * Get entity id
+	 */
+	get id(): string {
+		return this.user.baseUser.id;
+	}
+
+	/**
 	 * @ignore
 	 */
 	static test(from: string, options?: { user?: User }) {
 		const { user = User.test(from) } = options || {};
-		return new EventCreator({ ...user, ...user.baseUser });
+		return new EventCreator({ user });
 	}
 }

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Repository } from 'typeorm';
 import { Bloc } from './bloc.entity';
-import { User, UserRecieve } from 'user/user.entity';
+import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
 import { MetaData } from 'auth/guards';
@@ -38,17 +38,18 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 		private config: ConfigService,
 	) {
-		super(repo);
+		super(repo, Bloc);
 	}
 
 	/**
 	 * Assign new bloc
-	 * @param {User} owner - the owner of bloc
+	 * @param {string} ownerId - the owner of bloc id
 	 * @param {string} prev - previous bloc hash
+	 * @param {MetaData} metaData - client meta data
 	 */
-	assign(owner: User | null, prev: string | null, metaData?: MetaData) {
+	assign(ownerId: string, prev: string | null, metaData?: MetaData) {
 		const bloc = new Bloc({
-			ownerId: owner ? owner.id : null,
+			ownerId,
 			prev,
 			metaData: metaData ? JSON.stringify(sortObjectKeys(metaData)) : null,
 		});
@@ -68,7 +69,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		if (prev) {
 			const prevBloc = await this.findOne({ hash: prev });
 
-			if (!prevBloc || (await this.removeStrayTree(prevBloc.id))) {
+			if (prevBloc.isNull() || (await this.removeStrayTree(prevBloc.id))) {
 				await this.removeBloc(deleteId);
 				return true;
 			}
@@ -89,7 +90,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		if (prev) {
 			const prevBloc = await this.findOne({ hash: prev });
 
-			if (prevBloc) await this.removeTree(prevBloc.id);
+			if (!prevBloc.isNull()) await this.removeTree(prevBloc.id);
 		}
 
 		await this.removeBloc(deleteId);
@@ -105,11 +106,11 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 	/**
 	 * Get tokens
-	 * @param {User} user - user from request
+	 * @param {string} userId - user from request id
 	 * @param {MetaData} mtdt - metadata from client
 	 */
-	async getTokens(user: User, mtdt: MetaData) {
-		let prev = await this.assign(user, null, mtdt);
+	async getTokens(userId: string, mtdt: MetaData) {
+		let prev = await this.assign(userId, null, mtdt);
 
 		await this.use.range(async () => {
 			prev = await this.assign(null, prev.hash);
@@ -120,7 +121,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		return new UserRecieve({
 			accessToken: id,
 			refreshToken: hash,
-			response: { user: user.info },
+			response: await this.svc.user.info(userId),
 		});
 	}
 

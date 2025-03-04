@@ -1,14 +1,12 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { InterfaceCasting } from 'app/utils/utils';
-import {
-	IBaseUserInfoKeys,
-	IStudentInfoKeys,
-	IUserAuthenticationKeys,
-} from 'build/models';
-import { IUserSignUp, UserRole } from 'user/user.model';
+import { IStudentInfoKeys } from 'build/models';
+import { IUserInfo } from 'user/user.model';
+import { IBaseUserInfo } from 'app/app.model';
+import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
 
 /**
  * Student entity
@@ -17,25 +15,17 @@ import { IUserSignUp, UserRole } from 'user/user.model';
 export class Student extends BaseEntity implements IStudentEntity {
 	/**
 	 * Create student entity with infomations
+	 * @param {NonFunctionProperties<IStudentEntity>} payload - entity payload
 	 */
-	constructor(payload: IStudentInfo & IUserSignUp) {
+	constructor(payload: NonFunctionProperties<IStudentEntity>) {
 		super();
 
-		if (payload) {
-			this.user = new User({
-				...InterfaceCasting.quick(payload, [
-					...IUserAuthenticationKeys,
-					...IBaseUserInfoKeys,
-				]),
-				role: UserRole.student,
-			});
-			Object.assign(this, InterfaceCasting.quick(payload, IStudentInfoKeys));
-		}
+		if (payload) Object.assign(this, payload);
 	}
 
 	// Core Entity
 	/**
-	 * @ignore
+	 * Student user infomations
 	 */
 	@Column(() => User, { prefix: false }) user: User;
 
@@ -68,6 +58,17 @@ export class Student extends BaseEntity implements IStudentEntity {
 	 */
 	@Column({ name: 'enrollment_year' }) enrollmentYear: number;
 
+	// Methods
+	/**
+	 * A function return user's public infomations
+	 */
+	get info(): IStudentInfo & IUserInfo & IBaseUserInfo {
+		return {
+			...InterfaceCasting.quick(this, IStudentInfoKeys),
+			...this.user.info,
+		};
+	}
+
 	/**
 	 * @ignore
 	 */
@@ -79,8 +80,7 @@ export class Student extends BaseEntity implements IStudentEntity {
 			graduationYear: (20).random,
 			enrollmentYear: (20).random,
 			skills: (3).string,
-			...user.baseUser,
-			...user,
+			user,
 		});
 	}
 }

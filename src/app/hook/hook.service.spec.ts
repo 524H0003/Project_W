@@ -24,6 +24,7 @@ it('assign', async () => {
 		() =>
 			svc.hook.assign(mtdt, async () => {
 				user = User.test(fileName);
+
 				return (await svc.auth.signUp({ ...user, ...user.baseUser }, null))
 					.baseUser;
 			}),

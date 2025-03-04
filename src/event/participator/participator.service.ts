@@ -17,7 +17,7 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 		@InjectRepository(EventParticipator) repo: Repository<EventParticipator>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
-		super(repo);
+		super(repo, EventParticipator);
 	}
 
 	/**
@@ -59,6 +59,6 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 		updatedEntity: DeepPartial<EventParticipator>,
 	): Promise<EventParticipator> {
 		if (updatedEntity) await this.update({ id: entityId }, updatedEntity);
-		return new EventParticipator(await this.id(entityId));
+		return this.id(entityId);
 	}
 }

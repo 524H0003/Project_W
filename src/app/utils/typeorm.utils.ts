@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import {
-	BaseEntity,
+	BaseEntity as TypeOrmBaseEntity,
 	DeepPartial,
 	FindOptionsWhere,
 	PrimaryGeneratedColumn,
@@ -22,24 +22,34 @@ export type FindOptionsWithCustom<T> = (
 	skip?: number;
 	order?: object;
 	relations?: string[];
-};
+} & ExtendOptions;
+
+/**
+ * Custom save options
+ */
+export type ExtendOptions = { raw?: boolean };
 
 /**
  * Non function properties
  */
-type NonFunctionProperties<T> = DeepPartial<
-	Pick<
-		T,
-		{
-			[K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
-		}[keyof T]
-	>
+export type NonFunctionProperties<T> = Pick<
+	T,
+	{ [K in keyof T]: T[K] extends (...args: any[]) => any ? never : K }[keyof T]
 >;
 
 /**
  * Convert type from an array to a non array property
  */
 export type NonArray<T> = T extends (infer U)[] ? U : T;
+
+/**
+ * Server entity base
+ */
+export class BaseEntity extends TypeOrmBaseEntity {
+	isNull() {
+		return Object.keys(this).length == 0;
+	}
+}
 
 /**
  * Sensitive infomations in entity
@@ -63,7 +73,7 @@ export class SensitiveInfomations extends BaseEntity {
 /**
  * Generic database requests
  */
-export class DatabaseRequests<T extends BaseEntity> {
+export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	/**
 	 * Entity relationships
 	 */
@@ -72,7 +82,10 @@ export class DatabaseRequests<T extends BaseEntity> {
 	/**
 	 * Initiate database for entity
 	 */
-	constructor(protected repo: Repository<T>) {
+	constructor(
+		protected repo: Repository<T>,
+		private ctor: new (...args: any[]) => T,
+	) {
 		this.relations = [].concat(
 			...this.repo.metadata.relations.map((i) => this.exploreEntityMetadata(i)),
 		);
@@ -116,13 +129,14 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T[]>} array of found objects
 	 */
-	find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
+	async find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
 		const {
 				deep = 1,
 				relations = [''],
 				take = 50,
 				skip = 0,
 				order = undefined,
+				raw = false,
 				...newOptions
 			} = options || {},
 			findRelations = this.relations
@@ -130,13 +144,15 @@ export class DatabaseRequests<T extends BaseEntity> {
 				.filter((i) => relations.some((j) => i.includes(j)))
 				.filter((value, index, self) => self.indexOf(value) === index);
 
-		return this.repo.find({
-			where: <FindOptionsWhere<T>>newOptions,
-			take,
-			skip,
-			order,
-			relations: findRelations,
-		});
+		return (
+			await this.repo.find({
+				where: <FindOptionsWhere<T>>newOptions,
+				take,
+				skip,
+				order,
+				relations: findRelations,
+			})
+		).map((i) => (raw ? i : new this.ctor(i)));
 	}
 
 	/**
@@ -144,41 +160,23 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>}
 	 */
-	findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
-		const { deep = 1, relations = [''], ...newOptions } = options || {};
-		return this.repo.findOne({
-			where: <FindOptionsWhere<T>>newOptions,
-			relations: deep
-				? this.relations
-						.map((i) => i.split('.').slice(0, deep).join('.'))
-						.filter((i) => relations.some((j) => i.includes(j)))
-						.filter((value, index, self) => self.indexOf(value) === index)
-				: undefined,
-		});
-	}
-
-	/**
-	 * Push an entity to field's array
-	 * @param {string} id - the id of entity
-	 * @param {K} field - the pushing field
-	 * @param {NonArray<T[K]>} entity - the push entity
-	 */
-	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
-		const obj = await this.id(id);
-		obj[field as unknown as string].push(entity);
-		return this.save(obj);
-	}
-
-	/**
-	 * Push many entities to field's array
-	 * @param {string} id - the id of entity
-	 * @param {K} field - the pushing field
-	 * @param {T[K]} entities - the push entities
-	 */
-	async pushMany<K extends keyof T>(id: string, field: K, entities: T[K]) {
-		const obj = await this.id(id);
-		obj[field as unknown as string].push(entities);
-		return this.save(obj);
+	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
+		const {
+				deep = 1,
+				relations = [''],
+				raw = false,
+				...newOptions
+			} = options || {},
+			result = await this.repo.findOne({
+				where: <FindOptionsWhere<T>>newOptions,
+				relations: deep
+					? this.relations
+							.map((i) => i.split('.').slice(0, deep).join('.'))
+							.filter((i) => relations.some((j) => i.includes(j)))
+							.filter((value, index, self) => self.indexOf(value) === index)
+					: undefined,
+			});
+		return raw ? result : new this.ctor(result);
 	}
 
 	/**
@@ -198,18 +196,14 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {NonFunctionProperties<T>} entity - the saving entity
 	 * @param {SaveOptions} options - function's option
 	 */
-	protected save(
-		entity: NonFunctionProperties<T>,
-		options?: SaveOptions,
+	protected async save(
+		entity: DeepPartial<NonFunctionProperties<T>>,
+		options?: SaveOptions & ExtendOptions,
 	): Promise<T> {
-		return this.repo.save(entity as DeepPartial<T>, options);
-	}
+		const { raw = false, ...rest } = options || {},
+			result = await this.repo.save(entity as DeepPartial<T>, rest);
 
-	/**
-	 * Create an entity
-	 */
-	protected create(entity: T): T {
-		return this.repo.create(entity);
+		return raw ? result : new this.ctor(result);
 	}
 
 	/**
@@ -224,8 +218,32 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * Deleting an entity
 	 * @param {FindOptionsWhere<T>} criteria - the deleting entity
 	 */
-	protected delete(criteria: FindOptionsWhere<T>) {
-		return this.repo.delete(criteria);
+	protected async delete(criteria: FindOptionsWhere<T>) {
+		await this.repo.delete(criteria);
+	}
+
+	/**
+	 * Push an entity to field's array
+	 * @param {string} id - the id of entity
+	 * @param {K} field - the pushing field
+	 * @param {NonArray<T[K]>} entity - the push entity
+	 */
+	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
+		const obj = await this.id(id, { raw: true } as any);
+		obj[field as unknown as string].push(entity);
+		return this.save(obj);
+	}
+
+	/**
+	 * Push many entities to field's array
+	 * @param {string} id - the id of entity
+	 * @param {K} field - the pushing field
+	 * @param {T[K]} entities - the push entities
+	 */
+	async pushMany<K extends keyof T>(id: string, field: K, entities: T[K]) {
+		const obj = await this.id(id);
+		obj[field as unknown as string].push(entities);
+		return this.save(obj);
 	}
 
 	/**
@@ -241,11 +259,11 @@ export class DatabaseRequests<T extends BaseEntity> {
 	 * @param {DeepPartial<T>} entity - the updating entity
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
-	protected update(
+	protected async update(
 		entity: DeepPartial<T>,
 		updatedEntity?: QueryDeepPartialEntity<T>,
 	) {
-		return this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
+		await this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
 	}
 
 	/**

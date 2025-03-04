@@ -1,10 +1,11 @@
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import {
+	NonFunctionProperties,
+	SensitiveInfomations,
+} from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { BlackBox } from 'app/utils/model.utils';
 import { Event } from 'event/event.entity';
-import { ITagEntity, ITagInfo } from './tag.model';
-import { InterfaceCasting } from 'app/utils/utils';
-import { ITagInfoKeys } from 'build/models';
+import { ITagEntity } from './tag.model';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 /**
@@ -17,10 +18,10 @@ export class EventTag extends SensitiveInfomations implements ITagEntity {
 	 * Initiate event tag
 	 * @param {ITagInfo} input - entity input
 	 */
-	constructor(input: ITagInfo) {
+	constructor(input: NonFunctionProperties<ITagEntity>) {
 		super();
 
-		if (input) Object.assign(this, InterfaceCasting.quick(input, ITagInfoKeys));
+		if (input) Object.assign(this, input);
 	}
 
 	// Relationships

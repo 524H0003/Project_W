@@ -1,5 +1,9 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests } from './utils/typeorm.utils';
+import {
+	DatabaseRequests,
+	ExtendOptions,
+	NonFunctionProperties,
+} from './utils/typeorm.utils';
 import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository, SaveOptions } from 'typeorm';
@@ -21,6 +25,7 @@ import { EventParticipatorService } from 'event/participator/participator.servic
 import { AWSService } from './aws/aws.service';
 import { ConfigService } from '@nestjs/config';
 import { BlocService } from 'auth/bloc/bloc.service';
+import { IBaseUserEntity } from './app.model';
 
 /**
  * Server services
@@ -66,22 +71,20 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 * Initiate base user service
 	 */
 	constructor(repo: Repository<BaseUser>) {
-		super(repo);
+		super(repo, BaseUser);
 	}
 
 	/**
 	 * Assign new base user
-	 * @param {DeepPartial<BaseUser>} entity - assigning user
+	 * @param {BaseUser} entity - assigning user
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<BaseUser>}
 	 */
 	async assign(
-		entity: DeepPartial<BaseUser>,
-		options?: SaveOptions,
+		entity: NonFunctionProperties<IBaseUserEntity>,
+		options?: SaveOptions & ExtendOptions,
 	): Promise<BaseUser> {
-		return new BaseUser(
-			await this.save({ ...entity, email: entity.email.lower }, options),
-		);
+		return this.save(new BaseUser(entity), options);
 	}
 
 	/**
@@ -98,7 +101,7 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 			if (updatedEntity.email) updatedEntity.email = updatedEntity.email.lower;
 			await super.update({ id: entityId }, updatedEntity);
 		}
-		return new BaseUser(await this.id(entityId));
+		return this.id(entityId);
 	}
 
 	/**

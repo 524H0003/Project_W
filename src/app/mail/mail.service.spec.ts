@@ -21,7 +21,7 @@ describe('send', () => {
 
 		await execute(
 			() => svc.mail.send(email, subject, 'sendSignatureAdmin', { signature }),
-			{ exps: [{ type: 'toBeNull', params: [] }] },
+			{ exps: [{ type: 'toEqual', params: [{}] }] },
 		);
 		expect(mailerSvc.sendMail).toHaveBeenCalledWith({
 			to: email,

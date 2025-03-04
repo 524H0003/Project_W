@@ -1,6 +1,9 @@
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import {
+	NonFunctionProperties,
+	SensitiveInfomations,
+} from 'app/utils/typeorm.utils';
 import { BeforeInsert, Column, Entity } from 'typeorm';
-import { IBlocEntity, IBlocInfo } from './bloc.model';
+import { IBlocEntity } from './bloc.model';
 import { dataHashing } from 'app/utils/auth.utils';
 
 /**
@@ -10,9 +13,9 @@ import { dataHashing } from 'app/utils/auth.utils';
 export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Create device with infomations
-	 * @param {IBlocInfo} payload - the device's infomations
+	 * @param {NonFunctionProperties<IBlocEntity>} payload - the device's infomations
 	 */
-	constructor(payload: IBlocInfo) {
+	constructor(payload: NonFunctionProperties<IBlocEntity>) {
 		super();
 
 		if (payload) Object.assign(this, payload);
@@ -32,7 +35,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	/**
 	 * Bloc signature
 	 */
-	@Column({ nullable: false }) private signature: string = (16).string;
+	@Column({ nullable: false }) private signature: string;
 
 	/**
 	 * Current bloc hash
@@ -54,6 +57,8 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	 * Hashing bloc
 	 */
 	@BeforeInsert() private hashBloc() {
+		this.signature = (16).string;
+
 		const { prev, metaData, signature, ownerId, lastIssue } = this;
 
 		return (this.hash = dataHashing(

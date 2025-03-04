@@ -14,7 +14,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 		@InjectRepository(Reciever) repo: Repository<Reciever>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
-		super(repo);
+		super(repo, Reciever);
 	}
 
 	/**

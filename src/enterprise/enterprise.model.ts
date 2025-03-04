@@ -24,9 +24,9 @@ export interface IEnterpriseInfo {
 export interface IEnterpriseAssign extends IEnterpriseInfo, IBaseUserInfo {}
 
 /**
- * Enterprise model
+ * Enterprise relationships
  */
-export interface IEnterprise extends IEnterpriseInfo {
+export interface IEnterpriseRelationships {
 	/**
 	 * Base user
 	 */
@@ -35,10 +35,17 @@ export interface IEnterprise extends IEnterpriseInfo {
 	/**
 	 * Enterprise's employees
 	 */
-	employees: IEmployeeEntity[];
+	employees?: IEmployeeEntity[];
 
 	/**
 	 * Enterprise's students
 	 */
-	students: IStudentInfo[];
+	students?: IStudentInfo[];
 }
+
+/**
+ * Enterprise model
+ */
+export interface IEnterpriseEntity
+	extends IEnterpriseInfo,
+		IEnterpriseRelationships {}

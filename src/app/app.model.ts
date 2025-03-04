@@ -30,7 +30,7 @@ export interface IBaseUserEmail {
  * Base user relationships
  */
 export interface IBaseUserRelationships {
-	hooks: IHook[];
+	hooks?: IHook[];
 }
 
 /**
@@ -48,8 +48,7 @@ export interface IEntityId {
  */
 export interface IBaseUserEntity
 	extends IBaseUserInfo,
-		IBaseUserRelationships,
-		IEntityId {}
+		IBaseUserRelationships {}
 
 /**
  * Signature interface

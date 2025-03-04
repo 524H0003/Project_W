@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import {
 	EmployeePosition,
 	IEmployeeEntity,
@@ -7,10 +7,11 @@ import {
 import { EventCreator } from 'event/creator/creator.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { User } from 'user/user.entity';
-import { IUserAuthentication, UserRole } from 'user/user.model';
+import { IUserInfo } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'build/models';
+import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
 
 /**
  * Employee entity
@@ -20,16 +21,10 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	/**
 	 * Create employee entity with infomations
 	 */
-	constructor(payload: IEmployeeInfo & IUserAuthentication & IBaseUserInfo) {
+	constructor(payload: NonFunctionProperties<IEmployeeEntity>) {
 		super();
 
-		if (payload) {
-			this.eventCreator = new EventCreator({
-				...payload,
-				role: UserRole.enterprise,
-			});
-			Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));
-		}
+		if (payload) Object.assign(this, payload);
 	}
 
 	// Core Entity
@@ -62,15 +57,32 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 
 	// Methods
 	/**
+	 * A function return user's public infomations
+	 */
+	get info(): IEmployeeInfo & IUserInfo & IBaseUserInfo {
+		return {
+			...InterfaceCasting.quick(this, IEmployeeInfoKeys),
+			...this.eventCreator.user.info,
+		};
+	}
+
+	/**
+	 * Get entity id
+	 */
+	get id(): string {
+		return this.eventCreator.user.baseUser.id;
+	}
+
+	/**
 	 * @ignore
 	 */
 	static test(from: string) {
 		const baseUser = User.test(from, { email: `${(7).string}@gmaill.vn` }),
-			eventCreator = EventCreator.test(from, { user: baseUser });
+			eventCreator = EventCreator.test(from, { user: baseUser }),
+			enterprise = Enterprise.test(from);
 		return new Employee({
-			...eventCreator,
-			...eventCreator.user,
-			...eventCreator.user.baseUser,
+			eventCreator,
+			enterprise,
 			position: EmployeePosition['Other'],
 		});
 	}

@@ -44,7 +44,7 @@ export class EventResolver {
 			id: input.id,
 		});
 
-		if (!event) throw new ServerException('Invalid', 'Event', '');
+		if (event.isNull()) throw new ServerException('Invalid', 'Event', '');
 
 		return this.svc.event.modify(event.id, input);
 	}

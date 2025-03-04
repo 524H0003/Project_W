@@ -14,7 +14,7 @@ export class NotificationService extends DatabaseRequests<Notification> {
 		@InjectRepository(Notification) repo: Repository<Notification>,
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
-		super(repo);
+		super(repo, Notification);
 	}
 
 	/**

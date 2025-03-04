@@ -1,4 +1,4 @@
-import { IEnterprise } from 'enterprise/enterprise.model';
+import { IEnterpriseEntity } from 'enterprise/enterprise.model';
 import { IUserSignUp, IUserEntity } from 'user/user.model';
 
 // Interfaces
@@ -19,7 +19,7 @@ export interface ISutdentRelationship {
 	/**
 	 * Student current working enterprise
 	 */
-	currentEnterprise: IEnterprise;
+	currentEnterprise?: IEnterpriseEntity;
 }
 
 /**

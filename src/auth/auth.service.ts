@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { compare, SecurityService, validation } from 'app/utils/auth.utils';
-import { InterfaceCasting } from 'app/utils/utils';
 import { FileService } from 'file/file.service';
-import { IUserSignUpKeys } from 'build/models';
 import { User } from 'user/user.entity';
 import { IUserLogIn, IUserSignUp, UserRole } from 'user/user.model';
 import { UserService } from 'user/user.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IAuthSignUpOption } from './auth.interface';
 import { JwtService } from '@nestjs/jwt';
+import { ExtendOptions } from 'app/utils/typeorm.utils';
 
 /**
  * Auth service
@@ -36,24 +35,20 @@ export class AuthService extends SecurityService {
 	 * @return {Promise<User>} user's recieve infomations
 	 */
 	async signUp(
-		input: IUserSignUp,
+		{ name, email, password }: IUserSignUp,
 		avatar: MulterFile,
-		options?: IAuthSignUpOption,
+		options?: IAuthSignUpOption & ExtendOptions,
 	): Promise<User> {
-		input = InterfaceCasting.quick(input, IUserSignUpKeys);
+		const user = await this.usrSvc.email(email),
+			{ role = UserRole.undefined, raw = false } = options || {},
+			rawUser = new User({ password, baseUser: { email, name }, role });
 
-		const user = await this.usrSvc.email(input.email),
-			{ role = UserRole.undefined } = options || {},
-			rawUser = new User({ ...input, email: input.email.lower, role });
-
-		if (user) throw new ServerException('Invalid', 'User', 'SignUp');
+		if (!user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
 
 		try {
 			return validation(rawUser, async () => {
-				const { id } = await this.usrSvc.assign({
-					...rawUser,
-					...rawUser.baseUser,
-				});
+				const { id } = await this.usrSvc.assign(rawUser);
+
 				return await this.usrSvc.modify(
 					id,
 					avatar
@@ -63,6 +58,7 @@ export class AuthService extends SecurityService {
 								},
 							}
 						: {},
+					{ raw },
 				);
 			});
 		} catch (error) {
@@ -82,7 +78,7 @@ export class AuthService extends SecurityService {
 	 * @return {Promise<User>} user's recieve infomations
 	 */
 	async login({ email, password }: IUserLogIn): Promise<User> {
-		const user = await this.usrSvc.email(email);
+		const user = await this.usrSvc.email(email, { raw: true });
 
 		if (user) {
 			if (await compare(password, user.hashedPassword)) return user;
@@ -103,6 +99,9 @@ export class AuthService extends SecurityService {
 	): Promise<User> {
 		const { name, email } = baseUser;
 
-		return this.usrSvc.modify(id, new User({ password, name, email, role }));
+		return this.usrSvc.modify(
+			id,
+			new User({ password, baseUser: { name, email }, role }),
+		);
 	}
 }

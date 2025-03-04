@@ -49,6 +49,6 @@ it('remove', async () => {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 	});
 	await execute(() => svc.event.id(curEvent.id), {
-		exps: [{ type: 'toBeNull', params: [] }],
+		exps: [{ type: 'toEqual', params: [{}] }],
 	});
 });

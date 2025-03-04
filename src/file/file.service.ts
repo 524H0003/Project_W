@@ -41,7 +41,7 @@ export class FileService extends DatabaseRequests<File> {
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 		protected cfg: ConfigService,
 	) {
-		super(repo);
+		super(repo, File);
 
 		readdir(cfg.get('SERVER_PUBLIC'), async (error: Error, files) => {
 			if (error) {

@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRole } from 'user/user.model';
 import { Student } from './student.entity';
 import { Repository } from 'typeorm';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import {
+	DatabaseRequests,
+	FindOptionsWithCustom,
+} from 'app/utils/typeorm.utils';
 import { IStudentSignUp } from './student.model';
 import { AppService } from 'app/app.service';
 
@@ -19,7 +22,7 @@ export class StudentService extends DatabaseRequests<Student> {
 		@InjectRepository(Student) repo: Repository<Student>,
 		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 	) {
-		super(repo);
+		super(repo, Student);
 	}
 	/**
 	 * @ignore
@@ -36,14 +39,15 @@ export class StudentService extends DatabaseRequests<Student> {
 	}: Required<Pick<IStudentSignUp, 'email'>>): Promise<void> {
 		const existedUser = await this.svc.baseUser.email(email);
 
-		if (existedUser) throw new ServerException('Invalid', 'User', 'SignUp');
+		if (!existedUser.isNull())
+			throw new ServerException('Invalid', 'User', 'SignUp');
 		if (!email.match(this.studentMailRex))
 			throw new ServerException('Invalid', 'Email', '');
 
 		const student = await this.svc.auth.signUp(
 			{ email, name: email, password: (32).string + '!1Aa' },
 			null,
-			{ role: UserRole.student },
+			{ role: UserRole.student, raw: true },
 		);
 
 		await this.save({
@@ -52,5 +56,15 @@ export class StudentService extends DatabaseRequests<Student> {
 		});
 
 		throw new ServerException('Success', 'User', 'SignUp');
+	}
+
+	/**
+	 * Find student base on id
+	 * @param {string} id - student id
+	 * @param {FindOptionsWithCustom<Student>} options - function options
+	 */
+	id(id: string, options?: FindOptionsWithCustom<Student>): Promise<Student> {
+		if (!id) throw new ServerException('Invalid', 'ID', '');
+		return this.findOne({ user: { baseUser: { id } }, ...options });
 	}
 }

@@ -1,27 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
+import { IUserInfoKeys } from 'build/models';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import {
-	IBaseUserInfoKeys,
-	IUserAuthenticationKeys,
-	IUserInfoKeys,
-	IUserSensitiveKeys,
-} from 'build/models';
-import {
-	BaseEntity,
-	BeforeInsert,
-	BeforeUpdate,
-	Column,
-	Entity,
-	OneToMany,
-} from 'typeorm';
-import {
-	IUserAuthentication,
 	IUserEntity,
 	UserRole,
 	IUserInfo,
 	IUserRecieve,
-	IUserSensitive,
 	IResponse,
 } from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
@@ -32,6 +18,7 @@ import { BaseUser } from 'app/app.entity';
 import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
+import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
 
 /**
  * User entity
@@ -40,23 +27,12 @@ import { IsStrongPassword } from 'class-validator';
 @Entity({ name: 'User' })
 export class User extends BaseEntity implements IUserEntity {
 	/**
-	 * @param {object} payload - the user's infomations
+	 * @param {NonFunctionProperties<IUserEntity>} payload - the user's infomations
 	 */
-	constructor(payload: IUserAuthentication & IUserSensitive & IBaseUserInfo) {
+	constructor(payload: NonFunctionProperties<IUserEntity>) {
 		super();
 
-		if (payload) {
-			this.baseUser = new BaseUser(
-				InterfaceCasting.quick(payload, IBaseUserInfoKeys),
-			);
-			Object.assign(
-				this,
-				InterfaceCasting.quick(payload, [
-					...IUserAuthenticationKeys,
-					...IUserSensitiveKeys,
-				]),
-			);
-		}
+		if (payload) Object.assign(this, payload);
 	}
 
 	/**
@@ -157,14 +133,14 @@ export class User extends BaseEntity implements IUserEntity {
 
 		delete this.password;
 	}
+
 	/**
 	 * A function return user's public infomations
-	 * @return {IUserInfo} User's public infomations
 	 */
-	get info(): IUserInfo {
+	get info(): IUserInfo & IBaseUserInfo {
 		return {
 			...InterfaceCasting.quick(this, IUserInfoKeys),
-			...InterfaceCasting.quick(this.baseUser, IBaseUserInfoKeys),
+			...this.baseUser.info,
 		};
 	}
 
@@ -185,7 +161,7 @@ export class User extends BaseEntity implements IUserEntity {
 			options?.email || (20).string + '@lmao.com',
 		);
 		return new User({
-			...baseUser,
+			baseUser,
 			password: from + (20).string + 'aA1!',
 			role: UserRole.undefined,
 		});
