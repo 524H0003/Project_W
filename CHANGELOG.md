@@ -1,3 +1,10 @@
+## [1.2.13](https://github.com/524H0003/Project_W/compare/v1.2.12...v1.2.13) (2025-03-04)
+
+
+### Bug Fixes
+
+* **response:** better server response ([#148](https://github.com/524H0003/Project_W/issues/148)) ([6d4ce02](https://github.com/524H0003/Project_W/commit/6d4ce023191fd7accf97fb934bb9271abe3dee0c))
+
 ## [1.2.12](https://github.com/524H0003/Project_W/compare/v1.2.11...v1.2.12) (2025-02-19)
 
 
