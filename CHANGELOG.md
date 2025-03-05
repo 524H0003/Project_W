@@ -1,3 +1,10 @@
+## [1.2.14](https://github.com/524H0003/Project_W/compare/v1.2.13...v1.2.14) (2025-03-05)
+
+
+### Bug Fixes
+
+* **event:** add query all events ([#150](https://github.com/524H0003/Project_W/issues/150)) ([d9c0531](https://github.com/524H0003/Project_W/commit/d9c05319c7d72973a4e72146d0f77c5f1751694d))
+
 ## [1.2.13](https://github.com/524H0003/Project_W/compare/v1.2.12...v1.2.13) (2025-03-04)
 
 
