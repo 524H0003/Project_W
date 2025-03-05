@@ -12,6 +12,9 @@ import {
 	AssignEvent,
 	AssignEventMutation,
 	AssignEventMutationVariables,
+	GetEvents,
+	GetEventsQuery,
+	GetEventsQueryVariables,
 	UpdateEvent,
 	UpdateEventMutation,
 	UpdateEventMutationVariables,
@@ -19,6 +22,7 @@ import {
 import { AppService } from 'app/app.service';
 import { assignEmployee } from '../enterprise/employee/employee.controller.spec.utils';
 import { OutgoingHttpHeaders } from 'http';
+import { expect, it } from '@jest/globals';
 
 const fileName = curFile(__filename);
 
@@ -45,6 +49,33 @@ beforeEach(async () => {
 		.headers;
 });
 
+describe('getEvents', () => {
+	const send = sendGQL<GetEventsQuery, GetEventsQueryVariables>(GetEvents);
+	let eventId: string;
+
+	beforeEach(async () => {
+		eventId = (
+			await sendGQL<AssignEventMutation, AssignEventMutationVariables>(
+				AssignEvent,
+			)({ input: event }, { headers })
+		).assignEvent.id;
+	});
+
+	it('success', async () => {
+		await execute(async () => (await send({}, { headers })).getEvents, {
+			exps: [
+				{ type: 'toBeDefined', params: [] },
+				{
+					type: 'toEqual',
+					params: [
+						expect.arrayContaining([expect.objectContaining({ id: eventId })]),
+					],
+				},
+			],
+		});
+	});
+});
+
 describe('assignEvent', () => {
 	const send = sendGQL<AssignEventMutation, AssignEventMutationVariables>(
 		AssignEvent,
@@ -52,8 +83,7 @@ describe('assignEvent', () => {
 
 	it('success', async () => {
 		await execute(
-			async () =>
-				(await send({ input: event }, { headers: headers })).assignEvent,
+			async () => (await send({ input: event }, { headers })).assignEvent,
 			{ exps: [{ type: 'toHaveProperty', params: ['title', event.title] }] },
 		);
 		await execute(() => svc.event.find({ title: event.title }), {
@@ -72,7 +102,7 @@ describe('updateEvent', () => {
 		eventId = (
 			await sendGQL<AssignEventMutation, AssignEventMutationVariables>(
 				AssignEvent,
-			)({ input: event }, { headers: headers })
+			)({ input: event }, { headers })
 		).assignEvent.id;
 	});
 
@@ -81,12 +111,8 @@ describe('updateEvent', () => {
 
 		await execute(
 			async () =>
-				(
-					await send(
-						{ input: { id: eventId, title: newTitle } },
-						{ headers: headers },
-					)
-				).updateEvent,
+				(await send({ input: { id: eventId, title: newTitle } }, { headers }))
+					.updateEvent,
 			{ exps: [{ type: 'toHaveProperty', params: ['title', newTitle] }] },
 		);
 		await execute(() => svc.event.find({ title: newTitle }), {
@@ -104,7 +130,7 @@ describe('updateEvent', () => {
 				: eventId.slice(0, -1) + '1';
 
 		await execute(
-			async () => await send({ input: { id: newId } }, { headers: headers }),
+			async () => await send({ input: { id: newId } }, { headers }),
 			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Event', '')] }] },
 		);
 	});

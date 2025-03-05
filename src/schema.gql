@@ -153,6 +153,7 @@ input NotificationUpdate {
 }
 
 type Query {
+  getEvents: [Event!]!
   listAllNotifications(isRead: Boolean): [Reciever!]!
   listAllTags: [EventTag!]!
 }

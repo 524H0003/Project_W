@@ -3,7 +3,7 @@ import { AppService } from 'app/app.service';
 import { User } from 'user/user.entity';
 import { GetRequest, AccessGuard, Allow } from 'auth/guards';
 import { UserRole } from 'user/user.model';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Event } from './event.entity';
 import { EventAssign, EventUpdate } from './event.dto';
 
@@ -15,6 +15,17 @@ export class EventResolver {
 	 */
 	constructor(protected svc: AppService) {}
 
+	// Queries
+	/**
+	 * Query all events
+	 */
+	@Query(() => [Event])
+	@Allow([])
+	getEvents() {
+		return this.svc.event.find({ take: 10e10 });
+	}
+
+	// Mutations
 	/**
 	 * Event assign
 	 */
