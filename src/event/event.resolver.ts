@@ -19,9 +19,7 @@ export class EventResolver {
 	/**
 	 * Query all events
 	 */
-	@Query(() => [Event])
-	@Allow([])
-	getEvents() {
+	@Query(() => [Event]) @Allow([]) getEvents() {
 		return this.svc.event.find({ take: 10e10 });
 	}
 
