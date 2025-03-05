@@ -218,8 +218,8 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * Deleting an entity
 	 * @param {FindOptionsWhere<T>} criteria - the deleting entity
 	 */
-	protected async delete(criteria: FindOptionsWhere<T>) {
-		await this.repo.delete(criteria);
+	protected delete(criteria: FindOptionsWhere<T>) {
+		return this.repo.delete(criteria);
 	}
 
 	/**
@@ -259,11 +259,11 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {DeepPartial<T>} entity - the updating entity
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
-	protected async update(
+	protected update(
 		entity: DeepPartial<T>,
 		updatedEntity?: QueryDeepPartialEntity<T>,
 	) {
-		await this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
+		return this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
 	}
 
 	/**

@@ -44,6 +44,7 @@ export class EventService extends DatabaseRequests<Event> {
 		updatedEntity: DeepPartial<Event>,
 	): Promise<Event> {
 		await this.update({ id: entityId }, updatedEntity);
+
 		return this.id(entityId);
 	}
 
