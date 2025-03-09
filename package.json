@@ -160,7 +160,8 @@
 			"@fastify/session": "11.1.0",
 			"@fastify/formbody": "8.0.2",
 			"@fastify/multipart": "9.0.3",
-			"esbuild": "0.25.0"
+			"esbuild": "0.25.0",
+			"tinymce": "7.0.0"
 		},
 		"onlyBuiltDependencies": [
 			"sqlite3"
