@@ -1,11 +1,12 @@
 {
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"dev": "maizzle serve",
 		"build": "pnpm i && maizzle build production"
 	},
 	"dependencies": {
-		"@maizzle/framework": "4.8.9",
-		"tailwindcss-preset-email": "^1.1.0"
+		"@maizzle/framework": "latest",
+		"tailwindcss-preset-email": "latest"
 	}
 }

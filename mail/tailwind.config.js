@@ -21,4 +21,9 @@ module.exports = {
 			'aw-xl': { raw: '(max-width:1279px)' },
 		},
 	},
+	content: [
+		'./components/**/*.html',
+		'./emails/**/*.html',
+		'./layouts/**/*.html',
+	],
 };
