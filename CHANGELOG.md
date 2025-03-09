@@ -1,3 +1,10 @@
+## [1.2.15](https://github.com/524H0003/Project_W/compare/v1.2.14...v1.2.15) (2025-03-09)
+
+
+### Bug Fixes
+
+* **mail:** improper mail display ([#151](https://github.com/524H0003/Project_W/issues/151)) ([f94aa7f](https://github.com/524H0003/Project_W/commit/f94aa7f07a3f22415081a986261b174823509dbe))
+
 ## [1.2.14](https://github.com/524H0003/Project_W/compare/v1.2.13...v1.2.14) (2025-03-05)
 
 
