@@ -1,0 +1,8 @@
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+	.info-box {
+		@apply rounded-md border border-slate-200 bg-slate-200 text-sm text-slate-700 shadow-sm placeholder:text-slate-400 hover:border-slate-300 focus:border-slate-400 focus:shadow focus:outline-none break-words p-3;
+	}
+}
