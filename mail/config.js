@@ -13,6 +13,5 @@
 export default {
 	build: {
 		content: ['emails/**/*.html'],
-		static: { source: ['images/**/*.*'], destination: 'images' },
 	},
 };
