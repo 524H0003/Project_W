@@ -1,3 +1,10 @@
+## [1.2.16](https://github.com/524H0003/Project_W/compare/v1.2.15...v1.2.16) (2025-03-09)
+
+
+### Bug Fixes
+
+* **vulenbility:** upgrade esbuild and tinymce ([#153](https://github.com/524H0003/Project_W/issues/153)) ([96f2d49](https://github.com/524H0003/Project_W/commit/96f2d498a2c35baa7433e677daafb88cdf8ab4f0))
+
 ## [1.2.15](https://github.com/524H0003/Project_W/compare/v1.2.14...v1.2.15) (2025-03-09)
 
 
