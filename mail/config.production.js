@@ -11,15 +11,7 @@
 
 /** @type {import('@maizzle/framework').Config} */
 export default {
-	build: {
-		output: {
-			path: '../src/app/mail/templates',
-		},
-	},
-	css: {
-		inline: true,
-		purge: true,
-		shorthand: true,
-	},
+	build: { output: { path: '../src/app/mail/templates' } },
+	css: { inline: true, purge: true, shorthand: true },
 	prettify: true,
 };
