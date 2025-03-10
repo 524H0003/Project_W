@@ -84,9 +84,6 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	 */
 	id(id: string, options?: FindOptionsWithCustom<Employee>): Promise<Employee> {
 		if (!id) throw new ServerException('Invalid', 'ID', '');
-		return this.findOne({
-			eventCreator: { user: { baseUser: { id } } },
-			...options,
-		});
+		return this.findOne({ id, ...options });
 	}
 }
