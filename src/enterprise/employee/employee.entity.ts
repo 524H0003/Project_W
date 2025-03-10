@@ -34,7 +34,7 @@ export class Employee extends SensitiveInfomations implements IEmployeeEntity {
 	/**
 	 * @ignore
 	 */
-	@OneToOne(() => EventCreator, { cascade: true })
+	@OneToOne(() => EventCreator, { cascade: true, eager: true })
 	@JoinColumn()
 	eventCreator: EventCreator;
 
@@ -44,7 +44,7 @@ export class Employee extends SensitiveInfomations implements IEmployeeEntity {
 	 */
 	@ManyToOne(() => Enterprise, (_: Enterprise) => _.employees, {
 		nullable: false,
-		onDelete: 'CASCADE',
+		cascade: true,
 	})
 	@JoinColumn({ name: 'enterpriseId' })
 	enterprise: Enterprise;

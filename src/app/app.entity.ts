@@ -29,7 +29,7 @@ export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
 	/**
 	 * Base user hooks
 	 */
-	@OneToMany(() => Hook, (_: Hook) => _.fromBaseUser, { onDelete: 'CASCADE' })
+	@OneToMany(() => Hook, (_: Hook) => _.fromBaseUser, { cascade: true })
 	hooks: Hook[];
 
 	// Infomations

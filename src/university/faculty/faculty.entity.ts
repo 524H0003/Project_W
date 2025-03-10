@@ -1,4 +1,4 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { IFacultyEntity } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { IsString } from 'class-validator';
@@ -22,13 +22,17 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 	/**
 	 * Base event creator
 	 */
-	@Column(() => EventCreator, { prefix: false }) eventCreator: EventCreator;
+	@OneToOne(() => EventCreator, { cascade: true, eager: true })
+	@JoinColumn()
+	eventCreator: EventCreator;
 
 	// Infomations
 	/**
 	 * Department name
 	 */
-	@Column() @IsString() department: string;
+	@Column()
+	@IsString()
+	department: string;
 
 	// Methods
 	/**
