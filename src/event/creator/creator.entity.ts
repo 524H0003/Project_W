@@ -1,14 +1,20 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IEventCreatorEntity } from './creator.model';
-import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import {
+	NonFunctionProperties,
+	SensitiveInfomations,
+} from 'app/utils/typeorm.utils';
 
 /**
  * Event creator model
  */
 @Entity({ name: 'EventCreator' })
-export class EventCreator extends BaseEntity implements IEventCreatorEntity {
+export class EventCreator
+	extends SensitiveInfomations
+	implements IEventCreatorEntity
+{
 	/**
 	 * Create event creator entity with infomations
 	 * @param {NonFunctionProperties<IEventCreatorEntity>} payload - entity payload
@@ -23,7 +29,7 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 	/**
 	 * Base user
 	 */
-	@Column(() => User, { prefix: false }) user: User;
+	@OneToOne(() => User, { cascade: true }) @JoinColumn() user: User;
 
 	// Relationships
 	/**
@@ -33,13 +39,6 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 	createdEvents: Event[];
 
 	// Methods
-	/**
-	 * Get entity id
-	 */
-	get id(): string {
-		return this.user.baseUser.id;
-	}
-
 	/**
 	 * @ignore
 	 */

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
@@ -6,13 +6,16 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { IStudentInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
-import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import {
+	NonFunctionProperties,
+	SensitiveInfomations,
+} from 'app/utils/typeorm.utils';
 
 /**
  * Student entity
  */
 @Entity({ name: 'Student' })
-export class Student extends BaseEntity implements IStudentEntity {
+export class Student extends SensitiveInfomations implements IStudentEntity {
 	/**
 	 * Create student entity with infomations
 	 * @param {NonFunctionProperties<IStudentEntity>} payload - entity payload
@@ -27,7 +30,7 @@ export class Student extends BaseEntity implements IStudentEntity {
 	/**
 	 * Student user infomations
 	 */
-	@Column(() => User, { prefix: false }) user: User;
+	@OneToOne(() => User, { cascade: true }) @JoinColumn() user: User;
 
 	// Relationships
 	/**
