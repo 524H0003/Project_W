@@ -69,12 +69,11 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			throw new ServerException('Invalid', 'Enterprise', '');
 
 		const user = await this.svc.auth.signUp(form, avatar, {
-				role: UserRole.enterprise,
-				raw: true,
-			}),
-			eventCreator = await this.svc.eventCreator.assign(user, { raw: true });
+			role: UserRole.enterprise,
+			raw: true,
+		});
 
-		return this.save({ eventCreator, enterprise, position });
+		return this.save({ eventCreator: { user }, enterprise, position });
 	}
 
 	/**

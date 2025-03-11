@@ -65,6 +65,6 @@ export class StudentService extends DatabaseRequests<Student> {
 	 */
 	id(id: string, options?: FindOptionsWithCustom<Student>): Promise<Student> {
 		if (!id) throw new ServerException('Invalid', 'ID', '');
-		return this.findOne({ id, ...options });
+		return this.findOne({ user: { baseUser: { id } }, ...options });
 	}
 }

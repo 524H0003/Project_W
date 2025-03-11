@@ -108,7 +108,8 @@ export class UserService extends DatabaseRequests<User> {
 		if (!id) throw new ServerException('Invalid', 'ID', '');
 
 		const student = await this.svc.student.id(id),
-			employee = await this.svc.employee.id(id);
+			employee = await this.svc.employee.id(id),
+			faculty = await this.svc.faculty.id(id);
 
 		switch (false) {
 			case student.isNull():
@@ -116,6 +117,9 @@ export class UserService extends DatabaseRequests<User> {
 
 			case employee.isNull():
 				return employee.info;
+
+			case faculty.isNull():
+				return faculty.info;
 
 			default:
 				return (await this.id(id)).info;

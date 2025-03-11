@@ -42,6 +42,19 @@ export class EventCreator
 
 	// Methods
 	/**
+	 * Entity id
+	 */
+	// @ts-ignore
+	get id() {
+		return this.user.id;
+	}
+
+	/**
+	 * @ignore
+	 */
+	set id(x: string) {}
+
+	/**
 	 * @ignore
 	 */
 	static test(from: string, options?: { user?: User }) {

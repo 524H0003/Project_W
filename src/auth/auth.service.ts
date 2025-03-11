@@ -49,7 +49,7 @@ export class AuthService extends SecurityService {
 			return validation(rawUser, async () => {
 				const { id } = await this.usrSvc.assign(rawUser);
 
-				return await this.usrSvc.modify(
+				return this.usrSvc.modify(
 					id,
 					avatar
 						? {

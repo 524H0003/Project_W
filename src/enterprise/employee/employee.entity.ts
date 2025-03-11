@@ -72,6 +72,19 @@ export class Employee extends SensitiveInfomations implements IEmployeeEntity {
 	}
 
 	/**
+	 * Entity id
+	 */
+	// @ts-ignore
+	get id() {
+		return this.eventCreator.id;
+	}
+
+	/**
+	 * @ignore
+	 */
+	set id(x: string) {}
+
+	/**
 	 * @ignore
 	 */
 	static test(from: string) {

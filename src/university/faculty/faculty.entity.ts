@@ -2,13 +2,18 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { IFacultyEntity } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { IsString } from 'class-validator';
-import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import {
+	NonFunctionProperties,
+	SensitiveInfomations,
+} from 'app/utils/typeorm.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IFacultyInfoKeys } from 'build/models';
 
 /**
  * Faculty entity
  */
 @Entity({ name: 'FacultyUser' })
-export class Faculty extends BaseEntity implements IFacultyEntity {
+export class Faculty extends SensitiveInfomations implements IFacultyEntity {
 	/**
 	 * Initiate faculty object
 	 */
@@ -36,12 +41,26 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 
 	// Methods
 	/**
-	 * Get entity id
+	 * Entity base info
 	 */
-	get id(): string {
-		return this.eventCreator.user.baseUser.id;
+	get info() {
+		return {
+			...InterfaceCasting.quick(this, IFacultyInfoKeys),
+			...this.eventCreator.user.info,
+		};
 	}
 
+	/**
+	 * Entity id
+	 */
+	// @ts-ignore
+	get id() {
+		return this.eventCreator.id;
+	}
+
+	/**
+	 * @ignore
+	 */
 	static test(from: string, options?: { department?: string }) {
 		const { department = (10).string } = options || {},
 			eventCreator = EventCreator.test(from);
