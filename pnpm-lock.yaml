@@ -8573,8 +8573,8 @@ packages:
     resolution: {integrity: sha512-ZtV1YrwscEjlrUzYrTSs6Nwo49JM3pXLM4fFOBSC3wSni+bxaWlw9/Qgk75PZO8M7cX2EybmL2iwvaV3vkAttw==}
     engines: {node: '>=14'}
 
-  prismjs@1.29.0:
-    resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
+  prismjs@1.30.0:
+    resolution: {integrity: sha512-DEvV2ZF2r2/63V+tK8hQvrR2ZGn10srHbXviTlcv7Kpzw8jWiNTqbVgjO3IY8RxrrOUF8VPMQQFysYYYv0YZxw==}
     engines: {node: '>=6'}
 
   process-nextick-args@2.0.1:
@@ -12867,7 +12867,7 @@ snapshots:
       opencollective-postinstall: 2.0.3
       os-name: 4.0.1
       picocolors: 1.1.1
-      prismjs: 1.29.0
+      prismjs: 1.30.0
       semver: 7.7.1
       svg-pan-zoom: 3.6.2
       tablesort: 5.3.0
@@ -21745,7 +21745,7 @@ snapshots:
       uuid: 9.0.1
     optional: true
 
-  prismjs@1.29.0: {}
+  prismjs@1.30.0: {}
 
   process-nextick-args@2.0.1: {}
 
