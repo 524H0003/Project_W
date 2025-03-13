@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IUserInfoKeys } from 'build/models';
+import { IUserAuthenticationKeys, IUserInfoKeys } from 'build/models';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import {
 	IUserEntity,
@@ -31,8 +31,24 @@ export class User extends BaseEntity implements IUserEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IUserEntity>) {
 		super();
+		if (!payload) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(
+			this,
+			InterfaceCasting.quick(payload, [
+				...IUserInfoKeys,
+				...IUserAuthenticationKeys,
+				'hashedPassword',
+			]),
+		);
+		this.baseUser = new BaseUser(payload.baseUser);
+		this.uploadFiles = payload.uploadFiles?.map((i) => new File(i));
+		this.participatedEvents = payload.participatedEvents?.map(
+			(i) => new EventParticipator(i),
+		);
+		this.recievedNotifications = payload.recievedNotifications?.map(
+			(i) => new Reciever(i),
+		);
 	}
 
 	/**

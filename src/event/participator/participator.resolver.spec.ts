@@ -39,20 +39,15 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-	const eve = Event.test(fileName),
-		emp = await assignEmployee(
+	const emp = await assignEmployee(
 			req,
 			svc,
 			Enterprise.test(fileName),
 			Employee.test(fileName),
 			mailerSvc,
 		),
-		stu = await assignStudent(
-			req,
-			svc,
-			await Student.test(fileName),
-			mailerSvc,
-		);
+		eve = Event.test(fileName, emp.employee.eventCreator),
+		stu = await assignStudent(req, svc, Student.test(fileName), mailerSvc);
 
 	(student = stu.student),
 		(stuHeaders = stu.headers),

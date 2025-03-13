@@ -1,22 +1,33 @@
 import { IBaseUserEntity, ISignature } from 'app/app.model';
+import { IResult } from 'ua-parser-js';
 
 // Interfaces
 /**
- * Hook model
+ * Hook relationships
  */
-export interface IHook extends ISignature {
+export interface IHookRelationships {
 	/**
 	 * Hook from user
 	 */
 	fromBaseUser: IBaseUserEntity;
+}
 
+/**
+ * Hook model
+ */
+export interface IHookInfo extends ISignature {
 	/**
 	 * Client's metadata
 	 */
-	mtdt: object;
+	mtdt: IResult;
 
 	/**
 	 * Addition infomations
 	 */
 	note: object;
 }
+
+/**
+ * Hook entity
+ */
+export interface IHookEntity extends IHookRelationships, IHookInfo {}

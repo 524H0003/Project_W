@@ -2,6 +2,7 @@ import { IEntityId } from 'app/app.model';
 import { IEventCreatorEntity } from './creator/creator.model';
 import { ITagEntity } from './tag/tag.model';
 import { IEventParticipatorEntiy } from './participator/participator.model';
+import { IFile } from 'file/file.model';
 
 // Interfaces
 /**
@@ -22,6 +23,11 @@ export interface IEventRelationships {
 	 * Event's tags
 	 */
 	tags: ITagEntity[];
+
+	/**
+	 * Event's files
+	 */
+	documents: IFile[];
 }
 
 /**

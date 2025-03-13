@@ -1,5 +1,5 @@
 import { IBaseUserEntity, IBaseUserInfo } from 'app/app.model';
-import { IStudentInfo } from 'university/student/student.model';
+import { IStudentEntity } from 'university/student/student.model';
 import { IEmployeeEntity } from './employee/employee.model';
 
 // Interfaces
@@ -40,7 +40,7 @@ export interface IEnterpriseRelationships {
 	/**
 	 * Enterprise's students
 	 */
-	students?: IStudentInfo[];
+	students?: IStudentEntity[];
 }
 
 /**

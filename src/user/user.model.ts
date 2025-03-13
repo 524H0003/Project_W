@@ -68,7 +68,9 @@ export interface IUserRelationship {
 export interface IUserEntity
 	extends IUserAuthentication,
 		IUserInfo,
-		IUserRelationship {}
+		IUserRelationship {
+	hashedPassword?: string;
+}
 
 /**
  * Server response interface

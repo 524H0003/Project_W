@@ -18,11 +18,11 @@ export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IBaseUserEntity>) {
 		super();
+		if (!payload) return;
 
-		if (payload) {
-			payload.email = payload.email.lower;
-			Object.assign(this, payload);
-		}
+		Object.assign(this, InterfaceCasting.quick(payload, IBaseUserInfoKeys));
+		this.hooks = payload.hooks?.map((i) => new Hook(i));
+		this.email = payload.email.lower;
 	}
 
 	// Relationships

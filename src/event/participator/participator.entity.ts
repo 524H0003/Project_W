@@ -12,6 +12,8 @@ import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IEventParticipatorInfoKeys } from 'build/models';
 
 /**
  * Event participator entity
@@ -28,8 +30,14 @@ export class EventParticipator
 	 */
 	constructor(payload: NonFunctionProperties<IEventParticipatorEntiy>) {
 		super();
+		if (!payload) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(
+			this,
+			InterfaceCasting.quick(payload, IEventParticipatorInfoKeys),
+		);
+		this.fromEvent = new Event(payload.fromEvent);
+		this.participatedBy = new User(payload.participatedBy);
 	}
 
 	// Relationships

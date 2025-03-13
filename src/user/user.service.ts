@@ -75,7 +75,6 @@ export class UserService extends DatabaseRequests<User> {
 	email(input: string, options?: ExtendOptions): Promise<User> {
 		return this.findOne({
 			baseUser: { email: input.lower },
-			deep: 2,
 			...options,
 		});
 	}

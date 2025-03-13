@@ -58,6 +58,7 @@ export const PostgresModule = (type: SqlType) =>
 				...postgresConfig(type, cfgSvc),
 				autoLoadEntities: true,
 				synchronize: true,
+				retryAttempts: type == 'test' ? 0 : 5,
 			};
 		},
 	});

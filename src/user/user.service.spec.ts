@@ -21,7 +21,10 @@ it('assign', async () => {
 	await execute(() => svc.user.assign({ ...user, ...user.baseUser }), {
 		exps: [{ type: 'toBeInstanceOf', params: [User] }],
 		onFinish: async (result: User) => {
-			await execute(() => svc.baseUser.find(result.baseUser), {
+			await execute(() => svc.baseUser.find({ id: result.baseUser.id }), {
+				exps: [{ type: 'toHaveLength', params: [1] }],
+			});
+			await execute(() => svc.user.find({ baseUser: { id: result.id } }), {
 				exps: [{ type: 'toHaveLength', params: [1] }],
 			});
 			await execute(() => svc.user.email(result.baseUser.email), {

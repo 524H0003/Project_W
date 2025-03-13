@@ -21,8 +21,10 @@ export class EventCreator
 	 */
 	constructor(payload: NonFunctionProperties<IEventCreatorEntity>) {
 		super();
+		if (!payload) return;
 
-		if (payload) Object.assign(this, payload);
+		this.user = new User(payload.user);
+		this.createdEvents = payload.createdEvents.map((i) => new Event(i));
 	}
 
 	// Core Entity

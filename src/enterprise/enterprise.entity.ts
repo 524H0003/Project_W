@@ -6,6 +6,8 @@ import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { BaseUser } from 'app/app.entity';
 import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IEnterpriseInfoKeys } from 'build/models';
 
 /**
  * Enterprise entity
@@ -19,8 +21,12 @@ export class Enterprise extends BaseEntity implements IEnterpriseEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IEnterpriseEntity>) {
 		super();
+		if (!payload) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IEnterpriseInfoKeys));
+		this.baseUser = new BaseUser(payload.baseUser);
+		this.employees = payload.employees.map((i) => new Employee(i));
+		this.students = payload.students.map((i) => new Student(i));
 	}
 
 	// Core Entity

@@ -25,12 +25,12 @@ export class Employee extends SensitiveInfomations implements IEmployeeEntity {
 	 * Create employee entity with infomations
 	 */
 	constructor(payload: NonFunctionProperties<IEmployeeEntity>) {
-		if (!payload) return;
 		super();
+		if (!payload) return;
 
-		this.eventCreator = new EventCreator(payload['eventCreator']);
-		this.enterprise = new Enterprise(payload['enterprise']);
-		this.position = payload['position'];
+		Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));
+		this.eventCreator = new EventCreator(payload.eventCreator);
+		this.enterprise = new Enterprise(payload.enterprise);
 	}
 
 	// Core Entity

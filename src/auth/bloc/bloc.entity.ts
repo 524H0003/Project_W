@@ -5,6 +5,8 @@ import {
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { IBlocEntity } from './bloc.model';
 import { dataHashing } from 'app/utils/auth.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IBlocInfoKeys } from 'build/models';
 
 /**
  * Bloc entity
@@ -17,8 +19,9 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IBlocEntity>) {
 		super();
+		if (!payload) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IBlocInfoKeys));
 	}
 
 	// Infomations
