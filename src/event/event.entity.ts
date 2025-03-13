@@ -45,7 +45,7 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	 * The event creator
 	 */
 	@ManyToOne(() => EventCreator, (_: EventCreator) => _.createdEvents, {
-		cascade: true,
+		onDelete: 'CASCADE',
 	})
 	@JoinColumn({ name: 'creator_id' })
 	eventCreatedBy: EventCreator;
@@ -54,20 +54,22 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	 * Event's participators
 	 */
 	@OneToMany(() => EventParticipator, (_: EventParticipator) => _.fromEvent, {
-		cascade: true,
+		onDelete: 'CASCADE',
 	})
 	participators: EventParticipator[];
 
 	/**
 	 * Event's attached files
 	 */
-	@OneToMany(() => File, (_: File) => _.atEvent, { cascade: true })
+	@OneToMany(() => File, (_: File) => _.atEvent, { onDelete: 'CASCADE' })
 	documents: File[];
 
 	/**
 	 * Event's tags
 	 */
-	@ManyToMany(() => EventTag, (_: EventTag) => _.toEvents, { cascade: true })
+	@ManyToMany(() => EventTag, (_: EventTag) => _.toEvents, {
+		onDelete: 'CASCADE',
+	})
 	tags: EventTag[];
 
 	// Infomations

@@ -30,7 +30,7 @@ export class Student extends SensitiveInfomations implements IStudentEntity {
 	/**
 	 * Student user infomations
 	 */
-	@OneToOne(() => User, { cascade: true }) @JoinColumn() user: User;
+	@OneToOne(() => User, { onDelete: 'CASCADE' }) @JoinColumn() user: User;
 
 	// Relationships
 	/**

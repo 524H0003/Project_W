@@ -25,16 +25,19 @@ export class Employee extends SensitiveInfomations implements IEmployeeEntity {
 	 * Create employee entity with infomations
 	 */
 	constructor(payload: NonFunctionProperties<IEmployeeEntity>) {
+		if (!payload) return;
 		super();
 
-		if (payload) Object.assign(this, payload);
+		this.eventCreator = new EventCreator(payload['eventCreator']);
+		this.enterprise = new Enterprise(payload['enterprise']);
+		this.position = payload['position'];
 	}
 
 	// Core Entity
 	/**
 	 * @ignore
 	 */
-	@OneToOne(() => EventCreator, { cascade: true, eager: true })
+	@OneToOne(() => EventCreator, { onDelete: 'CASCADE', eager: true })
 	@JoinColumn()
 	eventCreator: EventCreator;
 
@@ -44,7 +47,7 @@ export class Employee extends SensitiveInfomations implements IEmployeeEntity {
 	 */
 	@ManyToOne(() => Enterprise, (_: Enterprise) => _.employees, {
 		nullable: false,
-		cascade: true,
+		onDelete: 'CASCADE',
 	})
 	@JoinColumn({ name: 'enterpriseId' })
 	enterprise: Enterprise;

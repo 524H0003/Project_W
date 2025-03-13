@@ -37,7 +37,7 @@ export class Notification
 	 * Notification send to
 	 */
 	@OneToMany(() => Reciever, (_: Reciever) => _.fromNotification, {
-		cascade: true,
+		onDelete: 'CASCADE',
 	})
 	sent: Reciever[];
 

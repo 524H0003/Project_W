@@ -27,7 +27,7 @@ export class Faculty extends SensitiveInfomations implements IFacultyEntity {
 	/**
 	 * Base event creator
 	 */
-	@OneToOne(() => EventCreator, { cascade: true, eager: true })
+	@OneToOne(() => EventCreator, { onDelete: 'CASCADE', eager: true })
 	@JoinColumn()
 	eventCreator: EventCreator;
 

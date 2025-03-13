@@ -51,7 +51,7 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * User uploaded files
 	 */
-	@OneToMany(() => File, (_) => _.fileCreatedBy, { cascade: true })
+	@OneToMany(() => File, (_) => _.fileCreatedBy, { onDelete: 'CASCADE' })
 	uploadFiles: File[];
 
 	/**
@@ -60,14 +60,14 @@ export class User extends BaseEntity implements IUserEntity {
 	@OneToMany(
 		() => EventParticipator,
 		(_: EventParticipator) => _.participatedBy,
-		{ cascade: true },
+		{ onDelete: 'CASCADE' },
 	)
 	participatedEvents: EventParticipator[];
 
 	/**
 	 * User notifications
 	 */
-	@OneToMany(() => Reciever, (_: Reciever) => _.toUser, { cascade: true })
+	@OneToMany(() => Reciever, (_: Reciever) => _.toUser, { onDelete: 'CASCADE' })
 	recievedNotifications: Reciever[];
 
 	// Infomations

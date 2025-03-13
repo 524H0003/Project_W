@@ -29,7 +29,7 @@ export class EventCreator
 	/**
 	 * Base user
 	 */
-	@OneToOne(() => User, { cascade: true, eager: true })
+	@OneToOne(() => User, { onDelete: 'CASCADE', eager: true })
 	@JoinColumn()
 	user: User;
 
