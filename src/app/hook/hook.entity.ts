@@ -21,7 +21,7 @@ export class Hook extends SensitiveInfomations implements IHookEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IHookEntity>) {
 		super();
-		if (!payload) return;
+		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IHookInfoKeys));
 		this.fromBaseUser = new BaseUser(payload.fromBaseUser);

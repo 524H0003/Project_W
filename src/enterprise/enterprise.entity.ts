@@ -21,12 +21,12 @@ export class Enterprise extends BaseEntity implements IEnterpriseEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IEnterpriseEntity>) {
 		super();
-		if (!payload) return;
+		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IEnterpriseInfoKeys));
 		this.baseUser = new BaseUser(payload.baseUser);
-		this.employees = payload.employees.map((i) => new Employee(i));
-		this.students = payload.students.map((i) => new Student(i));
+		this.employees = payload.employees?.map((i) => new Employee(i));
+		this.students = payload.students?.map((i) => new Student(i));
 	}
 
 	// Core Entity

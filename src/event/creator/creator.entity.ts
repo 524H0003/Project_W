@@ -21,10 +21,10 @@ export class EventCreator
 	 */
 	constructor(payload: NonFunctionProperties<IEventCreatorEntity>) {
 		super();
-		if (!payload) return;
+		if (!payload || !Object.keys(payload).length) return;
 
 		this.user = new User(payload.user);
-		this.createdEvents = payload.createdEvents.map((i) => new Event(i));
+		this.createdEvents = payload.createdEvents?.map((i) => new Event(i));
 	}
 
 	// Core Entity

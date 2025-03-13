@@ -19,7 +19,7 @@ export class Bloc extends SensitiveInfomations implements IBlocEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IBlocEntity>) {
 		super();
-		if (!payload) return;
+		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IBlocInfoKeys));
 	}

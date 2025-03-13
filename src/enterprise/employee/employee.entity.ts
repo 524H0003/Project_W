@@ -26,7 +26,7 @@ export class Employee extends SensitiveInfomations implements IEmployeeEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IEmployeeEntity>) {
 		super();
-		if (!payload) return;
+		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));
 		this.eventCreator = new EventCreator(payload.eventCreator);

@@ -30,7 +30,7 @@ export class EventParticipator
 	 */
 	constructor(payload: NonFunctionProperties<IEventParticipatorEntiy>) {
 		super();
-		if (!payload) return;
+		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(
 			this,

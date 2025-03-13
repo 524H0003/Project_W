@@ -19,8 +19,10 @@ export class Faculty extends SensitiveInfomations implements IFacultyEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IFacultyEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IFacultyInfoKeys));
+		this.eventCreator = new EventCreator(payload.eventCreator);
 	}
 
 	// Core Entity
@@ -57,6 +59,11 @@ export class Faculty extends SensitiveInfomations implements IFacultyEntity {
 	get id() {
 		return this.eventCreator.id;
 	}
+
+	/**
+	 * @ignore
+	 */
+	set id(x: string) {}
 
 	/**
 	 * @ignore

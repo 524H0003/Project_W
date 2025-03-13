@@ -31,7 +31,7 @@ export class User extends BaseEntity implements IUserEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IUserEntity>) {
 		super();
-		if (!payload) return;
+		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(
 			this,

@@ -33,15 +33,15 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IEventEntity>) {
 		super();
-		if (!payload) return;
+		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IEventInfoKeys));
 		this.eventCreatedBy = new EventCreator(payload.eventCreatedBy);
-		this.participators = payload.participators.map(
+		this.participators = payload.participators?.map(
 			(i) => new EventParticipator(i),
 		);
-		this.documents = payload.documents.map((i) => new File(i));
-		this.tags = payload.tags.map((i) => new EventTag(i));
+		this.documents = payload.documents?.map((i) => new File(i));
+		this.tags = payload.tags?.map((i) => new EventTag(i));
 	}
 
 	// Relationships
