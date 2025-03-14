@@ -72,6 +72,13 @@ export class Student extends ParentId implements IStudentEntity {
 	}
 
 	/**
+	 * Entity parent id
+	 */
+	get pid() {
+		return this.user.id;
+	}
+
+	/**
 	 * @ignore
 	 */
 	static test(from: string, options?: { email?: string; password?: string }) {

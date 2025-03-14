@@ -8,6 +8,8 @@ import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { IUserEntity, UserRole } from './user.model';
 import { AppService } from 'app/app.service';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IUserRelationshipKeys } from 'build/models';
 
 /**
  * Services for user
@@ -46,7 +48,12 @@ export class UserService extends DatabaseRequests<User> {
 	 */
 	async modify(entityId: string, updatedEntity: DeepPartial<User>) {
 		await this.svc.baseUser.modify(entityId, updatedEntity.baseUser);
-		await this.update({ baseUser: { id: entityId } }, updatedEntity);
+		updatedEntity = InterfaceCasting.delete(
+			updatedEntity,
+			IUserRelationshipKeys,
+		);
+		if (!updatedEntity) return;
+		await this.update({ id: entityId }, updatedEntity);
 	}
 
 	/**

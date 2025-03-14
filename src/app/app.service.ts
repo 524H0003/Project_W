@@ -80,7 +80,7 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 		entity: NonFunctionProperties<IBaseUserEntity>,
 		options?: SaveOptions,
 	): Promise<BaseUser> {
-		return this.save(new BaseUser(entity), options);
+		return this.save(entity, options);
 	}
 
 	/**

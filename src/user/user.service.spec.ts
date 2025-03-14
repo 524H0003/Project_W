@@ -54,10 +54,12 @@ it('modify', async () => {
 	await execute(
 		() => svc.user.modify(dbUser.id, { baseUser: { name: newName } }),
 		{
-			exps: [
-				{ type: 'toBeInstanceOf', params: [User] },
-				{ type: 'toHaveProperty', params: ['baseUser.name', newName] },
-			],
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(() => svc.user.find({ baseUser: { name: newName } }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
+			},
 		},
 	);
 });
@@ -74,12 +76,14 @@ it('remove', async () => {
 });
 
 it('updateRole', async () => {
-	const dbUser = await svc.user.assign({ ...user, ...user.baseUser });
+	const { id } = await svc.user.assign({ ...user, ...user.baseUser });
 
-	await execute(() => svc.user.updateRole(dbUser.id, UserRole.admin), {
-		exps: [
-			{ type: 'toBeInstanceOf', params: [User] },
-			{ type: 'toHaveProperty', params: ['role', UserRole.admin] },
-		],
+	await execute(() => svc.user.updateRole(id, UserRole.admin), {
+		exps: [{ type: 'toThrow', not: true, params: [] }],
+		onFinish: async () => {
+			await execute(() => svc.user.findOne({ id }), {
+				exps: [{ type: 'toHaveProperty', params: ['role', UserRole.admin] }],
+			});
+		},
 	});
 });

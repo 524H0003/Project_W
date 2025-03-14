@@ -233,7 +233,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 		options?: SaveOptions,
 	): Promise<T> {
 		const { ...rest } = options || {},
-			result = await this.repo.save(entity as DeepPartial<T>, rest);
+			result = await this.repo.save(new this.ctor(entity), rest);
 
 		return new this.ctor(result);
 	}
