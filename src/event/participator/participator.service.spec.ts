@@ -21,7 +21,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-	const stu = await Student.test(fileName),
+	const stu = Student.test(fileName),
 		eve = Event.test(fileName);
 	event = await svc.event.assign(eve);
 	student = (await assignStudent(req, svc, stu, mailerSvc)).student;

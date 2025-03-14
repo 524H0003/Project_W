@@ -150,6 +150,14 @@ export class User extends BaseEntity implements IUserEntity {
 		delete this.password;
 	}
 
+	public static changePassword(password: string) {
+		// @ts-ignore
+		const output = new this({});
+		output.password = password;
+
+		return output;
+	}
+
 	/**
 	 * A function return user's public infomations
 	 */

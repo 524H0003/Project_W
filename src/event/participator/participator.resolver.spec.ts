@@ -46,7 +46,7 @@ beforeEach(async () => {
 			Employee.test(fileName),
 			mailerSvc,
 		),
-		eve = Event.test(fileName, emp.employee.eventCreator),
+		eve = Event.test(fileName),
 		stu = await assignStudent(req, svc, Student.test(fileName), mailerSvc);
 
 	(student = stu.student),

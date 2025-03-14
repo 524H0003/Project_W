@@ -180,8 +180,8 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 	@Column(() => BlackBox, { prefix: false }) blackBox: BlackBox;
 
 	// Methods
-	static test(from: string, eventCreatedBy: EventCreator) {
-		return new Event({
+	static test(from: string) {
+		const output = new Event({
 			title: from + (5).string,
 			description: (20).string,
 			type: EventType['Workshop'],
@@ -201,8 +201,15 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 			requiredSkills: '',
 			documents: [],
 			tags: [],
-			eventCreatedBy,
+			eventCreatedBy: null,
 			participators: [],
 		});
+
+		delete output.eventCreatedBy;
+		delete output.participators;
+		delete output.documents;
+		delete output.tags;
+
+		return output;
 	}
 }

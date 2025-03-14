@@ -1,14 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { compare, SecurityService, validation } from 'app/utils/auth.utils';
-import { FileService } from 'file/file.service';
 import { User } from 'user/user.entity';
 import { IUserLogIn, IUserSignUp, UserRole } from 'user/user.model';
-import { UserService } from 'user/user.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IAuthSignUpOption } from './auth.interface';
 import { JwtService } from '@nestjs/jwt';
 import { ExtendOptions } from 'app/utils/typeorm.utils';
+import { AppService } from 'app/app.service';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Auth service
@@ -19,12 +18,12 @@ export class AuthService extends SecurityService {
 	 * Initiate auth service
 	 */
 	constructor(
-		protected config: ConfigService,
 		protected jwt: JwtService,
-		private usrSvc: UserService,
-		private fileSvc: FileService,
+		protected cfg: ConfigService,
+		@Inject(forwardRef(() => AppService))
+		protected svc: AppService,
 	) {
-		super(jwt, config);
+		super(jwt, cfg);
 	}
 
 	/**
@@ -39,22 +38,26 @@ export class AuthService extends SecurityService {
 		avatar: MulterFile,
 		options?: IAuthSignUpOption & ExtendOptions,
 	): Promise<User> {
-		const user = await this.usrSvc.email(email),
+		const user = await this.svc.user.email(email),
 			{ role = UserRole.undefined, raw = false } = options || {},
-			rawUser = new User({ password, baseUser: { email, name }, role });
+			rawUser = new User({
+				password,
+				baseUser: { email, name },
+				role,
+			});
 
 		if (!user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
 
 		try {
 			return validation(rawUser, async () => {
-				const { id } = await this.usrSvc.assign(rawUser);
+				const { id } = await this.svc.user.assign(rawUser);
 
-				return this.usrSvc.modify(
+				return this.svc.user.modify(
 					id,
 					avatar
 						? {
 								baseUser: {
-									avatarPath: (await this.fileSvc.assign(avatar, id)).path,
+									avatarPath: (await this.svc.file.assign(avatar, id)).path,
 								},
 							}
 						: {},
@@ -78,7 +81,7 @@ export class AuthService extends SecurityService {
 	 * @return {Promise<User>} user's recieve infomations
 	 */
 	async login({ email, password }: IUserLogIn): Promise<User> {
-		const user = await this.usrSvc.email(email, { raw: true });
+		const user = await this.svc.user.email(email, { raw: true });
 
 		if (user) {
 			if (await compare(password, user.hashedPassword)) return user;
@@ -93,15 +96,9 @@ export class AuthService extends SecurityService {
 	 * @param {string} password - new password
 	 * @return {Promise<User>} updated user
 	 */
-	async changePassword(
-		{ id, baseUser, role }: User,
-		password: string,
-	): Promise<User> {
-		const { name, email } = baseUser;
+	async changePassword({ id }: User, password: string): Promise<User> {
+		const newUser = User.changePassword(password);
 
-		return this.usrSvc.modify(
-			id,
-			new User({ password, baseUser: { name, email }, role }),
-		);
+		return this.svc.user.modify(id, newUser);
 	}
 }

@@ -1,4 +1,4 @@
-import { IHook } from './hook/hook.model';
+import { IHookEntity } from './hook/hook.model';
 
 // Interfaces
 /**
@@ -30,7 +30,7 @@ export interface IBaseUserEmail {
  * Base user relationships
  */
 export interface IBaseUserRelationships {
-	hooks?: IHook[];
+	hooks?: IHookEntity[];
 }
 
 /**
