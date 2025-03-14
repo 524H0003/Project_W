@@ -52,13 +52,11 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 	 * Modify participator infomations
 	 * @param {string} entityId - participator's id
 	 * @param {DeepPartial<EventParticipator>} updatedEntity - modified participator infomations
-	 * @return {Promise<EventParticipator>}
 	 */
 	async modify(
 		entityId: string,
 		updatedEntity: DeepPartial<EventParticipator>,
-	): Promise<EventParticipator> {
-		if (updatedEntity) await this.update({ id: entityId }, updatedEntity);
-		return this.id(entityId);
+	) {
+		await this.update({ id: entityId }, updatedEntity);
 	}
 }

@@ -34,10 +34,12 @@ it('modify', async () => {
 	await execute(
 		() => svc.event.modify(curEvent.id, { description: newDescription }),
 		{
-			exps: [
-				{ type: 'toBeInstanceOf', params: [Event] },
-				{ type: 'toHaveProperty', params: ['description', newDescription] },
-			],
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(() => svc.event.find({ description: newDescription }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
+			},
 		},
 	);
 });

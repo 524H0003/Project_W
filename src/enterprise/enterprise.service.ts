@@ -67,14 +67,9 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	 * Modify enterprise
 	 * @param {string} entityId - enterprise's id
 	 * @param {DeepPartial<Enterprise>} updatedEntity - modified enterprise
-	 * @return {Promise<Enterprise>}
 	 */
-	async modify(
-		entityId: string,
-		updatedEntity: DeepPartial<Enterprise>,
-	): Promise<Enterprise> {
+	async modify(entityId: string, updatedEntity: DeepPartial<Enterprise>) {
 		await this.update({ baseUser: { id: entityId } }, updatedEntity);
-		return this.id(entityId);
 	}
 
 	/**

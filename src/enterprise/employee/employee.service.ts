@@ -70,9 +70,8 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 
 		const user = await this.svc.auth.signUp(form, avatar, {
 				role: UserRole.enterprise,
-				raw: true,
 			}),
-			eventCreator = await this.svc.eventCreator.assign(user, { raw: true });
+			eventCreator = await this.svc.eventCreator.assign(user);
 
 		return this.save({ eventCreator, enterprise, position });
 	}

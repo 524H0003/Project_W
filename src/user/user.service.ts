@@ -2,7 +2,6 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
 	DatabaseRequests,
-	ExtendOptions,
 	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
@@ -29,11 +28,12 @@ export class UserService extends DatabaseRequests<User> {
 	 * Assign new user
 	 * @param {User} entity - the assigning user
 	 */
-	async assign(
-		{ baseUser, role, password }: NonFunctionProperties<IUserEntity>,
-		options?: ExtendOptions,
-	): Promise<User> {
-		const assignedBaseUser = await this.svc.baseUser.assign(baseUser, options),
+	async assign({
+		baseUser,
+		role,
+		password,
+	}: NonFunctionProperties<IUserEntity>): Promise<User> {
+		const assignedBaseUser = await this.svc.baseUser.assign(baseUser),
 			user = new User({ baseUser: assignedBaseUser, role, password });
 
 		return this.save(user);
@@ -43,19 +43,10 @@ export class UserService extends DatabaseRequests<User> {
 	 * Modify user
 	 * @param {string} entityId - user's id
 	 * @param {DeepPartial<User>} updatedEntity - modified user
-	 * @param {ExtendOptions} options - function options
 	 */
-	async modify(
-		entityId: string,
-		updatedEntity: DeepPartial<User>,
-		options?: ExtendOptions,
-	): Promise<User> {
-		const { id } = await this.svc.baseUser.modify(
-			entityId,
-			updatedEntity.baseUser,
-		);
-		await this.update({ baseUser: { id } }, updatedEntity);
-		return this.id(entityId, options);
+	async modify(entityId: string, updatedEntity: DeepPartial<User>) {
+		await this.svc.baseUser.modify(entityId, updatedEntity.baseUser);
+		await this.update({ baseUser: { id: entityId } }, updatedEntity);
 	}
 
 	/**
@@ -72,11 +63,8 @@ export class UserService extends DatabaseRequests<User> {
 	 * @param {string} input - user's email
 	 * @param {ExtendOptions} options - function options
 	 */
-	email(input: string, options?: ExtendOptions): Promise<User> {
-		return this.findOne({
-			baseUser: { email: input.lower },
-			...options,
-		});
+	email(input: string): Promise<User> {
+		return this.findOne({ baseUser: { email: input.lower } });
 	}
 
 	/**
@@ -85,18 +73,17 @@ export class UserService extends DatabaseRequests<User> {
 	 * @param {ExtendOptions} options - function options
 	 * @return {Promise<User>}
 	 */
-	id(id: string, options?: ExtendOptions): Promise<User> {
-		return this.findOne({ baseUser: { id }, deep: 2, ...options });
+	id(id: string): Promise<User> {
+		return this.findOne({ baseUser: { id }, deep: 2 });
 	}
 
 	/**
 	 * Updating user's role
 	 * @param {string} id - the user's id
 	 * @param {UserRole} updateRole - the role update to the user
-	 * @return {Promise<User>} the user's infomations
 	 */
-	updateRole(id: string, updateRole: UserRole): Promise<User> {
-		return this.modify(id, { role: updateRole });
+	async updateRole(id: string, updateRole: UserRole) {
+		await this.modify(id, { role: updateRole });
 	}
 
 	/**

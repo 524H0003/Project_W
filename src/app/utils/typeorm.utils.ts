@@ -24,12 +24,7 @@ export type FindOptionsWithCustom<T> = (
 	skip?: number;
 	order?: object;
 	relations?: string[];
-} & ExtendOptions;
-
-/**
- * Custom save options
- */
-export type ExtendOptions = { raw?: boolean };
+};
 
 /**
  * Non function properties
@@ -179,7 +174,6 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				take = 50,
 				skip = 0,
 				order = undefined,
-				raw = false,
 				...newOptions
 			} = options || {},
 			findRelations = this.relations
@@ -195,7 +189,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				order,
 				relations: findRelations,
 			})
-		).map((i) => (raw ? i : new this.ctor(i)));
+		).map((i) => new this.ctor(i));
 	}
 
 	/**
@@ -204,12 +198,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @return {Promise<T>}
 	 */
 	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
-		const {
-				deep = 1,
-				relations = [''],
-				raw = false,
-				...newOptions
-			} = options || {},
+		const { deep = 1, relations = [''], ...newOptions } = options || {},
 			result = await this.repo.findOne({
 				where: <FindOptionsWhere<T>>newOptions,
 				relations: deep
@@ -219,7 +208,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 							.filter((value, index, self) => self.indexOf(value) === index)
 					: undefined,
 			});
-		return raw ? result : new this.ctor(result);
+		return new this.ctor(result);
 	}
 
 	/**
@@ -241,12 +230,12 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 */
 	protected async save(
 		entity: DeepPartial<NonFunctionProperties<T>>,
-		options?: SaveOptions & ExtendOptions,
+		options?: SaveOptions,
 	): Promise<T> {
-		const { raw = false, ...rest } = options || {},
+		const { ...rest } = options || {},
 			result = await this.repo.save(entity as DeepPartial<T>, rest);
 
-		return raw ? result : new this.ctor(result);
+		return new this.ctor(result);
 	}
 
 	/**
@@ -313,7 +302,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * Modifying entity
 	 */
 	// eslint-disable-next-line tsEslint/no-unused-vars
-	modify(...args: any): Promise<T> {
+	modify(...args: any): Promise<void> {
 		throw new ServerException('Fatal', 'Method', 'Implementation');
 	}
 

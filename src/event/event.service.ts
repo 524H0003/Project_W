@@ -37,15 +37,9 @@ export class EventService extends DatabaseRequests<Event> {
 	 * Modify event
 	 * @param {string} entityId - event's id
 	 * @param {DeepPartial<Event>} updatedEntity - modified event
-	 * @return {Promise<Event>}
 	 */
-	async modify(
-		entityId: string,
-		updatedEntity: DeepPartial<Event>,
-	): Promise<Event> {
+	async modify(entityId: string, updatedEntity: DeepPartial<Event>) {
 		await this.update({ id: entityId }, updatedEntity);
-
-		return this.id(entityId);
 	}
 
 	/**

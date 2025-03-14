@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { GeneratedId, NonFunctionProperties } from './utils/typeorm.utils';
 import { IBaseUserEntity, IBaseUserInfo } from './app.model';
 import { InterfaceCasting } from './utils/utils';
@@ -51,6 +51,13 @@ export class BaseUser extends GeneratedId implements IBaseUserEntity {
 	avatarPath?: string;
 
 	// Methods
+	/**
+	 * Lower cassing email
+	 */
+	@BeforeUpdate() @BeforeInsert() private lowerCassingEmail() {
+		this.email = this.email.lower;
+	}
+
 	/**
 	 * A function return user's public infomations
 	 */

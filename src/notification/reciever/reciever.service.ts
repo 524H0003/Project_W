@@ -53,8 +53,9 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 * @param {string} recieverId - the reciever's id
 	 * @return {Promise<Reciever>}
 	 */
-	read(recieverId: string): Promise<Reciever> {
-		return this.modify(recieverId, { isRead: true, readAt: new Date() });
+	async read(recieverId: string): Promise<Reciever> {
+		await this.modify(recieverId, { isRead: true, readAt: new Date() });
+		return this.id(recieverId);
 	}
 
 	/**
@@ -70,13 +71,8 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 * Modify reciever
 	 * @param {string} entityId - reciever's id
 	 * @param {DeepPartial<Reciever>} updatedEntity - modified reciever
-	 * @return {Promise<Reciever>}
 	 */
-	async modify(
-		entityId: string,
-		updatedEntity: DeepPartial<Reciever>,
-	): Promise<Reciever> {
+	async modify(entityId: string, updatedEntity: DeepPartial<Reciever>) {
 		await this.update({ id: entityId }, updatedEntity);
-		return this.id(entityId);
 	}
 }

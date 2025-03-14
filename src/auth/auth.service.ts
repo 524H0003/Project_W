@@ -5,7 +5,6 @@ import { IUserLogIn, IUserSignUp, UserRole } from 'user/user.model';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IAuthSignUpOption } from './auth.interface';
 import { JwtService } from '@nestjs/jwt';
-import { ExtendOptions } from 'app/utils/typeorm.utils';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -36,10 +35,10 @@ export class AuthService extends SecurityService {
 	async signUp(
 		{ name, email, password }: IUserSignUp,
 		avatar: MulterFile,
-		options?: IAuthSignUpOption & ExtendOptions,
+		options?: IAuthSignUpOption,
 	): Promise<User> {
 		const user = await this.svc.user.email(email),
-			{ role = UserRole.undefined, raw = false } = options || {},
+			{ role = UserRole.undefined } = options || {},
 			rawUser = new User({
 				password,
 				baseUser: { email, name },
@@ -52,7 +51,7 @@ export class AuthService extends SecurityService {
 			return validation(rawUser, async () => {
 				const { id } = await this.svc.user.assign(rawUser);
 
-				return this.svc.user.modify(
+				await this.svc.user.modify(
 					id,
 					avatar
 						? {
@@ -61,8 +60,9 @@ export class AuthService extends SecurityService {
 								},
 							}
 						: {},
-					{ raw },
 				);
+
+				return this.svc.user.id(id);
 			});
 		} catch (error) {
 			switch ((error as { name: string }).name) {
@@ -81,9 +81,9 @@ export class AuthService extends SecurityService {
 	 * @return {Promise<User>} user's recieve infomations
 	 */
 	async login({ email, password }: IUserLogIn): Promise<User> {
-		const user = await this.svc.user.email(email, { raw: true });
+		const user = await this.svc.user.email(email);
 
-		if (user) {
+		if (!user.isNull()) {
 			if (await compare(password, user.hashedPassword)) return user;
 			throw new ServerException('Invalid', 'Password', '');
 		}
@@ -94,11 +94,10 @@ export class AuthService extends SecurityService {
 	 * Change user's password
 	 * @param {User} user - input user
 	 * @param {string} password - new password
-	 * @return {Promise<User>} updated user
 	 */
-	async changePassword({ id }: User, password: string): Promise<User> {
+	async changePassword({ id }: User, password: string) {
 		const newUser = User.changePassword(password);
 
-		return this.svc.user.modify(id, newUser);
+		await this.svc.user.modify(id, newUser);
 	}
 }
