@@ -1,4 +1,4 @@
-import { IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
+import { IBaseUserEmail, IBaseUserInfo, IEntityId } from 'app/app.model';
 import { IEnterpriseEntity } from 'enterprise/enterprise.model';
 import { IEventCreatorEntity } from 'event/creator/creator.model';
 import { IUserSignUp } from 'user/user.model';
@@ -7,7 +7,7 @@ import { IUserSignUp } from 'user/user.model';
 /**
  * Employee's general infomations
  */
-export interface IEmployeeInfo {
+export interface IEmployeeInfo extends IEntityId {
 	/**
 	 * Employee's position
 	 */
