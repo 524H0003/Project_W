@@ -30,7 +30,7 @@ export class EventService extends DatabaseRequests<Event> {
 		entity: DeepPartial<Event>,
 		options?: SaveOptions,
 	): Promise<Event> {
-		return new Event(await this.save(entity, options));
+		return this.save(entity, options);
 	}
 
 	/**

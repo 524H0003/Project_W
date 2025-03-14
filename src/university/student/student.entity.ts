@@ -6,16 +6,13 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { IStudentInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 
 /**
  * Student entity
  */
 @Entity({ name: 'Student' })
-export class Student extends SensitiveInfomations implements IStudentEntity {
+export class Student extends ParentId implements IStudentEntity {
 	/**
 	 * Create student entity with infomations
 	 * @param {NonFunctionProperties<IStudentEntity>} payload - entity payload
@@ -30,7 +27,9 @@ export class Student extends SensitiveInfomations implements IStudentEntity {
 	/**
 	 * Student user infomations
 	 */
-	@OneToOne(() => User, { onDelete: 'CASCADE' }) @JoinColumn() user: User;
+	@OneToOne(() => User, { onDelete: 'CASCADE', eager: true })
+	@JoinColumn()
+	user: User;
 
 	// Relationships
 	/**

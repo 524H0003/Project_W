@@ -1,4 +1,3 @@
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { Notification } from 'notification/notification.entity';
@@ -6,13 +5,14 @@ import { IRecieverEntity, IRecieverInfo } from './reciever.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IRecieverInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { GeneratedId } from 'app/utils/typeorm.utils';
 
 /**
  * Reciever entity
  */
 @ObjectType()
 @Entity({ name: 'UserNotification' })
-export class Reciever extends SensitiveInfomations implements IRecieverEntity {
+export class Reciever extends GeneratedId implements IRecieverEntity {
 	/**
 	 * Initiate reciever
 	 * @param {IRecieverInfo} input - entity input

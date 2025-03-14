@@ -1,7 +1,4 @@
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { BlackBox } from 'app/utils/model.utils';
 import { Event } from 'event/event.entity';
@@ -13,7 +10,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
  */
 @ObjectType()
 @Entity({ name: 'Tag' })
-export class EventTag extends SensitiveInfomations implements ITagEntity {
+export class EventTag extends GeneratedId implements ITagEntity {
 	/**
 	 * Initiate event tag
 	 * @param {ITagInfo} input - entity input

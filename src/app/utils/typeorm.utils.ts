@@ -6,6 +6,8 @@ import {
 	PrimaryGeneratedColumn,
 	Repository,
 	SaveOptions,
+	PrimaryColumn,
+	BeforeInsert,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
@@ -52,12 +54,12 @@ export class BaseEntity extends TypeOrmBaseEntity {
 }
 
 /**
- * Sensitive infomations in entity
+ * Entity with generated id
  */
 @ObjectType()
-export class SensitiveInfomations extends BaseEntity {
+export class GeneratedId extends BaseEntity {
 	/**
-	 * Initiate sensitive infomation
+	 * Entity initiation
 	 */
 	constructor() {
 		super();
@@ -68,6 +70,47 @@ export class SensitiveInfomations extends BaseEntity {
 	 * Unique identifier
 	 */
 	@Field() @PrimaryGeneratedColumn('uuid') id: string;
+}
+
+/**
+ * Entity with id from parent
+ */
+export class ParentId extends BaseEntity {
+	/**
+	 * Entity initiation
+	 */
+	constructor() {
+		super();
+	}
+
+	/**
+	 * Parent identifier
+	 */
+	@Field() @PrimaryColumn() id: string;
+
+	/**
+	 * Set id before insert
+	 */
+	@BeforeInsert() private setId() {
+		this.id = this.pid;
+	}
+
+	/**
+	 * Get parent identifier
+	 */
+	get pid() {
+		throw new ServerException(
+			'Fatal',
+			'Method',
+			'Implementation',
+			new Error('Cannot find parent id'),
+		);
+	}
+
+	/**
+	 * @ignore
+	 */
+	set pid(x: string) {}
 }
 
 /**

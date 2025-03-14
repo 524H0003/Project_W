@@ -1,16 +1,16 @@
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { FileType, IFile } from './file.model';
 import { Event } from 'event/event.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { GeneratedId } from 'app/utils/typeorm.utils';
 
 /**
  * File entity
  */
 @ObjectType()
 @Entity({ name: 'Document' })
-export class File extends SensitiveInfomations implements IFile {
+export class File extends GeneratedId implements IFile {
 	/**
 	 * Create file with infomations
 	 * @param {IFile} payload - file's infomations

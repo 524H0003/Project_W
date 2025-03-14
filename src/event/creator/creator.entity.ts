@@ -2,19 +2,13 @@ import { Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IEventCreatorEntity } from './creator.model';
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 
 /**
  * Event creator model
  */
 @Entity({ name: 'EventCreator' })
-export class EventCreator
-	extends SensitiveInfomations
-	implements IEventCreatorEntity
-{
+export class EventCreator extends ParentId implements IEventCreatorEntity {
 	/**
 	 * Create event creator entity with infomations
 	 * @param {NonFunctionProperties<IEventCreatorEntity>} payload - entity payload
@@ -44,17 +38,11 @@ export class EventCreator
 
 	// Methods
 	/**
-	 * Entity id
+	 * Entity parent id
 	 */
-	// @ts-ignore
-	get id() {
+	get pid() {
 		return this.user.id;
 	}
-
-	/**
-	 * @ignore
-	 */
-	set id(x: string) {}
 
 	/**
 	 * @ignore

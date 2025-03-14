@@ -11,16 +11,13 @@ import { IUserInfo } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'build/models';
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 
 /**
  * Employee entity
  */
 @Entity({ name: 'EnterpriseUser' })
-export class Employee extends SensitiveInfomations implements IEmployeeEntity {
+export class Employee extends ParentId implements IEmployeeEntity {
 	/**
 	 * Create employee entity with infomations
 	 */
@@ -75,17 +72,11 @@ export class Employee extends SensitiveInfomations implements IEmployeeEntity {
 	}
 
 	/**
-	 * Entity id
+	 * Entity parent id
 	 */
-	// @ts-ignore
-	get id() {
+	get pid() {
 		return this.eventCreator.id;
 	}
-
-	/**
-	 * @ignore
-	 */
-	set id(x: string) {}
 
 	/**
 	 * @ignore

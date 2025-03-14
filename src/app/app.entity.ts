@@ -1,8 +1,5 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from './utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from './utils/typeorm.utils';
 import { IBaseUserEntity, IBaseUserInfo } from './app.model';
 import { InterfaceCasting } from './utils/utils';
 import { Hook } from './hook/hook.entity';
@@ -12,7 +9,7 @@ import { IBaseUserInfoKeys } from 'build/models';
  * Base user
  */
 @Entity({ name: 'app_user' })
-export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
+export class BaseUser extends GeneratedId implements IBaseUserEntity {
 	/**
 	 * @param {NonFunctionProperties<IBaseUserEntity>} payload - entity payload
 	 */

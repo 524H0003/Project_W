@@ -1,4 +1,9 @@
-import { IBaseUserEntity, IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
+import {
+	IBaseUserEntity,
+	IBaseUserEmail,
+	IBaseUserInfo,
+	IEntityId,
+} from 'app/app.model';
 import { IEventParticipatorEntiy } from 'event/participator/participator.model';
 import { IFile } from 'file/file.model';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';
@@ -18,7 +23,8 @@ export interface IUserAuthentication {
  * Fields about user's infomations
  */
 export interface IUserInfo
-	extends IUserTimeRecord,
+	extends IEntityId,
+		IUserTimeRecord,
 		IUserStatus,
 		IUserSensitive {}
 

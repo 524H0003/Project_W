@@ -1,7 +1,4 @@
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BlackBox } from 'app/utils/model.utils';
 import { BaseUser } from 'app/app.entity';
@@ -14,7 +11,7 @@ import { IHookInfoKeys } from 'build/models';
  * Hook entity
  */
 @Entity({ name: 'auth_hook' })
-export class Hook extends SensitiveInfomations implements IHookEntity {
+export class Hook extends GeneratedId implements IHookEntity {
 	/**
 	 * Create hook with infomations
 	 * @param {NonFunctionProperties<IHookEntity>} payload - the hook's infomations

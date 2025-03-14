@@ -2,10 +2,7 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { IFacultyEntity } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { IsString } from 'class-validator';
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IFacultyInfoKeys } from 'build/models';
 
@@ -13,7 +10,7 @@ import { IFacultyInfoKeys } from 'build/models';
  * Faculty entity
  */
 @Entity({ name: 'FacultyUser' })
-export class Faculty extends SensitiveInfomations implements IFacultyEntity {
+export class Faculty extends ParentId implements IFacultyEntity {
 	/**
 	 * Initiate faculty object
 	 */
@@ -53,17 +50,11 @@ export class Faculty extends SensitiveInfomations implements IFacultyEntity {
 	}
 
 	/**
-	 * Entity id
+	 * Entity parent id
 	 */
-	// @ts-ignore
-	get id() {
+	get pid() {
 		return this.eventCreator.id;
 	}
-
-	/**
-	 * @ignore
-	 */
-	set id(x: string) {}
 
 	/**
 	 * @ignore

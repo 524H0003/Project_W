@@ -11,10 +11,7 @@ import { EventParticipator } from './participator/participator.entity';
 import { File } from 'file/file.entity';
 import { EventTag } from './tag/tag.entity';
 import { BlackBox } from 'app/utils/model.utils';
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator/creator.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
@@ -26,7 +23,7 @@ import { IEventInfoKeys } from 'build/models';
  */
 @ObjectType()
 @Entity({ name: 'Event' })
-export class Event extends SensitiveInfomations implements IEventEntity {
+export class Event extends GeneratedId implements IEventEntity {
 	/**
 	 * Initiate event entity
 	 * @param {NonFunctionProperties<IEventEntity>} payload - entity input
