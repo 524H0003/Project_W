@@ -3,6 +3,8 @@ import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IEventCreatorEntity } from './creator.model';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { IEventCreatorInfoKeys } from 'build/models';
+import { InterfaceCasting } from 'app/utils/utils';
 
 /**
  * Event creator model
@@ -17,6 +19,7 @@ export class EventCreator extends ParentId implements IEventCreatorEntity {
 		super();
 		if (!payload || !Object.keys(payload).length) return;
 
+		Object.assign(this, InterfaceCasting.quick(payload, IEventCreatorInfoKeys));
 		this.user = new User(payload.user);
 		this.createdEvents = payload.createdEvents?.map((i) => new Event(i));
 	}

@@ -1,4 +1,4 @@
-import { IBaseUserEntity, IBaseUserInfo } from 'app/app.model';
+import { IBaseUserEntity, IBaseUserInfo, IEntityId } from 'app/app.model';
 import { IStudentEntity } from 'university/student/student.model';
 import { IEmployeeEntity } from './employee/employee.model';
 
@@ -6,7 +6,7 @@ import { IEmployeeEntity } from './employee/employee.model';
 /**
  * Enterprise's general infomations
  */
-export interface IEnterpriseInfo {
+export interface IEnterpriseInfo extends IEntityId {
 	/**
 	 * Enterprise's description
 	 */
