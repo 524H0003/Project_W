@@ -52,7 +52,7 @@ export class UserService extends DatabaseRequests<User> {
 			updatedEntity,
 			IUserRelationshipKeys,
 		);
-		if (!updatedEntity) return;
+		if (!Object.keys(updatedEntity).length) return;
 		await this.update({ id: entityId }, updatedEntity);
 	}
 
