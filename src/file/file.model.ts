@@ -3,19 +3,9 @@ import { IUserEntity } from 'user/user.model';
 
 // Interfaces
 /**
- * File model
+ * File infomations
  */
-export interface IFile {
-	/**
-	 * File creator
-	 */
-	fileCreatedBy: IUserEntity;
-
-	/**
-	 * File create for event
-	 */
-	atEvent: IEventEntity;
-
+export interface IFileInfo {
 	/**
 	 * File's title
 	 */
@@ -36,6 +26,26 @@ export interface IFile {
 	 */
 	uploadedAt: Date;
 }
+
+/**
+ * File relationships
+ */
+export interface IFileRelationship {
+	/**
+	 * File creator
+	 */
+	fileCreatedBy: IUserEntity;
+
+	/**
+	 * File create for event
+	 */
+	atEvent: IEventEntity;
+}
+
+/**
+ * File entity
+ */
+export interface IFileEntity extends IFileInfo, IFileRelationship {}
 
 // Enums
 export enum FileType {

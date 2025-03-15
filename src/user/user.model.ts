@@ -5,7 +5,7 @@ import {
 	IEntityId,
 } from 'app/app.model';
 import { IEventParticipatorEntiy } from 'event/participator/participator.model';
-import { IFile } from 'file/file.model';
+import { IFileEntity } from 'file/file.model';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';
 
 // Interfaces
@@ -64,7 +64,7 @@ export interface IUserSensitive {
 export interface IUserRelationship {
 	baseUser: IBaseUserEntity;
 	recievedNotifications?: IRecieverEntity[];
-	uploadFiles?: IFile[];
+	uploadFiles?: IFileEntity[];
 	participatedEvents?: IEventParticipatorEntiy[];
 }
 
