@@ -65,14 +65,19 @@ describe('assign', () => {
 
 describe('modify', () => {
 	it('success', async () => {
-		const interviewNote = (30).string;
+		const interviewNote = (30).string,
+			evePar = await svc.eventParticipator.assign(student.user.id, event.id);
 
 		await execute(
-			() => svc.eventParticipator.modify(event.id, { interviewNote }),
-			{ exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }] },
+			() => svc.eventParticipator.modify(evePar.id, { interviewNote }),
+			{
+				exps: [{ type: 'toThrow', not: true, params: [] }],
+				onFinish: async () => {
+					await execute(() => svc.eventParticipator.find({ interviewNote }), {
+						exps: [{ type: 'toHaveLength', params: [1] }],
+					});
+				},
+			},
 		);
-		await execute(() => svc.eventParticipator.findOne({ interviewNote }), {
-			exps: [{ type: 'toBeDefined', params: [] }],
-		});
 	});
 });
