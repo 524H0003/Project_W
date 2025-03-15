@@ -19,7 +19,6 @@ export class BaseUser extends GeneratedId implements IBaseUserEntity {
 
 		Object.assign(this, InterfaceCasting.quick(payload, IBaseUserInfoKeys));
 		this.hooks = payload.hooks?.map((i) => new Hook(i));
-		this.email = payload.email.lower;
 	}
 
 	// Relationships

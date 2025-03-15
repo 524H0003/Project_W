@@ -21,7 +21,7 @@ export class File extends GeneratedId implements IFileEntity {
 		super();
 		if (!payload || !Object.keys(payload).length) return;
 
-		Object.assign(this, InterfaceCasting.quick(this, IFileInfoKeys));
+		Object.assign(this, InterfaceCasting.quick(payload, IFileInfoKeys));
 		this.fileCreatedBy = new User(payload.fileCreatedBy);
 		this.atEvent = new Event(payload.atEvent);
 	}
