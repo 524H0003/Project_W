@@ -55,7 +55,7 @@ export class BaseUser extends GeneratedId implements IBaseUserEntity {
 	 * Lower cassing email
 	 */
 	@BeforeUpdate() @BeforeInsert() private lowerCassingEmail() {
-		if (this.email) this.email = this.email.lower;
+		if (typeof this.email == 'string') this.email = this.email.lower;
 	}
 
 	/**

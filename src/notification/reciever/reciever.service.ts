@@ -30,7 +30,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 		const fromNotification = await this.svc.notification.id(notificationId),
 			toUser = await this.svc.user.id(recievedUserId);
 
-		return new Reciever(await this.save({ fromNotification, toUser }));
+		return this.save({ fromNotification, toUser });
 	}
 
 	/**
