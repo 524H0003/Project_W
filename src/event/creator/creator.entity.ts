@@ -1,29 +1,36 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IEventCreatorEntity } from './creator.model';
-import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { IEventCreatorInfoKeys } from 'build/models';
+import { InterfaceCasting } from 'app/utils/utils';
 
 /**
  * Event creator model
  */
 @Entity({ name: 'EventCreator' })
-export class EventCreator extends BaseEntity implements IEventCreatorEntity {
+export class EventCreator extends ParentId implements IEventCreatorEntity {
 	/**
 	 * Create event creator entity with infomations
 	 * @param {NonFunctionProperties<IEventCreatorEntity>} payload - entity payload
 	 */
 	constructor(payload: NonFunctionProperties<IEventCreatorEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IEventCreatorInfoKeys));
+		this.user = new User(payload.user);
+		this.createdEvents = payload.createdEvents?.map((i) => new Event(i));
 	}
 
 	// Core Entity
 	/**
 	 * Base user
 	 */
-	@Column(() => User, { prefix: false }) user: User;
+	@OneToOne(() => User, { onDelete: 'CASCADE', eager: true })
+	@JoinColumn()
+	user: User;
 
 	// Relationships
 	/**
@@ -34,10 +41,10 @@ export class EventCreator extends BaseEntity implements IEventCreatorEntity {
 
 	// Methods
 	/**
-	 * Get entity id
+	 * Entity parent id
 	 */
-	get id(): string {
-		return this.user.baseUser.id;
+	get pid() {
+		return this.user.id;
 	}
 
 	/**

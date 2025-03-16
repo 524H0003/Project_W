@@ -50,9 +50,12 @@ describe('signUp', () => {
 			exps: [
 				{ type: 'toBeInstanceOf', params: [User] },
 				{
-					type: 'toMatchObject',
+					type: 'toHaveProperty',
 					params: [
-						{ ...user, baseUser: { email: user.baseUser.email.toLowerCase() } },
+						'baseUser',
+						expect.objectContaining({
+							email: user.baseUser.email.toLowerCase(),
+						}),
 					],
 				},
 			],

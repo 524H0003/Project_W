@@ -34,13 +34,8 @@ export class NotificationService extends DatabaseRequests<Notification> {
 	 * Modify notification
 	 * @param {string} entityId - notification's id
 	 * @param {DeepPartial<Notification>} updatedEntity - modified notification
-	 * @return {Promise<Notification>}
 	 */
-	async modify(
-		entityId: string,
-		updatedEntity: DeepPartial<Notification>,
-	): Promise<Notification> {
+	async modify(entityId: string, updatedEntity: DeepPartial<Notification>) {
 		await this.update({ id: entityId }, updatedEntity);
-		return this.id(entityId);
 	}
 }

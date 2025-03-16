@@ -1,30 +1,38 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { IEnterpriseEntity } from './enterprise.model';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { BaseUser } from 'app/app.entity';
-import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IEnterpriseInfoKeys } from 'build/models';
 
 /**
  * Enterprise entity
  */
 @ObjectType()
 @Entity({ name: 'Enterprise' })
-export class Enterprise extends BaseEntity implements IEnterpriseEntity {
+export class Enterprise extends ParentId implements IEnterpriseEntity {
 	/**
 	 * Create enterprise with infomations
 	 * @param {NonFunctionProperties<IEnterpriseEntity>} payload - the infomations
 	 */
 	constructor(payload: NonFunctionProperties<IEnterpriseEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IEnterpriseInfoKeys));
+		this.baseUser = new BaseUser(payload.baseUser);
+		this.employees = payload.employees?.map((i) => new Employee(i));
+		this.students = payload.students?.map((i) => new Student(i));
 	}
 
 	// Core Entity
-	@Column(() => BaseUser, { prefix: false }) baseUser: BaseUser;
+	@OneToOne(() => BaseUser, { eager: true, onDelete: 'CASCADE' })
+	@JoinColumn()
+	baseUser: BaseUser;
 
 	// Relationships
 	/**
@@ -71,10 +79,9 @@ export class Enterprise extends BaseEntity implements IEnterpriseEntity {
 	}
 
 	/**
-	 * Get user's id
-	 * @return {string}
+	 * Get parent's id
 	 */
-	get id(): string {
+	get pid(): string {
 		return this.baseUser.id;
 	}
 }

@@ -1,5 +1,4 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { BlackBox } from 'app/utils/model.utils';
 import { Reciever } from './reciever/reciever.entity';
 import {
@@ -10,16 +9,14 @@ import {
 import { InterfaceCasting } from 'app/utils/utils';
 import { INotificationInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { GeneratedId } from 'app/utils/typeorm.utils';
 
 /**
  * Notification entity
  */
 @ObjectType()
 @Entity({ name: 'Notification' })
-export class Notification
-	extends SensitiveInfomations
-	implements INotificationEntity
-{
+export class Notification extends GeneratedId implements INotificationEntity {
 	/**
 	 * Initiate notification entity
 	 * @param {INotificationInfo} input - entity input

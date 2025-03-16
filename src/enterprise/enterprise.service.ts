@@ -2,12 +2,11 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
 	DatabaseRequests,
 	FindOptionsWithCustom,
-	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
 import { Enterprise } from './enterprise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
-import { IEnterpriseAssign, IEnterpriseEntity } from './enterprise.model';
+import { DeepPartial, Repository } from 'typeorm';
+import { IEnterpriseAssign } from './enterprise.model';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 
@@ -36,16 +35,8 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 		{ name, industry, email, description }: IEnterpriseAssign,
 		avatar: MulterFile,
 	): Promise<Enterprise> {
-		const save = async (
-			entity: NonFunctionProperties<IEnterpriseEntity>,
-			options?: SaveOptions,
-		): Promise<Enterprise> => {
-			const baseUser = await this.svc.baseUser.assign(entity.baseUser);
-			return this.save({ ...entity, baseUser }, options);
-		};
-
-		return save({
-			baseUser: {
+		return this.save({
+			baseUser: await this.svc.baseUser.assign({
 				name,
 				email,
 				avatarPath: avatar
@@ -57,7 +48,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 							)
 						).path
 					: undefined,
-			},
+			}),
 			industry,
 			description,
 		});
@@ -67,14 +58,11 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	 * Modify enterprise
 	 * @param {string} entityId - enterprise's id
 	 * @param {DeepPartial<Enterprise>} updatedEntity - modified enterprise
-	 * @return {Promise<Enterprise>}
 	 */
-	async modify(
-		entityId: string,
-		updatedEntity: DeepPartial<Enterprise>,
-	): Promise<Enterprise> {
+	async modify(entityId: string, updatedEntity: DeepPartial<Enterprise>) {
+		if (!updatedEntity) return;
+
 		await this.update({ baseUser: { id: entityId } }, updatedEntity);
-		return this.id(entityId);
 	}
 
 	/**

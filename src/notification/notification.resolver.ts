@@ -35,6 +35,8 @@ export class NotificationResolver {
 		if (notification.isNull())
 			throw new ServerException('Invalid', 'Notification', '');
 
-		return this.svc.notification.modify(notification.id, input);
+		await this.svc.notification.modify(notification.id, input);
+
+		return this.svc.notification.id(notification.id);
 	}
 }

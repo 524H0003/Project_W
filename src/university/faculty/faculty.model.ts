@@ -1,3 +1,4 @@
+import { IEntityId } from 'app/app.model';
 import { IEventCreatorEntity } from 'event/creator/creator.model';
 import { IUserSignUp } from 'user/user.model';
 
@@ -12,7 +13,7 @@ export interface IFacultyRelationship {
 /**
  * Faculty general infomations
  */
-export interface IFacultyInfo {
+export interface IFacultyInfo extends IEntityId {
 	/**
 	 * Department name
 	 */

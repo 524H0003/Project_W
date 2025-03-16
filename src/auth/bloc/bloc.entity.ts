@@ -1,24 +1,24 @@
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { IBlocEntity } from './bloc.model';
 import { dataHashing } from 'app/utils/auth.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IBlocInfoKeys } from 'build/models';
 
 /**
  * Bloc entity
  */
 @Entity({ name: 'auth_bloc' })
-export class Bloc extends SensitiveInfomations implements IBlocEntity {
+export class Bloc extends GeneratedId implements IBlocEntity {
 	/**
 	 * Create device with infomations
 	 * @param {NonFunctionProperties<IBlocEntity>} payload - the device's infomations
 	 */
 	constructor(payload: NonFunctionProperties<IBlocEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IBlocInfoKeys));
 	}
 
 	// Infomations

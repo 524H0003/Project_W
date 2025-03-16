@@ -110,7 +110,8 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {MetaData} mtdt - metadata from client
 	 */
 	async getTokens(userId: string, mtdt: MetaData) {
-		let prev = await this.assign(userId, null, mtdt);
+		const response = await this.svc.user.info(userId);
+		let prev = await this.assign(response['id'], null, mtdt);
 
 		await this.use.range(async () => {
 			prev = await this.assign(null, prev.hash);
@@ -118,11 +119,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 		const { id, hash } = await this.save(prev);
 
-		return new UserRecieve({
-			accessToken: id,
-			refreshToken: hash,
-			response: await this.svc.user.info(userId),
-		});
+		return new UserRecieve({ accessToken: id, refreshToken: hash, response });
 	}
 
 	/**

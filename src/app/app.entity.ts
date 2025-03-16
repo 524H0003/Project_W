@@ -1,8 +1,5 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from './utils/typeorm.utils';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { GeneratedId, NonFunctionProperties } from './utils/typeorm.utils';
 import { IBaseUserEntity, IBaseUserInfo } from './app.model';
 import { InterfaceCasting } from './utils/utils';
 import { Hook } from './hook/hook.entity';
@@ -12,17 +9,16 @@ import { IBaseUserInfoKeys } from 'build/models';
  * Base user
  */
 @Entity({ name: 'app_user' })
-export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
+export class BaseUser extends GeneratedId implements IBaseUserEntity {
 	/**
 	 * @param {NonFunctionProperties<IBaseUserEntity>} payload - entity payload
 	 */
 	constructor(payload: NonFunctionProperties<IBaseUserEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) {
-			payload.email = payload.email.lower;
-			Object.assign(this, payload);
-		}
+		Object.assign(this, InterfaceCasting.quick(payload, IBaseUserInfoKeys));
+		this.hooks = payload.hooks?.map((i) => new Hook(i));
 	}
 
 	// Relationships
@@ -54,6 +50,13 @@ export class BaseUser extends SensitiveInfomations implements IBaseUserEntity {
 	avatarPath?: string;
 
 	// Methods
+	/**
+	 * Lower cassing email
+	 */
+	@BeforeUpdate() @BeforeInsert() private lowerCassingEmail() {
+		if (typeof this.email == 'string') this.email = this.email.lower;
+	}
+
 	/**
 	 * A function return user's public infomations
 	 */

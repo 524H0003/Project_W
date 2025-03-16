@@ -37,10 +37,12 @@ describe('modify', () => {
 		await execute(
 			() => svc.notification.modify(rawNoti.id, { content: newContent }),
 			{
-				exps: [
-					{ type: 'toBeInstanceOf', params: [Notification] },
-					{ type: 'toHaveProperty', params: ['content', newContent] },
-				],
+				exps: [{ type: 'toThrow', not: true, params: [] }],
+				onFinish: async () => {
+					await execute(() => svc.notification.find({ content: newContent }), {
+						exps: [{ type: 'toHaveLength', params: [1] }],
+					});
+				},
 			},
 		);
 	});

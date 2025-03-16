@@ -29,18 +29,14 @@ describe('BaseUserService', () => {
 			newName = (5).string + '_' + name,
 			baseUser = await svc.baseUser.assign({ name, email });
 
-		await execute(
-			() => svc.baseUser.modify(baseUser.id, { email, name: newName }),
-			{
-				exps: [
-					{ type: 'toBeInstanceOf', params: [BaseUser] },
-					{
-						type: 'toMatchObject',
-						params: [{ email: email.lower, name: newName }],
-					},
-				],
+		await execute(() => svc.baseUser.modify(baseUser.id, { name: newName }), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(() => svc.baseUser.find({ name: newName }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
 			},
-		);
+		});
 		await execute(() => svc.baseUser.findOne({ email, name }), {
 			exps: [{ type: 'toEqual', params: [{}] }],
 		});

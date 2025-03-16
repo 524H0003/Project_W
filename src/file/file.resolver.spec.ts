@@ -1,3 +1,4 @@
+import { beforeEach, describe, it } from '@jest/globals';
 import { AppService } from 'app/app.service';
 import {
 	createFile,
@@ -54,7 +55,7 @@ describe('uploadFile', () => {
 					await send(
 						{ file: null },
 						{
-							headers: headers,
+							headers,
 							map: { file: ['variables.file'] },
 							files: { file: createFile(name, content) },
 						},

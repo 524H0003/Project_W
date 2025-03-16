@@ -1,6 +1,6 @@
 import { IEntityId } from 'app/app.model';
 import { INotificationInfo } from 'notification/notification.model';
-import { IUserInfo } from 'user/user.model';
+import { IUserEntity } from 'user/user.model';
 
 // Interfaces
 /**
@@ -25,7 +25,7 @@ export interface IRecieverRelationships {
 	/**
 	 * Recieve user
 	 */
-	toUser: IUserInfo;
+	toUser: IUserEntity;
 
 	/**
 	 * Notification origin

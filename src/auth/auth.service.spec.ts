@@ -1,3 +1,4 @@
+import { expect } from '@jest/globals';
 import { AppService } from 'app/app.service';
 import { execute, initJest } from 'app/utils/test.utils';
 import { User } from 'user/user.entity';
@@ -42,17 +43,15 @@ describe('AuthService', () => {
 	describe('login', () => {
 		let dbUser: User;
 		beforeEach(async () => {
-			dbUser = await svc.auth.signUp({ ...user, ...user.baseUser }, null, {
-				raw: true,
-			});
+			dbUser = await svc.auth.signUp({ ...user, ...user.baseUser }, null);
 		});
 
 		it('success', async () => {
 			await execute(() => svc.auth.login({ ...user, ...user.baseUser }), {
-				exps: [
-					{ type: 'toBeInstanceOf', params: [User] },
-					{ type: 'toEqual', params: [dbUser] },
-				],
+				exps: [{ type: 'toBeInstanceOf', params: [User] }],
+				onFinish(result) {
+					expect(result.info).toEqual(dbUser.info);
+				},
 			});
 		});
 
@@ -78,10 +77,18 @@ describe('AuthService', () => {
 			newPassword = (20).string + 'aA1!';
 
 		await execute(() => svc.auth.changePassword(dbUser, newPassword), {
-			exps: [
-				{ type: 'toBeInstanceOf', params: [User] },
-				{ type: 'toMatchObject', params: [{ baseUser: dbUser.baseUser }] },
-			],
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(
+					() =>
+						svc.auth.login({
+							...user,
+							...user.baseUser,
+							password: newPassword,
+						}),
+					{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
+				);
+			},
 		});
 		await execute(
 			() => svc.auth.login({ ...user.baseUser, password: newPassword }),

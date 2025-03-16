@@ -6,38 +6,39 @@ import {
 	ManyToOne,
 	OneToMany,
 } from 'typeorm';
-import {
-	EventStatus,
-	EventType,
-	IEventEntity,
-	IEventInfo,
-} from './event.model';
+import { EventStatus, EventType, IEventEntity } from './event.model';
 import { EventParticipator } from './participator/participator.entity';
 import { File } from 'file/file.entity';
 import { EventTag } from './tag/tag.entity';
 import { BlackBox } from 'app/utils/model.utils';
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator/creator.entity';
-import { IEventInfoKeys } from 'build/models';
-import { InterfaceCasting } from 'app/utils/utils';
 import { Field, ObjectType } from '@nestjs/graphql';
 import JSON from 'graphql-type-json';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IEventInfoKeys } from 'build/models';
 
 /**
  * Event entity
  */
 @ObjectType()
 @Entity({ name: 'Event' })
-export class Event extends SensitiveInfomations implements IEventEntity {
+export class Event extends GeneratedId implements IEventEntity {
 	/**
 	 * Initiate event entity
-	 * @param {IEventInfo} input - entity input
+	 * @param {NonFunctionProperties<IEventEntity>} payload - entity input
 	 */
-	constructor(input: IEventInfo) {
+	constructor(payload: NonFunctionProperties<IEventEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (input)
-			Object.assign(this, InterfaceCasting.quick(input, IEventInfoKeys));
+		Object.assign(this, InterfaceCasting.quick(payload, IEventInfoKeys));
+		this.eventCreatedBy = new EventCreator(payload.eventCreatedBy);
+		this.participators = payload.participators?.map(
+			(i) => new EventParticipator(i),
+		);
+		this.documents = payload.documents?.map((i) => new File(i));
+		this.tags = payload.tags?.map((i) => new EventTag(i));
 	}
 
 	// Relationships
@@ -177,7 +178,7 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 
 	// Methods
 	static test(from: string) {
-		return new Event({
+		const output = new Event({
 			title: from + (5).string,
 			description: (20).string,
 			type: EventType['Workshop'],
@@ -195,6 +196,17 @@ export class Event extends SensitiveInfomations implements IEventEntity {
 				`${(10).random + 1}/${(20).random + 2}/20${(90).random + 3}`,
 			),
 			requiredSkills: '',
+			documents: [],
+			tags: [],
+			eventCreatedBy: null,
+			participators: [],
 		});
+
+		delete output.eventCreatedBy;
+		delete output.participators;
+		delete output.documents;
+		delete output.tags;
+
+		return output;
 	}
 }

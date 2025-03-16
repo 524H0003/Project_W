@@ -63,13 +63,10 @@ export class RecieverResolver {
 	 */
 	@Query(() => [Reciever]) @Allow([UserRole.student]) listAllNotifications(
 		@Args('isRead', { nullable: true }) isRead: boolean,
-		@GetRequest('user') user: User,
+		@GetRequest('user') { id }: User,
 	) {
 		if (isRead !== undefined)
-			return this.svc.recie.find({
-				isRead,
-				toUser: { baseUser: { id: user.id } },
-			});
-		return this.svc.recie.find({ toUser: { baseUser: { id: user.id } } });
+			return this.svc.recie.find({ isRead, toUser: { id } });
+		return this.svc.recie.find({ toUser: { id } });
 	}
 }

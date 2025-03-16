@@ -1,26 +1,27 @@
-import {
-	NonFunctionProperties,
-	SensitiveInfomations,
-} from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { IHook } from './hook.model';
 import { BlackBox } from 'app/utils/model.utils';
 import { BaseUser } from 'app/app.entity';
 import { MetaData } from 'auth/guards';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IHookEntity } from './hook.model';
+import { IHookInfoKeys } from 'build/models';
 
 /**
  * Hook entity
  */
 @Entity({ name: 'auth_hook' })
-export class Hook extends SensitiveInfomations implements IHook {
+export class Hook extends GeneratedId implements IHookEntity {
 	/**
 	 * Create hook with infomations
-	 * @param {NonFunctionProperties<IHook>} input - the hook's infomations
+	 * @param {NonFunctionProperties<IHookEntity>} payload - the hook's infomations
 	 */
-	constructor(input: NonFunctionProperties<IHook>) {
+	constructor(payload: NonFunctionProperties<IHookEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (input) Object.assign(this, input);
+		Object.assign(this, InterfaceCasting.quick(payload, IHookInfoKeys));
+		this.fromBaseUser = new BaseUser(payload.fromBaseUser);
 	}
 
 	// Relationships

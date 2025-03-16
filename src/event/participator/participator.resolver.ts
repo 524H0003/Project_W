@@ -45,6 +45,8 @@ export class EventParticipatorResolver {
 
 		if (participator.isNull()) throw new ServerException('Invalid', 'User', '');
 
-		return this.svc.eventParticipator.modify(participator.id, input);
+		await this.svc.eventParticipator.modify(participator.id, input);
+
+		return this.svc.eventParticipator.id(participator.id);
 	}
 }

@@ -1,8 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BlackBox } from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IUserInfoKeys } from 'build/models';
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { IUserAuthenticationKeys, IUserInfoKeys } from 'build/models';
+import {
+	BeforeInsert,
+	BeforeUpdate,
+	Column,
+	Entity,
+	JoinColumn,
+	OneToMany,
+	OneToOne,
+} from 'typeorm';
 import {
 	IUserEntity,
 	UserRole,
@@ -18,21 +26,37 @@ import { BaseUser } from 'app/app.entity';
 import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
-import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 
 /**
  * User entity
  */
 @ObjectType()
 @Entity({ name: 'User' })
-export class User extends BaseEntity implements IUserEntity {
+export class User extends ParentId implements IUserEntity {
 	/**
 	 * @param {NonFunctionProperties<IUserEntity>} payload - the user's infomations
 	 */
 	constructor(payload: NonFunctionProperties<IUserEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(
+			this,
+			InterfaceCasting.quick(payload, [
+				...IUserInfoKeys,
+				...IUserAuthenticationKeys,
+				'hashedPassword',
+			]),
+		);
+		this.baseUser = new BaseUser(payload.baseUser);
+		this.uploadFiles = payload.uploadFiles?.map((i) => new File(i));
+		this.participatedEvents = payload.participatedEvents?.map(
+			(i) => new EventParticipator(i),
+		);
+		this.recievedNotifications = payload.recievedNotifications?.map(
+			(i) => new Reciever(i),
+		);
 	}
 
 	/**
@@ -44,7 +68,9 @@ export class User extends BaseEntity implements IUserEntity {
 	/**
 	 * Base user
 	 */
-	@Column(() => BaseUser, { prefix: false }) baseUser: BaseUser;
+	@OneToOne(() => BaseUser, { eager: true, onDelete: 'CASCADE' })
+	@JoinColumn()
+	baseUser: BaseUser;
 
 	// Relationships
 
@@ -134,6 +160,14 @@ export class User extends BaseEntity implements IUserEntity {
 		delete this.password;
 	}
 
+	public static changePassword(password: string) {
+		// @ts-ignore
+		const output = new this({});
+		output.password = password;
+
+		return output;
+	}
+
 	/**
 	 * A function return user's public infomations
 	 */
@@ -145,10 +179,9 @@ export class User extends BaseEntity implements IUserEntity {
 	}
 
 	/**
-	 * Get user's id
-	 * @return {string}
+	 * Get parent's id
 	 */
-	get id(): string {
+	get pid(): string {
 		return this.baseUser.id;
 	}
 

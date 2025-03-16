@@ -102,7 +102,7 @@ export class FileService extends DatabaseRequests<File> {
 		return this.save({
 			path,
 			title,
-			fileCreatedBy: userId ? { baseUser: { id: userId } } : null,
+			fileCreatedBy: userId ? { id: userId } : null,
 		});
 	}
 

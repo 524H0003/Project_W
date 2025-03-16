@@ -1,9 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import {
-	DatabaseRequests,
-	ExtendOptions,
-	NonFunctionProperties,
-} from './utils/typeorm.utils';
+import { DatabaseRequests, NonFunctionProperties } from './utils/typeorm.utils';
 import { BaseUser } from './app.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository, SaveOptions } from 'typeorm';
@@ -82,26 +78,20 @@ class BaseUserService extends DatabaseRequests<BaseUser> {
 	 */
 	async assign(
 		entity: NonFunctionProperties<IBaseUserEntity>,
-		options?: SaveOptions & ExtendOptions,
+		options?: SaveOptions,
 	): Promise<BaseUser> {
-		return this.save(new BaseUser(entity), options);
+		return this.save(entity, options);
 	}
 
 	/**
 	 * Modify new base user
 	 * @param {string} entityId - base user's id
 	 * @param {DeepPartial<BaseUser>} updatedEntity - modified base user
-	 * @return {Promise<BaseUser>}
 	 */
-	async modify(
-		entityId: string,
-		updatedEntity: DeepPartial<BaseUser>,
-	): Promise<BaseUser> {
-		if (updatedEntity) {
-			if (updatedEntity.email) updatedEntity.email = updatedEntity.email.lower;
-			await super.update({ id: entityId }, updatedEntity);
-		}
-		return this.id(entityId);
+	async modify(entityId: string, updatedEntity: DeepPartial<BaseUser>) {
+		if (!updatedEntity) return;
+
+		await this.update({ id: entityId }, updatedEntity);
 	}
 
 	/**

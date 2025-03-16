@@ -44,11 +44,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 
 		return validation<Faculty>(rawFaculty, async () => {
 			const eventCreator = await this.svc.eventCreator.assign(
-				await this.svc.auth.signUp({ name, email, password }, avatar, {
-					role,
-					raw: true,
-				}),
-				{ raw: true },
+				await this.svc.auth.signUp({ name, email, password }, avatar, { role }),
 			);
 
 			return this.save({ eventCreator, department });

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import {
 	EmployeePosition,
 	IEmployeeEntity,
@@ -11,27 +11,32 @@ import { IUserInfo } from 'user/user.model';
 import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'build/models';
-import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 
 /**
  * Employee entity
  */
 @Entity({ name: 'EnterpriseUser' })
-export class Employee extends BaseEntity implements IEmployeeEntity {
+export class Employee extends ParentId implements IEmployeeEntity {
 	/**
 	 * Create employee entity with infomations
 	 */
 	constructor(payload: NonFunctionProperties<IEmployeeEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));
+		this.eventCreator = new EventCreator(payload.eventCreator);
+		this.enterprise = new Enterprise(payload.enterprise);
 	}
 
 	// Core Entity
 	/**
 	 * @ignore
 	 */
-	@Column(() => EventCreator, { prefix: false }) eventCreator: EventCreator;
+	@OneToOne(() => EventCreator, { onDelete: 'CASCADE', eager: true })
+	@JoinColumn()
+	eventCreator: EventCreator;
 
 	// Relationships
 	/**
@@ -67,10 +72,10 @@ export class Employee extends BaseEntity implements IEmployeeEntity {
 	}
 
 	/**
-	 * Get entity id
+	 * Entity parent id
 	 */
-	get id(): string {
-		return this.eventCreator.user.baseUser.id;
+	get pid() {
+		return this.eventCreator.id;
 	}
 
 	/**

@@ -6,6 +6,8 @@ import {
 	PrimaryGeneratedColumn,
 	Repository,
 	SaveOptions,
+	PrimaryColumn,
+	BeforeInsert,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
@@ -22,12 +24,7 @@ export type FindOptionsWithCustom<T> = (
 	skip?: number;
 	order?: object;
 	relations?: string[];
-} & ExtendOptions;
-
-/**
- * Custom save options
- */
-export type ExtendOptions = { raw?: boolean };
+};
 
 /**
  * Non function properties
@@ -52,12 +49,12 @@ export class BaseEntity extends TypeOrmBaseEntity {
 }
 
 /**
- * Sensitive infomations in entity
+ * Entity with generated id
  */
 @ObjectType()
-export class SensitiveInfomations extends BaseEntity {
+export class GeneratedId extends BaseEntity {
 	/**
-	 * Initiate sensitive infomation
+	 * Entity initiation
 	 */
 	constructor() {
 		super();
@@ -68,6 +65,47 @@ export class SensitiveInfomations extends BaseEntity {
 	 * Unique identifier
 	 */
 	@Field() @PrimaryGeneratedColumn('uuid') id: string;
+}
+
+/**
+ * Entity with id from parent
+ */
+export class ParentId extends BaseEntity {
+	/**
+	 * Entity initiation
+	 */
+	constructor() {
+		super();
+	}
+
+	/**
+	 * Parent identifier
+	 */
+	@Field() @PrimaryColumn() id: string;
+
+	/**
+	 * Set id before insert
+	 */
+	@BeforeInsert() private setId() {
+		this.id = this.pid;
+	}
+
+	/**
+	 * Get parent identifier
+	 */
+	get pid() {
+		throw new ServerException(
+			'Fatal',
+			'Method',
+			'Implementation',
+			new Error('Cannot find parent id'),
+		);
+	}
+
+	/**
+	 * @ignore
+	 */
+	set pid(x: string) {}
 }
 
 /**
@@ -136,7 +174,6 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				take = 50,
 				skip = 0,
 				order = undefined,
-				raw = false,
 				...newOptions
 			} = options || {},
 			findRelations = this.relations
@@ -152,7 +189,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				order,
 				relations: findRelations,
 			})
-		).map((i) => (raw ? i : new this.ctor(i)));
+		).map((i) => new this.ctor(i));
 	}
 
 	/**
@@ -161,12 +198,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @return {Promise<T>}
 	 */
 	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
-		const {
-				deep = 1,
-				relations = [''],
-				raw = false,
-				...newOptions
-			} = options || {},
+		const { deep = 1, relations = [''], ...newOptions } = options || {},
 			result = await this.repo.findOne({
 				where: <FindOptionsWhere<T>>newOptions,
 				relations: deep
@@ -176,7 +208,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 							.filter((value, index, self) => self.indexOf(value) === index)
 					: undefined,
 			});
-		return raw ? result : new this.ctor(result);
+		return new this.ctor(result);
 	}
 
 	/**
@@ -198,12 +230,12 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 */
 	protected async save(
 		entity: DeepPartial<NonFunctionProperties<T>>,
-		options?: SaveOptions & ExtendOptions,
+		options?: SaveOptions,
 	): Promise<T> {
-		const { raw = false, ...rest } = options || {},
-			result = await this.repo.save(entity as DeepPartial<T>, rest);
+		const { ...rest } = options || {},
+			result = await this.repo.save(new this.ctor(entity), rest);
 
-		return raw ? result : new this.ctor(result);
+		return new this.ctor(result);
 	}
 
 	/**
@@ -229,7 +261,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {NonArray<T[K]>} entity - the push entity
 	 */
 	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
-		const obj = await this.id(id, { raw: true } as any);
+		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
 		return this.save(obj);
 	}
@@ -270,7 +302,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * Modifying entity
 	 */
 	// eslint-disable-next-line tsEslint/no-unused-vars
-	modify(...args: any): Promise<T> {
+	modify(...args: any): Promise<void> {
 		throw new ServerException('Fatal', 'Method', 'Implementation');
 	}
 

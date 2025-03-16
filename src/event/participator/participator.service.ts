@@ -39,26 +39,23 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 			positionsAvailable: event.positionsAvailable - 1,
 		});
 
-		return new EventParticipator(
-			await this.save({
-				fromEvent: { id: eventId },
-				participatedBy: { baseUser: { id: participatorId } },
-				registeredAt: new Date(),
-			}),
-		);
+		return this.save({
+			fromEvent: await this.svc.event.id(eventId),
+			participatedBy: await this.svc.user.id(participatorId),
+			registeredAt: new Date(),
+		});
 	}
 
 	/**
 	 * Modify participator infomations
 	 * @param {string} entityId - participator's id
 	 * @param {DeepPartial<EventParticipator>} updatedEntity - modified participator infomations
-	 * @return {Promise<EventParticipator>}
 	 */
 	async modify(
 		entityId: string,
 		updatedEntity: DeepPartial<EventParticipator>,
-	): Promise<EventParticipator> {
-		if (updatedEntity) await this.update({ id: entityId }, updatedEntity);
-		return this.id(entityId);
+	) {
+		if (!updatedEntity) return;
+		await this.update({ id: entityId }, updatedEntity);
 	}
 }

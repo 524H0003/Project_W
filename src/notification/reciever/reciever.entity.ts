@@ -1,27 +1,29 @@
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { Notification } from 'notification/notification.entity';
-import { IRecieverEntity, IRecieverInfo } from './reciever.model';
+import { IRecieverEntity } from './reciever.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IRecieverInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 
 /**
  * Reciever entity
  */
 @ObjectType()
 @Entity({ name: 'UserNotification' })
-export class Reciever extends SensitiveInfomations implements IRecieverEntity {
+export class Reciever extends GeneratedId implements IRecieverEntity {
 	/**
 	 * Initiate reciever
-	 * @param {IRecieverInfo} input - entity input
+	 * @param {NonFunctionProperties<IRecieverEntity>} input - entity input
 	 */
-	constructor(input: IRecieverInfo) {
+	constructor(input: NonFunctionProperties<IRecieverEntity>) {
 		super();
+		if (!input || !Object.keys(input)) return;
 
-		if (input)
-			Object.assign(this, InterfaceCasting.quick(input, IRecieverInfoKeys));
+		Object.assign(this, InterfaceCasting.quick(input, IRecieverInfoKeys));
+		this.toUser = new User(input.toUser);
+		this.fromNotification = new Notification(input.fromNotification);
 	}
 
 	// Relationships

@@ -145,7 +145,7 @@ describe('readNotification', () => {
 	let reciever: Reciever, userHeaders: OutgoingHttpHeaders;
 
 	beforeEach(async () => {
-		const tUser = await Student.test(fileName);
+		const tUser = Student.test(fileName);
 		userHeaders = (await assignStudent(req, svc, tUser, mailerSvc)).headers;
 		reciever = await svc.recie.assign(notification.id, tUser.user.id);
 	});
@@ -181,7 +181,7 @@ describe('readNotificationMany', () => {
 	let userHeaders: OutgoingHttpHeaders;
 
 	beforeEach(async () => {
-		const tUser = await Student.test(fileName),
+		const tUser = Student.test(fileName),
 			{ headers, student } = await assignStudent(req, svc, tUser, mailerSvc);
 
 		userHeaders = headers;
@@ -225,7 +225,7 @@ describe('listAllNotifications', () => {
 	let userHeaders: OutgoingHttpHeaders, numRead: number;
 
 	beforeEach(async () => {
-		const tUser = await Student.test(fileName),
+		const tUser = Student.test(fileName),
 			{ headers, student } = await assignStudent(req, svc, tUser, mailerSvc);
 
 		(userHeaders = headers), (numRead = 0);

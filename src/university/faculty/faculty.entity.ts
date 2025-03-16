@@ -1,28 +1,34 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { IFacultyEntity } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { IsString } from 'class-validator';
-import { BaseEntity, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IFacultyInfoKeys } from 'build/models';
 
 /**
  * Faculty entity
  */
 @Entity({ name: 'FacultyUser' })
-export class Faculty extends BaseEntity implements IFacultyEntity {
+export class Faculty extends ParentId implements IFacultyEntity {
 	/**
 	 * Initiate faculty object
 	 */
 	constructor(payload: NonFunctionProperties<IFacultyEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IFacultyInfoKeys));
+		this.eventCreator = new EventCreator(payload.eventCreator);
 	}
 
 	// Core Entity
 	/**
 	 * Base event creator
 	 */
-	@Column(() => EventCreator, { prefix: false }) eventCreator: EventCreator;
+	@OneToOne(() => EventCreator, { onDelete: 'CASCADE', eager: true })
+	@JoinColumn()
+	eventCreator: EventCreator;
 
 	// Infomations
 	/**
@@ -32,12 +38,25 @@ export class Faculty extends BaseEntity implements IFacultyEntity {
 
 	// Methods
 	/**
-	 * Get entity id
+	 * Entity base info
 	 */
-	get id(): string {
-		return this.eventCreator.user.baseUser.id;
+	get info() {
+		return {
+			...InterfaceCasting.quick(this, IFacultyInfoKeys),
+			...this.eventCreator.user.info,
+		};
 	}
 
+	/**
+	 * Entity parent id
+	 */
+	get pid() {
+		return this.eventCreator.id;
+	}
+
+	/**
+	 * @ignore
+	 */
 	static test(from: string, options?: { department?: string }) {
 		const { department = (10).string } = options || {},
 			eventCreator = EventCreator.test(from);

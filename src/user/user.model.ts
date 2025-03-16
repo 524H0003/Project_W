@@ -1,6 +1,11 @@
-import { IBaseUserEntity, IBaseUserEmail, IBaseUserInfo } from 'app/app.model';
+import {
+	IBaseUserEntity,
+	IBaseUserEmail,
+	IBaseUserInfo,
+	IEntityId,
+} from 'app/app.model';
 import { IEventParticipatorEntiy } from 'event/participator/participator.model';
-import { IFile } from 'file/file.model';
+import { IFileEntity } from 'file/file.model';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';
 
 // Interfaces
@@ -18,7 +23,8 @@ export interface IUserAuthentication {
  * Fields about user's infomations
  */
 export interface IUserInfo
-	extends IUserTimeRecord,
+	extends IEntityId,
+		IUserTimeRecord,
 		IUserStatus,
 		IUserSensitive {}
 
@@ -58,7 +64,7 @@ export interface IUserSensitive {
 export interface IUserRelationship {
 	baseUser: IBaseUserEntity;
 	recievedNotifications?: IRecieverEntity[];
-	uploadFiles?: IFile[];
+	uploadFiles?: IFileEntity[];
 	participatedEvents?: IEventParticipatorEntiy[];
 }
 
@@ -68,7 +74,9 @@ export interface IUserRelationship {
 export interface IUserEntity
 	extends IUserAuthentication,
 		IUserInfo,
-		IUserRelationship {}
+		IUserRelationship {
+	hashedPassword?: string;
+}
 
 /**
  * Server response interface

@@ -1,23 +1,29 @@
-import { SensitiveInfomations } from 'app/utils/typeorm.utils';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
-import { FileType, IFile } from './file.model';
+import { FileType, IFileEntity } from './file.model';
 import { Event } from 'event/event.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IFileInfoKeys } from 'build/models';
 
 /**
  * File entity
  */
 @ObjectType()
 @Entity({ name: 'Document' })
-export class File extends SensitiveInfomations implements IFile {
+export class File extends GeneratedId implements IFileEntity {
 	/**
 	 * Create file with infomations
 	 * @param {IFile} payload - file's infomations
 	 */
-	constructor(payload: IFile) {
+	constructor(payload: NonFunctionProperties<IFileEntity>) {
 		super();
-		Object.assign(this, payload);
+		if (!payload || !Object.keys(payload).length) return;
+
+		Object.assign(this, InterfaceCasting.quick(payload, IFileInfoKeys));
+		setEntity(Event, [payload.atEvent], this, 'atEvent');
+		this.fileCreatedBy = new User(payload.fileCreatedBy);
 	}
 
 	// Relationships

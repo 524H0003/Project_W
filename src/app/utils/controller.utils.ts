@@ -68,10 +68,10 @@ export class BaseController {
 			baseUser: { email: hook.fromBaseUser.email },
 		});
 
-		if (await this.svc.auth.changePassword(user, password))
-			return new UserRecieve({
-				response: { message: err('Success', 'Password', 'Implementation') },
-			});
+		await this.svc.auth.changePassword(user, password);
+		return new UserRecieve({
+			response: { message: err('Success', 'Password', 'Implementation') },
+		});
 	}
 }
 
