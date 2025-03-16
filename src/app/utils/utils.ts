@@ -294,6 +294,21 @@ declare global {
 	 * Sorting object keys
 	 */
 	function sortObjectKeys(input: object): object;
+
+	/**
+	 * Set relationship if not then null
+	 */
+	function setEntity<
+		T extends new (...args: any[]) => R,
+		R,
+		K,
+		U extends keyof K,
+	>(
+		entity: T,
+		payload: ConstructorParameters<T>,
+		destiny: K,
+		property: U,
+	): void;
 }
 
 /**
@@ -379,6 +394,21 @@ export const funcs = {
 				obj[key] = input[key];
 				return obj;
 			}, {}),
+	setEntity: <
+		T extends new (...args: any[]) => R,
+		R extends K[U],
+		K extends { [key in U]: R },
+		U extends keyof K,
+	>(
+		entity: T,
+		payload: ConstructorParameters<T>,
+		destiny: K,
+		property: U,
+	): void => {
+		payload = payload[0];
+		if (payload && Object.keys(payload).length)
+			destiny[property] = new entity(payload);
+	},
 };
 Object.assign(globalThis, funcs);
 // String.prototype

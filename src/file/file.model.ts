@@ -1,3 +1,4 @@
+import { IEntityId } from 'app/app.model';
 import { IEventEntity } from 'event/event.model';
 import { IUserEntity } from 'user/user.model';
 
@@ -5,7 +6,7 @@ import { IUserEntity } from 'user/user.model';
 /**
  * File infomations
  */
-export interface IFileInfo {
+export interface IFileInfo extends IEntityId {
 	/**
 	 * File's title
 	 */
