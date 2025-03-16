@@ -12,10 +12,13 @@ concurrency:
 jobs:
   changes:
     runs-on: ubuntu-latest
+
     permissions:
-      contents: write
+      contents: read
+
     outputs:
       project: ${{ steps.filter.outputs.project }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -40,7 +43,6 @@ jobs:
         id: auto-commit-action
         with:
           skip_dirty_check: false
-          
 
       - uses: dorny/paths-filter@v3
         if: steps.auto-commit-action.outputs.changes_detected == 'false'
@@ -63,6 +65,9 @@ jobs:
     runs-on: ubuntu-latest
 
     timeout-minutes: 3
+
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -97,6 +102,9 @@ jobs:
 
     timeout-minutes: 3
 
+    permissions:
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -129,6 +137,9 @@ jobs:
     runs-on: ubuntu-latest
 
     timeout-minutes: 3
+
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -163,6 +174,9 @@ jobs:
 
     timeout-minutes: 3
 
+    permissions:
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -194,6 +208,9 @@ jobs:
     runs-on: ubuntu-latest
 
     timeout-minutes: 3
+
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -230,6 +247,10 @@ jobs:
     runs-on: ubuntu-latest
 
     timeout-minutes: 3
+
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Delete GitHub Actions Comments
