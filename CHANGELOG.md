@@ -1,3 +1,10 @@
+## [1.2.17](https://github.com/524H0003/Project_W/compare/v1.2.16...v1.2.17) (2025-03-16)
+
+
+### Bug Fixes
+
+* **database:** new structure optimize data ([#159](https://github.com/524H0003/Project_W/issues/159)) ([b240e7b](https://github.com/524H0003/Project_W/commit/b240e7ba0d46487a78fd1fffa1b15e9649a0ead0))
+
 ## [1.2.16](https://github.com/524H0003/Project_W/compare/v1.2.15...v1.2.16) (2025-03-09)
 
 
