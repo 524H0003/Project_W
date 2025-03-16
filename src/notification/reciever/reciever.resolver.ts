@@ -66,10 +66,7 @@ export class RecieverResolver {
 		@GetRequest('user') { id }: User,
 	) {
 		if (isRead !== undefined)
-			return this.svc.recie.find({
-				isRead,
-				toUser: { id },
-			});
+			return this.svc.recie.find({ isRead, toUser: { id } });
 		return this.svc.recie.find({ toUser: { id } });
 	}
 }

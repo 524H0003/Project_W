@@ -34,9 +34,7 @@ export class Faculty extends ParentId implements IFacultyEntity {
 	/**
 	 * Department name
 	 */
-	@Column()
-	@IsString()
-	department: string;
+	@Column() @IsString() department: string;
 
 	// Methods
 	/**

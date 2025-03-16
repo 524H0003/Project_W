@@ -39,14 +39,7 @@ describe('EmployeeService', () => {
 						},
 						new UAParser().getResult(),
 					),
-				{
-					exps: [
-						{
-							type: 'toBeInstanceOf',
-							params: [Hook],
-						},
-					],
-				},
+				{ exps: [{ type: 'toBeInstanceOf', params: [Hook] }] },
 			);
 		});
 	});

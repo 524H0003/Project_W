@@ -119,11 +119,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 		const { id, hash } = await this.save(prev);
 
-		return new UserRecieve({
-			accessToken: id,
-			refreshToken: hash,
-			response,
-		});
+		return new UserRecieve({ accessToken: id, refreshToken: hash, response });
 	}
 
 	/**

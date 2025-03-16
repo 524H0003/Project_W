@@ -86,9 +86,7 @@ describe('AuthService', () => {
 							...user.baseUser,
 							password: newPassword,
 						}),
-					{
-						exps: [{ type: 'toBeInstanceOf', params: [User] }],
-					},
+					{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
 				);
 			},
 		});

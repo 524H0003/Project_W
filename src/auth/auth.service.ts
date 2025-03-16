@@ -19,8 +19,7 @@ export class AuthService extends SecurityService {
 	constructor(
 		protected jwt: JwtService,
 		protected cfg: ConfigService,
-		@Inject(forwardRef(() => AppService))
-		protected svc: AppService,
+		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 	) {
 		super(jwt, cfg);
 	}
@@ -39,11 +38,7 @@ export class AuthService extends SecurityService {
 	): Promise<User> {
 		const user = await this.svc.user.email(email),
 			{ role = UserRole.undefined } = options || {},
-			rawUser = new User({
-				password,
-				baseUser: { email, name },
-				role,
-			});
+			rawUser = new User({ password, baseUser: { email, name }, role });
 
 		if (!user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
 

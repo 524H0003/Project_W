@@ -31,9 +31,7 @@ describe('assign', () => {
 		await execute(
 			async () =>
 				svc.file.assign({ buffer: content, originalname: name }, user.id),
-			{
-				exps: [{ type: 'toBeInstanceOf', params: [File] }],
-			},
+			{ exps: [{ type: 'toBeInstanceOf', params: [File] }] },
 		);
 	});
 });
