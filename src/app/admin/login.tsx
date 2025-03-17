@@ -55,14 +55,14 @@ const csrfUrl = '../api/v1/csrf-token',
 	TextNoTopMargin = styled(Text)<BoxProps>`
 		margin-top: 0;
 	`,
+	getCsrfToken = async () =>
+		(await (await fetch(csrfUrl, { method: 'GET' })).json()).token,
 	handleRequest = async () => {
-		const { token } = await (await fetch(csrfUrl, { method: 'GET' })).json();
-
 		return fetch('../api/v1/request-signature', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'csrf-token': token,
+				'csrf-token': await getCsrfToken(),
 			},
 			body: JSON.stringify({ email }),
 		});
@@ -81,8 +81,7 @@ export const Login: React.FC = () => {
 
 	useEffect(() => {
 		async function getToken() {
-			const { token } = await (await fetch(csrfUrl, { method: 'GET' })).json();
-			setToken(token);
+			setToken(await getCsrfToken());
 		}
 		getToken();
 	}, []);

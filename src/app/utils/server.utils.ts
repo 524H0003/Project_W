@@ -73,6 +73,7 @@ export async function registerServerPlugins(
 			httpOnly: true,
 			secure: true,
 			sameSite: 'strict',
+			signed: true,
 		};
 
 	await fastify
@@ -82,7 +83,7 @@ export async function registerServerPlugins(
 		})
 		.register(fastifySecuredSession, {
 			cookieName: 'session',
-			cookie: { ...cookieOptions, signed: true },
+			cookie: cookieOptions,
 			secret,
 			key: readFileSync('securedSessionKey'),
 			salt: (256).string,
