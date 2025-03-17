@@ -64,10 +64,10 @@ export class Employee extends ParentId implements IEmployeeEntity {
 	/**
 	 * A function return user's public infomations
 	 */
-	get info(): IEmployeeInfo & IUserInfo & IBaseUserInfo {
+	get info(): { employee: IEmployeeInfo; user: IUserInfo & IBaseUserInfo } {
 		return {
-			...InterfaceCasting.quick(this, IEmployeeInfoKeys),
-			...this.eventCreator.user.info,
+			employee: InterfaceCasting.quick(this, IEmployeeInfoKeys),
+			user: this.eventCreator.user.info,
 		};
 	}
 

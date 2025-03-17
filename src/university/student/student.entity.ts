@@ -64,10 +64,10 @@ export class Student extends ParentId implements IStudentEntity {
 	/**
 	 * A function return user's public infomations
 	 */
-	get info(): IStudentInfo & IUserInfo & IBaseUserInfo {
+	get info(): { student: IStudentInfo; user: IUserInfo & IBaseUserInfo } {
 		return {
-			...InterfaceCasting.quick(this, IStudentInfoKeys),
-			...this.user.info,
+			student: InterfaceCasting.quick(this, IStudentInfoKeys),
+			user: this.user.info,
 		};
 	}
 

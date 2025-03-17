@@ -1,10 +1,12 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { IFacultyEntity } from './faculty.model';
+import { IFacultyEntity, IFacultyInfo } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { IsString } from 'class-validator';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IFacultyInfoKeys } from 'build/models';
+import { IUserInfo } from 'user/user.model';
+import { IBaseUserInfo } from 'app/app.model';
 
 /**
  * Faculty entity
@@ -40,10 +42,10 @@ export class Faculty extends ParentId implements IFacultyEntity {
 	/**
 	 * Entity base info
 	 */
-	get info() {
+	get info(): { faculty: IFacultyInfo; user: IUserInfo & IBaseUserInfo } {
 		return {
-			...InterfaceCasting.quick(this, IFacultyInfoKeys),
-			...this.eventCreator.user.info,
+			faculty: InterfaceCasting.quick(this, IFacultyInfoKeys),
+			user: this.eventCreator.user.info,
 		};
 	}
 
