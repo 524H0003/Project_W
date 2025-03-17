@@ -28,6 +28,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import pc from 'picocolors';
 import { Colors } from 'picocolors/types';
 import { ErrorType, ErrorObject, ErrorAction } from './utils';
+import { BaseUser } from 'app/app.entity';
 
 /**
  * Modified fastify interfaces
@@ -163,13 +164,15 @@ export async function initiateAdmin(
 	const admin = new AdminJS({
 		resources: [
 			Enterprise,
-			Faculty,
 			Student,
 			Employee,
 			EventTag,
 			Event,
 			Notification,
 			EventCreator,
+			User,
+			BaseUser,
+			Faculty,
 		].map((i) => generalDisplay(i)),
 		dashboard: { component: Components.Dashboard },
 		componentLoader,
