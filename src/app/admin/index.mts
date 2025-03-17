@@ -181,7 +181,7 @@ const uuidRegex =
 				authenticate: async (email, password) => {
 					const hook = await appService.hook.findOne({ signature: password });
 
-					if (!hook || email !== config.get('ADMIN_EMAIL')) return null;
+					if (hook.isNull() || email !== config.get('ADMIN_EMAIL')) return null;
 
 					return { email, password };
 				},
