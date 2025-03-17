@@ -19,7 +19,7 @@ import React, { useEffect, useState } from 'react';
 
 let email: string;
 
-const csrfUrl = '../api/v1/csrf-token',
+const csrfUrl = '/csrf-token',
 	Wrapper = styled(Box)<BoxProps>`
 		align-items: center;
 		justify-content: center;

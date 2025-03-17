@@ -201,6 +201,11 @@ export class InitServerClass implements OnModuleInit {
 			.addHook('preSerialization', (req, rep, payload: UserRecieve, done) =>
 				middleware.cookie(req, rep, payload, done),
 			)
+			.addHook('onRequest', (request, reply, done) => {
+				if (request.url.split('/').at(-1) == 'csrf-token')
+					reply.send({ token: reply.generateCsrf() });
+				else done();
+			})
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {

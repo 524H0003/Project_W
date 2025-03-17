@@ -6,7 +6,6 @@ import {
 	Inject,
 	Param,
 	Post,
-	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
@@ -40,7 +39,6 @@ import {
 	MetaData,
 	RefreshGuard,
 } from 'auth/guards';
-import { FastifyReply } from 'fastify';
 
 /**
  * Application Controller
@@ -195,11 +193,7 @@ export class AppController extends BaseController {
 	/**
 	 * Request a csrf token
 	 */
-	@Get('csrf-token') getCsrfToken(
-		@Res({ passthrough: true }) response: FastifyReply,
-	) {
-		return new UserRecieve({ response: { token: response.generateCsrf() } });
-	}
+	@Get('csrf-token') getCsrfToken() {}
 }
 
 @Controller('health')
