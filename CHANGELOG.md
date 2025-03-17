@@ -1,3 +1,10 @@
+## [1.2.18](https://github.com/524H0003/Project_W/compare/v1.2.17...v1.2.18) (2025-03-17)
+
+
+### Bug Fixes
+
+* **user response:** detailed user overall server response ([#160](https://github.com/524H0003/Project_W/issues/160)) ([536fb68](https://github.com/524H0003/Project_W/commit/536fb6866cc475a151e7ea603f5d04cda3a2f1a4))
+
 ## [1.2.17](https://github.com/524H0003/Project_W/compare/v1.2.16...v1.2.17) (2025-03-16)
 
 
