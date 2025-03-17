@@ -76,11 +76,10 @@ export class UserService extends DatabaseRequests<User> {
 	/**
 	 * Find user by id
 	 * @param {string} id - user's id
-	 * @param {ExtendOptions} options - function options
 	 * @return {Promise<User>}
 	 */
 	id(id: string): Promise<User> {
-		return this.findOne({ baseUser: { id }, deep: 2 });
+		return this.findOne({ id, deep: 2 });
 	}
 
 	/**

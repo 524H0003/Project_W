@@ -110,8 +110,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {MetaData} mtdt - metadata from client
 	 */
 	async getTokens(userId: string, mtdt: MetaData) {
-		const response = await this.svc.user.info(userId);
-		let prev = await this.assign(response['id'], null, mtdt);
+		let prev = await this.assign(userId, null, mtdt);
 
 		await this.use.range(async () => {
 			prev = await this.assign(null, prev.hash);
@@ -119,7 +118,11 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 		const { id, hash } = await this.save(prev);
 
-		return new UserRecieve({ accessToken: id, refreshToken: hash, response });
+		return new UserRecieve({
+			accessToken: id,
+			refreshToken: hash,
+			response: await this.svc.user.info(userId),
+		});
 	}
 
 	/**
@@ -130,7 +133,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		if (!id && !hash) throw new ServerException('Invalid', 'Token', '');
 
 		let bloc = await this.findOne({ id, hash });
-		while (bloc && bloc.ownerId == null)
+		while (bloc && bloc.ownerId == null && bloc.prev != null)
 			bloc = await this.findOne({ hash: bloc.prev });
 
 		return bloc.ownerId !== null ? bloc : null;
