@@ -48,9 +48,9 @@ async function bootstrap() {
 		{ httpAdapter } = nest.get(HttpAdapterHost),
 		config = nest.get(ConfigService),
 		cookie: CookieProps = {
-			name: config.get('SERVER_SECRET'),
+			name: (6).string,
 			password: (
-				await passwordHashing(config.get('SERVER_SECRET'), {
+				await passwordHashing((6).string, {
 					hashLength: 6,
 					timeCost: 2,
 					memoryCost: 6262,
