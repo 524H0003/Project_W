@@ -25,7 +25,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 			inject: [ConfigService],
 			useFactory: (cfgSvc: ConfigService): MailerOptions => {
 				return {
-					transport: process.argv.some((i) => i == '--test-mail')
+					transport: process.argv.some((i) => i == '--test-email')
 						? {
 								secure: false,
 								host: 'localhost',

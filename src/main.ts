@@ -112,6 +112,10 @@ async function bootstrap() {
 		.ready(() => {
 			server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
 		});
+
+	// Test modify
+	if (process.argv.some((i) => i == '--test-email'))
+		config.set('ADMIN_EMAIL', 'test@test.test');
 }
 
 void bootstrap();

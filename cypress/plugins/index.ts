@@ -1,6 +1,9 @@
 import ms from 'smtp-tester';
 
-module.exports = (on, config) => {
+export default (
+	on: Cypress.PluginEvents,
+	config: Cypress.PluginConfigOptions,
+) => {
 	// starts the SMTP server at localhost:7777
 	const port = 7777,
 		mailServer = ms.init(port);
@@ -9,8 +12,8 @@ module.exports = (on, config) => {
 	let lastEmail = {};
 
 	// process all emails
-	mailServer.bind((addr, id, email) => {
-		lastEmail[email.headers.to[0]] = email.html || email.body;
+	mailServer.bind((addr, id, { html, headers }) => {
+		lastEmail[headers.to as string] = html;
 	});
 
 	on('task', {

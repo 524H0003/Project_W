@@ -163,6 +163,8 @@ export async function initiateAdmin(
 
 	const admin = new AdminJS({
 		resources: [
+			BaseUser,
+			User,
 			Enterprise,
 			Student,
 			Employee,
@@ -170,8 +172,6 @@ export async function initiateAdmin(
 			Event,
 			Notification,
 			EventCreator,
-			User,
-			BaseUser,
 			Faculty,
 		].map((i) => generalDisplay(i)),
 		dashboard: { component: Components.Dashboard },

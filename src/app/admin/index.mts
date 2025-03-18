@@ -182,6 +182,7 @@ const uuidRegex =
 					const hook = await appService.hook.findOne({ signature: password });
 
 					if (hook.isNull() || email !== config.get('ADMIN_EMAIL')) return null;
+					await appService.hook.remove(hook.id);
 
 					return { email, password };
 				},

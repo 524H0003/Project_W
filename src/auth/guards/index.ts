@@ -64,10 +64,7 @@ export const Allow = Reflector.createDecorator<UserRole[]>(),
 			const { headers } = context.getArgByIndex(0),
 				uap = UAParser(headers);
 
-			return {
-				...(await uap.withClientHints()),
-				...(await uap.withFeatureCheck()),
-			};
+			return uap.withFeatureCheck();
 		},
 	);
 

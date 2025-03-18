@@ -30,9 +30,12 @@ export const loadEnv =
 			SERVER_PUBLIC: Joi.string().default('./public/'),
 			SERVER_FILE_SIZE_LIMIT: Joi.number().default(256),
 			// ADMIN
-			ADMIN_EMAIL: process.argv.some((i) => i == '--test-mail')
-				? 'test@test.test'
-				: Joi.string().default('admin'),
+			ADMIN_EMAIL:
+				Joi.string()[
+					process.argv.some((i) => i == '--test-email')
+						? 'optional'
+						: 'required'
+				](),
 			// AWS
 			AWS_REGION: Joi.string().default(false),
 			AWS_ACCESS_KEY_ID: Joi.string(),
