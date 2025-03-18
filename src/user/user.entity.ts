@@ -217,20 +217,17 @@ export class UserRecieve implements IUserRecieve {
 	/**
 	 * User access token
 	 */
-	@ApiHideProperty()
-	accessToken: string;
+	@ApiHideProperty() accessToken: string;
 
 	/**
 	 * User refresh token
 	 */
-	@ApiHideProperty()
-	refreshToken: string;
+	@ApiHideProperty() refreshToken: string;
 
 	/**
 	 * Server's response
 	 */
-	@ApiHideProperty()
-	response: IResponse;
+	@ApiHideProperty() response: IResponse;
 
 	/**
 	 * Jwt payload

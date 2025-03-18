@@ -26,11 +26,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 			useFactory: (cfgSvc: ConfigService): MailerOptions => {
 				return {
 					transport: process.argv.some((i) => i == '--test-email')
-						? {
-								secure: false,
-								host: 'localhost',
-								port: 7777,
-							}
+						? { secure: false, host: 'localhost', port: 7777 }
 						: {
 								host: 'smtp.gmail.com',
 								secure: true,
