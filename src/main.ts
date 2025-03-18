@@ -85,9 +85,8 @@ async function bootstrap() {
 
 	if (!process.argv.some((i) => i == '--no-csrf'))
 		fastify.addHook('preValidation', (req, reply, done) => {
-			if (req.method.toLowerCase() !== 'get')
-				fastify.csrfProtection(req, reply, done);
-			else done();
+			if (['get', 'head'].some((i) => i == req.method.toLowerCase())) done();
+			else fastify.csrfProtection(req, reply, done);
 		});
 
 	fastify
