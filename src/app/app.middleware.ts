@@ -6,6 +6,7 @@ import { DoneFuncWithErrOrRes, FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 import { UserRecieve } from 'user/user.entity';
 import { cookieOptions } from './utils/server.utils';
+import { CookieSerializeOptions } from '@fastify/cookie';
 
 /**
  * App middleware
@@ -70,22 +71,23 @@ export class AppMiddleware extends SecurityService {
 	) {
 		if (payload instanceof UserRecieve) {
 			const { accessToken = '', refreshToken = '', response } = payload,
-				accessKey = (32).string;
+				accessKey = (32).string,
+				cookieOpts: CookieSerializeOptions = {
+					...cookieOptions,
+					signed: false,
+				};
 
-			req.session.set<any>(
-				'accessKey',
-				this.encrypt(accessKey, req.ips?.join(';') || req.ip),
-			);
+			req.session.set<any>('accessKey', this.encrypt(accessKey, req.ip));
 			res
 				.setCookie(
 					'access',
 					this.encrypt(this.access({ accessToken }), accessKey),
-					cookieOptions,
+					cookieOpts,
 				)
 				.setCookie(
 					'refresh',
 					this.encrypt(this.refresh({ refreshToken })),
-					cookieOptions,
+					cookieOpts,
 				);
 			done(null, response);
 		} else done();
