@@ -259,6 +259,8 @@ jobs:
       contents: read
       pull-requests: write
 
+    if: always()
+
     steps:
       - run: exit 1
         if: failure()
