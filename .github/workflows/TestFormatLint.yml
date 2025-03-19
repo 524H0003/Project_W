@@ -242,13 +242,6 @@ jobs:
           path: ./cypress/screenshots
 
   FormatAndLint:
-    needs:
-      - Test_service
-      - Test_resolver
-      - Test_controller
-      - Test_web
-      - Test_etc
-
     name: 'Format & Lint'
 
     runs-on: ubuntu-latest
@@ -259,12 +252,9 @@ jobs:
       contents: read
       pull-requests: write
 
-    if: always()
+    if: contains(needs.*.result, 'failure') != true
 
     steps:
-      - run: exit 1
-        if: failure()
-
       - name: Delete GitHub Actions Comments
         uses: izhangzhihao/delete-comment@master
         with:
