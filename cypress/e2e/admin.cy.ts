@@ -7,7 +7,7 @@ describe('Admin page test', () => {
 		cy.visit(url).contains('Request password'));
 
 	it('able to login', () => {
-		cy.intercept('GET', '/csrf-token')
+		cy.intercept('GET', '/admin/csrf-token')
 			.as('csrfRequest')
 			.intercept('POST', '/api/v1/request-signature')
 			.as('signatureRequest');
