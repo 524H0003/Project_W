@@ -1,4 +1,4 @@
-import fastifyCookie from '@fastify/cookie';
+import '@fastify/cookie';
 import '@fastify/session';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Faculty } from 'university/faculty/faculty.entity';
@@ -63,22 +63,23 @@ export const fastifyOptions: FastifyServerOptions = { maxParamLength: 128 };
 export type CookieProps = { name: string; password: string };
 
 /**
+ * Client cookie save options
+ */
+export const cookieOptions: CookieSerializeOptions = {
+	httpOnly: true,
+	secure: true,
+	sameSite: 'strict',
+	signed: true,
+};
+
+/**
  * Register fastify plugins
  */
 export async function registerServerPlugins(
 	fastify: FastifyInstance,
 	{ password = (32).string, name = (6).string }: Partial<CookieProps>,
 ) {
-	const secret = password,
-		cookieOptions: CookieSerializeOptions = {
-			httpOnly: true,
-			secure: true,
-			sameSite: 'strict',
-			signed: true,
-		};
-
 	await fastify
-		.register(fastifyCookie, { parseOptions: cookieOptions })
 		.register(fastifyCompression, {
 			encodings: ['gzip', 'deflate'],
 			brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } },
@@ -86,7 +87,7 @@ export async function registerServerPlugins(
 		.register(fastifySecuredSession, {
 			cookieName: 'session',
 			cookie: cookieOptions,
-			secret,
+			secret: password,
 			key: readFileSync('securedSessionKey'),
 			salt: (256).string,
 		})

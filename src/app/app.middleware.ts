@@ -5,6 +5,7 @@ import { SecurityService } from 'app/utils/auth.utils';
 import { DoneFuncWithErrOrRes, FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 import { UserRecieve } from 'user/user.entity';
+import { cookieOptions } from './utils/server.utils';
 
 /**
  * App middleware
@@ -79,8 +80,13 @@ export class AppMiddleware extends SecurityService {
 				.setCookie(
 					'access',
 					this.encrypt(this.access({ accessToken }), accessKey),
+					cookieOptions,
 				)
-				.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
+				.setCookie(
+					'refresh',
+					this.encrypt(this.refresh({ refreshToken })),
+					cookieOptions,
+				);
 			done(null, response);
 		} else done();
 	}
