@@ -75,7 +75,7 @@ export const Login: React.FC = () => {
 
 	useEffect(() => {
 		async function getToken() {
-			setToken(await getCsrfToken());
+			setToken(await getCsrfToken('/admin'));
 		}
 		getToken();
 	}, []);
