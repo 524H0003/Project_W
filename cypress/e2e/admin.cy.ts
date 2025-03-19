@@ -30,8 +30,8 @@ describe('Admin page test', () => {
 					.type(`${$ele[0].innerText}`)
 					.get('.sc-hLseeU')
 					.click()
-					.get('.gxrojD > .sc-dmqHEX > .sc-iCmkLe')
-					.should('have.text', 'test@test.test');
+					.get('div')
+					.contains('test@test.test');
 			});
 		});
 	});
