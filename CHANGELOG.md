@@ -1,3 +1,10 @@
+## [1.2.19](https://github.com/524H0003/Project_W/compare/v1.2.18...v1.2.19) (2025-03-19)
+
+
+### Bug Fixes
+
+* **admin:** fixed csrf issue ([#161](https://github.com/524H0003/Project_W/issues/161)) ([2d4db09](https://github.com/524H0003/Project_W/commit/2d4db0988d40222cb497cb9b7d6e98a2c9ac10f4))
+
 ## [1.2.18](https://github.com/524H0003/Project_W/compare/v1.2.17...v1.2.18) (2025-03-17)
 
 
