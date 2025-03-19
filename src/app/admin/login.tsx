@@ -16,19 +16,15 @@ import { styled } from '@adminjs/design-system/styled-components';
 import { useTranslation } from 'adminjs';
 
 import React, { useEffect, useState } from 'react';
+import { getCsrfToken } from './utils.js';
 
 let email: string;
 
-const csrfUrl = '../api/v1/csrf-token',
-	Wrapper = styled(Box)<BoxProps>`
+const Wrapper = styled(Box)<BoxProps>`
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
 		height: 100%;
-	`,
-	StyledLogo = styled.img`
-		max-width: 200px;
-		margin: ${({ theme }) => theme.space.md} 0;
 	`,
 	IllustrationsWrapper = styled(Box)<BoxProps>`
 		display: flex;
@@ -56,13 +52,11 @@ const csrfUrl = '../api/v1/csrf-token',
 		margin-top: 0;
 	`,
 	handleRequest = async () => {
-		const { token } = await (await fetch(csrfUrl, { method: 'GET' })).json();
-
-		return fetch('../api/v1/request-signature', {
+		return fetch('/api/v1/request-signature', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'csrf-token': token,
+				'csrf-token': await getCsrfToken('/api/v1'),
 			},
 			body: JSON.stringify({ email }),
 		});
@@ -81,8 +75,7 @@ export const Login: React.FC = () => {
 
 	useEffect(() => {
 		async function getToken() {
-			const { token } = await (await fetch(csrfUrl, { method: 'GET' })).json();
-			setToken(token);
+			setToken(await getCsrfToken('/admin'));
 		}
 		getToken();
 	}, []);

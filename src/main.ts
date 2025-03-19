@@ -50,7 +50,7 @@ async function bootstrap() {
 		cookie: CookieProps = {
 			name: (6).string,
 			password: (
-				await passwordHashing(config.get('SERVER_SECRET'), {
+				await passwordHashing((6).string, {
 					hashLength: 6,
 					timeCost: 2,
 					memoryCost: 6262,
@@ -85,9 +85,8 @@ async function bootstrap() {
 
 	if (!process.argv.some((i) => i == '--no-csrf'))
 		fastify.addHook('preValidation', (req, reply, done) => {
-			if (req.method.toLowerCase() !== 'get')
-				fastify.csrfProtection(req, reply, done);
-			else done();
+			if (['get', 'head'].some((i) => i == req.method.toLowerCase())) done();
+			else fastify.csrfProtection(req, reply, done);
 		});
 
 	fastify
@@ -112,6 +111,10 @@ async function bootstrap() {
 		.ready(() => {
 			server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
 		});
+
+	// Test modify
+	if (process.argv.some((i) => i == '--test-email'))
+		config.set('ADMIN_EMAIL', 'test@test.test');
 }
 
 void bootstrap();

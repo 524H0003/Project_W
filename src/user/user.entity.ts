@@ -27,6 +27,7 @@ import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 /**
  * User entity
@@ -216,17 +217,17 @@ export class UserRecieve implements IUserRecieve {
 	/**
 	 * User access token
 	 */
-	accessToken: string;
+	@ApiHideProperty() accessToken: string;
 
 	/**
 	 * User refresh token
 	 */
-	refreshToken: string;
+	@ApiHideProperty() refreshToken: string;
 
 	/**
 	 * Server's response
 	 */
-	response: IResponse;
+	@ApiHideProperty() response: IResponse;
 
 	/**
 	 * Jwt payload

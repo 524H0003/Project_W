@@ -28,6 +28,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import pc from 'picocolors';
 import { Colors } from 'picocolors/types';
 import { ErrorType, ErrorObject, ErrorAction } from './utils';
+import { BaseUser } from 'app/app.entity';
 
 /**
  * Modified fastify interfaces
@@ -73,6 +74,7 @@ export async function registerServerPlugins(
 			httpOnly: true,
 			secure: true,
 			sameSite: 'strict',
+			signed: true,
 		};
 
 	await fastify
@@ -82,7 +84,7 @@ export async function registerServerPlugins(
 		})
 		.register(fastifySecuredSession, {
 			cookieName: 'session',
-			cookie: { ...cookieOptions, signed: true },
+			cookie: cookieOptions,
 			secret,
 			key: readFileSync('securedSessionKey'),
 			salt: (256).string,
@@ -161,14 +163,16 @@ export async function initiateAdmin(
 
 	const admin = new AdminJS({
 		resources: [
+			BaseUser,
+			User,
 			Enterprise,
-			Faculty,
 			Student,
 			Employee,
 			EventTag,
 			Event,
 			Notification,
 			EventCreator,
+			Faculty,
 		].map((i) => generalDisplay(i)),
 		dashboard: { component: Components.Dashboard },
 		componentLoader,
@@ -200,6 +204,11 @@ export class InitServerClass implements OnModuleInit {
 			.addHook('preSerialization', (req, rep, payload: UserRecieve, done) =>
 				middleware.cookie(req, rep, payload, done),
 			)
+			.addHook('onRequest', (request, reply, done) => {
+				if (request.url.split('/').at(-1) == 'csrf-token')
+					reply.send({ token: reply.generateCsrf() });
+				else done();
+			})
 			.addContentTypeParser(
 				/^multipart\/([\w-]+);?/,
 				function (request, payload, done) {

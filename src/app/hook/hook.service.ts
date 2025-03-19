@@ -54,4 +54,12 @@ export class HookService extends DatabaseRequests<Hook> {
 
 		await this.delete({ id: hook.id });
 	}
+
+	/**
+	 * Removing hook
+	 * @param {string} id - hook id
+	 */
+	async remove(id: string) {
+		await this.delete({ id });
+	}
 }

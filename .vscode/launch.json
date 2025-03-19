@@ -23,6 +23,12 @@
 			"name": "Debug Jest current file",
 			"request": "launch",
 			"type": "node-terminal"
+		},
+		{
+			"command": "npm run build --ignore-scripts && npm run start:web",
+			"name": "Debug cypress email",
+			"request": "launch",
+			"type": "node-terminal"
 		}
 	],
 	// Use IntelliSense to learn about possible attributes.

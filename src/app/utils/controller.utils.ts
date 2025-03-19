@@ -12,16 +12,6 @@ import { MetaData } from 'auth/guards';
  */
 export class BaseController {
 	/**
-	 * Server access token secret
-	 */
-	private acsKey: string = this.cfg.get('ACCESS_SECRET');
-
-	/**
-	 * Server refresh token secret
-	 */
-	private rfsKey: string = this.cfg.get('REFRESH_SECRET');
-
-	/**
 	 * Initiate base controller
 	 */
 	constructor(

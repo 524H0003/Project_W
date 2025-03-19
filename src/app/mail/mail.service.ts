@@ -37,7 +37,7 @@ export class MailService {
 			throw new ServerException('Invalid', 'Email', '');
 
 		await this.mailerService.sendMail({
-			to: baseUser?.email || email,
+			to: baseUser?.email || this.svc.cfg.get('ADMIN_EMAIL'),
 			subject,
 			template: `./${template}.html`,
 			context,
