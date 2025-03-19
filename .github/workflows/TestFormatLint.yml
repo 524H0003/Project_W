@@ -233,7 +233,6 @@ jobs:
       - run: rm -fr public/* && npm run genkey
 
       - run: npm run start:ci
-        continue-on-error: true 
 
       - name: Upload Images
         if: failure()  
