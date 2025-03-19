@@ -15,7 +15,7 @@ describe('Admin page test', () => {
 		cy.visit(url)
 			.wait('@csrfRequest')
 			.get('.gQljnD > :nth-child(2) > .sc-qRumB')
-			.type('test@test.test');
+			.type('test@test.test', { timeout: (10).s2ms });
 
 		cy.contains('Request password').click().wait('@signatureRequest');
 
