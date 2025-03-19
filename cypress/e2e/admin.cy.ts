@@ -14,7 +14,7 @@ describe('Admin page test', () => {
 
 		cy.visit(url)
 			.wait('@csrfRequest')
-			.get('.gQljnD > :nth-child(2) > .sc-qRumB', { timeout: (10).s2ms })
+			.get('.gQljnD > :nth-child(2) > .sc-qRumB', { timeout: 10000 })
 			.type('test@test.test');
 
 		cy.contains('Request password').click().wait('@signatureRequest');
@@ -24,7 +24,7 @@ describe('Admin page test', () => {
 			cy.get('.info-box').then(($ele) => {
 				cy.visit(url)
 					.wait('@csrfRequest')
-					.get('.gQljnD > :nth-child(2) > .sc-qRumB', { timeout: (10).s2ms })
+					.get('.gQljnD > :nth-child(2) > .sc-qRumB', { timeout: 10000 })
 					.type('test@test.test')
 					.get(':nth-child(3) > .sc-qRumB')
 					.type(`${$ele[0].innerText}`)
