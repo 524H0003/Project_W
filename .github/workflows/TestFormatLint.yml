@@ -259,7 +259,7 @@ jobs:
       contents: read
       pull-requests: write
 
-    if: contains(needs.*.result, 'failure') != true
+    if: always() && contains(needs.*.result, 'failure') != true
 
     steps:
       - name: Delete GitHub Actions Comments
