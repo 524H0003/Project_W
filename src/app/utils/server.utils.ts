@@ -1,4 +1,4 @@
-import '@fastify/cookie';
+import fastifyCookie from '@fastify/cookie';
 import '@fastify/session';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { Faculty } from 'university/faculty/faculty.entity';
@@ -78,6 +78,7 @@ export async function registerServerPlugins(
 		};
 
 	await fastify
+		.register(fastifyCookie, { parseOptions: cookieOptions })
 		.register(fastifyCompression, {
 			encodings: ['gzip', 'deflate'],
 			brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } },
