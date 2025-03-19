@@ -242,6 +242,13 @@ jobs:
           path: ./cypress/screenshots
 
   FormatAndLint:
+    needs:
+      - Test_service
+      - Test_resolver
+      - Test_controller
+      - Test_web
+      - Test_etc
+
     name: 'Format & Lint'
 
     runs-on: ubuntu-latest
