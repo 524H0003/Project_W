@@ -235,7 +235,7 @@ jobs:
       - run: npm run start:ci
 
       - name: Upload Images
-        if: failure()  
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-images
@@ -253,13 +253,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 3
+    timeout-minutes: 1
 
     permissions:
       contents: read
       pull-requests: write
 
     steps:
+      - run: exit 1
+        if: failure()
+
       - name: Delete GitHub Actions Comments
         uses: izhangzhihao/delete-comment@master
         with:
