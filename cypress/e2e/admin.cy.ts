@@ -14,7 +14,7 @@ describe('Admin page test', () => {
 
 		cy.visit(url)
 			.wait('@csrfRequest')
-			.get('input[name="email"]'	)
+			.get('input[name="email"]')
 			.type('test@test.test');
 
 		cy.contains('Request password').click().wait('@signatureRequest');
