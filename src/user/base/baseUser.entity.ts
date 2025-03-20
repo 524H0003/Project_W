@@ -1,9 +1,9 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
-import { GeneratedId, NonFunctionProperties } from './utils/typeorm.utils';
-import { IBaseUserEntity, IBaseUserInfo } from './app.model';
-import { InterfaceCasting } from './utils/utils';
-import { Hook } from './hook/hook.entity';
 import { IBaseUserInfoKeys } from 'build/models';
+import { IBaseUserEntity, IBaseUserInfo } from './baseUser.model';
+import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { InterfaceCasting } from 'app/utils/utils';
+import { Hook } from 'app/hook/hook.entity';
 
 /**
  * Base user

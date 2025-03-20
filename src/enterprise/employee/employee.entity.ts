@@ -8,10 +8,10 @@ import { EventCreator } from 'event/creator/creator.entity';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { User } from 'user/user.entity';
 import { IUserInfo } from 'user/user.model';
-import { IBaseUserInfo } from 'app/app.model';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'build/models';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { IBaseUserInfo } from 'user/base/baseUser.model';
 
 /**
  * Employee entity

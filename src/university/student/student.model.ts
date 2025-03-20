@@ -1,3 +1,4 @@
+import { IEntityId } from 'app/app.model';
 import { IEnterpriseEntity } from 'enterprise/enterprise.model';
 import { IUserSignUp, IUserEntity } from 'user/user.model';
 
@@ -25,7 +26,7 @@ export interface ISutdentRelationship {
 /**
  * Student general infomations
  */
-export interface IStudentInfo {
+export interface IStudentInfo extends IEntityId {
 	/**
 	 * Student's major
 	 */

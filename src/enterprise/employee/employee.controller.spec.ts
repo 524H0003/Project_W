@@ -33,7 +33,7 @@ beforeEach(async () => {
 		req,
 		enterprise,
 		mailerSvc,
-		svc.cfg.get('ADMIN_EMAIL'),
+		svc.config.get('ADMIN_EMAIL'),
 	);
 });
 

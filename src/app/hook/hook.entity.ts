@@ -1,11 +1,11 @@
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BlackBox } from 'app/utils/model.utils';
-import { BaseUser } from 'app/app.entity';
 import { MetaData } from 'auth/guards';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IHookEntity } from './hook.model';
 import { IHookInfoKeys } from 'build/models';
+import { BaseUser } from 'user/base/baseUser.entity';
 
 /**
  * Hook entity

@@ -354,7 +354,7 @@ describe('request-signature', () => {
 				(
 					await req()
 						.post('/request-signature')
-						.body({ email: svc.cfg.get('ADMIN_EMAIL') })
+						.body({ email: svc.config.get('ADMIN_EMAIL') })
 				).body,
 			{
 				exps: [

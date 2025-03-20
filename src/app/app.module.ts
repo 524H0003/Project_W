@@ -1,6 +1,4 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { BaseUser } from './app.entity';
 import { AppController, HealthController } from 'app/app.controller';
 import { AppService } from 'app/app.service';
 import { HookModule } from './hook/hook.module';
@@ -42,7 +40,6 @@ const modules = [
 			gracefulShutdownTimeoutMs: (30).s2ms,
 			logger: false,
 		}),
-		TypeOrmModule.forFeature([BaseUser]),
 		...modules.map((i) => forwardRef(() => i)),
 	],
 	providers: [AppService],

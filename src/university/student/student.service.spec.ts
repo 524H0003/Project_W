@@ -22,8 +22,6 @@ describe('StudentService', () => {
 			() =>
 				svc.student.signUp({
 					...student.user.baseUser,
-					...student.user,
-					...student,
 				}),
 			{
 				exps: [{ type: 'toThrow', params: [err('Success', 'User', 'SignUp')] }],
@@ -38,8 +36,6 @@ describe('StudentService', () => {
 			() =>
 				svc.student.signUp({
 					...student.user.baseUser,
-					...student.user,
-					...student,
 				}),
 			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Email', '')] }] },
 		);

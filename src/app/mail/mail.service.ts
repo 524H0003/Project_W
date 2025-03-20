@@ -1,7 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { BaseUser } from 'app/app.entity';
 import { AppService } from 'app/app.service';
+import { BaseUser } from 'user/base/baseUser.entity';
 
 /**
  * Mail service
@@ -33,11 +33,11 @@ export class MailService {
 	): Promise<BaseUser> {
 		const baseUser = await this.svc.baseUser.email(email);
 
-		if (baseUser.isNull() && email !== this.svc.cfg.get('ADMIN_EMAIL'))
+		if (baseUser.isNull() && email !== this.svc.config.get('ADMIN_EMAIL'))
 			throw new ServerException('Invalid', 'Email', '');
 
 		await this.mailerService.sendMail({
-			to: baseUser?.email || this.svc.cfg.get('ADMIN_EMAIL'),
+			to: baseUser?.email || this.svc.config.get('ADMIN_EMAIL'),
 			subject,
 			template: `./${template}.html`,
 			context,

@@ -15,7 +15,7 @@ beforeEach(() => {});
 
 describe('send', () => {
 	it('success', async () => {
-		const email = svc.cfg.get('ADMIN_EMAIL'),
+		const email = svc.config.get('ADMIN_EMAIL'),
 			subject = (21).string,
 			signature = (22).string;
 

@@ -1,6 +1,7 @@
-import { IBaseUserEmail, IBaseUserInfo, IEntityId } from 'app/app.model';
+import { IEntityId } from 'app/app.model';
 import { IEnterpriseEntity } from 'enterprise/enterprise.model';
 import { IEventCreatorEntity } from 'event/creator/creator.model';
+import { IBaseUserInfo } from 'user/base/baseUser.model';
 import { IUserSignUp } from 'user/user.model';
 
 // Interfaces
@@ -33,10 +34,7 @@ export interface IEmployeeSignUp extends IEmployeeInfo, IUserSignUp {}
 /**
  * Employee hooking
  */
-export interface IEmployeeHook
-	extends IBaseUserInfo,
-		IBaseUserEmail,
-		IEmployeeInfo {
+export interface IEmployeeHook extends IBaseUserInfo, IEmployeeInfo {
 	/**
 	 * Employee's working enterprise
 	 */

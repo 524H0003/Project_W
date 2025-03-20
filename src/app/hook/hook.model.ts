@@ -1,5 +1,6 @@
-import { IBaseUserEntity, IEntityId, ISignature } from 'app/app.model';
+import { IEntityId, ISignature } from 'app/app.model';
 import { IResult } from 'ua-parser-js';
+import { IBaseUserEntity } from 'user/base/baseUser.model';
 
 // Interfaces
 /**

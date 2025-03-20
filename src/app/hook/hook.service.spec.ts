@@ -4,7 +4,7 @@ import { User } from 'user/user.entity';
 import { Hook } from './hook.entity';
 import { UAParser } from 'ua-parser-js';
 import { MetaData } from 'auth/guards';
-import { BaseUser } from 'app/app.entity';
+import { BaseUser } from 'user/base/baseUser.entity';
 
 const fileName = curFile(__filename);
 

@@ -28,7 +28,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import pc from 'picocolors';
 import { Colors } from 'picocolors/types';
 import { ErrorType, ErrorObject, ErrorAction } from './utils';
-import { BaseUser } from 'app/app.entity';
+import { BaseUser } from 'user/base/baseUser.entity';
 
 /**
  * Modified fastify interfaces

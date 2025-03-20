@@ -3,9 +3,9 @@ import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Hook } from './hook.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BaseUser } from 'app/app.entity';
 import { AppService } from 'app/app.service';
 import { MetaData } from 'auth/guards';
+import { BaseUser } from 'user/base/baseUser.entity';
 
 /**
  * Hook service

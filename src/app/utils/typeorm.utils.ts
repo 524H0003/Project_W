@@ -70,6 +70,7 @@ export class GeneratedId extends BaseEntity {
 /**
  * Entity with id from parent
  */
+@ObjectType()
 export class ParentId extends BaseEntity {
 	/**
 	 * Entity initiation
@@ -183,7 +184,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 
 		return (
 			await this.repo.find({
-				where: <FindOptionsWhere<T>>newOptions,
+				where: <FindOptionsWhere<T>>new this.ctor(newOptions),
 				take,
 				skip,
 				order,
