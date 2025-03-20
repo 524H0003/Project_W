@@ -5,6 +5,7 @@ import { SecurityService } from 'app/utils/auth.utils';
 import { DoneFuncWithErrOrRes, FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 import { UserRecieve } from 'user/user.entity';
+import { cookieOptions } from './utils/server.utils';
 
 /**
  * App middleware
@@ -35,14 +36,19 @@ export class AppMiddleware extends SecurityService {
 
 		let access: string = '',
 			refresh: string = '';
-		for (const cookie in req.cookies)
-			if ('refresh' == cookie) {
-				res.clearCookie(cookie);
-				refresh = this.decrypt(req.cookies[cookie]);
-			} else if ('access' == cookie) {
-				res.clearCookie(cookie);
-				access = this.decrypt(req.cookies[cookie], accessKey);
+		for (const cookieName in req.cookies) {
+			const { valid, value } = req.unsignCookie(req.cookies[cookieName]);
+
+			if (!valid) continue;
+
+			if ('refresh' == cookieName) {
+				res.clearCookie(cookieName);
+				refresh = this.decrypt(value);
+			} else if ('access' == cookieName) {
+				res.clearCookie(cookieName);
+				access = this.decrypt(value, accessKey);
 			}
+		}
 
 		if (access || refresh)
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
@@ -71,16 +77,18 @@ export class AppMiddleware extends SecurityService {
 			const { accessToken = '', refreshToken = '', response } = payload,
 				accessKey = (32).string;
 
-			req.session.set<any>(
-				'accessKey',
-				this.encrypt(accessKey, req.ips?.join(';') || req.ip),
-			);
+			req.session.set<any>('accessKey', this.encrypt(accessKey, req.ip));
 			res
 				.setCookie(
 					'access',
 					this.encrypt(this.access({ accessToken }), accessKey),
+					cookieOptions,
 				)
-				.setCookie('refresh', this.encrypt(this.refresh({ refreshToken })));
+				.setCookie(
+					'refresh',
+					this.encrypt(this.refresh({ refreshToken })),
+					cookieOptions,
+				);
 			done(null, response);
 		} else done();
 	}

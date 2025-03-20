@@ -5,12 +5,14 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IStudentInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
-import { IBaseUserInfo } from 'app/app.model';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { IBaseUserInfo } from 'user/base/baseUser.model';
 
 /**
  * Student entity
  */
+@ObjectType()
 @Entity({ name: 'Student' })
 export class Student extends ParentId implements IStudentEntity {
 	/**
@@ -19,8 +21,16 @@ export class Student extends ParentId implements IStudentEntity {
 	 */
 	constructor(payload: NonFunctionProperties<IStudentEntity>) {
 		super();
+		if (!payload || !Object.keys(payload).length) return;
 
-		if (payload) Object.assign(this, payload);
+		Object.assign(this, InterfaceCasting.quick(payload, IStudentInfoKeys));
+		this.user = new User(payload.user);
+		setEntity(
+			Enterprise,
+			[payload.currentEnterprise],
+			this,
+			'currentEnterprise',
+		);
 	}
 
 	// Core Entity
@@ -29,6 +39,7 @@ export class Student extends ParentId implements IStudentEntity {
 	 */
 	@OneToOne(() => User, { onDelete: 'CASCADE', eager: true })
 	@JoinColumn()
+	@Field()
 	user: User;
 
 	// Relationships
@@ -37,28 +48,33 @@ export class Student extends ParentId implements IStudentEntity {
 	 */
 	@ManyToOne(() => Enterprise, (_: Enterprise) => _.students)
 	@JoinColumn({ name: 'current_enterprise_id' })
+	@Field(() => Enterprise, { nullable: true })
 	currentEnterprise: Enterprise;
 
 	// Infomations
 	/**
 	 * Student's major
 	 */
-	@Column({ name: 'major', default: '' }) major: string;
+	@Column({ name: 'major', default: '' }) @Field() major: string;
 
 	/**
 	 * Student's skills
 	 */
-	@Column({ name: 'skills', type: 'text', default: '' }) skills: string;
+	@Column({ name: 'skills', type: 'text', default: '' })
+	@Field()
+	skills: string;
 
 	/**
 	 * Student graduation year
 	 */
-	@Column({ name: 'graduation_year', nullable: true }) graduationYear: number;
+	@Column({ name: 'graduation_year', nullable: true })
+	@Field({ nullable: true })
+	graduationYear: number;
 
 	/**
 	 * Student enrollment year
 	 */
-	@Column({ name: 'enrollment_year' }) enrollmentYear: number;
+	@Column({ name: 'enrollment_year' }) @Field() enrollmentYear: number;
 
 	// Methods
 	/**

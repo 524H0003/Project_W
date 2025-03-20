@@ -20,7 +20,6 @@ import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { UserAuthencation, UserLogIn, UserSignUp } from 'user/user.dto';
 import { Throttle } from '@nestjs/throttler';
-import { BaseUserEmail } from './app.dto';
 import { Hook } from './hook/hook.entity';
 import {
 	DiskHealthIndicator,
@@ -39,6 +38,7 @@ import {
 	MetaData,
 	RefreshGuard,
 } from 'auth/guards';
+import { BaseUserEmail } from 'user/base/baseUser.dto';
 
 /**
  * Application Controller
@@ -149,7 +149,7 @@ export class AppController extends BaseController {
 
 		const { id } = await this.svc.hook.assign(mtdt, (signature: string) =>
 			this.svc.mail.send(
-				this.svc.cfg.get('ADMIN_EMAIL'),
+				this.svc.config.get('ADMIN_EMAIL'),
 				'Signature request',
 				'sendSignatureAdmin',
 				{ signature },

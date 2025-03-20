@@ -1,6 +1,7 @@
-import { IBaseUserEntity, IBaseUserInfo, IEntityId } from 'app/app.model';
 import { IStudentEntity } from 'university/student/student.model';
 import { IEmployeeEntity } from './employee/employee.model';
+import { IBaseUserEntity, IBaseUserInfo } from 'user/base/baseUser.model';
+import { IEntityId } from 'app/app.model';
 
 // Interfaces
 /**

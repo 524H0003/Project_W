@@ -151,7 +151,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		const blocs = await this.find({ lastIssue: Not(IsNull()) });
 
 		for (const { id, lastIssue } of blocs) {
-			const allowUsage = toMs(this.svc.cfg.get('REFRESH_EXPIRE')) / 1000;
+			const allowUsage = toMs(this.svc.config.get('REFRESH_EXPIRE')) / 1000;
 
 			if (currentTime() - lastIssue > allowUsage) await this.removeTree(id);
 			else await this.removeStrayTree(id);

@@ -1,12 +1,12 @@
-import {
-	IBaseUserEntity,
-	IBaseUserEmail,
-	IBaseUserInfo,
-	IEntityId,
-} from 'app/app.model';
+import { IEntityId } from 'app/app.model';
 import { IEventParticipatorEntiy } from 'event/participator/participator.model';
 import { IFileEntity } from 'file/file.model';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';
+import {
+	IBaseUserEmail,
+	IBaseUserEntity,
+	IBaseUserInfo,
+} from './base/baseUser.model';
 
 // Interfaces
 /**

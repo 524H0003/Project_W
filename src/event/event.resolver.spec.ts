@@ -62,17 +62,41 @@ describe('getEvents', () => {
 	});
 
 	it('success', async () => {
-		await execute(async () => (await send({}, { headers })).getEvents, {
-			exps: [
-				{ type: 'toBeDefined', params: [] },
-				{
-					type: 'toEqual',
-					params: [
-						expect.arrayContaining([expect.objectContaining({ id: eventId })]),
-					],
-				},
-			],
-		});
+		await execute(
+			async () => (await send({ input: {} }, { headers })).getEvents,
+			{
+				exps: [
+					{
+						type: 'toEqual',
+						params: [
+							expect.arrayContaining([
+								expect.objectContaining({ id: eventId }),
+							]),
+						],
+					},
+				],
+			},
+		);
+	});
+
+	it('success with id', async () => {
+		await execute(
+			async () =>
+				(await send({ input: { id: eventId } }, { headers })).getEvents,
+			{
+				exps: [
+					{
+						type: 'toEqual',
+						params: [
+							expect.arrayContaining([
+								expect.objectContaining({ id: eventId }),
+							]),
+						],
+					},
+					{ type: 'toHaveLength', params: [1] },
+				],
+			},
+		);
 	});
 });
 

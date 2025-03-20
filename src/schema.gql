@@ -7,6 +7,12 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Enterprise {
+  description: String!
+  id: String!
+  industry: String!
+}
+
 type Event {
   additionalFields: JSON!
   applicationDeadline: DateTime!
@@ -111,6 +117,45 @@ enum FileType {
   resume
 }
 
+input FindEvent {
+  applicationDeadline: DateTime
+  description: String
+  endDate: DateTime
+  id: String
+  location: String
+  maxParticipants: Float
+  positionsAvailable: Float
+  requiredSkills: String
+  startDate: DateTime
+  status: String
+  title: String
+  type: String
+}
+
+input FindStudent {
+  avatarPath: String
+  email: String
+  enrollmentYear: Float
+  graduationYear: Float
+  id: String
+  isActive: Boolean
+  lastLogin: DateTime
+  major: String
+  name: String
+  role: String
+  skills: String
+}
+
+input FindUser {
+  avatarPath: String
+  email: String
+  id: String
+  isActive: Boolean
+  lastLogin: DateTime
+  name: String
+  role: String
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -153,7 +198,9 @@ input NotificationUpdate {
 }
 
 type Query {
-  getEvents: [Event!]!
+  getEvents(input: FindEvent!): [Event!]!
+  getStudents(input: FindStudent!): [Student!]!
+  getUsers(input: FindUser!): [User!]!
   listAllNotifications(isRead: Boolean): [Reciever!]!
   listAllTags: [EventTag!]!
 }
@@ -182,8 +229,36 @@ input RecieverAssignMany {
   usersId: [String!]!
 }
 
+type Student {
+  currentEnterprise: Enterprise
+  enrollmentYear: Float!
+  graduationYear: Float
+  id: String!
+  major: String!
+  skills: String!
+  user: User!
+}
+
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+type User {
+  avatarPath: String!
+  email: String!
+  id: String!
+  isActive: Boolean!
+  lastLogin: DateTime!
+  name: String!
+  role: UserRole!
+}
+
+enum UserRole {
+  admin
+  enterprise
+  faculty
+  student
+  undefined
+}
 
 enum event_status {
   Cancelled

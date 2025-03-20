@@ -2,10 +2,10 @@ import { AppService } from 'app/app.service';
 import { UserRecieve } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
-import { BaseUserEmail } from 'app/app.dto';
 import { UserAuthencation } from 'user/user.dto';
 import { Hook } from 'app/hook/hook.entity';
 import { MetaData } from 'auth/guards';
+import { BaseUserEmail } from 'user/base/baseUser.dto';
 
 /**
  * Base controller

@@ -28,7 +28,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import pc from 'picocolors';
 import { Colors } from 'picocolors/types';
 import { ErrorType, ErrorObject, ErrorAction } from './utils';
-import { BaseUser } from 'app/app.entity';
+import { BaseUser } from 'user/base/baseUser.entity';
 
 /**
  * Modified fastify interfaces
@@ -63,20 +63,22 @@ export const fastifyOptions: FastifyServerOptions = { maxParamLength: 128 };
 export type CookieProps = { name: string; password: string };
 
 /**
+ * Client cookie save options
+ */
+export const cookieOptions: CookieSerializeOptions = {
+	httpOnly: true,
+	secure: true,
+	sameSite: 'strict',
+	signed: true,
+};
+
+/**
  * Register fastify plugins
  */
 export async function registerServerPlugins(
 	fastify: FastifyInstance,
 	{ password = (32).string, name = (6).string }: Partial<CookieProps>,
 ) {
-	const secret = password,
-		cookieOptions: CookieSerializeOptions = {
-			httpOnly: true,
-			secure: true,
-			sameSite: 'strict',
-			signed: true,
-		};
-
 	await fastify
 		.register(fastifyCompression, {
 			encodings: ['gzip', 'deflate'],
@@ -85,7 +87,7 @@ export async function registerServerPlugins(
 		.register(fastifySecuredSession, {
 			cookieName: 'session',
 			cookie: cookieOptions,
-			secret,
+			secret: password,
 			key: readFileSync('securedSessionKey'),
 			salt: (256).string,
 		})

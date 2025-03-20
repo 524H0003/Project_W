@@ -1,8 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests, NonFunctionProperties } from './utils/typeorm.utils';
-import { BaseUser } from './app.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { AuthService } from 'auth/auth.service';
 import { HookService } from './hook/hook.service';
 import { MailService } from './mail/mail.service';
@@ -21,20 +17,17 @@ import { EventParticipatorService } from 'event/participator/participator.servic
 import { AWSService } from './aws/aws.service';
 import { ConfigService } from '@nestjs/config';
 import { BlocService } from 'auth/bloc/bloc.service';
-import { IBaseUserEntity } from './app.model';
+import { BaseUserService } from 'user/base/baseUser.service';
 
 /**
  * Server services
  */
 @Injectable()
 export class AppService {
-	public baseUser: BaseUserService;
-
 	constructor(
-		@InjectRepository(BaseUser) baseUserRepo: Repository<BaseUser>,
 		@Inject(forwardRef(() => AuthService)) public auth: AuthService,
 		@Inject(forwardRef(() => BlocService)) public bloc: BlocService,
-		@Inject(forwardRef(() => ConfigService)) public cfg: ConfigService,
+		@Inject(forwardRef(() => ConfigService)) public config: ConfigService,
 		@Inject(forwardRef(() => HookService)) public hook: HookService,
 		@Inject(forwardRef(() => MailService)) public mail: MailService,
 		@Inject(forwardRef(() => StudentService)) public student: StudentService,
@@ -46,6 +39,7 @@ export class AppService {
 		@Inject(forwardRef(() => EventCreatorService))
 		public eventCreator: EventCreatorService,
 		@Inject(forwardRef(() => UserService)) public user: UserService,
+		@Inject(forwardRef(() => BaseUserService)) public baseUser: BaseUserService,
 		@Inject(forwardRef(() => EventService)) public event: EventService,
 		@Inject(forwardRef(() => EventTagService)) public eventTag: EventTagService,
 		@Inject(forwardRef(() => NotificationService))
@@ -54,59 +48,5 @@ export class AppService {
 		@Inject(forwardRef(() => EventParticipatorService))
 		public eventParticipator: EventParticipatorService,
 		@Inject(forwardRef(() => AWSService)) public aws: AWSService,
-	) {
-		this.baseUser = new BaseUserService(baseUserRepo);
-	}
-}
-
-/**
- * Base user service
- */
-class BaseUserService extends DatabaseRequests<BaseUser> {
-	/**
-	 * Initiate base user service
-	 */
-	constructor(repo: Repository<BaseUser>) {
-		super(repo, BaseUser);
-	}
-
-	/**
-	 * Assign new base user
-	 * @param {BaseUser} entity - assigning user
-	 * @param {SaveOptions} options - function's option
-	 * @return {Promise<BaseUser>}
-	 */
-	async assign(
-		entity: NonFunctionProperties<IBaseUserEntity>,
-		options?: SaveOptions,
-	): Promise<BaseUser> {
-		return this.save(entity, options);
-	}
-
-	/**
-	 * Modify new base user
-	 * @param {string} entityId - base user's id
-	 * @param {DeepPartial<BaseUser>} updatedEntity - modified base user
-	 */
-	async modify(entityId: string, updatedEntity: DeepPartial<BaseUser>) {
-		if (!updatedEntity) return;
-
-		await this.update({ id: entityId }, updatedEntity);
-	}
-
-	/**
-	 * Find by email
-	 * @param {string} input - the email address
-	 * @return {Promise<BaseUser>}
-	 */
-	email(input: string): Promise<BaseUser> {
-		return this.findOne({ email: input.lower });
-	}
-
-	/**
-	 * Remove base user by id
-	 */
-	remove(id: string) {
-		return this.delete({ id });
-	}
+	) {}
 }

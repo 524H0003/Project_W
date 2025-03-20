@@ -15,7 +15,7 @@ export async function getAdminSignature(
 ) {
 	const { headers } = await req()
 			.post('/request-signature')
-			.body({ email: svc.cfg.get('ADMIN_EMAIL') }),
+			.body({ email: svc.config.get('ADMIN_EMAIL') }),
 		signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0]['context'][
 			'signature'
 		];

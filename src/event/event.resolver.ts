@@ -5,7 +5,7 @@ import { GetRequest, AccessGuard, Allow } from 'auth/guards';
 import { UserRole } from 'user/user.model';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Event } from './event.entity';
-import { EventAssign, EventUpdate } from './event.dto';
+import { EventAssign, EventUpdate, FindEvent } from './event.dto';
 
 @Resolver(() => Event)
 @UseGuards(AccessGuard)
@@ -19,8 +19,8 @@ export class EventResolver {
 	/**
 	 * Query all events
 	 */
-	@Query(() => [Event]) @Allow([]) getEvents() {
-		return this.svc.event.find({ take: 10e10 });
+	@Query(() => [Event]) @Allow([]) getEvents(@Args('input') event: FindEvent) {
+		return this.svc.event.find(event);
 	}
 
 	// Mutations

@@ -7,13 +7,19 @@ import { StudentService } from './student/student.service';
 import { AppModule } from 'app/app.module';
 import { FacultyController } from './faculty/faculty.controller';
 import { FacultyService } from './faculty/faculty.service';
+import { StudentResolver } from './student/student.resolver';
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Faculty, Student]),
 		forwardRef(() => AppModule),
 	],
-	providers: [StudentService, StudentController, FacultyService],
+	providers: [
+		StudentService,
+		StudentController,
+		FacultyService,
+		StudentResolver,
+	],
 	controllers: [StudentController, FacultyController],
 	exports: [StudentController, StudentService, FacultyService],
 })

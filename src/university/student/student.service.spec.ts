@@ -18,30 +18,16 @@ describe('StudentService', () => {
 	it('sign up for student', async () => {
 		student = Student.test(fileName);
 
-		await execute(
-			() =>
-				svc.student.signUp({
-					...student.user.baseUser,
-					...student.user,
-					...student,
-				}),
-			{
-				exps: [{ type: 'toThrow', params: [err('Success', 'User', 'SignUp')] }],
-			},
-		);
+		await execute(() => svc.student.signUp({ ...student.user.baseUser }), {
+			exps: [{ type: 'toThrow', params: [err('Success', 'User', 'SignUp')] }],
+		});
 	});
 
 	it('sign up for stranger', async () => {
 		student = Student.test(fileName, { email: 'lmao' });
 
-		await execute(
-			() =>
-				svc.student.signUp({
-					...student.user.baseUser,
-					...student.user,
-					...student,
-				}),
-			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Email', '')] }] },
-		);
+		await execute(() => svc.student.signUp({ ...student.user.baseUser }), {
+			exps: [{ type: 'toThrow', params: [err('Invalid', 'Email', '')] }],
+		});
 	});
 });

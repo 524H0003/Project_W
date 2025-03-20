@@ -32,10 +32,9 @@ describe('EmployeeService', () => {
 				async () =>
 					svc.employee.hook(
 						{
-							...employee.eventCreator.user.baseUser,
-							...employee.eventCreator.user,
-							...employee,
 							enterpriseName: enterprise.baseUser.name,
+							...employee.eventCreator.user.baseUser,
+							...employee,
 						},
 						new UAParser().getResult(),
 					),
@@ -50,8 +49,8 @@ describe('EmployeeService', () => {
 				() =>
 					svc.employee.assign(
 						{
-							...employee.eventCreator.user.baseUser,
 							...employee.eventCreator.user,
+							...employee.eventCreator.user.baseUser,
 							...employee,
 							id: enterprise.id,
 						},
@@ -66,8 +65,8 @@ describe('EmployeeService', () => {
 				() =>
 					svc.employee.assign(
 						{
-							...employee.eventCreator.user.baseUser,
 							...employee.eventCreator.user,
+							...employee.eventCreator.user.baseUser,
 							...employee,
 							id: randomUUID(),
 						},

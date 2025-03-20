@@ -22,12 +22,12 @@ import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
 import { passwordHashing } from 'app/utils/auth.utils';
-import { BaseUser } from 'app/app.entity';
-import { IBaseUserInfo } from 'app/app.model';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { ApiHideProperty } from '@nestjs/swagger';
+import { BaseUser } from './base/baseUser.entity';
+import { IBaseUserInfo } from './base/baseUser.model';
 
 /**
  * User entity
@@ -72,6 +72,12 @@ export class User extends ParentId implements IUserEntity {
 	@OneToOne(() => BaseUser, { eager: true, onDelete: 'CASCADE' })
 	@JoinColumn()
 	baseUser: BaseUser;
+
+	@Field() private name: string;
+
+	@Field() private avatarPath?: string;
+
+	@Field() private email: string;
 
 	// Relationships
 
@@ -132,12 +138,13 @@ export class User extends ParentId implements IUserEntity {
 		type: 'timestamp with time zone',
 		default: () => 'CURRENT_TIMESTAMP',
 	})
+	@Field()
 	lastLogin: Date;
 
 	/**
 	 * User active status
 	 */
-	@Column({ name: 'is_active', default: false }) isActive: boolean;
+	@Column({ name: 'is_active', default: false }) @Field() isActive: boolean;
 
 	// Embedded Entity
 	/**
