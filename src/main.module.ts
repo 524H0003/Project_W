@@ -79,7 +79,7 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 					plugins: [
 						ApolloServerPluginLandingPageProductionDefault({
 							embed: true,
-							graphRef: 'ProjectW@current',
+							graphRef: 'PROJECT-W@current',
 						}),
 					],
 					includeStacktraceInErrorResponses: false,
