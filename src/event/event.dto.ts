@@ -37,3 +37,19 @@ export class EventUpdate implements IEventInfo {
 	@Field({ nullable: true }) requiredSkills: string;
 	@Field({ nullable: false }) id: string;
 }
+
+@InputType()
+export class FindEvent implements IEventInfo {
+	@Field({ nullable: true }) title: string;
+	@Field({ nullable: true }) startDate: Date;
+	@Field({ nullable: true }) endDate: Date;
+	@Field({ nullable: true }) applicationDeadline: Date;
+	@Field({ nullable: true }) positionsAvailable: number;
+	@Field({ nullable: true }) maxParticipants: number;
+	@Field({ nullable: true }) location: string;
+	@Field({ nullable: true }) description: string;
+	@Field({ nullable: true }) type: EventType;
+	@Field({ nullable: true }) status: EventStatus;
+	@Field({ nullable: true }) requiredSkills: string;
+	@Field({ nullable: true }) id: string;
+}

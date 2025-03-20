@@ -117,6 +117,21 @@ enum FileType {
   resume
 }
 
+input FindEvent {
+  applicationDeadline: DateTime
+  description: String
+  endDate: DateTime
+  id: String
+  location: String
+  maxParticipants: Float
+  positionsAvailable: Float
+  requiredSkills: String
+  startDate: DateTime
+  status: String
+  title: String
+  type: String
+}
+
 input FindStudent {
   avatarPath: String
   email: String
@@ -183,7 +198,7 @@ input NotificationUpdate {
 }
 
 type Query {
-  getEvents: [Event!]!
+  getEvents(input: FindEvent!): [Event!]!
   getStudents(input: FindStudent!): [Student!]!
   getUsers(input: FindUser!): [User!]!
   listAllNotifications(isRead: Boolean): [Reciever!]!

@@ -46,6 +46,27 @@ beforeEach(async () => {
 describe('getUsers', () => {
 	const send = sendGQL<GetUsersQuery, GetUsersQueryVariables>(GetUsers);
 
+	it('success', async () => {
+		await execute(
+			async () => (await send({ input: {} }, { headers })).getUsers,
+			{
+				exps: [
+					{
+						type: 'toEqual',
+						params: [
+							expect.arrayContaining([
+								expect.objectContaining({
+									...employee.eventCreator.user.info,
+									lastLogin: expect.anything(),
+								}),
+							]),
+						],
+					},
+				],
+			},
+		);
+	});
+
 	it('success with id', async () => {
 		await execute(
 			async () =>

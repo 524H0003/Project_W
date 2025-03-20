@@ -41,6 +41,27 @@ describe('getStudent', () => {
 		GetStudents,
 	);
 
+	it('success', async () => {
+		await execute(
+			async () => (await send({ input: {} }, { headers })).getStudents,
+			{
+				exps: [
+					{
+						type: 'toEqual',
+						params: [
+							expect.arrayContaining([
+								expect.objectContaining({
+									...student.info.student,
+									user: { ...student.user.info, lastLogin: expect.anything() },
+								}),
+							]),
+						],
+					},
+				],
+			},
+		);
+	});
+
 	it('success with id', async () => {
 		await execute(
 			async () =>

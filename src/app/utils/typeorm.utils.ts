@@ -172,7 +172,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 		const {
 				deep = 1,
 				relations = [''],
-				take = 50,
+				take = 10e10,
 				skip = 0,
 				order = undefined,
 				...newOptions
