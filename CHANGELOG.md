@@ -1,3 +1,10 @@
+## [1.2.22](https://github.com/524H0003/Project_W/compare/v1.2.21...v1.2.22) (2025-03-20)
+
+
+### Bug Fixes
+
+* **graphql:** allow introspec query passthrough csrf ([#164](https://github.com/524H0003/Project_W/issues/164)) ([371cef7](https://github.com/524H0003/Project_W/commit/371cef7137519b80b3437fa964035db8c6971540))
+
 ## [1.2.21](https://github.com/524H0003/Project_W/compare/v1.2.20...v1.2.21) (2025-03-20)
 
 
