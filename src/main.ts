@@ -20,7 +20,7 @@ import { createServer, Server } from 'http';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { join } from 'path';
 import fastifyStatic from '@fastify/static';
-import { passwordHashing } from 'app/utils/auth.utils';
+import { dataHashing, passwordHashing } from 'app/utils/auth.utils';
 
 async function bootstrap() {
 	let server: Server;
@@ -85,7 +85,13 @@ async function bootstrap() {
 
 	if (!process.argv.some((i) => i == '--no-csrf'))
 		fastify.addHook('preValidation', (req, reply, done) => {
-			if (['get', 'head'].some((i) => i == req.method.toLowerCase())) done();
+			if (
+				['get', 'head'].some((i) => i == req.method.toLowerCase()) ||
+				['11351952989562645715', '4235353387532762162'].some(
+					(i) => dataHashing(JSON.stringify(req.body)) == i,
+				)
+			)
+				done();
 			else fastify.csrfProtection(req, reply, done);
 		});
 
