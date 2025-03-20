@@ -135,10 +135,7 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 	],
 	providers: [
 		{ provide: APP_GUARD, useClass: ThrottlerGuard },
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: CacheInterceptor,
-		},
+		{ provide: APP_INTERCEPTOR, useClass: CacheInterceptor },
 	],
 })
 export class MainModule extends InitServerClass {
