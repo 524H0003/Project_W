@@ -73,14 +73,11 @@ export class User extends ParentId implements IUserEntity {
 	@JoinColumn()
 	baseUser: BaseUser;
 
-	@Field()
-	private name: string;
+	@Field() private name: string;
 
-	@Field()
-	private avatarPath?: string;
+	@Field() private avatarPath?: string;
 
-	@Field()
-	private email: string;
+	@Field() private email: string;
 
 	// Relationships
 
