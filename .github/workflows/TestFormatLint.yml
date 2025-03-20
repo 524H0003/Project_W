@@ -259,11 +259,11 @@ jobs:
       contents: read
       pull-requests: write
 
-    if: always() 
+    if: always()
 
     steps:
       - run: exit 1
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped')
 
       - name: Delete GitHub Actions Comments
         uses: izhangzhihao/delete-comment@master
