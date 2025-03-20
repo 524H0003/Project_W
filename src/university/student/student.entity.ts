@@ -46,9 +46,7 @@ export class Student extends ParentId implements IStudentEntity {
 	/**
 	 * Student current working enterprise
 	 */
-	@ManyToOne(() => Enterprise, (_: Enterprise) => _.students, {
-		nullable: true,
-	})
+	@ManyToOne(() => Enterprise, (_: Enterprise) => _.students)
 	@JoinColumn({ name: 'current_enterprise_id' })
 	@Field({ nullable: true })
 	currentEnterprise: Enterprise;
