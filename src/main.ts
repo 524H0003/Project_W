@@ -88,7 +88,7 @@ async function bootstrap() {
 			if (
 				['get', 'head'].some((i) => i == req.method.toLowerCase()) ||
 				['11351952989562645715', '4235353387532762162'].some(
-					(i) => dataHashing(JSON.stringify(req.body)) == i,
+					(i) => dataHashing(JSON.stringify(req.body || '')) == i,
 				)
 			)
 				done();
