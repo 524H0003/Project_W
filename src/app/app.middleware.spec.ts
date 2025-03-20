@@ -35,6 +35,10 @@ describe('auth', () => {
 			},
 		);
 		req['cookies'] = {};
+		req['unsignCookie'] = (i: String) => ({
+			valid: true,
+			value: i.split('.')[0],
+		});
 		res['setCookie'] = (key: string, value: string) => {
 			req['cookies'][key] = value;
 			return res;
