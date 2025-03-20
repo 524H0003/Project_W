@@ -1,3 +1,10 @@
+## [1.2.21](https://github.com/524H0003/Project_W/compare/v1.2.20...v1.2.21) (2025-03-20)
+
+
+### Bug Fixes
+
+* **redis:** properly use of Redis ([#163](https://github.com/524H0003/Project_W/issues/163)) ([306d870](https://github.com/524H0003/Project_W/commit/306d870d5d7d00a894ff59258fe2bd544637479f))
+
 ## [1.2.20](https://github.com/524H0003/Project_W/compare/v1.2.19...v1.2.20) (2025-03-20)
 
 
