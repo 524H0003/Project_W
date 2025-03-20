@@ -1,13 +1,22 @@
-import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Param,
+	Res,
+	UseGuards,
+	UseInterceptors,
+} from '@nestjs/common';
 import { FileGuard, GetRequest } from 'auth/guards';
 import { FastifyReply } from 'fastify';
 import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 /**
  * File controller
  */
 @Controller({ version: '1', path: 'file' })
+@UseInterceptors(CacheInterceptor)
 export class FileController {
 	/**
 	 * Initiate file controller

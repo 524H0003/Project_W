@@ -7,7 +7,6 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from 'app/app.service';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
@@ -24,7 +23,6 @@ import { UserRecieve } from 'user/user.entity';
  * Employee controller
  */
 @Controller({ version: '1', path: 'employee' })
-@UseInterceptors(CacheInterceptor)
 export class EmployeeController extends BaseController {
 	/**
 	 * Initiate employee controller

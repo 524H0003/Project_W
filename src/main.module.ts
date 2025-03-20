@@ -7,15 +7,16 @@ import { loadEnv } from 'app/module/config.module';
 import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { AppModule } from 'app/app.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { Cache, CacheModule } from '@nestjs/cache-manager';
+import { Cache, CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { InitServerClass } from 'app/utils/server.utils';
 import KeyvRedis from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 
 @Module({
 	imports: [
@@ -23,7 +24,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 		MailerModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
-			useFactory: (cfgSvc: ConfigService): MailerOptions => {
+			useFactory: (config: ConfigService): MailerOptions => {
 				return {
 					transport: process.argv.some((i) => i == '--test-email')
 						? { secure: false, host: 'localhost', port: 7777 }
@@ -31,8 +32,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 								host: 'smtp.gmail.com',
 								secure: true,
 								auth: {
-									user: cfgSvc.get('SMTP_USER'),
-									pass: cfgSvc.get('SMTP_PASS'),
+									user: config.get('SMTP_USER'),
+									pass: config.get('SMTP_PASS'),
 								},
 							},
 					defaults: { from: '"Unreal mail" <secret@student.tdtu.edu.vn>' },
@@ -45,9 +46,19 @@ import { ScheduleModule } from '@nestjs/schedule';
 			},
 		}),
 		// Api rate limit
-		ThrottlerModule.forRoot({
-			throttlers: [{ limit: 2, ttl: 1000 }],
-			errorMessage: 'Invalid_Request',
+		ThrottlerModule.forRootAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: (config: ConfigService) => ({
+				throttlers: [{ limit: 2, ttl: 1000 }],
+				errorMessage: new ServerException('Fatal', 'User', 'Request').message,
+				storage: new ThrottlerStorageRedisService({
+					username: config.get('REDIS_USER'),
+					password: config.get('REDIS_PASS'),
+					host: config.get('REDIS_HOST'),
+					port: config.get('REDIS_PORT'),
+				}),
+			}),
 		}),
 		// GraphQL and Apollo SandBox
 		GraphQLModule.forRootAsync<ApolloDriverConfig>({
@@ -122,7 +133,13 @@ import { ScheduleModule } from '@nestjs/schedule';
 			},
 		}),
 	],
-	providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+	providers: [
+		{ provide: APP_GUARD, useClass: ThrottlerGuard },
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: CacheInterceptor,
+		},
+	],
 })
 export class MainModule extends InitServerClass {
 	constructor(

@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { GetMetaData, GetRequest, LocalhostGuard, MetaData } from 'auth/guards';
 import { AppService } from 'app/app.service';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { BaseController } from 'app/utils/controller.utils';
@@ -20,7 +19,6 @@ import { UserRecieve } from 'user/user.entity';
  */
 @Injectable()
 @Controller({ version: '1', path: 'student' })
-@UseInterceptors(CacheInterceptor)
 export class StudentController extends BaseController {
 	/**
 	 * Initiate student controller

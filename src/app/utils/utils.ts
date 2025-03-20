@@ -351,6 +351,7 @@ export type ErrorObject =
  */
 export type ErrorAction =
 	| ''
+	| 'Request'
 	| 'Read'
 	| 'Sent'
 	| 'Implementation'
