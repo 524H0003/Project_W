@@ -8,7 +8,6 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from 'app/app.service';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
@@ -24,7 +23,6 @@ import { UserRole } from 'user/user.model';
  */
 @Injectable()
 @Controller({ version: '1', path: 'faculty' })
-@UseInterceptors(CacheInterceptor)
 export class FacultyController extends BaseController {
 	/**
 	 * Initiate controller

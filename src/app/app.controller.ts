@@ -13,7 +13,6 @@ import {
 import { AppService } from './app.service';
 import { UserRecieve } from 'user/user.entity';
 import { AvatarFileUpload, BaseController } from './utils/controller.utils';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
@@ -44,7 +43,6 @@ import { BaseUserEmail } from 'user/base/baseUser.dto';
  * Application Controller
  */
 @Controller({ version: '1', path: '' })
-@UseInterceptors(CacheInterceptor)
 export class AppController extends BaseController {
 	/**
 	 * Initiate controller

@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
@@ -23,7 +22,6 @@ import { GetMetaData, GetRequest, MetaData } from 'auth/guards';
  * Enterprise controller
  */
 @Controller({ version: '1', path: 'enterprise' })
-@UseInterceptors(CacheInterceptor)
 export class EnterpriseController extends BaseController {
 	/**
 	 * Initiate enterprise controller
