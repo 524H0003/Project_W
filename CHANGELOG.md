@@ -1,3 +1,10 @@
+## [1.2.20](https://github.com/524H0003/Project_W/compare/v1.2.19...v1.2.20) (2025-03-20)
+
+
+### Bug Fixes
+
+* **cookie:** more secure cookie implement ([#162](https://github.com/524H0003/Project_W/issues/162)) ([1e102c7](https://github.com/524H0003/Project_W/commit/1e102c7ab78ce07b9bc2faf578ff6dba436b334a))
+
 ## [1.2.19](https://github.com/524H0003/Project_W/compare/v1.2.18...v1.2.19) (2025-03-19)
 
 
