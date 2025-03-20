@@ -1,3 +1,10 @@
+## [1.2.23](https://github.com/524H0003/Project_W/compare/v1.2.22...v1.2.23) (2025-03-20)
+
+
+### Bug Fixes
+
+* **graphql:** update graphRef ([#165](https://github.com/524H0003/Project_W/issues/165)) ([7d322be](https://github.com/524H0003/Project_W/commit/7d322beae8ba5b932e9995d69ab16d83a1466bb1))
+
 ## [1.2.22](https://github.com/524H0003/Project_W/compare/v1.2.21...v1.2.22) (2025-03-20)
 
 
