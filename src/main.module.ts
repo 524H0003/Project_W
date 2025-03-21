@@ -5,7 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { loadEnv } from 'app/module/config.module';
 import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { AppModule } from 'app/app.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -16,6 +16,7 @@ import KeyvRedis from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import { ModifiedThrottlerGuard } from 'app/app.fix';
 
 @Module({
 	imports: [
@@ -86,6 +87,8 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 							cacheManager.set(key, value, options.ttl.s2ms) as Promise<void>,
 						delete: (key: string) => cacheManager.del(key),
 					},
+					// Fix request context
+					context: (...args: any[]) => ({ req: args[0], res: args[1] }),
 				};
 			},
 		}),
@@ -128,7 +131,7 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 		}),
 	],
 	providers: [
-		{ provide: APP_GUARD, useClass: ThrottlerGuard },
+		{ provide: APP_GUARD, useClass: ModifiedThrottlerGuard },
 		{ provide: APP_INTERCEPTOR, useClass: CacheInterceptor },
 	],
 })
