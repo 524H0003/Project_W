@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { EventTag } from './tag.entity';
 import { UseGuards } from '@nestjs/common';
-import { AllowPublic, AccessGuard, Allow } from 'auth/guards';
+import { AccessGuard, Allow } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { EventTagAssign, EventTagAttach } from './tag.graphql';
@@ -37,7 +37,7 @@ export class EventTagResolver {
 	/**
 	 * list all tags server have
 	 */
-	@Query(() => [EventTag]) @AllowPublic() listAllTags() {
+	@Query(() => [EventTag]) @Allow([]) listAllTags() {
 		return this.svc.eventTag.find({});
 	}
 }
