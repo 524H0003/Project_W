@@ -10,13 +10,13 @@ import { APP_GUARD, APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { Cache, CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { InitServerClass } from 'app/utils/server.utils';
 import KeyvRedis from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { ModifiedThrottlerGuard } from 'app/app.fix';
+import { ModifiedCacheInterceptor, ModifiedThrottlerGuard } from 'app/app.fix';
 
 @Module({
 	imports: [
@@ -77,7 +77,7 @@ import { ModifiedThrottlerGuard } from 'app/app.fix';
 					// Init sandBox
 					playground: false,
 					plugins: [],
-					includeStacktraceInErrorResponses: false,
+					includeStacktraceInErrorResponses: true,
 					inheritResolversFromInterfaces: false,
 					introspection: true,
 					// Caching
@@ -132,7 +132,7 @@ import { ModifiedThrottlerGuard } from 'app/app.fix';
 	],
 	providers: [
 		{ provide: APP_GUARD, useClass: ModifiedThrottlerGuard },
-		{ provide: APP_INTERCEPTOR, useClass: CacheInterceptor },
+		{ provide: APP_INTERCEPTOR, useClass: ModifiedCacheInterceptor },
 	],
 })
 export class MainModule extends InitServerClass {
