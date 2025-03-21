@@ -74,6 +74,7 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 					autoSchemaFile: 'src/schema.gql',
 					sortSchema: true,
 					// Init sandBox
+					playground: false,
 					plugins: [],
 					includeStacktraceInErrorResponses: false,
 					inheritResolversFromInterfaces: false,

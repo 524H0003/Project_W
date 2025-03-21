@@ -87,7 +87,7 @@ async function bootstrap() {
 		fastify.addHook('preValidation', (req, reply, done) => {
 			if (
 				['get', 'head'].some((i) => i == req.method.toLowerCase()) ||
-				['3861457445048818342'].some(
+				['14605993204484154039'].some(
 					(i) => dataHashing(JSON.stringify(req.body || '')) == i,
 				)
 			)
@@ -96,24 +96,23 @@ async function bootstrap() {
 		});
 
 	fastify
+		.register(
+			(childContext, _, done) => {
+				const root = join(__dirname, '..', 'app/page');
+
+				childContext.setNotFoundHandler((_, reply) =>
+					reply.type('text/html').sendFile('index.html', root),
+				);
+				childContext.register(fastifyStatic, { root });
+				done();
+			},
+			{ prefix: '/' },
+		)
 		.register(fastifyStatic, {
 			prefix: '/docs',
 			root: join(__dirname, '..', 'app/docs'),
 			redirect: true,
 		})
-		.register(
-			(childContext, _, done) => {
-				childContext.register(fastifyStatic, {
-					root: join(__dirname, '..', 'app/page'),
-					wildcard: false,
-				});
-				childContext.setNotFoundHandler((_, reply) =>
-					reply.code(404).type('text/html').sendFile('index.html'),
-				);
-				done();
-			},
-			{ prefix: '/', decorateReply: false },
-		)
 		.ready(() => {
 			server.listen(process.env.PORT || config.get<string>('SERVER_PORT'));
 		});
