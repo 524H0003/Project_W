@@ -1,3 +1,10 @@
+## [1.2.29](https://github.com/524H0003/Project_W/compare/v1.2.28...v1.2.29) (2025-03-21)
+
+
+### Bug Fixes
+
+* **cookie:** prevent cookies clear while requesting graphql ([#171](https://github.com/524H0003/Project_W/issues/171)) ([738a9aa](https://github.com/524H0003/Project_W/commit/738a9aacebb302f09b825f556eaf8703ce5a9994))
+
 ## [1.2.28](https://github.com/524H0003/Project_W/compare/v1.2.27...v1.2.28) (2025-03-21)
 
 
