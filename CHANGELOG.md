@@ -1,3 +1,10 @@
+## [1.2.26](https://github.com/524H0003/Project_W/compare/v1.2.25...v1.2.26) (2025-03-21)
+
+
+### Bug Fixes
+
+* **server context:** modifying throttle module fixing graphql context type ([#168](https://github.com/524H0003/Project_W/issues/168)) ([bebe876](https://github.com/524H0003/Project_W/commit/bebe876159d8603bcebb0a2a63f59dd184b9f78b))
+
 ## [1.2.25](https://github.com/524H0003/Project_W/compare/v1.2.24...v1.2.25) (2025-03-21)
 
 
