@@ -1,3 +1,10 @@
+## [1.2.24](https://github.com/524H0003/Project_W/compare/v1.2.23...v1.2.24) (2025-03-21)
+
+
+### Bug Fixes
+
+* **request:** fix empty request body cause hashing error ([#166](https://github.com/524H0003/Project_W/issues/166)) ([e09354d](https://github.com/524H0003/Project_W/commit/e09354dc4897ede964a6b167d9541810aa3a8139))
+
 ## [1.2.23](https://github.com/524H0003/Project_W/compare/v1.2.22...v1.2.23) (2025-03-20)
 
 
