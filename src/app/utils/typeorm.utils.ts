@@ -292,11 +292,11 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {DeepPartial<T>} entity - the updating entity
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
-	protected update(
+	protected async update(
 		entity: DeepPartial<T>,
 		updatedEntity?: QueryDeepPartialEntity<T>,
 	) {
-		return this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
+		await this.repo.update(entity as FindOptionsWhere<T>, updatedEntity);
 	}
 
 	/**
