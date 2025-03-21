@@ -74,14 +74,8 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 					// Code first
 					autoSchemaFile: 'src/schema.gql',
 					sortSchema: true,
-					// Init Apollo SandBox
-					playground: false,
-					plugins: [
-						ApolloServerPluginLandingPageProductionDefault({
-							embed: true,
-							graphRef: 'PROJECT-W@current',
-						}),
-					],
+					// Init sandBox
+					plugins: [],
 					includeStacktraceInErrorResponses: false,
 					inheritResolversFromInterfaces: false,
 					introspection: true,

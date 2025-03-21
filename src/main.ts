@@ -87,7 +87,7 @@ async function bootstrap() {
 		fastify.addHook('preValidation', (req, reply, done) => {
 			if (
 				['get', 'head'].some((i) => i == req.method.toLowerCase()) ||
-				['11351952989562645715', '4235353387532762162'].some(
+				['3861457445048818342'].some(
 					(i) => dataHashing(JSON.stringify(req.body || '')) == i,
 				)
 			)
