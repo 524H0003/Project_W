@@ -144,7 +144,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {object} identifier - bloc indentifier
 	 */
 	async issue({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
-		return await this.update({ hash, id }, { lastIssue: currentTime() });
+		await this.update({ hash, id }, { lastIssue: currentTime() });
 	}
 
 	@Cron('0 0 * * * *') async randomRemoveTree() {
