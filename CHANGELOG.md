@@ -1,3 +1,10 @@
+## [1.2.25](https://github.com/524H0003/Project_W/compare/v1.2.24...v1.2.25) (2025-03-21)
+
+
+### Bug Fixes
+
+* **graphql:** better apollo sandbox ([#167](https://github.com/524H0003/Project_W/issues/167)) ([19a5f1e](https://github.com/524H0003/Project_W/commit/19a5f1e5fbfdd2bf419434e259d53a9cb16476bc))
+
 ## [1.2.24](https://github.com/524H0003/Project_W/compare/v1.2.23...v1.2.24) (2025-03-21)
 
 
