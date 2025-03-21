@@ -76,7 +76,7 @@ export class AppMiddleware extends SecurityService {
 					this.encrypt(this.access({ accessToken }), accessKey),
 					cookieOptions,
 				);
-			}
+			} else res.clearCookie('access');
 
 			if (refreshToken)
 				res.setCookie(
@@ -84,6 +84,7 @@ export class AppMiddleware extends SecurityService {
 					this.encrypt(this.refresh({ refreshToken })),
 					cookieOptions,
 				);
+			else res.clearCookie('refresh');
 
 			done(null, response);
 		} else done();
