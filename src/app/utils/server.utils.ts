@@ -70,6 +70,7 @@ export const cookieOptions: CookieSerializeOptions = {
 	secure: true,
 	sameSite: 'strict',
 	signed: true,
+	path: '/',
 };
 
 /**
