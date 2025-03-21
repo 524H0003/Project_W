@@ -57,14 +57,12 @@ export class AppMiddleware extends SecurityService {
 	}
 
 	async graphQl(req: FastifyRequest, res: FastifyReply) {
-		if (
-			typeof req.isMultipart == 'boolean' &&
-			req.isMultipart &&
-			req.url === '/graphql'
-		)
-			req.body = await processRequest(req.raw, res.raw, {
-				maxFileSize: (50).mb2b,
-			});
+		if (req.url === '/graphql') {
+			if (typeof req.isMultipart == 'boolean' && req.isMultipart)
+				req.body = await processRequest(req.raw, res.raw, {
+					maxFileSize: (50).mb2b,
+				});
+		}
 	}
 
 	cookie(

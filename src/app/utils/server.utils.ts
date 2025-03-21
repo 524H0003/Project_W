@@ -209,6 +209,11 @@ export class InitServerClass implements OnModuleInit {
 			.addHook('onRequest', (request, reply, done) => {
 				if (request.url.split('/').at(-1) == 'csrf-token')
 					reply.send({ token: reply.generateCsrf() });
+				else if (
+					request.url == '/graphql' &&
+					request.method.toLocaleLowerCase() != 'post'
+				)
+					reply.callNotFound();
 				else done();
 			})
 			.addContentTypeParser(
@@ -253,7 +258,7 @@ class ServerException extends HttpException {
 		type: ErrorType,
 		object: ErrorObject,
 		action: ErrorAction,
-		private err: ErrorExtender = new Error() as ErrorExtender,
+		private err: any = new Error() as ErrorExtender,
 	) {
 		super(
 			(6).string + '_' + type + '_' + object + (action ? '_' : '') + action,

@@ -1,5 +1,4 @@
 import { join } from 'path';
-import { ApolloServerPluginLandingPageProductionDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -74,14 +73,9 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 					// Code first
 					autoSchemaFile: 'src/schema.gql',
 					sortSchema: true,
-					// Init Apollo SandBox
+					// Init sandBox
 					playground: false,
-					plugins: [
-						ApolloServerPluginLandingPageProductionDefault({
-							embed: true,
-							graphRef: 'PROJECT-W@current',
-						}),
-					],
+					plugins: [],
 					includeStacktraceInErrorResponses: false,
 					inheritResolversFromInterfaces: false,
 					introspection: true,
