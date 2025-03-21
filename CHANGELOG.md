@@ -1,3 +1,10 @@
+## [1.2.27](https://github.com/524H0003/Project_W/compare/v1.2.26...v1.2.27) (2025-03-21)
+
+
+### Bug Fixes
+
+* **cookie:** united cookie path to / ([#169](https://github.com/524H0003/Project_W/issues/169)) ([82fa45c](https://github.com/524H0003/Project_W/commit/82fa45ca7ff433a0b80c7e14a9892ecf9e70f8ec))
+
 ## [1.2.26](https://github.com/524H0003/Project_W/compare/v1.2.25...v1.2.26) (2025-03-21)
 
 
