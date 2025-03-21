@@ -1,3 +1,10 @@
+## [1.2.28](https://github.com/524H0003/Project_W/compare/v1.2.27...v1.2.28) (2025-03-21)
+
+
+### Bug Fixes
+
+* **server-context:** fixing graphql context type in caching ([#170](https://github.com/524H0003/Project_W/issues/170)) ([95ec12f](https://github.com/524H0003/Project_W/commit/95ec12f0e25cdcc873310b3bf9b3c41e162f54dd))
+
 ## [1.2.27](https://github.com/524H0003/Project_W/compare/v1.2.26...v1.2.27) (2025-03-21)
 
 
