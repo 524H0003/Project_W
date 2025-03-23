@@ -41,7 +41,7 @@ export class EventTagResolver {
 	/**
 	 * list all tags server have
 	 */
-	@CacheControl({ maxAge: 50 })
+	@CacheControl({ maxAge: (5).m2s })
 	@Query(() => [EventTag])
 	@Allow([])
 	listAllTags() {

@@ -6,10 +6,12 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { IHookEntity } from './hook.model';
 import { IHookInfoKeys } from 'build/models';
 import { BaseUser } from 'user/base/baseUser.entity';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Hook entity
  */
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'auth_hook' })
 export class Hook extends GeneratedId implements IHookEntity {
 	/**

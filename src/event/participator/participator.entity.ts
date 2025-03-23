@@ -11,11 +11,13 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import GQLJSON from 'graphql-type-json';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEventParticipatorInfoKeys } from 'build/models';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Event participator entity
  */
 @ObjectType()
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'EventParticipation' })
 export class EventParticipator
 	extends GeneratedId

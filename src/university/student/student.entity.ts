@@ -8,11 +8,13 @@ import { IUserInfo } from 'user/user.model';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IBaseUserInfo } from 'user/base/baseUser.model';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Student entity
  */
 @ObjectType()
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'Student' })
 export class Student extends ParentId implements IStudentEntity {
 	/**

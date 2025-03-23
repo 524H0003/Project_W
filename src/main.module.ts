@@ -1,5 +1,8 @@
 import { join } from 'path';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import {
+	ApolloFederationDriver,
+	ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule, Int } from '@nestjs/graphql';
 import { loadEnv } from 'app/module/config.module';
@@ -64,18 +67,13 @@ import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheContr
 			errorMessage: new ServerException('Fatal', 'User', 'Request').message,
 		}),
 		// GraphQL and Apollo SandBox
-		GraphQLModule.forRootAsync<ApolloDriverConfig>({
-			driver: ApolloDriver,
+		GraphQLModule.forRootAsync<ApolloFederationDriverConfig>({
+			driver: ApolloFederationDriver,
 			inject: ['CACHE_MANAGER'],
 			useFactory: (cacheManager: Cache) => {
 				return {
-					// Avoid deprecated
-					subscriptions: {
-						'graphql-ws': true,
-						'subscriptions-transport-ws': false,
-					},
 					// Code first
-					autoSchemaFile: { path: 'src/schema.gql' },
+					autoSchemaFile: { path: 'src/schema.gql', federation: 2 },
 					sortSchema: true,
 					// Init sandBox
 					playground: false,

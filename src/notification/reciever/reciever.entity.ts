@@ -6,11 +6,13 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { IRecieverInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Reciever entity
  */
 @ObjectType()
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'UserNotification' })
 export class Reciever extends GeneratedId implements IRecieverEntity {
 	/**

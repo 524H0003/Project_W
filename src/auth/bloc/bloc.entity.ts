@@ -4,10 +4,12 @@ import { IBlocEntity } from './bloc.model';
 import { dataHashing } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IBlocInfoKeys } from 'build/models';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Bloc entity
  */
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'auth_bloc' })
 export class Bloc extends GeneratedId implements IBlocEntity {
 	/**

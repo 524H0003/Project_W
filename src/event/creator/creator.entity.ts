@@ -5,10 +5,12 @@ import { IEventCreatorEntity } from './creator.model';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { IEventCreatorInfoKeys } from 'build/models';
 import { InterfaceCasting } from 'app/utils/utils';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Event creator model
  */
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'EventCreator' })
 export class EventCreator extends ParentId implements IEventCreatorEntity {
 	/**

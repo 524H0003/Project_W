@@ -22,6 +22,8 @@ export class ModifiedThrottlerGuard extends ThrottlerGuard {
 }
 
 export class ModifiedCacheInterceptor extends CacheInterceptor {
+	private isCacheGQL: boolean = false;
+
 	protected isRequestCacheable(context: ExecutionContext): boolean {
 		let req: FastifyRequest;
 
@@ -33,7 +35,7 @@ export class ModifiedCacheInterceptor extends CacheInterceptor {
 
 		return (
 			this.allowedMethods.includes(req?.method) ||
-			['/graphql'].some((i) => i == req?.url.toLowerCase())
+			(this.isCacheGQL && ['/graphql'].some((i) => i == req?.url.toLowerCase()))
 		);
 	}
 
@@ -44,7 +46,7 @@ export class ModifiedCacheInterceptor extends CacheInterceptor {
 				CACHE_KEY_METADATA,
 				context.getHandler(),
 			),
-			getQuery = (query: string, variables: string) => {
+			getQuery = (query: string, variables: object) => {
 				const f = query.indexOf('('),
 					s = query.indexOf('{'),
 					getVariable = () => {
