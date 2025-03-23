@@ -41,6 +41,6 @@ export const loadEnv =
 			SMTP_USER: Joi.string().default(''),
 			SMTP_PASS: Joi.string().default(''),
 			// Caching
-			REDIS_URL: Joi.string().required(),
+			REDIS_URL: Joi.string().default('redis://default:@localhost:6379'),
 		}),
 	});
