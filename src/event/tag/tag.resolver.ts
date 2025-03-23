@@ -28,7 +28,9 @@ export class EventTagResolver {
 	/**
 	 * Tag attach to event
 	 */
-	@Directive('@deprecated(reason: "This query will be removed in the next version")')
+	@Directive(
+		'@deprecated(reason: "This query will be removed in the next version")',
+	)
 	@Mutation(() => EventTag)
 	@Allow([UserRole.faculty, UserRole.enterprise])
 	async attachEventTag(@Args('input') { name, eventId }: EventTagAttach) {

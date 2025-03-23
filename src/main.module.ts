@@ -109,10 +109,7 @@ import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheContr
 									scope: {
 										type: new GraphQLEnumType({
 											name: 'CacheControlScope',
-											values: {
-												PUBLIC: {},
-												PRIVATE: {},
-											},
+											values: { PUBLIC: {}, PRIVATE: {} },
 										}),
 									},
 									inheritMaxAge: { type: GraphQLBoolean },
