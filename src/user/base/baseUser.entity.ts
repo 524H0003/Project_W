@@ -4,10 +4,12 @@ import { IBaseUserEntity, IBaseUserInfo } from './baseUser.model';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { Hook } from 'app/hook/hook.entity';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Base user
  */
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'app_user' })
 export class BaseUser extends GeneratedId implements IBaseUserEntity {
 	/**

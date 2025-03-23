@@ -28,11 +28,13 @@ import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { ApiHideProperty } from '@nestjs/swagger';
 import { BaseUser } from './base/baseUser.entity';
 import { IBaseUserInfo } from './base/baseUser.model';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * User entity
  */
 @ObjectType()
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'User' })
 export class User extends ParentId implements IUserEntity {
 	/**

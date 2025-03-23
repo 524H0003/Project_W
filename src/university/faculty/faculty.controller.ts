@@ -15,7 +15,7 @@ import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { memoryStorage } from 'fastify-multer';
 import { Hook } from 'app/hook/hook.entity';
 import { FacultyAssign } from './faculty.dto';
-import { GetMetaData, GetRequest, HookGuard, MetaData } from 'auth/guards';
+import { GetRequest, HookGuard, MetaData } from 'auth/guards';
 import { UserRole } from 'user/user.model';
 
 /**
@@ -42,7 +42,7 @@ export class FacultyController extends BaseController {
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
 		@Body() { signature, department, password, ...body }: FacultyAssign,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 		@GetRequest('hook') hook: Hook,
 	) {

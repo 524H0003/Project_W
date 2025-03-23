@@ -8,11 +8,13 @@ import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEnterpriseInfoKeys } from 'build/models';
 import { BaseUser } from 'user/base/baseUser.entity';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Enterprise entity
  */
 @ObjectType()
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'Enterprise' })
 export class Enterprise extends ParentId implements IEnterpriseEntity {
 	/**

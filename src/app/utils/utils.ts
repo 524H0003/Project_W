@@ -193,6 +193,16 @@ declare global {
 		readonly s2ms: number;
 
 		/**
+		 * minute to second
+		 */
+		readonly m2s: number;
+
+		/**
+		 * hour to second
+		 */
+		readonly h2s: number;
+
+		/**
 		 * Get random number
 		 */
 		readonly random: number;
@@ -554,6 +564,20 @@ Object.defineProperty(Number.prototype, 'mb2b', {
 Object.defineProperty(Number.prototype, 's2ms', {
 	get: function () {
 		return this * 1000;
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(Number.prototype, 'm2s', {
+	get: function () {
+		return this * 60;
+	},
+	enumerable: true,
+	configurable: true,
+});
+Object.defineProperty(Number.prototype, 'h2s', {
+	get: function () {
+		return this * (60).m2s;
 	},
 	enumerable: true,
 	configurable: true,

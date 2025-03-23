@@ -16,7 +16,7 @@ import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards';
 import { EnterpriseAssign } from './enterprise.dto';
 import { Hook } from 'app/hook/hook.entity';
-import { GetMetaData, GetRequest, MetaData } from 'auth/guards';
+import { GetRequest, MetaData } from 'auth/guards';
 
 /**
  * Enterprise controller
@@ -41,7 +41,7 @@ export class EnterpriseController extends BaseController {
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async assign(
 		@Body() { signature, ...body }: EnterpriseAssign,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 		@GetRequest('hook') hook: Hook,
 	): Promise<UserRecieve> {

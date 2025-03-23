@@ -1,7 +1,10 @@
 import { join } from 'path';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import {
+	ApolloFederationDriver,
+	ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule, Int } from '@nestjs/graphql';
 import { loadEnv } from 'app/module/config.module';
 import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { AppModule } from 'app/app.module';
@@ -12,11 +15,24 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { InitServerClass } from 'app/utils/server.utils';
-import KeyvRedis from '@keyv/redis';
+import { createKeyv } from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { ModifiedCacheInterceptor, ModifiedThrottlerGuard } from 'app/app.fix';
+import {
+	DateTimeScalar,
+	ModifiedCacheInterceptor,
+	ModifiedThrottlerGuard,
+} from 'app/app.fix';
+import { Cacheable } from 'cacheable';
+import Keyv from 'keyv';
+import responseCachePlugin from '@apollo/server-plugin-response-cache';
+import {
+	DirectiveLocation,
+	GraphQLBoolean,
+	GraphQLDirective,
+	GraphQLEnumType,
+} from 'graphql';
+import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
 
 @Module({
 	imports: [
@@ -46,49 +62,66 @@ import { ModifiedCacheInterceptor, ModifiedThrottlerGuard } from 'app/app.fix';
 			},
 		}),
 		// Api rate limit
-		ThrottlerModule.forRootAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: (config: ConfigService) => ({
-				throttlers: [{ limit: 2, ttl: 1000 }],
-				errorMessage: new ServerException('Fatal', 'User', 'Request').message,
-				storage: new ThrottlerStorageRedisService({
-					username: config.get('REDIS_USER'),
-					password: config.get('REDIS_PASS'),
-					host: config.get('REDIS_HOST'),
-					port: config.get('REDIS_PORT'),
-				}),
-			}),
+		ThrottlerModule.forRoot({
+			throttlers: [{ limit: 2, ttl: 1000, name: 'defaultThrottler' }],
+			errorMessage: new ServerException('Fatal', 'User', 'Request').message,
 		}),
 		// GraphQL and Apollo SandBox
-		GraphQLModule.forRootAsync<ApolloDriverConfig>({
-			driver: ApolloDriver,
+		GraphQLModule.forRootAsync<ApolloFederationDriverConfig>({
+			driver: ApolloFederationDriver,
 			inject: ['CACHE_MANAGER'],
 			useFactory: (cacheManager: Cache) => {
 				return {
-					// Avoid deprecated
-					subscriptions: {
-						'graphql-ws': true,
-						'subscriptions-transport-ws': false,
-					},
 					// Code first
-					autoSchemaFile: 'src/schema.gql',
+					autoSchemaFile: { path: 'src/schema.gql', federation: 2 },
 					sortSchema: true,
 					// Init sandBox
 					playground: false,
-					plugins: [],
 					includeStacktraceInErrorResponses: true,
 					inheritResolversFromInterfaces: false,
 					introspection: true,
 					// Caching
 					cache: {
-						get: (key: string) => cacheManager.get(key),
+						get: async (key: string): Promise<string> => {
+							const result = await cacheManager.get<string>(key);
+
+							if (!result) return undefined;
+
+							return result;
+						},
 						set: (key: string, value: unknown, options: { ttl: number }) =>
 							cacheManager.set(key, value, options.ttl.s2ms) as Promise<void>,
 						delete: (key: string) => cacheManager.del(key),
 					},
 					// Fix request context
 					context: (...args: any[]) => ({ req: args[0], res: args[1] }),
+					// Plugins
+					plugins: [responseCachePlugin(), ApolloServerPluginCacheControl()],
+					// Schema build options
+					buildSchemaOptions: {
+						directives: [
+							new GraphQLDirective({
+								name: 'cacheControl',
+								args: {
+									maxAge: { type: Int },
+									scope: {
+										type: new GraphQLEnumType({
+											name: 'CacheControlScope',
+											values: { PUBLIC: {}, PRIVATE: {} },
+										}),
+									},
+									inheritMaxAge: { type: GraphQLBoolean },
+								},
+								locations: [
+									DirectiveLocation.FIELD_DEFINITION,
+									DirectiveLocation.OBJECT,
+									DirectiveLocation.INTERFACE,
+									DirectiveLocation.UNION,
+									DirectiveLocation.QUERY,
+								],
+							}),
+						],
+					},
 				};
 			},
 		}),
@@ -102,37 +135,28 @@ import { ModifiedCacheInterceptor, ModifiedThrottlerGuard } from 'app/app.fix';
 		ScheduleModule.forRoot(),
 		// Request caching
 		CacheModule.registerAsync({
-			isGlobal: true,
 			imports: [ConfigModule],
+			useFactory: (config: ConfigService) => ({
+				stores: [
+					new Keyv({
+						store: new Cacheable({
+							primary: createKeyv({
+								url: config.get('REDIS_URL'),
+								name: 'cache',
+							}),
+							ttl: (180).s2ms,
+						}),
+					}),
+				],
+			}),
 			inject: [ConfigService],
-			useFactory: (cfg: ConfigService) => {
-				let store = undefined;
-
-				try {
-					store = new KeyvRedis({
-						socket: {
-							host: cfg.get('REDIS_HOST'),
-							port: cfg.get('REDIS_PORT'),
-						},
-						username: cfg.get('REDIS_USER'),
-						password: cfg.get('REDIS_PASS'),
-					});
-				} catch (error) {
-					throw new ServerException(
-						'Fatal',
-						'Redis',
-						'Implementation',
-						error as Error,
-					);
-				}
-
-				return { store, ttl: (180).s2ms };
-			},
+			isGlobal: true,
 		}),
 	],
 	providers: [
 		{ provide: APP_GUARD, useClass: ModifiedThrottlerGuard },
 		{ provide: APP_INTERCEPTOR, useClass: ModifiedCacheInterceptor },
+		DateTimeScalar,
 	],
 })
 export class MainModule extends InitServerClass {

@@ -6,11 +6,13 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IFileInfoKeys } from 'build/models';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * File entity
  */
 @ObjectType()
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'Document' })
 export class File extends GeneratedId implements IFileEntity {
 	/**

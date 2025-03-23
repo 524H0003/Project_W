@@ -7,10 +7,12 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { IFacultyInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
 import { IBaseUserInfo } from 'user/base/baseUser.model';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Faculty entity
  */
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'FacultyUser' })
 export class Faculty extends ParentId implements IFacultyEntity {
 	/**

@@ -12,10 +12,12 @@ import { InterfaceCasting } from 'app/utils/utils';
 import { IEmployeeInfoKeys } from 'build/models';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { IBaseUserInfo } from 'user/base/baseUser.model';
+import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
  * Employee entity
  */
+@CacheControl({ maxAge: (1).m2s })
 @Entity({ name: 'EnterpriseUser' })
 export class Employee extends ParentId implements IEmployeeEntity {
 	/**

@@ -2,7 +2,6 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { FastifyRequest } from 'fastify';
-import { UAParser } from 'ua-parser-js';
 import { IResult } from 'ua-parser-js';
 import { UserRole } from 'user/user.model';
 
@@ -58,14 +57,6 @@ export const Allow = Reflector.createDecorator<UserRole[]>(),
 	GetRequest = createParamDecorator(
 		<K extends keyof FastifyRequest>(args: K, context: ExecutionContext) =>
 			convertForGql(context)[args || 'user'],
-	),
-	GetMetaData = createParamDecorator(
-		async (data: unknown, context: ExecutionContext): Promise<MetaData> => {
-			const { headers } = context.getArgByIndex(0),
-				uap = UAParser(headers);
-
-			return uap.withFeatureCheck();
-		},
 	);
 
 export * from './access.guard';

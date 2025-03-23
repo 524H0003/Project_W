@@ -22,7 +22,7 @@ import { readFileSync } from 'fs';
 import { AppMiddleware } from 'app/app.middleware';
 import fastifyCompression from '@fastify/compress';
 import { constants } from 'zlib';
-import { IRefreshResult } from 'auth/guards';
+import { IRefreshResult, MetaData } from 'auth/guards';
 import { JwtService } from '@nestjs/jwt';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import pc from 'picocolors';
@@ -42,6 +42,7 @@ declare module 'fastify' {
 		hook: Hook;
 		refresh: IRefreshResult;
 		isMultipart: boolean;
+		metaData: MetaData;
 	}
 
 	/**
@@ -203,6 +204,7 @@ export class InitServerClass implements OnModuleInit {
 			.addHook('preValidation', (req, rep, done) =>
 				middleware.auth(req, rep, done),
 			)
+			.addHook('preValidation', (req, rep) => middleware.setMetaData(req, rep))
 			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
 			.addHook('preSerialization', (req, rep, payload: UserRecieve, done) =>
 				middleware.cookie(req, rep, payload, done),
