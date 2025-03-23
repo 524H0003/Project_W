@@ -29,7 +29,6 @@ import {
 } from '@nestjs/terminus';
 import { join } from 'path';
 import {
-	GetMetaData,
 	GetRequest,
 	HookGuard,
 	IRefreshResult,
@@ -61,7 +60,7 @@ export class AppController extends BaseController {
 	 */
 	@Post('login') @UseInterceptors(FileInterceptor()) async login(
 		@Body() body: UserLogIn,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('hostname') hostname: string,
 	): Promise<UserRecieve> {
 		try {
@@ -92,7 +91,7 @@ export class AppController extends BaseController {
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Body() body: UserSignUp,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<UserRecieve> {
 		const { id } = await this.svc.auth.signUp(body, avatar || null);
@@ -118,7 +117,7 @@ export class AppController extends BaseController {
 	 * Refreshing tokens request
 	 */
 	@Post('refresh') @UseGuards(RefreshGuard) async refresh(
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('refresh') refresh: IRefreshResult,
 	): Promise<UserRecieve> {
 		const { metaData, rootId, blocHash, blocId } = refresh;
@@ -140,7 +139,7 @@ export class AppController extends BaseController {
 	@Post('request-signature')
 	protected async requestSignatureViaConsole(
 		@Body() { email }: BaseUserEmail,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 	): Promise<UserRecieve> {
 		if (email !== this.cfg.get('ADMIN_EMAIL'))
 			throw new ServerException('Invalid', 'Email', '');
@@ -169,7 +168,7 @@ export class AppController extends BaseController {
 	protected changePassword(
 		@Param('token') signature: string,
 		@Body() { password }: UserAuthencation,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('hook') hook: Hook,
 	): Promise<UserRecieve> {
 		return super.changePassword(signature, { password }, mtdt, hook);
@@ -183,7 +182,7 @@ export class AppController extends BaseController {
 	protected async resetPasswordViaEmail(
 		@GetRequest('hostname') hostname: string,
 		@Body() { email }: BaseUserEmail,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 	): Promise<UserRecieve> {
 		return super.resetPasswordViaEmail(hostname, { email }, mtdt);
 	}

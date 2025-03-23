@@ -6,6 +6,7 @@ import { DoneFuncWithErrOrRes, FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 import { UserRecieve } from 'user/user.entity';
 import { cookieOptions } from './utils/server.utils';
+import { UAParser } from 'ua-parser-js';
 
 /**
  * App middleware
@@ -48,6 +49,14 @@ export class AppMiddleware extends SecurityService {
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
 
 		done();
+	}
+
+	/**
+	 * Set metadata current request
+	 */
+	// eslint-disable-next-line tsEslint/no-unused-vars
+	async setMetaData(req: FastifyRequest, res: FastifyReply) {
+		req.metaData = await UAParser(req.headers).withFeatureCheck();
 	}
 
 	async graphQl(req: FastifyRequest, res: FastifyReply) {

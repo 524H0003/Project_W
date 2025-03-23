@@ -16,7 +16,7 @@ import { HookGuard } from 'auth/guards';
 import { EmployeeHook, EmployeeSignUp } from './employee.dto';
 import { Hook } from 'app/hook/hook.entity';
 import { IEmployeeSignUp } from './employee.model';
-import { GetMetaData, GetRequest, MetaData } from 'auth/guards';
+import { GetRequest, MetaData } from 'auth/guards';
 import { UserRecieve } from 'user/user.entity';
 
 /**
@@ -41,7 +41,7 @@ export class EmployeeController extends BaseController {
 	 */
 	@Post('hook') @UseInterceptors(FileInterceptor()) async employeeHook(
 		@Body() body: EmployeeHook,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 	) {
 		const { id } = await this.svc.employee.hook(body, mtdt);
 
@@ -59,7 +59,7 @@ export class EmployeeController extends BaseController {
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
 	async signUp(
 		@Body() { signature, password }: EmployeeSignUp,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 		@GetRequest('hook') hook: Hook,
 	): Promise<UserRecieve> {

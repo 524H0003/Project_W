@@ -6,7 +6,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { GetMetaData, GetRequest, LocalhostGuard, MetaData } from 'auth/guards';
+import { GetRequest, LocalhostGuard, MetaData } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
@@ -38,7 +38,7 @@ export class StudentController extends BaseController {
 	@UseInterceptors(FileInterceptor())
 	async signUp(
 		@Body() body: StudentSignUp,
-		@GetMetaData() mtdt: MetaData,
+		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('hostname') hostname: string,
 	): Promise<UserRecieve> {
 		try {

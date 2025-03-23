@@ -8,7 +8,7 @@ import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
-import JSON from 'graphql-type-json';
+import GQLJSON from 'graphql-type-json';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEventParticipatorInfoKeys } from 'build/models';
 
@@ -86,9 +86,9 @@ export class EventParticipator
 	/**
 	 * Addition data
 	 */
-	@Field(() => JSON)
+	@Field(() => GQLJSON)
 	@Column({ name: 'additional_data', default: {}, type: 'jsonb' })
-	additionalData: object;
+	additionalData: JSON;
 
 	/**
 	 * The status in event

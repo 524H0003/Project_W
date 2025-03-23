@@ -10,13 +10,18 @@ import { APP_GUARD, APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { Cache, CacheModule } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import { InitServerClass } from 'app/utils/server.utils';
-import KeyvRedis from '@keyv/redis';
+import { createKeyv } from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { ModifiedCacheInterceptor, ModifiedThrottlerGuard } from 'app/app.fix';
+import {
+	DateTimeScalar,
+	ModifiedCacheInterceptor,
+	ModifiedThrottlerGuard,
+} from 'app/app.fix';
+import { Cacheable } from 'cacheable';
+import Keyv from 'keyv';
 
 @Module({
 	imports: [
@@ -46,51 +51,29 @@ import { ModifiedCacheInterceptor, ModifiedThrottlerGuard } from 'app/app.fix';
 			},
 		}),
 		// Api rate limit
-		ThrottlerModule.forRootAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: (config: ConfigService) => ({
-				throttlers: [{ limit: 2, ttl: 1000 }],
-				errorMessage: new ServerException('Fatal', 'User', 'Request').message,
-				storage: new ThrottlerStorageRedisService({
-					username: config.get('REDIS_USER'),
-					password: config.get('REDIS_PASS'),
-					host: config.get('REDIS_HOST'),
-					port: config.get('REDIS_PORT'),
-				}),
-			}),
+		ThrottlerModule.forRoot({
+			throttlers: [{ limit: 2, ttl: 1000, name: 'defaultThrottler' }],
+			errorMessage: new ServerException('Fatal', 'User', 'Request').message,
 		}),
 		// GraphQL and Apollo SandBox
-		GraphQLModule.forRootAsync<ApolloDriverConfig>({
+		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
-			inject: ['CACHE_MANAGER'],
-			useFactory: (cacheManager: Cache) => {
-				return {
-					// Avoid deprecated
-					subscriptions: {
-						'graphql-ws': true,
-						'subscriptions-transport-ws': false,
-					},
-					// Code first
-					autoSchemaFile: 'src/schema.gql',
-					sortSchema: true,
-					// Init sandBox
-					playground: false,
-					plugins: [],
-					includeStacktraceInErrorResponses: true,
-					inheritResolversFromInterfaces: false,
-					introspection: true,
-					// Caching
-					cache: {
-						get: (key: string) => cacheManager.get(key),
-						set: (key: string, value: unknown, options: { ttl: number }) =>
-							cacheManager.set(key, value, options.ttl.s2ms) as Promise<void>,
-						delete: (key: string) => cacheManager.del(key),
-					},
-					// Fix request context
-					context: (...args: any[]) => ({ req: args[0], res: args[1] }),
-				};
+			// Avoid deprecated
+			subscriptions: {
+				'graphql-ws': true,
+				'subscriptions-transport-ws': false,
 			},
+			// Code first
+			autoSchemaFile: 'src/schema.gql',
+			sortSchema: true,
+			// Init sandBox
+			playground: false,
+			plugins: [],
+			includeStacktraceInErrorResponses: true,
+			inheritResolversFromInterfaces: false,
+			introspection: true,
+			// Fix request context
+			context: (...args: any[]) => ({ req: args[0], res: args[1] }),
 		}),
 		// Core modules
 		loadEnv,
@@ -102,37 +85,28 @@ import { ModifiedCacheInterceptor, ModifiedThrottlerGuard } from 'app/app.fix';
 		ScheduleModule.forRoot(),
 		// Request caching
 		CacheModule.registerAsync({
-			isGlobal: true,
 			imports: [ConfigModule],
+			useFactory: (config: ConfigService) => ({
+				stores: [
+					new Keyv({
+						store: new Cacheable({
+							primary: createKeyv({
+								url: config.get('REDIS_URL'),
+								name: 'cache',
+							}),
+							ttl: (180).s2ms,
+						}),
+					}),
+				],
+			}),
 			inject: [ConfigService],
-			useFactory: (cfg: ConfigService) => {
-				let store = undefined;
-
-				try {
-					store = new KeyvRedis({
-						socket: {
-							host: cfg.get('REDIS_HOST'),
-							port: cfg.get('REDIS_PORT'),
-						},
-						username: cfg.get('REDIS_USER'),
-						password: cfg.get('REDIS_PASS'),
-					});
-				} catch (error) {
-					throw new ServerException(
-						'Fatal',
-						'Redis',
-						'Implementation',
-						error as Error,
-					);
-				}
-
-				return { store, ttl: (180).s2ms };
-			},
+			isGlobal: true,
 		}),
 	],
 	providers: [
 		{ provide: APP_GUARD, useClass: ModifiedThrottlerGuard },
 		{ provide: APP_INTERCEPTOR, useClass: ModifiedCacheInterceptor },
+		DateTimeScalar,
 	],
 })
 export class MainModule extends InitServerClass {

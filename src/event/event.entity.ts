@@ -14,7 +14,7 @@ import { BlackBox } from 'app/utils/model.utils';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator/creator.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
-import JSON from 'graphql-type-json';
+import GQLJSON from 'graphql-type-json';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IEventInfoKeys } from 'build/models';
 
@@ -166,9 +166,9 @@ export class Event extends GeneratedId implements IEventEntity {
 	/**
 	 * Addition fields
 	 */
-	@Field(() => JSON)
+	@Field(() => GQLJSON)
 	@Column({ name: 'additional_fields', default: {}, type: 'jsonb' })
-	additionalFields?: object;
+	additionalFields?: JSON;
 
 	// Embedded Entity
 	/**

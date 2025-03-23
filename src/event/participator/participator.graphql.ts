@@ -4,7 +4,7 @@ import {
 	EventParticipatorStatus,
 	IEventParticipatorInfo,
 } from './participator.model';
-import JSON from 'graphql-type-json';
+import GQLJSON from 'graphql-type-json';
 
 @InputType()
 export class EventParticipatorAssign {
@@ -20,7 +20,7 @@ export class EventParticipatorUpdate implements IEventParticipatorInfo {
 	@Field({ nullable: true }) registeredAt: Date;
 	@Field({ nullable: true }) interviewAt: Date;
 	@Field({ nullable: true }) interviewNote: string;
-	@Field(() => JSON, { nullable: true, defaultValue: '' })
-	additionalData: object;
+	@Field(() => GQLJSON, { nullable: true, defaultValue: '' })
+	additionalData: JSON;
 	@Field() id: string;
 }

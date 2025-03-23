@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { EventStatus, EventType, IEventInfo } from './event.model';
-import JSON from 'graphql-type-json';
+import GQLJSON from 'graphql-type-json';
 
 @InputType()
 export class EventAssign implements IEventInfo {
@@ -16,8 +16,8 @@ export class EventAssign implements IEventInfo {
 	type: EventType;
 	@Field({ nullable: true, defaultValue: EventStatus['Draft'] })
 	status: EventStatus;
-	@Field(() => JSON, { nullable: true, defaultValue: '' })
-	additionalFields: object;
+	@Field(() => GQLJSON, { nullable: true, defaultValue: '' })
+	additionalFields: JSON;
 	@Field({ nullable: true, defaultValue: '' }) requiredSkills: string;
 }
 
@@ -33,7 +33,7 @@ export class EventUpdate implements IEventInfo {
 	@Field({ nullable: true }) description: string;
 	@Field({ nullable: true }) type: EventType;
 	@Field({ nullable: true }) status: EventStatus;
-	@Field(() => JSON, { nullable: true }) additionalFields: object;
+	@Field(() => GQLJSON, { nullable: true }) additionalFields: JSON;
 	@Field({ nullable: true }) requiredSkills: string;
 	@Field({ nullable: false }) id: string;
 }
