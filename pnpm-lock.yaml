@@ -28,6 +28,9 @@ importers:
       '@apollo/server':
         specifier: ^4.11.3
         version: 4.11.3(encoding@0.1.13)(graphql@16.10.0)
+      '@apollo/server-plugin-response-cache':
+        specifier: ^4.1.4
+        version: 4.1.4(@apollo/server@4.11.3(encoding@0.1.13)(graphql@16.10.0))(graphql@16.10.0)
       '@as-integrations/fastify':
         specifier: ^2.1.1
         version: 2.1.1(@apollo/server@4.11.3(encoding@0.1.13)(graphql@16.10.0))(fastify@5.2.1)
@@ -124,6 +127,9 @@ importers:
       aws-sdk:
         specifier: ^2.1692.0
         version: 2.1692.0
+      cacheControl:
+        specifier: link:@apollo/server/plugin/cacheControl
+        version: link:@apollo/server/plugin/cacheControl
       cacheable:
         specifier: ^1.8.9
         version: 1.8.9
@@ -447,6 +453,13 @@ packages:
     deprecated: The use of GraphQL Playground in Apollo Server was supported in previous versions, but this is no longer the case as of December 31, 2022. This package exists for v4 migration purposes only. We do not intend to resolve security issues or other bugs with this package if they arise, so please migrate away from this to [Apollo Server's default Explorer](https://www.apollographql.com/docs/apollo-server/api/plugin/landing-pages) as soon as possible.
     peerDependencies:
       '@apollo/server': ^4.0.0
+
+  '@apollo/server-plugin-response-cache@4.1.4':
+    resolution: {integrity: sha512-MicQsfTbwIzUc7GCFwY9uOz46ad2q22f4RWy42YEoy4YKGdrnl3X0rfs5GpBliw54nM3fxYIdmvGKeO2W7wMSg==}
+    engines: {node: '>=14.16.0'}
+    peerDependencies:
+      '@apollo/server': ^4.0.1
+      graphql: ^16.6.0
 
   '@apollo/server@4.11.3':
     resolution: {integrity: sha512-mW8idE2q0/BN14mimfJU5DAnoPHZRrAWgwsVLBEdACds+mxapIYxIbI6AH4AsOpxfrpvHts3PCYDbopy1XPW1g==}
@@ -10875,6 +10888,13 @@ snapshots:
     dependencies:
       '@apollo/server': 4.11.3(encoding@0.1.13)(graphql@16.10.0)
       '@apollographql/graphql-playground-html': 1.6.29
+
+  '@apollo/server-plugin-response-cache@4.1.4(@apollo/server@4.11.3(encoding@0.1.13)(graphql@16.10.0))(graphql@16.10.0)':
+    dependencies:
+      '@apollo/server': 4.11.3(encoding@0.1.13)(graphql@16.10.0)
+      '@apollo/utils.createhash': 2.0.2
+      '@apollo/utils.keyvaluecache': 2.1.1
+      graphql: 16.10.0
 
   '@apollo/server@4.11.3(encoding@0.1.13)(graphql@16.10.0)':
     dependencies:

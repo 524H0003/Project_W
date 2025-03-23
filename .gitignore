@@ -78,3 +78,4 @@ securedSessionKey
 
 # GraphQL
 graphql/
+!src/app/graphql/

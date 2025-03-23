@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule, Int } from '@nestjs/graphql';
 import { loadEnv } from 'app/module/config.module';
 import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { AppModule } from 'app/app.module';
@@ -10,7 +10,7 @@ import { APP_GUARD, APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { CacheModule } from '@nestjs/cache-manager';
+import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { InitServerClass } from 'app/utils/server.utils';
 import { createKeyv } from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
@@ -22,6 +22,14 @@ import {
 } from 'app/app.fix';
 import { Cacheable } from 'cacheable';
 import Keyv from 'keyv';
+import responseCachePlugin from '@apollo/server-plugin-response-cache';
+import {
+	DirectiveLocation,
+	GraphQLBoolean,
+	GraphQLDirective,
+	GraphQLEnumType,
+} from 'graphql';
+import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
 
 @Module({
 	imports: [
@@ -56,24 +64,71 @@ import Keyv from 'keyv';
 			errorMessage: new ServerException('Fatal', 'User', 'Request').message,
 		}),
 		// GraphQL and Apollo SandBox
-		GraphQLModule.forRoot<ApolloDriverConfig>({
+		GraphQLModule.forRootAsync<ApolloDriverConfig>({
 			driver: ApolloDriver,
-			// Avoid deprecated
-			subscriptions: {
-				'graphql-ws': true,
-				'subscriptions-transport-ws': false,
+			inject: ['CACHE_MANAGER'],
+			useFactory: (cacheManager: Cache) => {
+				return {
+					// Avoid deprecated
+					subscriptions: {
+						'graphql-ws': true,
+						'subscriptions-transport-ws': false,
+					},
+					// Code first
+					autoSchemaFile: { path: 'src/schema.gql' },
+					sortSchema: true,
+					// Init sandBox
+					playground: false,
+					includeStacktraceInErrorResponses: true,
+					inheritResolversFromInterfaces: false,
+					introspection: true,
+					// Caching
+					cache: {
+						get: async (key: string): Promise<string> => {
+							const result = await cacheManager.get<string>(key);
+
+							if (!result) return undefined;
+
+							return result;
+						},
+						set: (key: string, value: unknown, options: { ttl: number }) =>
+							cacheManager.set(key, value, options.ttl.s2ms) as Promise<void>,
+						delete: (key: string) => cacheManager.del(key),
+					},
+					// Fix request context
+					context: (...args: any[]) => ({ req: args[0], res: args[1] }),
+					// Plugins
+					plugins: [responseCachePlugin(), ApolloServerPluginCacheControl()],
+					// Schema build options
+					buildSchemaOptions: {
+						directives: [
+							new GraphQLDirective({
+								name: 'cacheControl',
+								args: {
+									maxAge: { type: Int },
+									scope: {
+										type: new GraphQLEnumType({
+											name: 'CacheControlScope',
+											values: {
+												PUBLIC: {},
+												PRIVATE: {},
+											},
+										}),
+									},
+									inheritMaxAge: { type: GraphQLBoolean },
+								},
+								locations: [
+									DirectiveLocation.FIELD_DEFINITION,
+									DirectiveLocation.OBJECT,
+									DirectiveLocation.INTERFACE,
+									DirectiveLocation.UNION,
+									DirectiveLocation.QUERY,
+								],
+							}),
+						],
+					},
+				};
 			},
-			// Code first
-			autoSchemaFile: 'src/schema.gql',
-			sortSchema: true,
-			// Init sandBox
-			playground: false,
-			plugins: [],
-			includeStacktraceInErrorResponses: true,
-			inheritResolversFromInterfaces: false,
-			introspection: true,
-			// Fix request context
-			context: (...args: any[]) => ({ req: args[0], res: args[1] }),
 		}),
 		// Core modules
 		loadEnv,

@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+directive @cacheControl(inheritMaxAge: Boolean, maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | INTERFACE | OBJECT | QUERY | UNION
+
+enum CacheControlScope {
+  PRIVATE
+  PUBLIC
+}
+
 """DateTime custom scalar type"""
 scalar DateTime
 
