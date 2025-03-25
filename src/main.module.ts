@@ -18,10 +18,7 @@ import { InitServerClass } from 'app/utils/server.utils';
 import { createKeyv } from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
-import {
-	DateTimeScalar,
-	ModifiedThrottlerGuard,
-} from 'app/app.fix';
+import { DateTimeScalar, ModifiedThrottlerGuard } from 'app/app.fix';
 import { Cacheable } from 'cacheable';
 import Keyv from 'keyv';
 import responseCachePlugin from '@apollo/server-plugin-response-cache';
