@@ -2,7 +2,6 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { matching } from 'app/utils/utils';
-import { User } from 'user/user.entity';
 import { Allow, AllowPublic, convertForGql, Forbid } from '.';
 
 /**
