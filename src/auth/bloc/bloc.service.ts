@@ -18,6 +18,14 @@ interface IdOrHash {
 }
 
 /**
+ * Bloc required infomations
+ */
+interface BlocInput {
+	prev: string;
+	mtdt: MetaData;
+}
+
+/**
  * Bloc service
  */
 @Injectable()
@@ -44,14 +52,17 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {string} prev - previous bloc id
 	 * @param {MetaData} mtdt - client meta data
 	 */
-	async assign(owner: User, prev: string | null, mtdt?: MetaData) {
+	async assign(
+		owner: User,
+		{ prev, mtdt }: RequireOnlyOne<BlocInput, 'mtdt' | 'prev'>,
+	) {
 		const updatePrev = async () => {
 			if (!prev) return null;
 			const { metaData } = await this.findOne({ id: prev });
 
 			mtdt = metaData;
 
-			await this.update({ id: prev }, { owner: null , metaData: {} }, true);
+			await this.update({ id: prev }, { owner: null, metaData: {} }, true);
 
 			return prev;
 		};

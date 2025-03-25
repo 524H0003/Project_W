@@ -60,8 +60,8 @@ export class FacultyController extends BaseController {
 			),
 			{ id, hash } = await this.svc.bloc.assign(
 				faculty.eventCreator.user,
-				null,
-				mtdt,
+
+				{ mtdt },
 			);
 
 		return new UserRecieve({

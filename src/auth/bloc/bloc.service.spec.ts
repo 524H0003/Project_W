@@ -22,23 +22,15 @@ describe('assign', () => {
 	let bloc: Bloc;
 
 	it('success', async () => {
-		await execute(() => svc.bloc.assign(user, null, mtdt), {
+		await execute(() => svc.bloc.assign(user, { mtdt }), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
 	});
 
 	it('success chaining', async () => {
-		bloc = await svc.bloc.assign(user, null, mtdt);
+		bloc = await svc.bloc.assign(user, { mtdt });
 
-		await execute(() => svc.bloc.assign(user, bloc.id, mtdt), {
-			exps: [{ type: 'toThrow', not: true, params: [] }],
-		});
-	});
-
-	it('success chaining without metadata', async () => {
-		bloc = await svc.bloc.assign(user, null, mtdt);
-
-		await execute(() => svc.bloc.assign(user, bloc.id), {
+		await execute(() => svc.bloc.assign(user, { prev: bloc.id }), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
 	});
@@ -48,8 +40,8 @@ describe('removeSnake', () => {
 	let root: Bloc, sub: Bloc;
 
 	beforeEach(async () => {
-		(root = await svc.bloc.assign(user, null, mtdt)),
-			(sub = await svc.bloc.assign(user, root.id, mtdt));
+		(root = await svc.bloc.assign(user, { mtdt })),
+			(sub = await svc.bloc.assign(user, { prev: root.id }));
 	});
 
 	it('success', async () => {

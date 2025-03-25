@@ -70,7 +70,7 @@ export class AppController extends BaseController {
 			switch (true) {
 				case message.includes(err('Invalid', 'User', 'SignUp')):
 					const user = await this.svc.auth.login(body),
-						{ id, hash } = await this.svc.bloc.assign(user, null, mtdt);
+						{ id, hash } = await this.svc.bloc.assign(user, { mtdt });
 
 					return new UserRecieve({
 						accessToken: hash,
@@ -99,7 +99,7 @@ export class AppController extends BaseController {
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<UserRecieve> {
 		const user = await this.svc.auth.signUp(body, avatar || null),
-			{ id, hash } = await this.svc.bloc.assign(user, null, mtdt);
+			{ id, hash } = await this.svc.bloc.assign(user, { mtdt });
 
 		return new UserRecieve({
 			accessToken: hash,

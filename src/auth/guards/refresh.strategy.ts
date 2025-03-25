@@ -38,7 +38,9 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 			throw new ServerException('Invalid', 'User', 'Access');
 		}
 
-		const { hash, id } = await this.bloc.assign(current.owner, current.id);
+		const { hash, id } = await this.bloc.assign(current.owner, {
+			prev: current.id,
+		});
 
 		return {
 			blocHash: hash,

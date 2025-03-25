@@ -8,16 +8,15 @@ import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
 import { OutgoingHttpHeaders } from 'http';
-import { ConfigService } from '@nestjs/config';
 
 const fileName = curFile(__filename);
 
-let req: RequesterType, user: User, config: ConfigService, svc: AppService;
+let req: RequesterType, user: User, svc: AppService;
 
 beforeAll(async () => {
-	const { appSvc, requester, module } = await initJest();
+	const { appSvc, requester } = await initJest();
 
-	(svc = appSvc), (req = requester), (config = module.get(ConfigService));
+	(svc = appSvc), (req = requester);
 });
 
 beforeEach(() => {

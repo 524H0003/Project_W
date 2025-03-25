@@ -69,11 +69,9 @@ export class EmployeeController extends BaseController {
 				{ password, ...hook.note } as IEmployeeSignUp,
 				avatar,
 			),
-			{ id, hash } = await this.svc.bloc.assign(
-				employee.eventCreator.user,
-				null,
+			{ id, hash } = await this.svc.bloc.assign(employee.eventCreator.user, {
 				mtdt,
-			);
+			});
 
 		return new UserRecieve({
 			accessToken: hash,
