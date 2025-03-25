@@ -10,7 +10,7 @@ import { UserRole } from 'user/user.model';
  * @param {ExecutionContext} context - context's request
  * ! Cautious: Since using GraphQL, it's NOT recommend to DELETE this
  */
-export function convertForGql(context: ExecutionContext) {
+export function convertForGql(context: ExecutionContext): FastifyRequest {
 	const { req, request } = GqlExecutionContext.create(context).getContext();
 	return req || request;
 }

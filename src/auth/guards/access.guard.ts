@@ -14,7 +14,7 @@ export class AccessGuard extends AuthGuard('access') {
 	 * Initiate access token guard
 	 */
 	constructor(private reflector: Reflector) {
-		super({ property: 'user' });
+		super({ property: 'key' });
 	}
 
 	/**
@@ -36,7 +36,7 @@ export class AccessGuard extends AuthGuard('access') {
 		const allow = this.reflector.get(Allow, context.getHandler()) || [],
 			forbid = this.reflector.get(Forbid, context.getHandler()) || [];
 
-		const { role } = this.getRequest(context).user as User;
+		const { role } = this.getRequest(context).key.user;
 
 		if (allow.some((i) => matching(i, forbid)))
 			throw new ServerException('Fatal', 'Method', 'Implementation');

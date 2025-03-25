@@ -228,7 +228,7 @@ describe('refresh', () => {
 						not: true,
 						params: [
 							'headers.set-cookie',
-							expect.arrayContaining(headers['set-cookie'] as unknown[]),
+							expect.arrayContaining([...headers['set-cookie']]),
 						],
 					},
 					{
