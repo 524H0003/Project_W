@@ -5,6 +5,8 @@ import { UserRole } from 'user/user.model';
 import { AccessGuard } from './access.guard';
 import { execute, initJest } from 'app/utils/test.utils';
 import { expect } from '@jest/globals';
+import { FastifyRequest } from 'fastify';
+import { User } from 'user/user.entity';
 
 let roleGrd: AccessGuard, rflt: Reflector, ctx: ExecutionContext;
 
@@ -20,10 +22,19 @@ beforeEach(async () => {
 });
 
 describe('canActivate', () => {
+	let req: FastifyRequest;
+
 	beforeEach(() => {
 		jest
 			.spyOn(AuthGuard('access').prototype, 'canActivate')
 			.mockImplementation(() => true);
+
+		jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce({
+			key: {
+				user: { role: UserRole.faculty } as unknown as User,
+				accessId: '',
+			},
+		} as unknown as FastifyRequest);
 	});
 
 	it('success when AllowPublic is set', async () => {
@@ -32,39 +43,35 @@ describe('canActivate', () => {
 	});
 
 	it("success when user's role match the allowance roles", async () => {
-		const req = { user: { role: UserRole.faculty } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
 			.mockReturnValueOnce([UserRole.faculty])
-			.mockReturnValueOnce(null),
-			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
+			.mockReturnValueOnce(null);
+
 		expect(await roleGrd.canActivate(ctx)).toBe(true);
 	});
 
 	it("fail when user's role match the forbiddance roles", async () => {
-		const req = { user: { role: UserRole.faculty } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
 			.mockReturnValueOnce(null)
-			.mockReturnValueOnce([UserRole.faculty]),
-			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
+			.mockReturnValueOnce([UserRole.faculty]);
+
 		expect(await roleGrd.canActivate(ctx)).toBe(false);
 	});
 
 	it("fail when user's roles not match the required roles", async () => {
-		const req = { user: { role: UserRole.student } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
-			.mockReturnValueOnce([UserRole.faculty]),
+			.mockReturnValueOnce([UserRole.student]),
 			jest.spyOn(roleGrd, 'getRequest').mockReturnValueOnce(req);
 		expect(await roleGrd.canActivate(ctx)).toBe(false);
 	});
 
 	it('success when allowance and forbiddance roles not defined', async () => {
-		const req = { user: { role: UserRole.student } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)
@@ -75,7 +82,6 @@ describe('canActivate', () => {
 	});
 
 	it('fail when allowance and forbiddance roles have same child', async () => {
-		const req = { user: { role: UserRole.student } };
 		jest
 			.spyOn(rflt, 'get')
 			.mockReturnValueOnce(false)

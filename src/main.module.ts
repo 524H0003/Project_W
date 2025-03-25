@@ -13,12 +13,16 @@ import { APP_GUARD, APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { Cache, CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { InitServerClass } from 'app/utils/server.utils';
 import { createKeyv } from '@keyv/redis';
 import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
-import { DateTimeScalar, ModifiedThrottlerGuard } from 'app/app.fix';
+import {
+	DateTimeScalar,
+	ModifiedCacheInterceptor,
+	ModifiedThrottlerGuard,
+} from 'app/app.fix';
 import { Cacheable } from 'cacheable';
 import Keyv from 'keyv';
 import responseCachePlugin from '@apollo/server-plugin-response-cache';
@@ -151,7 +155,7 @@ import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheContr
 	],
 	providers: [
 		{ provide: APP_GUARD, useClass: ModifiedThrottlerGuard },
-		{ provide: APP_INTERCEPTOR, useClass: CacheInterceptor },
+		{ provide: APP_INTERCEPTOR, useClass: ModifiedCacheInterceptor },
 		DateTimeScalar,
 	],
 })
