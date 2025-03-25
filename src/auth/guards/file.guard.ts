@@ -10,7 +10,7 @@ export class FileGuard extends AuthGuard('access') {
 	 * Initiate file guard
 	 */
 	constructor() {
-		super({ property: 'user' });
+		super({ property: 'key' });
 	}
 
 	/**

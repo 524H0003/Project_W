@@ -57,7 +57,13 @@ export const Allow = Reflector.createDecorator<UserRole[]>(),
 		<K extends keyof FastifyRequest['key']>(
 			args: K,
 			context: ExecutionContext,
-		) => convertForGql(context).key[args],
+		) => {
+			const res = convertForGql(context).key;
+
+			if (!res) return null;
+
+			return res[args];
+		},
 	);
 
 export * from './access.guard';
