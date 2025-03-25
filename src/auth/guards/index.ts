@@ -35,14 +35,9 @@ export interface IRefreshResult {
 	blocId: string;
 
 	/**
-	 * Root id
-	 */
-	rootId: string;
-
-	/**
 	 * Root meta data
 	 */
-	metaData: string;
+	metaData: MetaData;
 }
 
 /**
@@ -56,7 +51,13 @@ export const Allow = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),
 	GetRequest = createParamDecorator(
 		<K extends keyof FastifyRequest>(args: K, context: ExecutionContext) =>
-			convertForGql(context)[args || 'user'],
+			convertForGql(context)[args],
+	),
+	GetServerKey = createParamDecorator(
+		<K extends keyof FastifyRequest['key']>(
+			args: K,
+			context: ExecutionContext,
+		) => convertForGql(context).key[args],
 	);
 
 export * from './access.guard';

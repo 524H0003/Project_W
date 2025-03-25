@@ -30,6 +30,11 @@ import { Colors } from 'picocolors/types';
 import { ErrorType, ErrorObject, ErrorAction } from './utils';
 import { BaseUser } from 'user/base/baseUser.entity';
 
+export interface IServerKey {
+	accessId: string;
+	user: User;
+}
+
 /**
  * Modified fastify interfaces
  */
@@ -38,7 +43,7 @@ declare module 'fastify' {
 	 * Server request
 	 */
 	interface FastifyRequest {
-		user: User;
+		key: IServerKey;
 		hook: Hook;
 		refresh: IRefreshResult;
 		isMultipart: boolean;

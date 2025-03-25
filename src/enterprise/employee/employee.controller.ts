@@ -65,11 +65,20 @@ export class EmployeeController extends BaseController {
 	): Promise<UserRecieve> {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
-		const { id } = await this.svc.employee.assign(
-			{ password, ...hook.note } as IEmployeeSignUp,
-			avatar,
-		);
+		const employee = await this.svc.employee.assign(
+				{ password, ...hook.note } as IEmployeeSignUp,
+				avatar,
+			),
+			{ id, hash } = await this.svc.bloc.assign(
+				employee.eventCreator.user,
+				null,
+				mtdt,
+			);
 
-		return this.svc.bloc.getTokens(id, mtdt);
+		return new UserRecieve({
+			accessToken: hash,
+			refreshToken: id,
+			response: await this.svc.user.info(employee.id),
+		});
 	}
 }

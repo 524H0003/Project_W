@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { EventParticipator } from './participator.entity';
 import { UseGuards } from '@nestjs/common';
-import { AccessGuard, GetRequest, Allow } from 'auth/guards';
+import { AccessGuard, Allow, GetServerKey } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
 import { User } from 'user/user.entity';
@@ -36,7 +36,7 @@ export class EventParticipatorResolver {
 	@Allow([UserRole.faculty, UserRole.enterprise])
 	async updateParticipator(
 		@Args('input') input: EventParticipatorUpdate,
-		@GetRequest('user') user: User,
+		@GetServerKey('user') user: User,
 	) {
 		const participator = await this.svc.eventParticipator.findOne({
 			id: input.id,

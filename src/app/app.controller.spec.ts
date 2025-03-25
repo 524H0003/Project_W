@@ -63,11 +63,7 @@ describe('signUp', () => {
 		await execute(
 			async () =>
 				svc.bloc.find({
-					ownerId: (
-						await svc.user.findOne({
-							baseUser: { email: user.baseUser.email.lower },
-						})
-					).id,
+					owner: { baseUser: { email: user.baseUser.email.lower } },
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [1] }] },
 		);
@@ -125,11 +121,9 @@ describe('login', () => {
 		await execute(
 			async () =>
 				svc.bloc.find({
-					ownerId: (
-						await svc.user.findOne({
-							baseUser: { email: user.baseUser.email.lower },
-						})
-					).id,
+					owner: {
+						baseUser: { email: user.baseUser.email.lower },
+					},
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
 		);
@@ -196,11 +190,9 @@ describe('logout', () => {
 					await execute(
 						async () =>
 							svc.bloc.find({
-								ownerId: (
-									await svc.user.findOne({
-										baseUser: { email: user.baseUser.email.lower },
-									})
-								).id,
+								owner: {
+									baseUser: { email: user.baseUser.email.lower },
+								},
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
 					);
@@ -264,23 +256,44 @@ describe('refresh', () => {
 		});
 	});
 
-	it('success in throw invalid token due to out of refresh token usage', async () => {
+	it('success in throw invalid token due to used old token', async () => {
+		const cookie = getCookie(headers['set-cookie']),
+			newCookie = getCookie(
+				(await req().post('/refresh').headers({ cookie })).headers[
+					'set-cookie'
+				],
+			);
+
 		await execute(
-			async () =>
-				await req()
-					.post('/refresh')
-					.headers({ cookie: getCookie(headers['set-cookie']) }),
+			async () => await req().post('/refresh').headers({ cookie }),
 			{
 				handleLoop: async (func) => {
 					headers = (await func()).headers;
 				},
-				numOfRun: config.get('REFRESH_USE'),
 				exps: [
 					{
 						type: 'toHaveProperty',
 						params: [
 							'body',
-							expect.stringContaining(err('Invalid', 'Token', '')),
+							expect.stringContaining(err('Invalid', 'User', 'Access')),
+						],
+					},
+				],
+			},
+		);
+
+		await execute(
+			async () => await req().post('/refresh').headers({ cookie: newCookie }),
+			{
+				handleLoop: async (func) => {
+					headers = (await func()).headers;
+				},
+				exps: [
+					{
+						type: 'toHaveProperty',
+						params: [
+							'body',
+							expect.stringContaining(err('Invalid', 'User', 'Access')),
 						],
 					},
 				],
@@ -301,9 +314,7 @@ describe('refresh', () => {
 						.end()
 				).body,
 			{
-				exps: [
-					{ type: 'toContain', params: [err('Invalid', 'Signature', '')] },
-				],
+				exps: [{ type: 'toContain', params: [err('Invalid', 'Client', '')] }],
 			},
 		);
 	});

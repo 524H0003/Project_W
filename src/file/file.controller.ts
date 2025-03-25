@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
-import { FileGuard, GetRequest } from 'auth/guards';
+import { FileGuard, GetServerKey } from 'auth/guards';
 import { FastifyReply } from 'fastify';
 import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
@@ -23,7 +23,7 @@ export class FileController {
 	@Get(':filename') @UseGuards(FileGuard) async seeUploadedFile(
 		@Param('filename') fileName: string,
 		@Res() res: FastifyReply,
-		@GetRequest('user') user: User,
+		@GetServerKey('user') user: User,
 	) {
 		const { stream, type, length } = await this.svc.file.recieve(
 			fileName,

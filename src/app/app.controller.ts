@@ -69,10 +69,14 @@ export class AppController extends BaseController {
 			const { message } = error as ServerException;
 			switch (true) {
 				case message.includes(err('Invalid', 'User', 'SignUp')):
-					return this.svc.bloc.getTokens(
-						(await this.svc.auth.login(body)).id,
-						mtdt,
-					);
+					const user = await this.svc.auth.login(body),
+						{ id, hash } = await this.svc.bloc.assign(user, null, mtdt);
+
+					return new UserRecieve({
+						accessToken: hash,
+						refreshToken: id,
+						response: await this.svc.user.info(user.id),
+					});
 
 				case message.includes(err('Success', 'User', 'SignUp')):
 					return this.resetPasswordViaEmail(hostname, body, mtdt);
@@ -94,8 +98,14 @@ export class AppController extends BaseController {
 		@GetRequest('metaData') mtdt: MetaData,
 		@UploadedFile(AvatarFileUpload) avatar: MulterFile,
 	): Promise<UserRecieve> {
-		const { id } = await this.svc.auth.signUp(body, avatar || null);
-		return this.svc.bloc.getTokens(id, mtdt);
+		const user = await this.svc.auth.signUp(body, avatar || null),
+			{ id, hash } = await this.svc.bloc.assign(user, null, mtdt);
+
+		return new UserRecieve({
+			accessToken: hash,
+			refreshToken: id,
+			response: await this.svc.user.info(user.id),
+		});
 	}
 
 	/**
@@ -104,9 +114,9 @@ export class AppController extends BaseController {
 	@Post('logout') @UseGuards(RefreshGuard) async logout(
 		@GetRequest('refresh') refresh: IRefreshResult,
 	): Promise<UserRecieve> {
-		const { rootId } = refresh;
+		const { blocId } = refresh;
 
-		await this.svc.bloc.removeTree(rootId);
+		await this.svc.bloc.removeSnake(blocId);
 
 		return new UserRecieve({
 			response: { message: err('Success', 'User', 'LogOut') },
@@ -120,16 +130,19 @@ export class AppController extends BaseController {
 		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('refresh') refresh: IRefreshResult,
 	): Promise<UserRecieve> {
-		const { metaData, rootId, blocHash, blocId } = refresh;
+		const { metaData, blocHash, blocId } = refresh;
 
-		if (metaData !== JSON.stringify(sortObjectKeys(mtdt))) {
-			await this.svc.bloc.removeTree(rootId);
+		if (
+			JSON.stringify(sortObjectKeys(metaData)) !==
+			JSON.stringify(sortObjectKeys(mtdt))
+		) {
+			await this.svc.bloc.removeSnake(blocId);
 			return new UserRecieve({
-				response: { message: err('Invalid', 'Signature', '') },
+				response: { message: err('Invalid', 'Client', '') },
 			});
 		}
 
-		return new UserRecieve({ accessToken: blocId, refreshToken: blocHash });
+		return new UserRecieve({ accessToken: blocHash, refreshToken: blocId });
 	}
 
 	/**

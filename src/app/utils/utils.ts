@@ -335,6 +335,7 @@ export type ErrorType =
  * Server error object type
  */
 export type ErrorObject =
+	| 'Client'
 	| 'ID'
 	| 'Hash'
 	| 'CsrfCookie'
