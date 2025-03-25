@@ -195,6 +195,8 @@ export async function initJest() {
 
 	// eslint-disable-next-line tsEslint/no-unused-vars
 	console.error = (...args: any) => true;
+	// eslint-disable-next-line tsEslint/no-unused-vars
+	console.info = (...args: any) => true;
 
 	await registerServerPlugins(fastify, {});
 	app = module.createNestApplication(new FastifyAdapter(fastify));
