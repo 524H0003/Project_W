@@ -67,11 +67,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 			return prev;
 		};
 
-		const bloc = new Bloc({
-			owner,
-			prev: await updatePrev(),
-			metaData: mtdt,
-		});
+		const bloc = new Bloc({ owner, prev: await updatePrev(), metaData: mtdt });
 
 		return this.save(bloc);
 	}
