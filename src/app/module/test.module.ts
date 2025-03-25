@@ -4,7 +4,7 @@ import { GraphQLModule, Int } from '@nestjs/graphql';
 import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { loadEnv } from './config.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { Cache, CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AWSRecieve, AWSService } from 'app/aws/aws.service';
 import {
@@ -33,6 +33,7 @@ import {
 import Keyv from 'keyv';
 import { Cacheable } from 'cacheable';
 import { createKeyv } from '@keyv/redis';
+import { ModifiedCacheInterceptor } from 'app/app.fix';
 
 /**
  * Server public path
@@ -125,7 +126,7 @@ export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 	],
 	providers: [
 		{ provide: MailerService, useValue: { sendMail: jest.fn() } },
-		{ provide: APP_INTERCEPTOR, useClass: CacheInterceptor },
+		{ provide: APP_INTERCEPTOR, useClass: ModifiedCacheInterceptor },
 		{
 			provide: AWSService,
 			useValue: {
