@@ -58,11 +58,9 @@ export class FacultyController extends BaseController {
 				},
 				avatar,
 			),
-			{ id, hash } = await this.svc.bloc.assign(
-				faculty.eventCreator.user,
-
-				{ mtdt },
-			);
+			{ id, hash } = await this.svc.bloc.assign(faculty.eventCreator.user, {
+				mtdt,
+			});
 
 		return new UserRecieve({
 			accessToken: hash,
