@@ -73,8 +73,7 @@ export class AppController extends BaseController {
 						{ id, hash } = await this.svc.bloc.assign(user, { mtdt });
 
 					return new UserRecieve({
-						accessToken: hash,
-						refreshToken: id,
+						blocInfo: { id, hash },
 						response: await this.svc.user.info(user.id),
 					});
 
@@ -102,8 +101,7 @@ export class AppController extends BaseController {
 			{ id, hash } = await this.svc.bloc.assign(user, { mtdt });
 
 		return new UserRecieve({
-			accessToken: hash,
-			refreshToken: id,
+			blocInfo: { id, hash },
 			response: await this.svc.user.info(user.id),
 		});
 	}
@@ -119,6 +117,7 @@ export class AppController extends BaseController {
 		await this.svc.bloc.removeSnake(blocId);
 
 		return new UserRecieve({
+			isClearCookie: true,
 			response: { message: err('Success', 'User', 'LogOut') },
 		});
 	}
@@ -138,11 +137,15 @@ export class AppController extends BaseController {
 		) {
 			await this.svc.bloc.removeSnake(blocId);
 			return new UserRecieve({
+				isClearCookie: true,
 				response: { message: err('Invalid', 'Client', '') },
 			});
 		}
 
-		return new UserRecieve({ accessToken: blocHash, refreshToken: blocId });
+		return new UserRecieve({
+			blocInfo: { id: blocId, hash: blocHash },
+			response: err('Success', 'Client', 'Request'),
+		});
 	}
 
 	/**
@@ -167,7 +170,7 @@ export class AppController extends BaseController {
 		);
 
 		return new UserRecieve({
-			accessToken: id,
+			HookId: id,
 			response: { message: err('Success', 'Signature', 'Sent') },
 		});
 	}

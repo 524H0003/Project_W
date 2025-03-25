@@ -63,8 +63,7 @@ export class FacultyController extends BaseController {
 			});
 
 		return new UserRecieve({
-			accessToken: hash,
-			refreshToken: id,
+			blocInfo: { id, hash },
 			response: await this.svc.user.info(faculty.id),
 		});
 	}

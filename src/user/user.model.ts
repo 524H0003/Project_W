@@ -7,6 +7,7 @@ import {
 	IBaseUserEntity,
 	IBaseUserInfo,
 } from './base/baseUser.model';
+import { IBlocCompulsory } from 'auth/bloc/bloc.model';
 
 // Interfaces
 /**
@@ -79,32 +80,28 @@ export interface IUserEntity
 }
 
 /**
- * Server response interface
- */
-export interface IResponse {
-	message?: string;
-	token?: string;
-	user?: IUserInfo;
-}
-
-/**
  * Fields about user's recieved properties
  */
 export interface IUserRecieve {
 	/**
-	 * Access token
+	 * Bloc id
 	 */
-	accessToken: string;
-
-	/**
-	 * Refresh token
-	 */
-	refreshToken: string;
+	blocInfo: Required<IBlocCompulsory>;
 
 	/**
 	 * Server's response
 	 */
-	response: IResponse;
+	response: any;
+
+	/**
+	 * Hook id
+	 */
+	HookId: string;
+
+	/**
+	 * Clear cookie
+	 */
+	isClearCookie: boolean;
 }
 
 /**

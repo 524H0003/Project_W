@@ -46,7 +46,7 @@ export class EmployeeController extends BaseController {
 		const { id } = await this.svc.employee.hook(body, mtdt);
 
 		return new UserRecieve({
-			accessToken: id,
+			HookId: id,
 			response: { message: err('Success', 'Signature', 'Sent') },
 		});
 	}
@@ -74,8 +74,7 @@ export class EmployeeController extends BaseController {
 			});
 
 		return new UserRecieve({
-			accessToken: hash,
-			refreshToken: id,
+			blocInfo: { id, hash },
 			response: await this.svc.user.info(employee.id),
 		});
 	}

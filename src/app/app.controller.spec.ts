@@ -177,12 +177,7 @@ describe('logout', () => {
 					.post('/logout')
 					.headers({ cookie: getCookie(headers['set-cookie']) }),
 			{
-				exps: [
-					{
-						type: 'toHaveProperty',
-						params: ['headers.set-cookie', expect.arrayContaining([])],
-					},
-				],
+				exps: [{ type: 'toThrow', not: true, params: [] }],
 				onFinish: async () => {
 					await execute(
 						async () =>

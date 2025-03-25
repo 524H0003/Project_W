@@ -3,18 +3,23 @@ import { IUserEntity } from 'user/user.model';
 
 // Interfaces
 /**
- * Bloc infomations
+ * Bloc compulsory infomations
  */
-export interface IBlocInfo extends IEntityId {
-	/**
-	 * Previous bloc id
-	 */
-	prev?: string;
-
+export interface IBlocCompulsory extends IEntityId {
 	/**
 	 * Current bloc hash
 	 */
 	hash?: string;
+}
+
+/**
+ * Bloc infomations
+ */
+export interface IBlocInfo extends IBlocCompulsory {
+	/**
+	 * Previous bloc id
+	 */
+	prev?: string;
 
 	/**
 	 * Current bloc meta data

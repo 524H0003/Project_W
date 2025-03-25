@@ -96,7 +96,14 @@ import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheContr
 					// Fix request context
 					context: (...args: any[]) => ({ req: args[0], res: args[1] }),
 					// Plugins
-					plugins: [responseCachePlugin(), ApolloServerPluginCacheControl()],
+					plugins: [
+						responseCachePlugin({
+							sessionId: async (requestContext) =>
+								(await requestContext.request.http.headers.get('sessionId')) ||
+								null,
+						}),
+						ApolloServerPluginCacheControl(),
+					],
 					// Schema build options
 					buildSchemaOptions: {
 						directives: [

@@ -72,7 +72,13 @@ export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 					// Fix request context
 					context: (...args: any[]) => ({ req: args[0], res: args[1] }),
 					// Plugins
-					plugins: [responseCachePlugin(), ApolloServerPluginCacheControl()],
+					plugins: [
+						responseCachePlugin({
+							sessionId: async (requestContext) =>
+								requestContext.request.http.headers.get('sessionId') || null,
+						}),
+						ApolloServerPluginCacheControl(),
+					],
 					// Schema build options
 					buildSchemaOptions: {
 						directives: [

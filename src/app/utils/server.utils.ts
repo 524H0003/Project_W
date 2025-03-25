@@ -29,9 +29,10 @@ import pc from 'picocolors';
 import { Colors } from 'picocolors/types';
 import { ErrorType, ErrorObject, ErrorAction } from './utils';
 import { BaseUser } from 'user/base/baseUser.entity';
+import { IBlocCompulsory } from 'auth/bloc/bloc.model';
 
 export interface IServerKey {
-	accessId: string;
+	blocInfo: Required<IBlocCompulsory>;
 	user: User;
 }
 
@@ -55,6 +56,8 @@ declare module 'fastify' {
 	 */
 	interface Session {
 		redirectTo: string;
+		accessKey: string;
+		sessionId: string;
 	}
 }
 

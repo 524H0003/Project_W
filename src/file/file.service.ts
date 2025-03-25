@@ -11,7 +11,7 @@ import { AWSRecieve } from 'app/aws/aws.service';
 import { FileUpload } from 'graphql-upload-ts';
 import { createHmac } from 'node:crypto';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
-import { RequireOnlyOne } from 'app/utils/model.utils';
+import { RequireOnlyOneOptionalRest } from 'app/utils/model.utils';
 
 /**
  * Convert a stream to buffer
@@ -83,8 +83,10 @@ export class FileService extends DatabaseRequests<File> {
 			buffer,
 			stream,
 			originalname,
-		}: RequireOnlyOne<MulterFile, 'stream' | 'buffer'> &
-			Required<Pick<MulterFile, 'originalname'>>,
+		}:
+			| (RequireOnlyOneOptionalRest<MulterFile, 'stream' | 'buffer'> &
+					Required<Pick<MulterFile, 'originalname'>>)
+			| MulterFile,
 		userId: string,
 		serverFileName?: string,
 	): Promise<File> {
