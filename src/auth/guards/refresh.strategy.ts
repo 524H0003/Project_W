@@ -42,10 +42,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 			prev: current.id,
 		});
 
-		return {
-			blocHash: hash,
-			blocId: id,
-			metaData: current.metaData,
-		};
+		return { blocHash: hash, blocId: id, metaData: current.metaData };
 	}
 }
