@@ -110,6 +110,10 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      - uses: supercharge/redis-github-action@1.8.0
+        with:
+          redis-password: ''
+
       - uses: ikalnytskyi/action-setup-postgres@v6
 
       - uses: pnpm/action-setup@v4
