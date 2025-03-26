@@ -17,6 +17,7 @@ import { InitServerClass } from 'app/utils/server.utils';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { BaseModule } from './base.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 /**
  * Server public path
@@ -26,6 +27,10 @@ export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 @Global()
 @Module({
 	imports: [
+		// Api rate limit
+		ThrottlerModule.forRoot({
+			errorMessage: new ServerException('Fatal', 'User', 'Request').message,
+		}),
 		// Core module
 		BaseModule,
 		loadEnv,

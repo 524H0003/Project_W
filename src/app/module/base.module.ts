@@ -6,7 +6,6 @@ import {
 import { Cache, CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { GraphQLModule, Int } from '@nestjs/graphql';
-import { ThrottlerModule } from '@nestjs/throttler';
 import {
 	DirectiveLocation,
 	GraphQLBoolean,
@@ -48,11 +47,6 @@ import { JwtModule } from '@nestjs/jwt';
 			}),
 			inject: [ConfigService],
 			isGlobal: true,
-		}),
-		// Api rate limit
-		ThrottlerModule.forRoot({
-			throttlers: [{ limit: 2, ttl: 1000, name: 'defaultThrottler' }],
-			errorMessage: new ServerException('Fatal', 'User', 'Request').message,
 		}),
 		// GraphQL and Apollo SandBox
 		GraphQLModule.forRootAsync<ApolloFederationDriverConfig>({

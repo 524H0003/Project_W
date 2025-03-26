@@ -11,9 +11,15 @@ import { InitServerClass } from 'app/utils/server.utils';
 import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BaseModule } from 'app/module/base.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
 	imports: [
+		// Api rate limit
+		ThrottlerModule.forRoot({
+			throttlers: [{ limit: 2, ttl: 1000, name: 'defaultThrottler' }],
+			errorMessage: new ServerException('Fatal', 'User', 'Request').message,
+		}),
 		// Mail
 		MailerModule.forRootAsync({
 			imports: [ConfigModule],
