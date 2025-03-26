@@ -25,7 +25,7 @@ const config: Config = {
 		'!**/?(*.)+(service).ts',
 	],
 	forceExit: true,
-	rootDir: '.'
+	rootDir: '.',
 };
 
 export default config;
