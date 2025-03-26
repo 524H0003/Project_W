@@ -27,7 +27,10 @@ const config: Config = {
 		'!**/*.model.ts',
 		'!**/*.entity.ts',
 		'!**/*.module.ts',
+		'!**/*.spec.ts',
+		'!**/*.graphql.ts',
 	],
+	rootDir: 'src',
 };
 
 export default config;
