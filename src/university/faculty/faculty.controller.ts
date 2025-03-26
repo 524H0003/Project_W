@@ -17,6 +17,7 @@ import { Hook } from 'app/hook/hook.entity';
 import { FacultyAssign } from './faculty.dto';
 import { GetRequest, HookGuard, MetaData } from 'auth/guards';
 import { UserRole } from 'user/user.model';
+import { UserRecieve } from 'user/user.entity';
 
 /**
  * Faculty controller
@@ -48,19 +49,22 @@ export class FacultyController extends BaseController {
 	) {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
-		return this.svc.bloc.getTokens(
-			(
-				await this.svc.faculty.assign(
-					{
-						eventCreator: {
-							user: { baseUser: body, password, role: UserRole['faculty'] },
-						},
-						department,
+		const faculty = await this.svc.faculty.assign(
+				{
+					eventCreator: {
+						user: { baseUser: body, password, role: UserRole['faculty'] },
 					},
-					avatar,
-				)
-			).id,
-			mtdt,
-		);
+					department,
+				},
+				avatar,
+			),
+			{ id, hash } = await this.svc.bloc.assign(faculty.eventCreator.user, {
+				mtdt,
+			});
+
+		return new UserRecieve({
+			blocInfo: { id, hash },
+			response: await this.svc.user.info(faculty.id),
+		});
 	}
 }

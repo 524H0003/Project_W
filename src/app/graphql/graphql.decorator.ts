@@ -8,7 +8,7 @@ interface CacheControlOptions {
 
 export const CacheControl = ({
 	maxAge,
-	scope = 'PUBLIC',
+	scope = 'PRIVATE',
 	inheritMaxAge,
 }: CacheControlOptions) => {
 	const args = [

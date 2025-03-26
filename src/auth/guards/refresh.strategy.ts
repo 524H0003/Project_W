@@ -31,17 +31,17 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	 * @return {Promise<IRefreshResult>}
 	 */
 	async validate({ refreshToken }: IPayload): Promise<IRefreshResult> {
-		const root = await this.bloc.findRoot({ hash: refreshToken });
-		if (root && refreshToken != root.hash) {
-			const { prev } = await this.bloc.findOne({ hash: refreshToken }),
-				{ hash, id } = await this.bloc.findOne({ hash: prev });
-			return {
-				blocHash: hash,
-				blocId: id,
-				rootId: root.id,
-				metaData: root.metaData,
-			};
+		const current = await this.bloc.findOne({ id: refreshToken });
+
+		if (current.isNull() || current.owner.isNull()) {
+			await this.bloc.removeSnake(current.id);
+			throw new ServerException('Invalid', 'User', 'Access');
 		}
-		throw new ServerException('Invalid', 'Token', '');
+
+		const { hash, id } = await this.bloc.assign(current.owner, {
+			prev: current.id,
+		});
+
+		return { blocHash: hash, blocId: id, metaData: current.metaData };
 	}
 }

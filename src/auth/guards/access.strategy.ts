@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
+import { IServerKey } from 'app/utils/server.utils';
 import { IPayload } from 'auth/auth.interface';
 import { BlocService } from 'auth/bloc/bloc.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserService } from 'user/user.service';
 
 /**
  * Check the access token from client
@@ -17,7 +17,6 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	constructor(
 		config: ConfigService,
 		private bloc: BlocService,
-		private user: UserService,
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -30,10 +29,15 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 	 * Validating the access token from client
 	 * @param {IPayload} payload - the payload from token
 	 */
-	async validate({ accessToken }: IPayload) {
-		await this.bloc.issue({ id: accessToken });
-		const root = await this.bloc.findRoot({ id: accessToken });
-		if (root) return this.user.id(root.ownerId);
+	async validate({ accessToken }: IPayload): Promise<IServerKey> {
+		if (accessToken) {
+			try {
+				const { id } = await this.bloc.findOne({ hash: accessToken });
+				await this.bloc.issue({ hash: accessToken });
+				const { hash, owner } = await this.bloc.findOne({ id });
+				return { blocInfo: { id, hash }, user: owner };
+			} catch {}
+		}
 		throw new ServerException('Invalid', 'ID', '');
 	}
 }

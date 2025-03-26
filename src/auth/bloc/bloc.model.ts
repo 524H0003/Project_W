@@ -1,37 +1,48 @@
 import { IEntityId } from 'app/app.model';
+import { IUserEntity } from 'user/user.model';
 
 // Interfaces
 /**
- * Bloc infomations
+ * Bloc compulsory infomations
  */
-export interface IBlocInfo extends IEntityId {
-	/**
-	 * Previous bloc hash
-	 */
-	prev?: string;
-
+export interface IBlocCompulsory extends IEntityId {
 	/**
 	 * Current bloc hash
 	 */
 	hash?: string;
+}
+
+/**
+ * Bloc infomations
+ */
+export interface IBlocInfo extends IBlocCompulsory {
+	/**
+	 * Previous bloc id
+	 */
+	prev?: string;
 
 	/**
 	 * Current bloc meta data
 	 */
-	metaData?: string;
+	metaData?: object;
 
 	/**
 	 * Bloc last issue time
 	 */
 	lastIssue?: number;
+}
 
+/**
+ * Bloc relationships
+ */
+export interface IBlocRelationships {
 	/**
 	 * Bloc owner id
 	 */
-	ownerId?: string;
+	owner?: IUserEntity;
 }
 
 /**
  * Bloc entity
  */
-export interface IBlocEntity extends IBlocInfo {}
+export interface IBlocEntity extends IBlocInfo, IBlocRelationships {}

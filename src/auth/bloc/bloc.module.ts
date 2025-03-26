@@ -5,10 +5,7 @@ import { Bloc } from './bloc.entity';
 import { BlocService } from './bloc.service';
 
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([Bloc], 'sqlite_db'),
-		forwardRef(() => AppModule),
-	],
+	imports: [TypeOrmModule.forFeature([Bloc]), forwardRef(() => AppModule)],
 	providers: [BlocService],
 	exports: [BlocService],
 })

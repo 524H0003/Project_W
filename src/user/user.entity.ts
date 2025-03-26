@@ -1,7 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { BlackBox } from 'app/utils/model.utils';
+import {
+	BlackBox,
+	RequireOnlyOne,
+	RequireOnlyOneRequiredRest,
+} from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IUserAuthenticationKeys, IUserInfoKeys } from 'build/models';
+import {
+	IUserAuthenticationKeys,
+	IUserInfoKeys,
+	IUserRecieveKeys,
+} from 'build/models';
 import {
 	BeforeInsert,
 	BeforeUpdate,
@@ -22,13 +30,13 @@ import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
 import { passwordHashing } from 'app/utils/auth.utils';
-import { decode, JwtPayload } from 'jsonwebtoken';
 import { IsStrongPassword } from 'class-validator';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { ApiHideProperty } from '@nestjs/swagger';
 import { BaseUser } from './base/baseUser.entity';
 import { IBaseUserInfo } from './base/baseUser.model';
 import { CacheControl } from 'app/graphql/graphql.decorator';
+import { IBlocCompulsory } from 'auth/bloc/bloc.model';
 
 /**
  * User entity
@@ -217,41 +225,44 @@ export class User extends ParentId implements IUserEntity {
 export class UserRecieve implements IUserRecieve {
 	/**
 	 * Quick user recieve initiation
-	 * @param {object} payload - User recieve infomations
+	 * @param {RequireOnlyOneRequiredRest<UserRecieve,'HookId' | 'blocInfo' | 'isClearCookie'>} payload - User recieve infomations
 	 */
-	constructor(payload: Partial<IUserRecieve>) {
-		Object.assign(this, payload);
+	constructor(
+		payload: RequireOnlyOneRequiredRest<
+			UserRecieve,
+			'HookId' | 'blocInfo' | 'isClearCookie'
+		>,
+	) {
+		Object.assign(this, InterfaceCasting.quick(payload, IUserRecieveKeys));
 	}
+
+	/**
+	 * Clear cookie if requested
+	 */
+	@ApiHideProperty() isClearCookie: boolean;
+
+	/**
+	 * Hook id
+	 */
+	@ApiHideProperty() HookId: string;
 
 	/**
 	 * User access token
 	 */
-	@ApiHideProperty() accessToken: string;
-
-	/**
-	 * User refresh token
-	 */
-	@ApiHideProperty() refreshToken: string;
+	@ApiHideProperty() blocInfo: Required<IBlocCompulsory>;
 
 	/**
 	 * Server's response
 	 */
-	@ApiHideProperty() response: IResponse;
-
-	/**
-	 * Jwt payload
-	 */
-	get payload(): JwtPayload {
-		return (decode(this.accessToken) as JwtPayload) || { exp: 0, iat: 0 };
-	}
+	@ApiHideProperty() response: RequireOnlyOne<IResponse, 'message' | 'user'>;
 
 	/**
 	 * Test entity
 	 */
 	static get test() {
 		return new UserRecieve({
-			accessToken: (10).string,
-			refreshToken: (10).string,
+			blocInfo: { hash: '', id: '' },
+			response: { message: (10).string },
 		});
 	}
 }

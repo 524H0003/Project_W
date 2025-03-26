@@ -46,7 +46,7 @@ export class EmployeeController extends BaseController {
 		const { id } = await this.svc.employee.hook(body, mtdt);
 
 		return new UserRecieve({
-			accessToken: id,
+			HookId: id,
 			response: { message: err('Success', 'Signature', 'Sent') },
 		});
 	}
@@ -65,11 +65,17 @@ export class EmployeeController extends BaseController {
 	): Promise<UserRecieve> {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
-		const { id } = await this.svc.employee.assign(
-			{ password, ...hook.note } as IEmployeeSignUp,
-			avatar,
-		);
+		const employee = await this.svc.employee.assign(
+				{ password, ...hook.note } as IEmployeeSignUp,
+				avatar,
+			),
+			{ id, hash } = await this.svc.bloc.assign(employee.eventCreator.user, {
+				mtdt,
+			});
 
-		return this.svc.bloc.getTokens(id, mtdt);
+		return new UserRecieve({
+			blocInfo: { id, hash },
+			response: await this.svc.user.info(employee.id),
+		});
 	}
 }

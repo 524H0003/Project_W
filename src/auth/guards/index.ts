@@ -10,7 +10,7 @@ import { UserRole } from 'user/user.model';
  * @param {ExecutionContext} context - context's request
  * ! Cautious: Since using GraphQL, it's NOT recommend to DELETE this
  */
-export function convertForGql(context: ExecutionContext) {
+export function convertForGql(context: ExecutionContext): FastifyRequest {
 	const { req, request } = GqlExecutionContext.create(context).getContext();
 	return req || request;
 }
@@ -35,14 +35,9 @@ export interface IRefreshResult {
 	blocId: string;
 
 	/**
-	 * Root id
-	 */
-	rootId: string;
-
-	/**
 	 * Root meta data
 	 */
-	metaData: string;
+	metaData: MetaData;
 }
 
 /**
@@ -56,7 +51,19 @@ export const Allow = Reflector.createDecorator<UserRole[]>(),
 	AllowPublic = Reflector.createDecorator<boolean>(),
 	GetRequest = createParamDecorator(
 		<K extends keyof FastifyRequest>(args: K, context: ExecutionContext) =>
-			convertForGql(context)[args || 'user'],
+			convertForGql(context)[args],
+	),
+	GetServerKey = createParamDecorator(
+		<K extends keyof FastifyRequest['key']>(
+			args: K,
+			context: ExecutionContext,
+		) => {
+			const res = convertForGql(context).key;
+
+			if (!res) return null;
+
+			return res[args];
+		},
 	);
 
 export * from './access.guard';

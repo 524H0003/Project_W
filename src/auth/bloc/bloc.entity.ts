@@ -1,10 +1,13 @@
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
 import { IBlocEntity } from './bloc.model';
 import { dataHashing } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IBlocInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
+import { User } from 'user/user.entity';
+import { MetaData } from 'auth/guards';
+import { UAParser } from 'ua-parser-js';
 
 /**
  * Bloc entity
@@ -21,23 +24,20 @@ export class Bloc extends GeneratedId implements IBlocEntity {
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IBlocInfoKeys));
+		this.owner = new User(payload.owner);
 	}
 
-	// Infomations
+	// Relationships
 	/**
 	 * Bloc owner id
 	 */
-	@Column({ nullable: true, update: false }) ownerId: string | null;
+	@ManyToOne(() => User, { nullable: true }) owner: User;
 
+	// Infomations
 	/**
-	 * Previous bloc hash
+	 * Previous bloc id
 	 */
 	@Column({ nullable: true, update: false }) prev?: string;
-
-	/**
-	 * Bloc signature
-	 */
-	@Column({ nullable: false }) private signature: string;
 
 	/**
 	 * Current bloc hash
@@ -52,23 +52,21 @@ export class Bloc extends GeneratedId implements IBlocEntity {
 	/**
 	 * Current bloc content
 	 */
-	@Column({ nullable: true }) metaData?: string;
+	@Column({ type: 'jsonb', default: {} }) metaData: MetaData;
 
 	// Methods
 	/**
 	 * Hashing bloc
 	 */
-	@BeforeInsert() private hashBloc() {
-		this.signature = (16).string;
-
-		const { prev, metaData, signature, ownerId, lastIssue } = this;
+	@BeforeInsert() @BeforeUpdate() private hashBloc() {
+		const { prev, metaData, id, owner, lastIssue } = this;
 
 		return (this.hash = dataHashing(
-			JSON.stringify({ metaData, lastIssue, prev, signature, ownerId }),
+			JSON.stringify({ metaData, lastIssue, prev, id, owner: owner.id }),
 		));
 	}
 
 	static test(from: string) {
-		return new Bloc({ metaData: from });
+		return new Bloc({ metaData: new UAParser(from) });
 	}
 }

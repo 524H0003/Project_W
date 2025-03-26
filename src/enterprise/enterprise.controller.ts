@@ -48,6 +48,7 @@ export class EnterpriseController extends BaseController {
 		await this.svc.hook.validating(signature, mtdt, hook);
 		await this.svc.enterprise.assign(body, avatar);
 		return new UserRecieve({
+			isClearCookie: true,
 			response: { message: err('Success', 'Enterprise', 'Assign') },
 		});
 	}

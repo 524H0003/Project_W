@@ -16,13 +16,27 @@ interface IRecordTime {
 }
 
 /**
- * Only required specified keys and optional for remains
+ * Only required one of specified keys and remove remains
  */
-export type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
-	| {
-			[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
-	  }[Keys]
-	| Partial<Pick<T, Keys>>;
+export type RequireOnlyOne<T, Keys extends keyof T = keyof T> = {
+	[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
+}[Keys];
+
+/**
+ * Only required one of specified keys and require remains
+ */
+export type RequireOnlyOneRequiredRest<T, Keys extends keyof T = keyof T> = {
+	[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
+}[Keys] &
+	Required<Omit<T, Keys>>;
+
+/**
+ * Only required one of specified keys and optional remains
+ */
+export type RequireOnlyOneOptionalRest<T, Keys extends keyof T = keyof T> = {
+	[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
+}[Keys] &
+	Partial<Omit<T, Keys>>;
 
 /**
  * Time record entity

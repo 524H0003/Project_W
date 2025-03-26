@@ -38,7 +38,7 @@ export class BaseController {
 		});
 
 		return new UserRecieve({
-			accessToken: id,
+			HookId: id,
 			response: { message: err('Success', 'Signature', 'Sent') },
 		});
 	}
@@ -60,6 +60,7 @@ export class BaseController {
 
 		await this.svc.auth.changePassword(user, password);
 		return new UserRecieve({
+			isClearCookie: true,
 			response: { message: err('Success', 'Password', 'Implementation') },
 		});
 	}

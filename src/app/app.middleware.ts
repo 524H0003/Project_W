@@ -7,6 +7,7 @@ import { processRequest } from 'graphql-upload-ts';
 import { UserRecieve } from 'user/user.entity';
 import { cookieOptions } from './utils/server.utils';
 import { UAParser } from 'ua-parser-js';
+import { CookieSerializeOptions } from '@fastify/cookie';
 
 /**
  * App middleware
@@ -48,6 +49,11 @@ export class AppMiddleware extends SecurityService {
 		if (access || refresh)
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
 
+		delete req.headers.sessionId;
+		try {
+			if (access && this.verify(access).accessToken)
+				req.headers.sessionId = req.session.get('sessionId') || '';
+		} catch {}
 		done();
 	}
 
@@ -74,28 +80,53 @@ export class AppMiddleware extends SecurityService {
 		payload: UserRecieve,
 		done: DoneFuncWithErrOrRes,
 	) {
-		if (payload instanceof UserRecieve) {
-			const { accessToken = '', refreshToken = '', response } = payload,
-				accessKey = (32).string;
+		const sessionId = req.session.get('sessionId');
 
-			if (accessToken) {
-				req.session.set<any>('accessKey', this.encrypt(accessKey, req.ip));
-				res.setCookie(
-					'access',
-					this.encrypt(this.access({ accessToken }), accessKey),
-					cookieOptions,
-				);
-			} else res.clearCookie('access');
+		if (!sessionId) req.session.set('sessionId', (64).string);
 
-			if (refreshToken)
-				res.setCookie(
-					'refresh',
-					this.encrypt(this.refresh({ refreshToken })),
-					cookieOptions,
-				);
-			else res.clearCookie('refresh');
+		if (!(payload instanceof UserRecieve)) {
+			done();
+			return;
+		}
+
+		const {
+				blocInfo = req.key?.blocInfo,
+				HookId,
+				response,
+				isClearCookie = false,
+			} = payload,
+			accessKey = (32).string;
+
+		if (isClearCookie) {
+			['access', 'refresh'].forEach((i) => res.clearCookie(i));
 
 			done(null, response);
-		} else done();
+			return;
+		}
+
+		const cookieOpts: CookieSerializeOptions = {
+				...cookieOptions,
+				maxAge: 2 ** 31,
+			},
+			{ hash = '', id = '' } = blocInfo || {};
+
+		req.session.set('accessKey', this.encrypt(accessKey, req.ip));
+
+		res.setCookie(
+			'access',
+			this.encrypt(
+				this.access({ accessToken: HookId ? HookId : hash }),
+				accessKey,
+			),
+			cookieOpts,
+		);
+
+		res.setCookie(
+			'refresh',
+			this.encrypt(this.refresh({ refreshToken: id })),
+			cookieOpts,
+		);
+
+		done(null, response);
 	}
 }

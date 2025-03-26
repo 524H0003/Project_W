@@ -1,11 +1,8 @@
 /* eslint-disable tsEslint/require-await */
-import { ApolloDriver } from '@nestjs/apollo';
 import { Global, Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
 import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { loadEnv } from './config.module';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { CacheModule } from '@nestjs/cache-manager';
+import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AWSRecieve, AWSService } from 'app/aws/aws.service';
 import {
@@ -19,6 +16,7 @@ import { Readable } from 'stream';
 import { InitServerClass } from 'app/utils/server.utils';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { BaseModule } from './base.module';
 
 /**
  * Server public path
@@ -28,14 +26,8 @@ export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 @Global()
 @Module({
 	imports: [
-		GraphQLModule.forRoot({
-			driver: ApolloDriver,
-			autoSchemaFile: 'src/schema.gql',
-			sortSchema: true,
-			playground: false,
-		}),
-		CacheModule.register({ isGlobal: true, ttl: 0 }),
-		JwtModule.register({ global: true }),
+		// Core module
+		BaseModule,
 		loadEnv,
 		PostgresModule('test'),
 		SqliteModule('test'),
