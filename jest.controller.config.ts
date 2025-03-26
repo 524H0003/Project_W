@@ -17,7 +17,7 @@ const config: Config = {
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'controller.txt' }]],
 	collectCoverageFrom: ['src/**/*.controller.ts'],
-	forceExit: true
+	forceExit: true,
 };
 
 export default config;
