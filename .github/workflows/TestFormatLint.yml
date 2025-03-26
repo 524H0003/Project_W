@@ -152,6 +152,10 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
+      - uses: supercharge/redis-github-action@1.8.0
+        with:
+          redis-password: ''
+
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
