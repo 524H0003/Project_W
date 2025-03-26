@@ -13,12 +13,8 @@ import {
 	GraphQLEnumType,
 } from 'graphql';
 import responseCachePlugin from '@apollo/server-plugin-response-cache';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import {
-	DateTimeScalar,
-	ModifiedCacheInterceptor,
-	ModifiedThrottlerGuard,
-} from 'app/app.fix';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { DateTimeScalar, ModifiedCacheInterceptor } from 'app/app.fix';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Keyv from 'keyv';
 import { Cacheable } from 'cacheable';
@@ -116,7 +112,6 @@ import { JwtModule } from '@nestjs/jwt';
 		}),
 	],
 	providers: [
-		{ provide: APP_GUARD, useClass: ModifiedThrottlerGuard },
 		{ provide: APP_INTERCEPTOR, useClass: ModifiedCacheInterceptor },
 		DateTimeScalar,
 	],

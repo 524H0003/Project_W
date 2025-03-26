@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { loadEnv } from 'app/module/config.module';
 import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { AppModule } from 'app/app.module';
-import { HttpAdapterHost } from '@nestjs/core';
+import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BaseModule } from 'app/module/base.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ModifiedThrottlerGuard } from 'app/app.fix';
 
 @Module({
 	imports: [
@@ -55,6 +56,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 		// Schedule mmodule
 		ScheduleModule.forRoot(),
 	],
+	providers: [{ provide: APP_GUARD, useClass: ModifiedThrottlerGuard }],
 })
 export class MainModule extends InitServerClass {
 	constructor(
