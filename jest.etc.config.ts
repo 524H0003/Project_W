@@ -19,13 +19,16 @@ const config: Config = {
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'etc.txt' }]],
 	collectCoverageFrom: [
-		'**/?(*.)+.ts',
-		'!**/?(*.)+(controller).ts',
-		'!**/?(*.)+(resolver).ts',
-		'!**/?(*.)+(service).ts',
+		'**/*.ts',
+		'!**/*.controller.ts',
+		'!**/*.resolver.ts',
+		'!**/*.service.ts',
+		'!**/*.dto.ts',
+		'!**/*.model.ts',
+		'!**/*.entity.ts',
+		'!**/*.module.ts',
 	],
 	forceExit: true,
-	rootDir: '.',
 };
 
 export default config;
