@@ -50,9 +50,10 @@ export class AppMiddleware extends SecurityService {
 			req.headers.authorization = `Bearer ${isRefresh ? refresh : access}`;
 
 		delete req.headers.sessionId;
-		if (access && this.verify(access).accessToken)
-			req.headers.sessionId = req.session.get('sessionId') || '';
-
+		try {
+			if (access && this.verify(access).accessToken)
+				req.headers.sessionId = req.session.get('sessionId') || '';
+		} catch {}
 		done();
 	}
 

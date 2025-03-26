@@ -12,6 +12,8 @@ export class ModifiedThrottlerGuard extends ThrottlerGuard {
 		req: Record<string, any>;
 		res: Record<string, any>;
 	} {
+		if (context.getType() == 'http') return super.getRequestResponse(context);
+
 		const { res, req } = GqlExecutionContext.create(context).getContext();
 
 		return { req, res };
