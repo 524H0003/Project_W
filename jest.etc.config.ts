@@ -11,7 +11,21 @@ const config: Config = {
 		'!**/?(*.)+(resolver.spec).ts',
 		'!**/?(*.)+(service.spec).ts',
 	],
-	reporters: ['default', ['github-actions', { silent: false }]],
+	reporters: [
+		'default',
+		['github-actions', { silent: false }],
+		['jest-junit', { outputDirectory: 'reports', outputName: 'etc.xml' }],
+	],
+	collectCoverage: true,
+	coverageReporters: [['text', { file: 'etc.txt' }]],
+	collectCoverageFrom: [
+		'**/?(*.)+.ts',
+		'!**/?(*.)+(controller).ts',
+		'!**/?(*.)+(resolver).ts',
+		'!**/?(*.)+(service).ts',
+	],
+	forceExit: true,
+	rootDir: '.'
 };
 
 export default config;

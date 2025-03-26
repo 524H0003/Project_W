@@ -206,6 +206,7 @@ jobs:
           name: etc
           path: |
             ./reports/etc.xml
+            ./coverage/etc.txt
 
   Test_web:
     needs: changes
@@ -305,3 +306,11 @@ jobs:
           coverage-path: ./service/coverage/service.txt
           create-new-comment: true
           junitxml-path: ./service/reports/service.xml
+
+      - name: Et cetera
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          title: Et cetera test result
+          coverage-path: ./etc/coverage/etc.txt
+          create-new-comment: true
+          junitxml-path: ./etc/reports/etc.xml
