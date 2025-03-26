@@ -19,7 +19,7 @@ const config: Config = {
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'etc.txt' }]],
 	collectCoverageFrom: [
-		'**/*.ts',
+		'src/**/*.ts',
 		'!**/*.controller.ts',
 		'!**/*.resolver.ts',
 		'!**/*.service.ts',
@@ -30,7 +30,6 @@ const config: Config = {
 		'!**/*.spec.ts',
 		'!**/*.graphql.ts',
 	],
-	rootDir: 'src',
 };
 
 export default config;
