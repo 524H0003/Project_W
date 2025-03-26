@@ -20,6 +20,9 @@ const config: Config = {
 	coverageReporters: [['text', { file: 'etc.txt' }]],
 	collectCoverageFrom: [
 		'src/**/*.ts',
+		'!src/*.ts',
+		'!src/build/*',
+		'!src/app/{utils, admin, graphql, interceptor, typeorm}/*',
 		'!**/*.controller.ts',
 		'!**/*.resolver.ts',
 		'!**/*.service.ts',
@@ -28,6 +31,7 @@ const config: Config = {
 		'!**/*.entity.ts',
 		'!**/*.module.ts',
 		'!**/*.spec.ts',
+		'!**/*.spec.utils.ts',
 		'!**/*.graphql.ts',
 	],
 };
