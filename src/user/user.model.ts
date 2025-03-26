@@ -79,6 +79,11 @@ export interface IUserEntity
 	hashedPassword?: string;
 }
 
+export interface IResponse {
+	message: string;
+	user: IUserInfo;
+}
+
 /**
  * Fields about user's recieved properties
  */
@@ -91,7 +96,7 @@ export interface IUserRecieve {
 	/**
 	 * Server's response
 	 */
-	response: any;
+	response: Partial<IResponse>;
 
 	/**
 	 * Hook id

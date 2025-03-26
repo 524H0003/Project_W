@@ -1,5 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { BlackBox, RequireOnlyOneRequiredRest } from 'app/utils/model.utils';
+import {
+	BlackBox,
+	RequireOnlyOne,
+	RequireOnlyOneRequiredRest,
+} from 'app/utils/model.utils';
 import { InterfaceCasting } from 'app/utils/utils';
 import {
 	IUserAuthenticationKeys,
@@ -15,7 +19,13 @@ import {
 	OneToMany,
 	OneToOne,
 } from 'typeorm';
-import { IUserEntity, UserRole, IUserInfo, IUserRecieve } from './user.model';
+import {
+	IUserEntity,
+	UserRole,
+	IUserInfo,
+	IUserRecieve,
+	IResponse,
+} from './user.model';
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
@@ -215,11 +225,11 @@ export class User extends ParentId implements IUserEntity {
 export class UserRecieve implements IUserRecieve {
 	/**
 	 * Quick user recieve initiation
-	 * @param {NonFunctionProperties<UserRecieve>} payload - User recieve infomations
+	 * @param {RequireOnlyOneRequiredRest<UserRecieve,'HookId' | 'blocInfo' | 'isClearCookie'>} payload - User recieve infomations
 	 */
 	constructor(
 		payload: RequireOnlyOneRequiredRest<
-			IUserRecieve,
+			UserRecieve,
 			'HookId' | 'blocInfo' | 'isClearCookie'
 		>,
 	) {
@@ -244,7 +254,7 @@ export class UserRecieve implements IUserRecieve {
 	/**
 	 * Server's response
 	 */
-	@ApiHideProperty() response: any;
+	@ApiHideProperty() response: RequireOnlyOne<IResponse, 'message' | 'user'>;
 
 	/**
 	 * Test entity
@@ -252,7 +262,7 @@ export class UserRecieve implements IUserRecieve {
 	static get test() {
 		return new UserRecieve({
 			blocInfo: { hash: '', id: '' },
-			response: (10).string,
+			response: { message: (10).string },
 		});
 	}
 }
