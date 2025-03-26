@@ -14,6 +14,7 @@ const config: Config = {
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'resolver.txt' }]],
 	collectCoverageFrom: ['src/**/*.resolver.ts'],
+	forceExit: true
 };
 
 export default config;
