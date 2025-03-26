@@ -28,7 +28,6 @@ const config: Config = {
 		'!**/*.entity.ts',
 		'!**/*.module.ts',
 	],
-	forceExit: true,
 };
 
 export default config;
