@@ -144,7 +144,7 @@ export class AppController extends BaseController {
 
 		return new UserRecieve({
 			blocInfo: { id: blocId, hash: blocHash },
-			response: err('Success', 'Client', 'Request'),
+			response: { message: err('Success', 'Client', 'Request') },
 		});
 	}
 

@@ -6,7 +6,7 @@ import {
 } from 'app/utils/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
-import { IUserEntity, UserRole } from './user.model';
+import { IUserEntity, IUserInfo, UserRole } from './user.model';
 import { AppService } from 'app/app.service';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IUserRelationshipKeys } from 'build/models';
@@ -95,7 +95,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * Find full user infomations
 	 * @param {string} id - user id
 	 */
-	async info(id: string): Promise<object> {
+	async info(id: string): Promise<{ user: IUserInfo }> {
 		if (!id) throw new ServerException('Invalid', 'ID', '');
 
 		const student = await this.svc.student.id(id),
@@ -113,7 +113,7 @@ export class UserService extends DatabaseRequests<User> {
 				return faculty.info;
 
 			default:
-				return (await this.id(id)).info;
+				return { user: (await this.id(id)).info };
 		}
 	}
 }
