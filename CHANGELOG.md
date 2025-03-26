@@ -1,3 +1,10 @@
+## [1.2.31](https://github.com/524H0003/Project_W/compare/v1.2.30...v1.2.31) (2025-03-26)
+
+
+### Bug Fixes
+
+* **authencation:** better and more secure system ([#173](https://github.com/524H0003/Project_W/issues/173)) ([460a2f4](https://github.com/524H0003/Project_W/commit/460a2f47755179c14505986a13823617e0b67c6b))
+
 ## [1.2.30](https://github.com/524H0003/Project_W/compare/v1.2.29...v1.2.30) (2025-03-23)
 
 
