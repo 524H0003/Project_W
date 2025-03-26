@@ -16,6 +16,14 @@ interface IRecordTime {
 }
 
 /**
+ * Paging interface
+ */
+export interface IPaging {
+	index: number;
+	take: number;
+}
+
+/**
  * Only required one of specified keys and remove remains
  */
 export type RequireOnlyOne<T, Keys extends keyof T = keyof T> = {

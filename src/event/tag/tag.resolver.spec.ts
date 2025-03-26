@@ -134,7 +134,7 @@ describe('listAllTags', () => {
 
 	it('success', async () => {
 		await execute(
-			async () => (await send({}, { headers: headers })).listAllTags,
+			async () => (await send({ input: {} }, { headers: headers })).listAllTags,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {

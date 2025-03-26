@@ -22,7 +22,6 @@ const config: Config = {
 		'src/**/*.ts',
 		'!src/*.ts',
 		'!src/build/*',
-		'!src/app/utils/*',
 		'!src/app/admin/*',
 		'!src/app/graphql/*',
 		'!src/app/interceptor/*',

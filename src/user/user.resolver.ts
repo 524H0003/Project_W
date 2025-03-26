@@ -4,6 +4,7 @@ import { AppService } from 'app/app.service';
 import { AccessGuard, Allow } from 'auth/guards';
 import { User } from './user.entity';
 import { FindUser } from './user.dto';
+import { Paging } from 'app/app.graphql';
 
 @Resolver(() => User)
 @UseGuards(AccessGuard)
@@ -28,7 +29,16 @@ export class UserResolver {
 	/**
 	 * Query user by request
 	 */
-	@Query(() => [User]) @Allow([]) getUsers(@Args('input') user: FindUser) {
-		return this.svc.user.find({ ...user, baseUser: user });
+	@Query(() => [User]) @Allow([]) getUsers(
+		@Args('input') user: FindUser,
+		@Args('page', { nullable: true })
+		{ index, take }: Paging = { index: 0, take: 10e10 },
+	) {
+		return this.svc.user.find({
+			...user,
+			baseUser: user,
+			take,
+			skip: index * take,
+		});
 	}
 }

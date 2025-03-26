@@ -4,8 +4,9 @@ import { UseGuards } from '@nestjs/common';
 import { AccessGuard, Allow } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { UserRole } from 'user/user.model';
-import { EventTagAssign, EventTagAttach } from './tag.graphql';
+import { EventTagAssign, EventTagAttach, FindTag } from './tag.graphql';
 import { CacheControl } from 'app/graphql/graphql.decorator';
+import { Paging } from 'app/app.graphql';
 
 @Resolver(() => EventTag)
 @UseGuards(AccessGuard)
@@ -44,7 +45,11 @@ export class EventTagResolver {
 	@CacheControl({ maxAge: (5).m2s })
 	@Query(() => [EventTag])
 	@Allow([])
-	listAllTags() {
-		return this.svc.eventTag.find({});
+	listAllTags(
+		@Args('input') tag: FindTag,
+		@Args('page', { nullable: true })
+		{ index, take }: Paging = { index: 0, take: 10e10 },
+	) {
+		return this.svc.eventTag.find({ ...tag, take, skip: take * index });
 	}
 }
