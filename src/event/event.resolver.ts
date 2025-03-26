@@ -6,6 +6,7 @@ import { UserRole } from 'user/user.model';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Event } from './event.entity';
 import { EventAssign, EventUpdate, FindEvent } from './event.dto';
+import { Paging } from 'app/app.graphql';
 
 @Resolver(() => Event)
 @UseGuards(AccessGuard)
@@ -19,8 +20,12 @@ export class EventResolver {
 	/**
 	 * Query all events
 	 */
-	@Query(() => [Event]) @Allow([]) getEvents(@Args('input') event: FindEvent) {
-		return this.svc.event.find(event);
+	@Query(() => [Event]) @Allow([]) getEvents(
+		@Args('input') event: FindEvent,
+		@Args('page', { nullable: true })
+		{ index, take }: Paging = { index: 0, take: 10e10 },
+	) {
+		return this.svc.event.find({ ...event, skip: index * take, take });
 	}
 
 	// Mutations

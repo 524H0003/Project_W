@@ -151,6 +151,11 @@ input FindStudent {
   skills: String
 }
 
+input FindTag {
+  id: String
+  name: String
+}
+
 input FindUser {
   avatarPath: String
   email: String
@@ -202,12 +207,17 @@ input NotificationUpdate {
   type: String
 }
 
+input Paging {
+  index: Float!
+  take: Float!
+}
+
 type Query {
-  getEvents(input: FindEvent!): [Event!]!
-  getStudents(input: FindStudent!): [Student!]!
-  getUsers(input: FindUser!): [User!]!
-  listAllNotifications(isRead: Boolean): [Reciever!]!
-  listAllTags: [EventTag!]!
+  getEvents(input: FindEvent!, page: Paging): [Event!]!
+  getStudents(input: FindStudent!, page: Paging): [Student!]!
+  getUsers(input: FindUser!, page: Paging): [User!]!
+  listAllNotifications(isRead: Boolean, page: Paging): [Reciever!]!
+  listAllTags(input: FindTag!, page: Paging): [EventTag!]!
 }
 
 input ReadNotification {

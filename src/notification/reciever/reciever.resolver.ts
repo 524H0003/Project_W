@@ -11,6 +11,7 @@ import {
 	RecieverAssign,
 	RecieverAssignMany,
 } from './reciever.graphql';
+import { Paging } from 'app/app.graphql';
 
 @Resolver(() => Reciever)
 @UseGuards(AccessGuard)
@@ -63,10 +64,17 @@ export class RecieverResolver {
 	 */
 	@Query(() => [Reciever]) @Allow([UserRole.student]) listAllNotifications(
 		@Args('isRead', { nullable: true }) isRead: boolean,
+		@Args('page', { nullable: true })
+		{ index, take }: Paging = { index: 0, take: 10e10 },
 		@GetServerKey('user') { id }: User,
 	) {
 		if (isRead !== undefined)
-			return this.svc.recie.find({ isRead, toUser: { id } });
-		return this.svc.recie.find({ toUser: { id } });
+			return this.svc.recie.find({
+				isRead,
+				toUser: { id },
+				take,
+				skip: index * take,
+			});
+		return this.svc.recie.find({ toUser: { id }, take, skip: index * take });
 	}
 }
