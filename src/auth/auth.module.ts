@@ -1,5 +1,4 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AccessStrategy } from './guards/access.strategy';
@@ -12,7 +11,6 @@ import { AccessGuard, HookGuard, LocalhostGuard, RefreshGuard } from './guards';
 	imports: [
 		// Authencation
 		PassportModule.register({ session: true }),
-		JwtModule.register({ global: true }),
 		// App module
 		forwardRef(() => AppModule),
 	],
