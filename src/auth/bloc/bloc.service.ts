@@ -1,11 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Repository } from 'typeorm';
 import { Bloc } from './bloc.entity';
 import { User } from 'user/user.entity';
-import { AppService } from 'app/app.service';
-import { ConfigService } from '@nestjs/config';
 import { MetaData } from 'auth/guards';
 import { RequireOnlyOne } from 'app/utils/model.utils';
 
@@ -31,18 +29,9 @@ interface BlocInput {
 @Injectable()
 export class BlocService extends DatabaseRequests<Bloc> {
 	/**
-	 * Refresh token use time
-	 */
-	private use: number = this.config.get('REFRESH_USE');
-
-	/**
 	 * Initiate bloc service
 	 */
-	constructor(
-		@InjectRepository(Bloc) repo: Repository<Bloc>,
-		@Inject(forwardRef(() => AppService)) private svc: AppService,
-		private config: ConfigService,
-	) {
+	constructor(@InjectRepository(Bloc) repo: Repository<Bloc>) {
 		super(repo, Bloc);
 	}
 
@@ -58,7 +47,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	) {
 		const updatePrev = async () => {
 			if (!prev) return null;
-			const { metaData } = await this.findOne({ id: prev });
+			const { metaData } = await this.findOne({ cache: false, id: prev });
 
 			mtdt = metaData;
 
@@ -79,8 +68,8 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	async removeSnake(blocId: string) {
 		if (!blocId) return;
 
-		const { prev } = await this.findOne({ id: blocId }),
-			{ id } = await this.findOne({ prev: blocId });
+		const { prev } = await this.findOne({ cache: false, id: blocId }),
+			{ id } = await this.findOne({ cache: false, prev: blocId });
 
 		await this.delete({ id: blocId });
 

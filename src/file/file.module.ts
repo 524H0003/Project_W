@@ -7,11 +7,12 @@ import { AppModule } from 'app/app.module';
 import { FileResolver } from './file.resolver';
 import { registerEnumType } from '@nestjs/graphql';
 import { FileType } from './file.model';
+import { AWSService } from './aws/aws.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([File]), forwardRef(() => AppModule)],
-	providers: [FileService, FileResolver],
-	exports: [FileService],
+	providers: [FileService, FileResolver, AWSService],
+	exports: [FileService, AWSService],
 	controllers: [FileController],
 })
 export class FileModule {

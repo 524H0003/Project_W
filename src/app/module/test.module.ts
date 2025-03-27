@@ -4,7 +4,7 @@ import { PostgresModule, SqliteModule } from 'app/module/sql.module';
 import { loadEnv } from './config.module';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
-import { AWSRecieve, AWSService } from 'app/aws/aws.service';
+import { AWSRecieve, AWSService } from 'file/aws/aws.service';
 import {
 	createReadStream,
 	createWriteStream,

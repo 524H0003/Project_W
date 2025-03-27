@@ -3,7 +3,7 @@ import {
 	ApolloFederationDriver,
 	ApolloFederationDriverConfig,
 } from '@nestjs/apollo';
-import { Cache, CacheModule } from '@nestjs/cache-manager';
+import { Cache, CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { GraphQLModule, Int } from '@nestjs/graphql';
 import {
@@ -47,7 +47,7 @@ import { JwtModule } from '@nestjs/jwt';
 		// GraphQL and Apollo SandBox
 		GraphQLModule.forRootAsync<ApolloFederationDriverConfig>({
 			driver: ApolloFederationDriver,
-			inject: ['CACHE_MANAGER'],
+			inject: [CACHE_MANAGER],
 			useFactory: (cacheManager: Cache) => {
 				return {
 					// Code first
@@ -55,7 +55,7 @@ import { JwtModule } from '@nestjs/jwt';
 					sortSchema: true,
 					// Init sandBox
 					playground: false,
-					includeStacktraceInErrorResponses: true,
+					includeStacktraceInErrorResponses: false,
 					inheritResolversFromInterfaces: false,
 					introspection: true,
 					// Caching

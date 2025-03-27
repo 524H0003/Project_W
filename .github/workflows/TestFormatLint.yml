@@ -9,6 +9,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  ACCESS_SECRET: 'ACCESS_SECRET'
+  REFRESH_SECRET: 'REFRESH_SECRET'
+  SERVER_SECRET: 'SERVER_SECRET'
+
 jobs:
   changes:
     runs-on: ubuntu-latest

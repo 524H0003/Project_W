@@ -31,7 +31,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	 * @return {Promise<IRefreshResult>}
 	 */
 	async validate({ refreshToken }: IPayload): Promise<IRefreshResult> {
-		const current = await this.bloc.findOne({ id: refreshToken });
+		const current = await this.bloc.findOne({ id: refreshToken, cache: false });
 
 		if (current.isNull() || current.owner.isNull()) {
 			await this.bloc.removeSnake(current.id);
