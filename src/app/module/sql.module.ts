@@ -161,8 +161,6 @@ export class CacheManagerProvider implements QueryResultCache {
 		identifiers: string[],
 		queryRunner?: QueryRunner,
 	): Promise<void> {
-		for (const key of identifiers) {
-			await this.cache.del(key);
-		}
+		for (const key of identifiers) await this.cache.del(key);
 	}
 }
