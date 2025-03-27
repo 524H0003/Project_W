@@ -24,6 +24,7 @@ export type FindOptionsWithCustom<T> = (
 	skip?: number;
 	order?: object;
 	relations?: string[];
+	cache?: boolean;
 };
 
 /**
@@ -175,6 +176,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				take = 10e10,
 				skip = 0,
 				order = undefined,
+				cache = true,
 				...newOptions
 			} = options || {},
 			findRelations = this.relations
@@ -189,6 +191,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				skip,
 				order,
 				relations: findRelations,
+				cache,
 			})
 		).map((i) => new this.ctor(i));
 	}
@@ -199,7 +202,12 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @return {Promise<T>}
 	 */
 	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
-		const { deep = 1, relations = [''], ...newOptions } = options || {},
+		const {
+				deep = 1,
+				relations = [''],
+				cache = true,
+				...newOptions
+			} = options || {},
 			result = await this.repo.findOne({
 				where: <FindOptionsWhere<T>>newOptions,
 				relations: deep
@@ -208,6 +216,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 							.filter((i) => relations.some((j) => i.includes(j)))
 							.filter((value, index, self) => self.indexOf(value) === index)
 					: undefined,
+				cache,
 			});
 		return new this.ctor(result);
 	}
