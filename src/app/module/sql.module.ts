@@ -129,14 +129,7 @@ export class CacheManagerProvider implements QueryResultCache {
 		const key = `${this.keyPrefix}${identifier || this.generateIdentifier(query)}`;
 		const result = await this.cache.get(key);
 
-		return (
-			result && {
-				identifier: key,
-				duration,
-				query,
-				result,
-			}
-		);
+		return result && { identifier: key, duration, query, result };
 	}
 
 	async storeInCache(
