@@ -65,9 +65,9 @@ export const PostgresModule = (type: SqlType) =>
 				synchronize: true,
 				retryAttempts: type == 'test' ? 0 : 5,
 				cache: {
-					provider() {
-						return new CacheManagerProvider(cache);
-					},
+					type: 'database',
+					alwaysEnabled: true,
+					duration: (1).m2s,
 				},
 			};
 		},
