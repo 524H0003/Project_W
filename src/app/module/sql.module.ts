@@ -146,8 +146,8 @@ export class CacheManagerProvider implements QueryResultCache {
 		return false;
 	}
 
-	clear(queryRunner?: QueryRunner): Promise<void> {
-		throw new Error('Method not implemented.');
+	async clear(queryRunner?: QueryRunner): Promise<void> {
+		await this.cache.clear();
 	}
 
 	async remove(
