@@ -55,7 +55,7 @@ import { JwtModule } from '@nestjs/jwt';
 					sortSchema: true,
 					// Init sandBox
 					playground: false,
-					includeStacktraceInErrorResponses: true,
+					includeStacktraceInErrorResponses: false,
 					inheritResolversFromInterfaces: false,
 					introspection: true,
 					// Caching
