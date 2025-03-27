@@ -1,10 +1,15 @@
+/* eslint-disable tsEslint/no-unused-vars */
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { dataHashing } from 'app/utils/auth.utils';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { TlsOptions } from 'tls';
-import { DataSourceOptions } from 'typeorm';
+import { DataSourceOptions, QueryRunner } from 'typeorm';
 import { createPostgresDatabase } from 'typeorm-extension';
+import { QueryResultCache } from 'typeorm/cache/QueryResultCache.js';
+import { QueryResultCacheOptions } from 'typeorm/cache/QueryResultCacheOptions.js';
 
 /**
  * Reading SSL certificate
@@ -46,8 +51,8 @@ export const postgresConfig = (
 export const PostgresModule = (type: SqlType) =>
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],
-		inject: [ConfigService],
-		useFactory: async (cfgSvc: ConfigService) => {
+		inject: [ConfigService, CACHE_MANAGER],
+		useFactory: async (cfgSvc: ConfigService, cache: Cache) => {
 			try {
 				await createPostgresDatabase({
 					options: postgresConfig(type, cfgSvc),
@@ -59,7 +64,13 @@ export const PostgresModule = (type: SqlType) =>
 				autoLoadEntities: true,
 				synchronize: true,
 				retryAttempts: type == 'test' ? 0 : 5,
-				cache: { type: 'database', alwaysEnabled: true, duration: (1).m2s },
+				cache: {
+					alwaysEnabled: true,
+					duration: (1).m2s,
+					provider() {
+						return new CacheManagerProvider(cache);
+					},
+				},
 			};
 		},
 	});
@@ -83,3 +94,75 @@ export const SqliteModule = (type: SqlType) =>
 			autoLoadEntities: true,
 		}),
 	});
+
+/**
+ * TypeOrm Cache provider from cache manager
+ */
+export class CacheManagerProvider implements QueryResultCache {
+	private keyPrefix: String;
+
+	constructor(private cache: Cache) {
+		this.keyPrefix = 'TypeOrm';
+	}
+
+	private generateIdentifier(query: string) {
+		return dataHashing(query);
+	}
+
+	connect(): Promise<void> {
+		return;
+	}
+
+	disconnect(): Promise<void> {
+		return;
+	}
+
+	synchronize(queryRunner?: QueryRunner): Promise<void> {
+		return;
+	}
+
+	async getFromCache(
+		options: QueryResultCacheOptions,
+		queryRunner?: QueryRunner,
+	): Promise<QueryResultCacheOptions | undefined> {
+		const { identifier, query, duration } = options;
+		const key = `${this.keyPrefix}${identifier || this.generateIdentifier(query)}`;
+		const result = await this.cache.get(key);
+
+		return (
+			result && {
+				identifier: key,
+				duration,
+				query,
+				result,
+			}
+		);
+	}
+
+	async storeInCache(
+		options: QueryResultCacheOptions,
+		savedCache: QueryResultCacheOptions | undefined,
+		queryRunner?: QueryRunner,
+	): Promise<void> {
+		const { identifier, query, duration, result } = options;
+		const key = `${this.keyPrefix}${identifier || this.generateIdentifier(query)}`;
+		await this.cache.set(key, result, duration);
+	}
+
+	isExpired(savedCache: QueryResultCacheOptions): boolean {
+		return false;
+	}
+
+	clear(queryRunner?: QueryRunner): Promise<void> {
+		throw new Error('Method not implemented.');
+	}
+
+	async remove(
+		identifiers: string[],
+		queryRunner?: QueryRunner,
+	): Promise<void> {
+		for (const key of identifiers) {
+			await this.cache.del(key);
+		}
+	}
+}
