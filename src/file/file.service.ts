@@ -7,7 +7,7 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
-import { AWSRecieve } from 'app/aws/aws.service';
+import { AWSRecieve } from 'file/aws/aws.service';
 import { FileUpload } from 'graphql-upload-ts';
 import { createHmac } from 'node:crypto';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';

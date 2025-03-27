@@ -10,7 +10,7 @@ import { FileModule } from 'file/file.module';
 import { UniversityModule } from 'university/university.module';
 import { UserModule } from 'user/user.module';
 import { NotificationModule } from 'notification/notification.module';
-import { AWSModule } from './aws/aws.module';
+import { AWSModule } from '../file/aws/aws.module';
 import { TerminusModule } from '@nestjs/terminus';
 import { BlocModule } from 'auth/bloc/bloc.module';
 

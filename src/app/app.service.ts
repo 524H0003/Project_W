@@ -14,7 +14,7 @@ import { EventTagService } from 'event/tag/tag.service';
 import { NotificationService } from 'notification/notification.service';
 import { RecieverService } from 'notification/reciever/reciever.service';
 import { EventParticipatorService } from 'event/participator/participator.service';
-import { AWSService } from './aws/aws.service';
+import { AWSService } from '../file/aws/aws.service';
 import { ConfigService } from '@nestjs/config';
 import { BlocService } from 'auth/bloc/bloc.service';
 import { BaseUserService } from 'user/base/baseUser.service';
