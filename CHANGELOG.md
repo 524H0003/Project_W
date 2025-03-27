@@ -1,3 +1,10 @@
+## [1.2.32](https://github.com/524H0003/Project_W/compare/v1.2.31...v1.2.32) (2025-03-27)
+
+
+### Bug Fixes
+
+* caching TypeORM queries and patch GraphQL vulnerabilities ([#176](https://github.com/524H0003/Project_W/issues/176)) ([7adefe9](https://github.com/524H0003/Project_W/commit/7adefe9bf651cf8daf6ff2ec42a487970e8a9ceb))
+
 ## [1.2.31](https://github.com/524H0003/Project_W/compare/v1.2.30...v1.2.31) (2025-03-26)
 
 
