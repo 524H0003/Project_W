@@ -64,11 +64,7 @@ export const PostgresModule = (type: SqlType) =>
 				autoLoadEntities: true,
 				synchronize: true,
 				retryAttempts: type == 'test' ? 0 : 5,
-				cache: {
-					duration: (1).m2s,
-					alwaysEnabled: true,
-					type: 'database',
-				},
+				cache: { duration: (1).m2s, alwaysEnabled: true, type: 'database' },
 			};
 		},
 	});
