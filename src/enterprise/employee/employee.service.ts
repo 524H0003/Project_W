@@ -33,6 +33,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 	) {
 		const ent = await this.svc.enterprise.findOne({
 			baseUser: { name: enterpriseName },
+			cache: false,
 		});
 		if (ent.isNull() || !enterpriseName)
 			throw new ServerException('Invalid', 'Enterprise', '');
