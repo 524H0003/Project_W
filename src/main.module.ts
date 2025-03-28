@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { loadEnv } from 'app/module/config.module';
-import { PostgresModule, SqliteModule } from 'app/module/sql.module';
+import { PostgresModule } from 'app/module/sql.module';
 import { AppModule } from 'app/app.module';
 import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
@@ -50,7 +50,6 @@ import { ModifiedThrottlerGuard } from 'app/app.fix';
 		BaseModule,
 		loadEnv,
 		PostgresModule('deploy'),
-		SqliteModule('deploy'),
 		// Application modules
 		AppModule,
 		// Schedule mmodule
