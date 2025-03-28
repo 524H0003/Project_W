@@ -1,3 +1,10 @@
+## [1.2.33](https://github.com/524H0003/Project_W/compare/v1.2.32...v1.2.33) (2025-03-28)
+
+
+### Bug Fixes
+
+* TypeOrm caching by both Redis and Sqlite ([#177](https://github.com/524H0003/Project_W/issues/177)) ([0b4a628](https://github.com/524H0003/Project_W/commit/0b4a62842613f2222f010bde30a637d050a39218))
+
 ## [1.2.32](https://github.com/524H0003/Project_W/compare/v1.2.31...v1.2.32) (2025-03-27)
 
 
