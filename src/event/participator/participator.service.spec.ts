@@ -23,11 +23,12 @@ beforeAll(async () => {
 beforeEach(async () => {
 	student = (await assignStudent(req, svc, Student.test(fileName), mailerSvc))
 		.student;
+
+	event = await svc.event.assign(Event.test(fileName));
 });
 
 describe('assign', () => {
 	it('success', async () => {
-		event = await svc.event.assign(Event.test(fileName));
 		await execute(
 			() => svc.eventParticipator.assign(student.user.id, event.id),
 			{
