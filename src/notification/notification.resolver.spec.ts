@@ -63,9 +63,10 @@ describe('assignNotification', () => {
 				],
 			},
 		);
-		await execute(() => svc.notification.find({ title: notification.title }), {
-			exps: [{ type: 'toHaveLength', params: [1] }],
-		});
+		await execute(
+			() => svc.notification.find({ title: notification.title, cache: false }),
+			{ exps: [{ type: 'toHaveLength', params: [1] }] },
+		);
 	});
 });
 
@@ -98,11 +99,13 @@ describe('updateNotification', () => {
 				).updateNotification,
 			{ exps: [{ type: 'toHaveProperty', params: ['content', newContent] }] },
 		);
-		await execute(() => svc.notification.find({ content: newContent }), {
-			exps: [{ type: 'toHaveLength', params: [1] }],
-		});
 		await execute(
-			() => svc.notification.find({ content: notification.content }),
+			() => svc.notification.find({ content: newContent, cache: false }),
+			{ exps: [{ type: 'toHaveLength', params: [1] }] },
+		);
+		await execute(
+			() =>
+				svc.notification.find({ content: notification.content, cache: false }),
 			{ exps: [{ type: 'toHaveLength', params: [0] }] },
 		);
 	});

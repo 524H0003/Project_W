@@ -110,7 +110,7 @@ describe('assignEvent', () => {
 			async () => (await send({ input: event }, { headers })).assignEvent,
 			{ exps: [{ type: 'toHaveProperty', params: ['title', event.title] }] },
 		);
-		await execute(() => svc.event.find({ title: event.title }), {
+		await execute(() => svc.event.find({ title: event.title, cache: false }), {
 			exps: [{ type: 'toHaveLength', params: [1] }],
 		});
 	});
@@ -139,10 +139,10 @@ describe('updateEvent', () => {
 					.updateEvent,
 			{ exps: [{ type: 'toHaveProperty', params: ['title', newTitle] }] },
 		);
-		await execute(() => svc.event.find({ title: newTitle }), {
+		await execute(() => svc.event.find({ title: newTitle, cache: false }), {
 			exps: [{ type: 'toHaveLength', params: [1] }],
 		});
-		await execute(() => svc.event.find({ title: event.title }), {
+		await execute(() => svc.event.find({ title: event.title, cache: false }), {
 			exps: [{ type: 'toHaveLength', params: [0] }],
 		});
 	});

@@ -18,7 +18,8 @@ import { DateTimeScalar, ModifiedCacheInterceptor } from 'app/app.fix';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Keyv from 'keyv';
 import { Cacheable } from 'cacheable';
-import { createKeyv } from '@keyv/redis';
+import { createKeyv as createRedisKeyv } from '@keyv/redis';
+import { KeyvSqlite } from '@keyv/sqlite';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
@@ -32,7 +33,11 @@ import { JwtModule } from '@nestjs/jwt';
 				stores: [
 					new Keyv({
 						store: new Cacheable({
-							primary: createKeyv({
+							primary: new Keyv({
+								store: new KeyvSqlite('sqlite://cache.sqlite'),
+								useKeyPrefix: false,
+							}),
+							secondary: createRedisKeyv({
 								url: config.get('REDIS_URL'),
 								name: 'cache',
 							}),

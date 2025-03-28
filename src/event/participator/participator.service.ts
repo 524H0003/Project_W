@@ -30,7 +30,7 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 		participatorId: string,
 		eventId: string,
 	): Promise<EventParticipator> {
-		const event = await this.svc.event.findOne({ id: eventId });
+		const event = await this.svc.event.id(eventId);
 
 		if (!event.positionsAvailable)
 			throw new ServerException('Invalid', 'Event', 'Access');

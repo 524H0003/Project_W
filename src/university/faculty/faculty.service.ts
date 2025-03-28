@@ -50,13 +50,4 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 			return this.save({ eventCreator, department });
 		});
 	}
-
-	/**
-	 * Find faculty by id
-	 * @param {string} id - faculty id
-	 * @return {Promise<Faculty>}
-	 */
-	id(id: string): Promise<Faculty> {
-		return this.findOne({ eventCreator: { user: { baseUser: { id } } } });
-	}
 }

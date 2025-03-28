@@ -70,16 +70,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @param {string} input - user's email
 	 */
 	email(input: string): Promise<User> {
-		return this.findOne({ baseUser: { email: input.lower } });
-	}
-
-	/**
-	 * Find user by id
-	 * @param {string} id - user's id
-	 * @return {Promise<User>}
-	 */
-	id(id: string): Promise<User> {
-		return this.findOne({ id, deep: 2 });
+		return this.findOne({ cache: false, baseUser: { email: input.lower } });
 	}
 
 	/**

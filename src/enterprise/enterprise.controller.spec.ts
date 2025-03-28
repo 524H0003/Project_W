@@ -50,6 +50,7 @@ describe('assign', () => {
 			() =>
 				svc.enterprise.findOne({
 					baseUser: { name: enterprise.baseUser.name },
+					cache: false,
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);

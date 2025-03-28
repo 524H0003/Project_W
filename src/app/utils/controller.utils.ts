@@ -56,6 +56,7 @@ export class BaseController {
 
 		const user = await this.svc.user.findOne({
 			baseUser: { email: hook.fromBaseUser.email },
+			cache: false,
 		});
 
 		await this.svc.auth.changePassword(user, password);

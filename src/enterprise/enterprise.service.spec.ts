@@ -24,9 +24,10 @@ describe('EnterpriseService', () => {
 			{
 				exps: [{ type: 'toBeInstanceOf', params: [Enterprise] }],
 				onFinish: async ({ description }: Enterprise) => {
-					await execute(() => svc.enterprise.findOne({ description }), {
-						exps: [{ type: 'toBeDefined', params: [] }],
-					});
+					await execute(
+						() => svc.enterprise.findOne({ description, cache: false }),
+						{ exps: [{ type: 'toBeDefined', params: [] }] },
+					);
 				},
 			},
 		);

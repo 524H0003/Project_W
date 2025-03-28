@@ -299,7 +299,7 @@ const uuidRegex =
 			}
 
 			async update(id: string, params = {}) {
-				const instance = await svc[this.resourceName].id(id, { deep: 0 });
+				const instance = await svc[this.resourceName].id(id);
 
 				if (!instance) throw new Error('Instance not found.');
 

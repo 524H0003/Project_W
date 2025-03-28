@@ -1,8 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import {
-	DatabaseRequests,
-	FindOptionsWithCustom,
-} from 'app/utils/typeorm.utils';
+import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Enterprise } from './enterprise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
@@ -72,17 +69,5 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	async remove(entityId: string) {
 		await this.delete({ baseUser: { id: entityId } });
 		await this.svc.baseUser.remove(entityId);
-	}
-
-	/**
-	 * Find enterprise with id
-	 * @param {string} id - enterprise's id
-	 * @return {Promise<Enterprise>}
-	 */
-	id(
-		id: string,
-		options?: FindOptionsWithCustom<Enterprise>,
-	): Promise<Enterprise> {
-		if (id) return this.findOne({ ...options, baseUser: { id } });
 	}
 }

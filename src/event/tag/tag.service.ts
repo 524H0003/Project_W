@@ -26,7 +26,10 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 	 * @param {ITagInfo} input - tag's infomations
 	 */
 	async assign(input: ITagInfo): Promise<EventTag> {
-		const existedTag = await this.svc.eventTag.findOne(input);
+		const existedTag = await this.svc.eventTag.findOne({
+			...input,
+			cache: false,
+		});
 
 		if (!existedTag.isNull()) return existedTag;
 

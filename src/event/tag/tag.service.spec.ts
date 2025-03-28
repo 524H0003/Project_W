@@ -22,9 +22,10 @@ describe('assign', () => {
 		await execute(() => svc.eventTag.assign(eventTag), {
 			exps: [{ type: 'toBeInstanceOf', params: [EventTag] }],
 			onFinish: async (result: EventTag) => {
-				await execute(() => svc.eventTag.find({ id: result.id }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
+				await execute(
+					() => svc.eventTag.find({ id: result.id, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
 			},
 		});
 	});
@@ -35,9 +36,10 @@ describe('assign', () => {
 		await execute(() => svc.eventTag.assign(eventTag), {
 			exps: [{ type: 'toBeInstanceOf', params: [EventTag] }],
 			onFinish: async (result: EventTag) => {
-				await execute(() => svc.eventTag.find({ id: result.id }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
+				await execute(
+					() => svc.eventTag.find({ id: result.id, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
 			},
 		});
 	});
@@ -53,12 +55,14 @@ describe('attach', () => {
 		await execute(() => svc.eventTag.attach(eventTag, assignedEvent.id), {
 			exps: [{ type: 'toBeInstanceOf', params: [EventTag] }],
 			onFinish: async (result: EventTag) => {
-				await execute(() => svc.eventTag.find({ id: result.id }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
-				await execute(() => svc.event.findOne({ tags: [{ id: result.id }] }), {
-					exps: [{ type: 'toBeDefined', params: [] }],
-				});
+				await execute(
+					() => svc.eventTag.find({ id: result.id, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
+				await execute(
+					() => svc.event.findOne({ tags: [{ id: result.id }], cache: false }),
+					{ exps: [{ type: 'toBeDefined', params: [] }] },
+				);
 			},
 		});
 	});

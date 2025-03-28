@@ -21,12 +21,14 @@ it('assign', async () => {
 	await execute(() => svc.user.assign({ ...user, ...user.baseUser }), {
 		exps: [{ type: 'toBeInstanceOf', params: [User] }],
 		onFinish: async (result: User) => {
-			await execute(() => svc.baseUser.find({ id: result.baseUser.id }), {
-				exps: [{ type: 'toHaveLength', params: [1] }],
-			});
-			await execute(() => svc.user.find({ baseUser: { id: result.id } }), {
-				exps: [{ type: 'toHaveLength', params: [1] }],
-			});
+			await execute(
+				() => svc.baseUser.find({ id: result.baseUser.id, cache: false }),
+				{ exps: [{ type: 'toHaveLength', params: [1] }] },
+			);
+			await execute(
+				() => svc.user.find({ baseUser: { id: result.id }, cache: false }),
+				{ exps: [{ type: 'toHaveLength', params: [1] }] },
+			);
 			await execute(() => svc.user.email(result.baseUser.email), {
 				exps: [
 					{
@@ -56,9 +58,10 @@ it('modify', async () => {
 		{
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 			onFinish: async () => {
-				await execute(() => svc.user.find({ baseUser: { name: newName } }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
+				await execute(
+					() => svc.user.find({ baseUser: { name: newName }, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
 			},
 		},
 	);
@@ -81,7 +84,7 @@ it('updateRole', async () => {
 	await execute(() => svc.user.updateRole(id, UserRole.admin), {
 		exps: [{ type: 'toThrow', not: true, params: [] }],
 		onFinish: async () => {
-			await execute(() => svc.user.findOne({ id }), {
+			await execute(() => svc.user.findOne({ id, cache: false }), {
 				exps: [{ type: 'toHaveProperty', params: ['role', UserRole.admin] }],
 			});
 		},

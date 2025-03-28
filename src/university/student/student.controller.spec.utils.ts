@@ -33,6 +33,7 @@ export async function assignStudent(
 			.body({ ...studentInp.user.baseUser, password }),
 		student = await svc.student.findOne({
 			user: { baseUser: { email: studentInp.user.baseUser.email } },
+			cache: false,
 		});
 
 	return { headers, student };

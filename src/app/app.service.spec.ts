@@ -32,12 +32,13 @@ describe('BaseUserService', () => {
 		await execute(() => svc.baseUser.modify(baseUser.id, { name: newName }), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 			onFinish: async () => {
-				await execute(() => svc.baseUser.find({ name: newName }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
+				await execute(
+					() => svc.baseUser.find({ name: newName, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
 			},
 		});
-		await execute(() => svc.baseUser.findOne({ email, name }), {
+		await execute(() => svc.baseUser.findOne({ email, name, cache: false }), {
 			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});
@@ -49,7 +50,7 @@ describe('BaseUserService', () => {
 		await execute(() => svc.baseUser.remove(usr.id), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
-		await execute(() => svc.baseUser.findOne({ email, name }), {
+		await execute(() => svc.baseUser.findOne({ email, name, cache: false }), {
 			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});
