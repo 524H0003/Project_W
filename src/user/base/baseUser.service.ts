@@ -48,7 +48,7 @@ export class BaseUserService extends DatabaseRequests<BaseUser> {
 	 * @return {Promise<BaseUser>}
 	 */
 	email(input: string): Promise<BaseUser> {
-		return this.findOne({ email: input.lower });
+		return this.findOne({ cache: false, email: input.lower });
 	}
 
 	/**

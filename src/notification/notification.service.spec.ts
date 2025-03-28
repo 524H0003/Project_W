@@ -21,9 +21,12 @@ describe('assign', () => {
 		await execute(() => svc.notification.assign(notification), {
 			exps: [{ type: 'toBeInstanceOf', params: [Notification] }],
 			onFinish: async (result) => {
-				await execute(() => svc.notification.find({ id: result.id }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
+				await execute(
+					() => svc.notification.find({ id: result.id, cache: false }),
+					{
+						exps: [{ type: 'toHaveLength', params: [1] }],
+					},
+				);
 			},
 		});
 	});
@@ -39,9 +42,12 @@ describe('modify', () => {
 			{
 				exps: [{ type: 'toThrow', not: true, params: [] }],
 				onFinish: async () => {
-					await execute(() => svc.notification.find({ content: newContent }), {
-						exps: [{ type: 'toHaveLength', params: [1] }],
-					});
+					await execute(
+						() => svc.notification.find({ content: newContent, cache: false }),
+						{
+							exps: [{ type: 'toHaveLength', params: [1] }],
+						},
+					);
 				},
 			},
 		);

@@ -105,6 +105,7 @@ describe('signUp', () => {
 							baseUser: { name: employee.eventCreator.user.baseUser.name },
 						},
 					},
+					cache: false,
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
@@ -120,6 +121,7 @@ describe('signUp', () => {
 							},
 						},
 					],
+					cache: false,
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);

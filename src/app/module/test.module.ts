@@ -1,6 +1,6 @@
 /* eslint-disable tsEslint/require-await */
 import { Global, Module } from '@nestjs/common';
-import { PostgresModule, SqliteModule } from 'app/module/sql.module';
+import { PostgresModule } from 'app/module/sql.module';
 import { loadEnv } from './config.module';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -30,7 +30,6 @@ export const rootPublic = process.env.SERVER_PUBLIC || 'public/';
 		BaseModule,
 		loadEnv,
 		PostgresModule('test'),
-		SqliteModule('test'),
 	],
 	providers: [
 		{ provide: MailerService, useValue: { sendMail: jest.fn() } },

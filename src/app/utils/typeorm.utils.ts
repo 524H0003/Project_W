@@ -325,11 +325,13 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	/**
 	 * Get entity from id
 	 * @param {string} id - the entity's id
-	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>} found entity
 	 */
-	id(id: string, options?: FindOptionsWithCustom<T>): Promise<T> {
+	id(id: string): Promise<T> {
 		if (!id) throw new ServerException('Invalid', 'ID', '');
-		return this.findOne({ id, ...options });
+		return this.findOne({
+			id,
+			cache: false,
+		} as unknown as FindOptionsWithCustom<T>);
 	}
 }

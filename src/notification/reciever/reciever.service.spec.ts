@@ -31,6 +31,7 @@ describe('assign', () => {
 						svc.user.findOne({
 							recievedNotifications: [{ id: result.id }],
 							baseUser: { id: user.id },
+							cache: false,
 						}),
 					{ exps: [{ type: 'toBeDefined', params: [] }] },
 				);
@@ -39,6 +40,7 @@ describe('assign', () => {
 						svc.notification.findOne({
 							sent: [{ id: result.id }],
 							id: notification.id,
+							cache: false,
 						}),
 					{ exps: [{ type: 'toBeDefined', params: [] }] },
 				);
@@ -63,12 +65,19 @@ describe('assignMany', () => {
 			onFinish: async (result) => {
 				for (const { id } of result) {
 					await execute(
-						() => svc.user.findOne({ recievedNotifications: [{ id }] }),
+						() =>
+							svc.user.findOne({
+								recievedNotifications: [{ id }],
+								cache: false,
+							}),
 						{ exps: [{ type: 'toBeDefined', params: [] }] },
 					);
-					await execute(() => svc.notification.findOne({ sent: [{ id }] }), {
-						exps: [{ type: 'toBeDefined', params: [] }],
-					});
+					await execute(
+						() => svc.notification.findOne({ sent: [{ id }], cache: false }),
+						{
+							exps: [{ type: 'toBeDefined', params: [] }],
+						},
+					);
 				}
 			},
 		});
@@ -86,12 +95,15 @@ describe('read', () => {
 		await execute(() => svc.recie.read(reciever.id), {
 			exps: [{ type: 'toBeInstanceOf', params: [Reciever] }],
 			onFinish: async (result) => {
-				await execute(() => svc.recie.findOne({ id: result.id }), {
-					exps: [
-						{ type: 'toHaveProperty', params: ['isRead', true] },
-						{ type: 'toHaveProperty', params: ['readAt', null], not: true },
-					],
-				});
+				await execute(
+					() => svc.recie.findOne({ id: result.id, cache: false }),
+					{
+						exps: [
+							{ type: 'toHaveProperty', params: ['isRead', true] },
+							{ type: 'toHaveProperty', params: ['readAt', null], not: true },
+						],
+					},
+				);
 			},
 		});
 	});
@@ -121,12 +133,15 @@ describe('readMany', () => {
 			exps: [{ type: 'toBeInstanceOf', params: [Array<Reciever>] }],
 			onFinish: async (result) => {
 				for (let i = 0; i < 5; i++)
-					await execute(() => svc.recie.findOne({ id: result[i].id }), {
-						exps: [
-							{ type: 'toHaveProperty', params: ['isRead', true] },
-							{ type: 'toHaveProperty', params: ['readAt', null], not: true },
-						],
-					});
+					await execute(
+						() => svc.recie.findOne({ id: result[i].id, cache: false }),
+						{
+							exps: [
+								{ type: 'toHaveProperty', params: ['isRead', true] },
+								{ type: 'toHaveProperty', params: ['readAt', null], not: true },
+							],
+						},
+					);
 			},
 		});
 	});

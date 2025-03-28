@@ -49,10 +49,10 @@ describe('removeSnake', () => {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
 
-		await execute(() => svc.bloc.findOne({ id: root.id }), {
+		await execute(() => svc.bloc.findOne({ id: root.id, cache: false }), {
 			exps: [{ type: 'toEqual', params: [{}] }],
 		});
-		await execute(() => svc.bloc.findOne({ id: sub.id }), {
+		await execute(() => svc.bloc.findOne({ id: sub.id, cache: false }), {
 			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});
@@ -62,10 +62,10 @@ describe('removeSnake', () => {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
 
-		await execute(() => svc.bloc.findOne({ id: root.id }), {
+		await execute(() => svc.bloc.findOne({ id: root.id, cache: false }), {
 			exps: [{ type: 'toEqual', params: [{}] }],
 		});
-		await execute(() => svc.bloc.findOne({ id: sub.id }), {
+		await execute(() => svc.bloc.findOne({ id: sub.id, cache: false }), {
 			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});

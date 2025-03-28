@@ -53,6 +53,7 @@ export async function assignEmployee(
 					},
 				},
 			},
+			cache: false,
 		});
 
 	return { headers, employee };

@@ -79,6 +79,7 @@ describe('assignParticipator', () => {
 			() =>
 				svc.eventParticipator.findOne({
 					participatedBy: { baseUser: { id: student.user.id } },
+					cache: false,
 				}),
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
@@ -117,9 +118,12 @@ describe('updateParticipator', () => {
 			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 
-		await execute(() => svc.eventParticipator.findOne({ interviewNote }), {
-			exps: [{ type: 'toBeDefined', params: [] }],
-		});
+		await execute(
+			() => svc.eventParticipator.findOne({ interviewNote, cache: false }),
+			{
+				exps: [{ type: 'toBeDefined', params: [] }],
+			},
+		);
 	});
 
 	it('failed due to invalid id', async () => {

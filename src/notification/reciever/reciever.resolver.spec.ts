@@ -61,11 +61,15 @@ beforeEach(async () => {
 	await req()
 		.post('/sign-up')
 		.body({ ...user, ...user.baseUser });
-	user = await svc.user.findOne({ baseUser: { name: user.baseUser.name } });
+	user = await svc.user.findOne({
+		baseUser: { name: user.baseUser.name },
+		cache: false,
+	});
 
 	notification = await svc.notification.findOne({
 		id: (await assignNoti(Notification.test(fileName), headers))
 			.assignNotification.id,
+		cache: false,
 	});
 });
 
@@ -123,12 +127,19 @@ describe('assignRecieverMany', () => {
 				onFinish: async (result) => {
 					for (const { id } of result) {
 						await execute(
-							() => svc.user.findOne({ recievedNotifications: [{ id }] }),
+							() =>
+								svc.user.findOne({
+									recievedNotifications: [{ id }],
+									cache: false,
+								}),
 							{ exps: [{ type: 'toBeDefined', params: [] }] },
 						);
-						await execute(() => svc.notification.findOne({ sent: [{ id }] }), {
-							exps: [{ type: 'toBeDefined', params: [] }],
-						});
+						await execute(
+							() => svc.notification.findOne({ sent: [{ id }], cache: false }),
+							{
+								exps: [{ type: 'toBeDefined', params: [] }],
+							},
+						);
 					}
 				},
 			},

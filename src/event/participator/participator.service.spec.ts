@@ -35,11 +35,19 @@ describe('assign', () => {
 				exps: [{ type: 'toBeInstanceOf', params: [EventParticipator] }],
 				onFinish: async (result: EventParticipator) => {
 					await execute(
-						() => svc.event.findOne({ participators: [{ id: result.id }] }),
+						() =>
+							svc.event.findOne({
+								participators: [{ id: result.id }],
+								cache: false,
+							}),
 						{ exps: [{ type: 'toBeDefined', params: [] }] },
 					);
 					await execute(
-						() => svc.user.findOne({ participatedEvents: [{ id: result.id }] }),
+						() =>
+							svc.user.findOne({
+								participatedEvents: [{ id: result.id }],
+								cache: false,
+							}),
 						{ exps: [{ type: 'toBeDefined', params: [] }] },
 					);
 				},
@@ -73,9 +81,12 @@ describe('modify', () => {
 			{
 				exps: [{ type: 'toThrow', not: true, params: [] }],
 				onFinish: async () => {
-					await execute(() => svc.eventParticipator.find({ interviewNote }), {
-						exps: [{ type: 'toHaveLength', params: [1] }],
-					});
+					await execute(
+						() => svc.eventParticipator.find({ interviewNote, cache: false }),
+						{
+							exps: [{ type: 'toHaveLength', params: [1] }],
+						},
+					);
 				},
 			},
 		);

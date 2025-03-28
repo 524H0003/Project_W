@@ -63,6 +63,7 @@ describe('signUp', () => {
 			async () =>
 				svc.bloc.find({
 					owner: { baseUser: { email: user.baseUser.email.lower } },
+					cache: false,
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [1] }] },
 		);
@@ -121,6 +122,7 @@ describe('login', () => {
 			async () =>
 				svc.bloc.find({
 					owner: { baseUser: { email: user.baseUser.email.lower } },
+					cache: false,
 				}),
 			{ exps: [{ type: 'toHaveLength', params: [2] }] },
 		);
@@ -183,6 +185,7 @@ describe('logout', () => {
 						async () =>
 							svc.bloc.find({
 								owner: { baseUser: { email: user.baseUser.email.lower } },
+								cache: false,
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [0] }] },
 					);

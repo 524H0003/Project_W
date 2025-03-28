@@ -20,7 +20,7 @@ it('assign', async () => {
 	await execute(() => svc.event.assign(event), {
 		exps: [{ type: 'toBeInstanceOf', params: [Event] }],
 		onFinish: async (result: Event) => {
-			await execute(() => svc.event.find({ id: result.id }), {
+			await execute(() => svc.event.find({ id: result.id, cache: false }), {
 				exps: [{ type: 'toHaveLength', params: [1] }],
 			});
 		},
@@ -36,9 +36,12 @@ it('modify', async () => {
 		{
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 			onFinish: async () => {
-				await execute(() => svc.event.find({ description: newDescription }), {
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				});
+				await execute(
+					() => svc.event.find({ description: newDescription, cache: false }),
+					{
+						exps: [{ type: 'toHaveLength', params: [1] }],
+					},
+				);
 			},
 		},
 	);

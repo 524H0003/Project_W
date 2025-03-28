@@ -64,29 +64,14 @@ export const PostgresModule = (type: SqlType) =>
 				autoLoadEntities: true,
 				synchronize: true,
 				retryAttempts: type == 'test' ? 0 : 5,
-				cache: { duration: (1).m2s, alwaysEnabled: true, type: 'database' },
+				cache: {
+					duration: (1).m2s.s2ms,
+					provider() {
+						return new CacheManagerProvider(cache);
+					},
+				},
 			};
 		},
-	});
-
-/**
- * Server sqlite module
- */
-export const SqliteModule = (type: SqlType) =>
-	TypeOrmModule.forRootAsync({
-		name: 'sqlite_db',
-		imports: [ConfigModule],
-		inject: [ConfigService],
-		useFactory: (config: ConfigService) => ({
-			type: 'sqlite',
-			database: join(
-				__dirname,
-				(type === 'deploy' ? config.get<string>('POSTGRES_DB') : type) +
-					'.sqlite',
-			),
-			synchronize: true,
-			autoLoadEntities: true,
-		}),
 	});
 
 /**
