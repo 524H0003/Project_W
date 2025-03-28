@@ -23,15 +23,11 @@ it('assign', async () => {
 		onFinish: async (result: User) => {
 			await execute(
 				() => svc.baseUser.find({ id: result.baseUser.id, cache: false }),
-				{
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				},
+				{ exps: [{ type: 'toHaveLength', params: [1] }] },
 			);
 			await execute(
 				() => svc.user.find({ baseUser: { id: result.id }, cache: false }),
-				{
-					exps: [{ type: 'toHaveLength', params: [1] }],
-				},
+				{ exps: [{ type: 'toHaveLength', params: [1] }] },
 			);
 			await execute(() => svc.user.email(result.baseUser.email), {
 				exps: [
@@ -64,9 +60,7 @@ it('modify', async () => {
 			onFinish: async () => {
 				await execute(
 					() => svc.user.find({ baseUser: { name: newName }, cache: false }),
-					{
-						exps: [{ type: 'toHaveLength', params: [1] }],
-					},
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
 				);
 			},
 		},

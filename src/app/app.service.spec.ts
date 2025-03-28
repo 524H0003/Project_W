@@ -34,9 +34,7 @@ describe('BaseUserService', () => {
 			onFinish: async () => {
 				await execute(
 					() => svc.baseUser.find({ name: newName, cache: false }),
-					{
-						exps: [{ type: 'toHaveLength', params: [1] }],
-					},
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
 				);
 			},
 		});

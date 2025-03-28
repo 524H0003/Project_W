@@ -74,9 +74,7 @@ describe('assignMany', () => {
 					);
 					await execute(
 						() => svc.notification.findOne({ sent: [{ id }], cache: false }),
-						{
-							exps: [{ type: 'toBeDefined', params: [] }],
-						},
+						{ exps: [{ type: 'toBeDefined', params: [] }] },
 					);
 				}
 			},

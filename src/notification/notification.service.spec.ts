@@ -23,9 +23,7 @@ describe('assign', () => {
 			onFinish: async (result) => {
 				await execute(
 					() => svc.notification.find({ id: result.id, cache: false }),
-					{
-						exps: [{ type: 'toHaveLength', params: [1] }],
-					},
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
 				);
 			},
 		});
@@ -44,9 +42,7 @@ describe('modify', () => {
 				onFinish: async () => {
 					await execute(
 						() => svc.notification.find({ content: newContent, cache: false }),
-						{
-							exps: [{ type: 'toHaveLength', params: [1] }],
-						},
+						{ exps: [{ type: 'toHaveLength', params: [1] }] },
 					);
 				},
 			},

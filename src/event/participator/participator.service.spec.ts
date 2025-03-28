@@ -83,9 +83,7 @@ describe('modify', () => {
 				onFinish: async () => {
 					await execute(
 						() => svc.eventParticipator.find({ interviewNote, cache: false }),
-						{
-							exps: [{ type: 'toHaveLength', params: [1] }],
-						},
+						{ exps: [{ type: 'toHaveLength', params: [1] }] },
 					);
 				},
 			},

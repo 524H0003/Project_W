@@ -65,9 +65,7 @@ describe('assignNotification', () => {
 		);
 		await execute(
 			() => svc.notification.find({ title: notification.title, cache: false }),
-			{
-				exps: [{ type: 'toHaveLength', params: [1] }],
-			},
+			{ exps: [{ type: 'toHaveLength', params: [1] }] },
 		);
 	});
 });
@@ -103,9 +101,7 @@ describe('updateNotification', () => {
 		);
 		await execute(
 			() => svc.notification.find({ content: newContent, cache: false }),
-			{
-				exps: [{ type: 'toHaveLength', params: [1] }],
-			},
+			{ exps: [{ type: 'toHaveLength', params: [1] }] },
 		);
 		await execute(
 			() =>

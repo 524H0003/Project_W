@@ -120,9 +120,7 @@ describe('updateParticipator', () => {
 
 		await execute(
 			() => svc.eventParticipator.findOne({ interviewNote, cache: false }),
-			{
-				exps: [{ type: 'toBeDefined', params: [] }],
-			},
+			{ exps: [{ type: 'toBeDefined', params: [] }] },
 		);
 	});
 

@@ -38,9 +38,7 @@ it('modify', async () => {
 			onFinish: async () => {
 				await execute(
 					() => svc.event.find({ description: newDescription, cache: false }),
-					{
-						exps: [{ type: 'toHaveLength', params: [1] }],
-					},
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
 				);
 			},
 		},
