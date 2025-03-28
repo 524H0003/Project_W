@@ -37,6 +37,6 @@ export class NotificationResolver {
 
 		await this.svc.notification.modify(notification.id, input);
 
-		return this.svc.notification.id(notification.id, { cache: false });
+		return this.svc.notification.id(notification.id);
 	}
 }
