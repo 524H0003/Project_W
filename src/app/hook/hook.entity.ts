@@ -11,7 +11,7 @@ import { CacheControl } from 'app/graphql/graphql.decorator';
 /**
  * Hook entity
  */
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'auth_hook' })
 export class Hook extends GeneratedId implements IHookEntity {
 	/**

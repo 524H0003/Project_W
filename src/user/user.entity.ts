@@ -42,7 +42,7 @@ import { IBlocCompulsory } from 'auth/bloc/bloc.model';
  * User entity
  */
 @ObjectType()
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'User' })
 export class User extends ParentId implements IUserEntity {
 	/**

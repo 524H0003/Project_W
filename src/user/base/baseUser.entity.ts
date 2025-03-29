@@ -9,7 +9,7 @@ import { CacheControl } from 'app/graphql/graphql.decorator';
 /**
  * Base user
  */
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'app_user' })
 export class BaseUser extends GeneratedId implements IBaseUserEntity {
 	/**

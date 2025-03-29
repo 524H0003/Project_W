@@ -10,7 +10,7 @@ import { CacheControl } from 'app/graphql/graphql.decorator';
  * Tag entity
  */
 @ObjectType()
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'Tag' })
 export class EventTag extends GeneratedId implements ITagEntity {
 	/**

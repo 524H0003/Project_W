@@ -85,7 +85,7 @@ import { JwtModule } from '@nestjs/jwt';
 								(await requestContext.request.http.headers.get('sessionId')) ||
 								null,
 						}),
-						ApolloServerPluginCacheControl(),
+						ApolloServerPluginCacheControl({ defaultMaxAge: (3).m2s }),
 					],
 					// Schema build options
 					buildSchemaOptions: {

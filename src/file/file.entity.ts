@@ -12,7 +12,7 @@ import { CacheControl } from 'app/graphql/graphql.decorator';
  * File entity
  */
 @ObjectType()
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'Document' })
 export class File extends GeneratedId implements IFileEntity {
 	/**
