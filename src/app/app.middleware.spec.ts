@@ -44,14 +44,21 @@ describe('auth', () => {
 			return res;
 		};
 
-		middleware.cookie(
+		middleware.preSerialization(
 			req as unknown as FastifyRequest,
 			res as unknown as FastifyReply,
 			new UserRecieve({
 				blocInfo: { id: rfsTkn, hash: acsTkn },
 				response: { message: '' },
 			}),
-			() => ({}),
+			() => {
+				middleware.setCookie(
+					req as unknown as FastifyRequest,
+					res as unknown as FastifyReply,
+					null,
+					() => ({}),
+				);
+			},
 		);
 	});
 
