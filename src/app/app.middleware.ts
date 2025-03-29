@@ -89,10 +89,8 @@ export class AppMiddleware extends SecurityService {
 				...cookieOptions,
 				maxAge: 2 ** 31,
 			},
-			accessKey = (32).string,
-			{ id = '', hash = '' } = req.key?.blocInfo || {};
-
-		req.session.set('accessKey', this.encrypt(accessKey, req.ip));
+			{ id = '', hash = '' } = req.key?.blocInfo || {},
+			accessKey = this.decrypt(req.session.get<any>('accessKey'), req.ip);
 
 		res.setCookie(
 			'access',
@@ -124,7 +122,10 @@ export class AppMiddleware extends SecurityService {
 			return;
 		}
 
-		const { blocInfo, HookId, response, isClearCookie = false } = payload;
+		const { blocInfo, HookId, response, isClearCookie = false } = payload,
+			accessKey = (32).string;
+
+		req.session.set('accessKey', this.encrypt(accessKey, req.ip));
 
 		if (isClearCookie) {
 			['access', 'refresh'].forEach((i) => res.clearCookie(i));
