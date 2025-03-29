@@ -12,7 +12,7 @@ import { UAParser } from 'ua-parser-js';
 /**
  * Bloc entity
  */
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'auth_bloc' })
 export class Bloc extends GeneratedId implements IBlocEntity {
 	/**

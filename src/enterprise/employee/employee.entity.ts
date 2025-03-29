@@ -17,7 +17,7 @@ import { CacheControl } from 'app/graphql/graphql.decorator';
 /**
  * Employee entity
  */
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'EnterpriseUser' })
 export class Employee extends ParentId implements IEmployeeEntity {
 	/**

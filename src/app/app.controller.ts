@@ -223,11 +223,11 @@ export class HealthController {
 			() => this.db.pingCheck('database'),
 			() =>
 				this.disk.checkStorage('storage', {
-					path: join(__dirname),
+					path: join(process.cwd()),
 					thresholdPercent: 0.75,
 				}),
-			() => this.memory.checkHeap('memory_heap', (365).mb2b),
-			() => this.memory.checkRSS('memory_rss', (256).mb2b),
+			() => this.memory.checkHeap('memory_heap', (256).mb2b),
+			() => this.memory.checkRSS('memory_rss', (400).mb2b),
 		]);
 	}
 }

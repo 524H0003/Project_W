@@ -47,7 +47,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	) {
 		const updatePrev = async () => {
 			if (!prev) return null;
-			const { metaData } = await this.findOne({ cache: false, id: prev });
+			const { metaData } = await this.id(prev);
 
 			mtdt = metaData;
 
@@ -68,8 +68,8 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	async removeSnake(blocId: string) {
 		if (!blocId) return;
 
-		const { prev } = await this.findOne({ cache: false, id: blocId }),
-			{ id } = await this.findOne({ cache: false, prev: blocId });
+		const { prev } = await this.id(blocId),
+			{ id } = await this.findContinuousBloc(blocId);
 
 		await this.delete({ id: blocId });
 
@@ -83,5 +83,21 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 */
 	async issue({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
 		await this.update({ hash, id }, { lastIssue: currentTime() });
+	}
+
+	/**
+	 * Find continuous bloc
+	 * @param {string} id - current bloc id
+	 */
+	async findContinuousBloc(id: string) {
+		return this.findOne({ cache: false, prev: id });
+	}
+
+	/**
+	 * Find bloc by hash
+	 * @param {string} hash - current bloc hash
+	 */
+	async findBlocByHash(hash: string) {
+		return this.findOne({ hash, cache: false });
 	}
 }

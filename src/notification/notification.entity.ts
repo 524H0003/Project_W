@@ -16,7 +16,7 @@ import { CacheControl } from 'app/graphql/graphql.decorator';
  * Notification entity
  */
 @ObjectType()
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'Notification' })
 export class Notification extends GeneratedId implements INotificationEntity {
 	/**

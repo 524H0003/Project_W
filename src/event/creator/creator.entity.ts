@@ -10,7 +10,7 @@ import { CacheControl } from 'app/graphql/graphql.decorator';
 /**
  * Event creator model
  */
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'EventCreator' })
 export class EventCreator extends ParentId implements IEventCreatorEntity {
 	/**
