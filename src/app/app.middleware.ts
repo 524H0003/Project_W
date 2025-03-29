@@ -89,7 +89,7 @@ export class AppMiddleware extends SecurityService {
 				...cookieOptions,
 				maxAge: 2 ** 31,
 			},
-			{ id = '', hash = '' } = req.key?.blocInfo || {},
+			{ id, hash } = req.key.blocInfo,
 			accessKey = this.decrypt(req.session.get<any>('accessKey'), req.ip);
 
 		res.setCookie(
