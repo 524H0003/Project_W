@@ -39,9 +39,11 @@ import { JwtModule } from '@nestjs/jwt';
 							}),
 							secondary: createRedisKeyv({
 								url: config.get('REDIS_URL'),
-								name: 'cache',
 							}),
-							ttl: (180).s2ms,
+							ttl: (10).m2s.s2ms,
+							namespace: 'Cache0',
+							nonBlocking: true,
+							stats: true,
 						}),
 					}),
 				],
