@@ -37,9 +37,7 @@ import { JwtModule } from '@nestjs/jwt';
 								store: new KeyvSqlite('sqlite://cache.sqlite'),
 								useKeyPrefix: false,
 							}),
-							secondary: createRedisKeyv({
-								url: config.get('REDIS_URL'),
-							}),
+							secondary: createRedisKeyv({ url: config.get('REDIS_URL') }),
 							ttl: (10).m2s.s2ms,
 							namespace: 'Cache0',
 							nonBlocking: true,
