@@ -1,3 +1,10 @@
+## [1.2.34](https://github.com/524H0003/Project_W/compare/v1.2.33...v1.2.34) (2025-03-30)
+
+
+### Bug Fixes
+
+* better Cache config ([#179](https://github.com/524H0003/Project_W/issues/179)) ([5fccdea](https://github.com/524H0003/Project_W/commit/5fccdea40384db54b3f7dd544b2caed74718607e))
+
 ## [1.2.33](https://github.com/524H0003/Project_W/compare/v1.2.32...v1.2.33) (2025-03-28)
 
 
