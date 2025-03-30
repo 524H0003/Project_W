@@ -41,7 +41,6 @@ import { JwtModule } from '@nestjs/jwt';
 							ttl: (10).m2s.s2ms,
 							namespace: 'Cache0',
 							nonBlocking: true,
-							stats: true,
 						}),
 					}),
 				],
