@@ -12,7 +12,7 @@ import { CacheControl } from 'app/graphql/graphql.decorator';
  * Reciever entity
  */
 @ObjectType()
-@CacheControl({ maxAge: (1).m2s })
+@CacheControl({ maxAge: (2).m2s })
 @Entity({ name: 'UserNotification' })
 export class Reciever extends GeneratedId implements IRecieverEntity {
 	/**

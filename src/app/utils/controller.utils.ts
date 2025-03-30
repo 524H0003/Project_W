@@ -54,10 +54,7 @@ export class BaseController {
 	): Promise<UserRecieve> {
 		await this.svc.hook.validating(signature, mtdt, hook);
 
-		const user = await this.svc.user.findOne({
-			baseUser: { email: hook.fromBaseUser.email },
-			cache: false,
-		});
+		const user = await this.svc.user.email(hook.fromBaseUser.email);
 
 		await this.svc.auth.changePassword(user, password);
 		return new UserRecieve({

@@ -37,11 +37,10 @@ import { JwtModule } from '@nestjs/jwt';
 								store: new KeyvSqlite('sqlite://cache.sqlite'),
 								useKeyPrefix: false,
 							}),
-							secondary: createRedisKeyv({
-								url: config.get('REDIS_URL'),
-								name: 'cache',
-							}),
-							ttl: (180).s2ms,
+							secondary: createRedisKeyv({ url: config.get('REDIS_URL') }),
+							ttl: (10).m2s.s2ms,
+							namespace: 'Cache0',
+							nonBlocking: true,
 						}),
 					}),
 				],
@@ -85,7 +84,7 @@ import { JwtModule } from '@nestjs/jwt';
 								(await requestContext.request.http.headers.get('sessionId')) ||
 								null,
 						}),
-						ApolloServerPluginCacheControl(),
+						ApolloServerPluginCacheControl({ defaultMaxAge: (3).m2s }),
 					],
 					// Schema build options
 					buildSchemaOptions: {

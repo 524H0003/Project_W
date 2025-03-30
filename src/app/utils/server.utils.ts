@@ -215,7 +215,10 @@ export class InitServerClass implements OnModuleInit {
 			.addHook('preValidation', (req, rep) => middleware.setMetaData(req, rep))
 			.addHook('preValidation', (req, rep) => middleware.graphQl(req, rep))
 			.addHook('preSerialization', (req, rep, payload: UserRecieve, done) =>
-				middleware.cookie(req, rep, payload, done),
+				middleware.preSerialization(req, rep, payload, done),
+			)
+			.addHook('onSend', (req, rep, payload, done) =>
+				middleware.setCookie(req, rep, payload, done),
 			)
 			.addHook('onRequest', (request, reply, done) => {
 				if (request.url.split('/').at(-1) == 'csrf-token')

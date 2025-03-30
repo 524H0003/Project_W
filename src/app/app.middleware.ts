@@ -74,7 +74,40 @@ export class AppMiddleware extends SecurityService {
 		}
 	}
 
-	cookie(
+	setCookie(
+		req: FastifyRequest,
+		res: FastifyReply,
+		payload: unknown,
+		done: DoneFuncWithErrOrRes,
+	) {
+		if (!req.key) {
+			done();
+			return;
+		}
+
+		const cookieOpts: CookieSerializeOptions = {
+				...cookieOptions,
+				maxAge: 2 ** 31,
+			},
+			{ id, hash } = req.key.blocInfo,
+			accessKey = this.decrypt(req.session.get<any>('accessKey'), req.ip);
+
+		res.setCookie(
+			'access',
+			this.encrypt(this.access({ accessToken: hash }), accessKey),
+			cookieOpts,
+		);
+
+		res.setCookie(
+			'refresh',
+			this.encrypt(this.refresh({ refreshToken: id })),
+			cookieOpts,
+		);
+
+		done(null, payload);
+	}
+
+	preSerialization(
 		req: FastifyRequest,
 		res: FastifyReply,
 		payload: UserRecieve,
@@ -89,43 +122,19 @@ export class AppMiddleware extends SecurityService {
 			return;
 		}
 
-		const {
-				blocInfo = req.key?.blocInfo,
-				HookId,
-				response,
-				isClearCookie = false,
-			} = payload,
+		const { blocInfo, HookId, response, isClearCookie = false } = payload,
 			accessKey = (32).string;
+
+		req.session.set('accessKey', this.encrypt(accessKey, req.ip));
 
 		if (isClearCookie) {
 			['access', 'refresh'].forEach((i) => res.clearCookie(i));
 
 			done(null, response);
 			return;
-		}
-
-		const cookieOpts: CookieSerializeOptions = {
-				...cookieOptions,
-				maxAge: 2 ** 31,
-			},
-			{ hash = '', id = '' } = blocInfo || {};
-
-		req.session.set('accessKey', this.encrypt(accessKey, req.ip));
-
-		res.setCookie(
-			'access',
-			this.encrypt(
-				this.access({ accessToken: HookId ? HookId : hash }),
-				accessKey,
-			),
-			cookieOpts,
-		);
-
-		res.setCookie(
-			'refresh',
-			this.encrypt(this.refresh({ refreshToken: id })),
-			cookieOpts,
-		);
+		} else if (HookId)
+			req.key = { blocInfo: { hash: HookId, id: '' }, user: null };
+		else if (blocInfo) req.key = { blocInfo, user: null };
 
 		done(null, response);
 	}
