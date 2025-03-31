@@ -21,6 +21,7 @@ import { Cacheable } from 'cacheable';
 import { createKeyv as createRedisKeyv } from '@keyv/redis';
 import { KeyvSqlite } from '@keyv/sqlite';
 import { JwtModule } from '@nestjs/jwt';
+import 'app/utils/utils';
 
 @Module({
 	imports: [
