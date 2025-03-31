@@ -319,15 +319,6 @@ declare global {
 		destiny: K,
 		property: U,
 	): void;
-
-	/**
-	 * Set method unmodifiable
-	 */
-	function final(
-		target: Object,
-		key: string | symbol,
-		descriptor: PropertyDescriptor,
-	);
 }
 
 /**
@@ -429,13 +420,6 @@ export const funcs = {
 		payload = payload[0];
 		if (payload && Object.keys(payload).length)
 			destiny[property] = new entity(payload);
-	},
-	final: (
-		target: Object,
-		key: string | symbol,
-		descriptor: PropertyDescriptor,
-	) => {
-		descriptor.writable = false;
 	},
 };
 Object.assign(globalThis, funcs);

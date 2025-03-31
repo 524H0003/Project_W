@@ -168,7 +168,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T[]>} array of found objects
 	 */
-	@final async find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
+	async find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
 		const {
 				deep = 1,
 				relations = [''],
@@ -200,7 +200,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>}
 	 */
-	@final async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
+	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
 		const {
 				deep = 0,
 				relations = [''],
@@ -224,7 +224,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * Saving an entity
 	 * @param {NonFunctionProperties<T>} entity - the saving entity
 	 */
-	@final protected async save(
+	protected async save(
 		entity: DeepPartial<NonFunctionProperties<T>>,
 	): Promise<T> {
 		return new this.ctor(await this.repo.save(new this.ctor(entity)));
@@ -234,7 +234,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * Deleting an entity
 	 * @param {FindOptionsWhere<T>} criteria - the deleting entity
 	 */
-	@final protected async delete(criteria: FindOptionsWhere<T>) {
+	protected async delete(criteria: FindOptionsWhere<T>) {
 		await this.repo.delete(criteria);
 	}
 
@@ -244,7 +244,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {NonArray<T[K]>} entity - the push entity
 	 */
-	@final async push<K extends keyof T>(
+	async push<K extends keyof T>(
 		id: string,
 		field: K,
 		entity: NonArray<T[K]>,
@@ -260,7 +260,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {T[K]} entities - the push entities
 	 */
-	@final async pushMany<K extends keyof T>(
+	async pushMany<K extends keyof T>(
 		id: string,
 		field: K,
 		entities: T[K],
@@ -275,7 +275,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {DeepPartial<T>} entity - the updating entity
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
-	@final protected async update(
+	protected async update(
 		entity: DeepPartial<T>,
 		updatedEntity: QueryDeepPartialEntity<T>,
 		raw: boolean = false,
@@ -317,7 +317,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {string} id - the entity's id
 	 * @return {Promise<T>} found entity
 	 */
-	@final id(id: string): Promise<T> {
+	id(id: string): Promise<T> {
 		if (!id) throw new ServerException('Invalid', 'ID', '');
 		return this.findOne({
 			id,
