@@ -5,7 +5,6 @@ import {
 	FindOptionsWhere,
 	PrimaryGeneratedColumn,
 	Repository,
-	SaveOptions,
 	PrimaryColumn,
 	BeforeInsert,
 } from 'typeorm';
@@ -169,7 +168,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T[]>} array of found objects
 	 */
-	async find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
+	@final async find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
 		const {
 				deep = 1,
 				relations = [''],
@@ -201,9 +200,9 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>}
 	 */
-	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
+	@final async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
 		const {
-				deep = 1,
+				deep = 0,
 				relations = [''],
 				cache = true,
 				...newOptions
@@ -222,45 +221,20 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	}
 
 	/**
-	 * Saving entities
-	 * @param {NonFunctionProperties<T>[]} entities - the saving entity
-	 * @param {SaveOptions} options - function's option
-	 */
-	protected saveMany(
-		entities: NonFunctionProperties<T>[],
-		options?: SaveOptions,
-	): Promise<T[]> {
-		return this.repo.save(entities as DeepPartial<T>[], options);
-	}
-
-	/**
 	 * Saving an entity
 	 * @param {NonFunctionProperties<T>} entity - the saving entity
-	 * @param {SaveOptions} options - function's option
 	 */
-	protected async save(
+	@final protected async save(
 		entity: DeepPartial<NonFunctionProperties<T>>,
-		options?: SaveOptions,
 	): Promise<T> {
-		const { ...rest } = options || {},
-			result = await this.repo.save(new this.ctor(entity), rest);
-
-		return new this.ctor(result);
-	}
-
-	/**
-	 * Assign an entity
-	 */
-	// eslint-disable-next-line tsEslint/no-unused-vars
-	assign(...args: any): Promise<T> {
-		throw new ServerException('Invalid', 'Method', 'Implementation');
+		return new this.ctor(await this.repo.save(new this.ctor(entity)));
 	}
 
 	/**
 	 * Deleting an entity
 	 * @param {FindOptionsWhere<T>} criteria - the deleting entity
 	 */
-	protected async delete(criteria: FindOptionsWhere<T>) {
+	@final protected async delete(criteria: FindOptionsWhere<T>) {
 		await this.repo.delete(criteria);
 	}
 
@@ -270,7 +244,11 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {NonArray<T[K]>} entity - the push entity
 	 */
-	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
+	@final async push<K extends keyof T>(
+		id: string,
+		field: K,
+		entity: NonArray<T[K]>,
+	) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
 		return this.save(obj);
@@ -282,18 +260,14 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {T[K]} entities - the push entities
 	 */
-	async pushMany<K extends keyof T>(id: string, field: K, entities: T[K]) {
+	@final async pushMany<K extends keyof T>(
+		id: string,
+		field: K,
+		entities: T[K],
+	) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entities);
 		return this.save(obj);
-	}
-
-	/**
-	 * Removing an entity
-	 */
-	// eslint-disable-next-line tsEslint/no-unused-vars
-	remove(...args: any) {
-		throw new ServerException('Invalid', 'Method', 'Implementation');
 	}
 
 	/**
@@ -301,9 +275,9 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {DeepPartial<T>} entity - the updating entity
 	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
 	 */
-	protected async update(
+	@final protected async update(
 		entity: DeepPartial<T>,
-		updatedEntity?: QueryDeepPartialEntity<T>,
+		updatedEntity: QueryDeepPartialEntity<T>,
 		raw: boolean = false,
 	) {
 		await this.repo.update(
@@ -315,6 +289,14 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	}
 
 	/**
+	 * Assign an entity
+	 */
+	// eslint-disable-next-line tsEslint/no-unused-vars
+	assign(...args: any): Promise<T> {
+		throw new ServerException('Invalid', 'Method', 'Implementation');
+	}
+
+	/**
 	 * Modifying entity
 	 */
 	// eslint-disable-next-line tsEslint/no-unused-vars
@@ -323,11 +305,19 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	}
 
 	/**
+	 * Removing an entity
+	 */
+	// eslint-disable-next-line tsEslint/no-unused-vars
+	remove(...args: any) {
+		throw new ServerException('Invalid', 'Method', 'Implementation');
+	}
+
+	/**
 	 * Get entity from id
 	 * @param {string} id - the entity's id
 	 * @return {Promise<T>} found entity
 	 */
-	id(id: string): Promise<T> {
+	@final id(id: string): Promise<T> {
 		if (!id) throw new ServerException('Invalid', 'ID', '');
 		return this.findOne({
 			id,
