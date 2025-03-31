@@ -40,7 +40,7 @@ export class Event extends GeneratedId implements IEventEntity {
 			(i) => new EventParticipator(i),
 		);
 		this.documents = payload.documents?.map((i) => new File(i));
-		this.tags = payload.tags?.map((i) => new EventTag(i));
+		this.tags = payload.tags?.map((i) => new EventTag(i)) || [];
 	}
 
 	// Relationships
