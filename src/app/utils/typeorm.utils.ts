@@ -244,11 +244,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {NonArray<T[K]>} entity - the push entity
 	 */
-	async push<K extends keyof T>(
-		id: string,
-		field: K,
-		entity: NonArray<T[K]>,
-	) {
+	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
 		return this.save(obj);
@@ -260,11 +256,7 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {T[K]} entities - the push entities
 	 */
-	async pushMany<K extends keyof T>(
-		id: string,
-		field: K,
-		entities: T[K],
-	) {
+	async pushMany<K extends keyof T>(id: string, field: K, entities: T[K]) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entities);
 		return this.save(obj);
