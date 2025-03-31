@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Notification } from './notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
 
 @Injectable()
@@ -23,11 +23,8 @@ export class NotificationService extends DatabaseRequests<Notification> {
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<Notification>}
 	 */
-	async assign(
-		entity: DeepPartial<Notification>,
-		options?: SaveOptions,
-	): Promise<Notification> {
-		return new Notification(await this.save(entity, options));
+	async assign(entity: DeepPartial<Notification>): Promise<Notification> {
+		return new Notification(await this.save(entity));
 	}
 
 	/**

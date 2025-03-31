@@ -3,7 +3,7 @@ import {
 	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
 import { BaseUser } from './baseUser.entity';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { IBaseUserEntity } from './baseUser.model';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -26,9 +26,8 @@ export class BaseUserService extends DatabaseRequests<BaseUser> {
 	 */
 	async assign(
 		entity: NonFunctionProperties<IBaseUserEntity>,
-		options?: SaveOptions,
 	): Promise<BaseUser> {
-		return this.save(entity, options);
+		return this.save(entity);
 	}
 
 	/**
