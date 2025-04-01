@@ -1,4 +1,4 @@
-import { RecordJSON, RecordActionResponse } from "adminjs";
+import { RecordJSON, RecordActionResponse } from 'adminjs';
 
 /**
  * Handlers of all [Actions]{@link Action} of type `record` returns record.
