@@ -99,6 +99,29 @@ export function allImplement(decorator: MethodDecorator) {
 }
 
 /**
+ * Fix circular JSON
+ */
+export function censor(censor: any) {
+	var i = 0;
+
+	return function (key: any, value: any) {
+		if (
+			i !== 0 &&
+			typeof censor === 'object' &&
+			typeof value == 'object' &&
+			censor == value
+		)
+			return '[Circular]';
+
+		if (i >= 29) return '[Unknown]';
+
+		++i;
+
+		return value;
+	};
+}
+
+/**
  * A function decorator that implements prerun and postrun functions
  * @param {Object} functions - A two-element array that contains prerun and postrun functions
  */
