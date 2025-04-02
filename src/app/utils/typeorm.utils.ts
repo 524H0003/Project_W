@@ -7,7 +7,6 @@ import {
 	Repository,
 	PrimaryColumn,
 	BeforeInsert,
-	ObjectId,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
@@ -285,7 +284,7 @@ export abstract class DatabaseRequests<T extends TypeOrmBaseEntity> {
 		raw: boolean = false,
 	) {
 		await this.repo.update(
-			new ObjectId(id),
+			{ id } as unknown as FindOptionsWhere<T>,
 			(raw
 				? updatedEntity
 				: new this.ctor(updatedEntity)) as QueryDeepPartialEntity<T>,
@@ -315,6 +314,6 @@ export abstract class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {string} id - the entity identifier string
 	 */
 	async remove(id: string): Promise<void> {
-		await this.repo.delete(new ObjectId(id));
+		await this.repo.delete({ id } as unknown as FindOptionsWhere<T>);
 	}
 }
