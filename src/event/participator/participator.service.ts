@@ -4,6 +4,7 @@ import { EventParticipator } from './participator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
+import { IEventParticipatorRelationshipsKeys } from 'build/models';
 
 /**
  * Participator services
@@ -20,6 +21,7 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 		super(repo, EventParticipator);
 	}
 
+	// Abstract
 	/**
 	 * Assign participator to event
 	 * @param {string} participatorId - participator's id
@@ -46,16 +48,16 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 		});
 	}
 
-	/**
-	 * Modify participator infomations
-	 * @param {string} entityId - participator's id
-	 * @param {DeepPartial<EventParticipator>} updatedEntity - modified participator infomations
-	 */
-	async modify(
-		entityId: string,
-		updatedEntity: DeepPartial<EventParticipator>,
-	) {
-		if (!updatedEntity) return;
-		await this.update({ id: entityId }, updatedEntity);
+	public modify(
+		id: string,
+		update: DeepPartial<EventParticipator>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(
+			update,
+			IEventParticipatorRelationshipsKeys,
+		);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { Bloc } from './bloc.entity';
 import { User } from 'user/user.entity';
 import { MetaData } from 'auth/guards';
@@ -36,32 +36,6 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	}
 
 	/**
-	 * Assign new bloc
-	 * @param {User} owner - the owner of bloc id
-	 * @param {string} prev - previous bloc id
-	 * @param {MetaData} mtdt - client meta data
-	 */
-	async assign(
-		owner: User,
-		{ prev, mtdt }: RequireOnlyOne<BlocInput, 'mtdt' | 'prev'>,
-	) {
-		const updatePrev = async () => {
-			if (!prev) return null;
-			const { metaData } = await this.id(prev);
-
-			mtdt = metaData;
-
-			await this.update({ id: prev }, { owner: null, metaData: {} }, true);
-
-			return prev;
-		};
-
-		const bloc = new Bloc({ owner, prev: await updatePrev(), metaData: mtdt });
-
-		return this.save(bloc);
-	}
-
-	/**
 	 * Remove snake by id
 	 * @param {string} blocId - removing bloc id
 	 */
@@ -71,7 +45,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		const { prev } = await this.id(blocId),
 			{ id } = await this.findContinuousBloc(blocId);
 
-		await this.delete({ id: blocId });
+		await this.remove(blocId);
 
 		await this.removeSnake(prev);
 		await this.removeSnake(id);
@@ -82,7 +56,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 * @param {object} identifier - bloc indentifier
 	 */
 	async issue({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
-		await this.update({ hash, id }, { lastIssue: currentTime() });
+		return this.update({ hash, id }, { lastIssue: currentTime() });
 	}
 
 	/**
@@ -99,5 +73,40 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	 */
 	async findBlocByHash(hash: string) {
 		return this.findOne({ hash, cache: false });
+	}
+
+	// Abstract
+	/**
+	 * Assign new bloc
+	 * @param {User} owner - the owner of bloc id
+	 * @param {string} prev - previous bloc id
+	 * @param {MetaData} mtdt - client meta data
+	 */
+	async assign(
+		owner: User,
+		{ prev, mtdt }: RequireOnlyOne<BlocInput, 'mtdt' | 'prev'>,
+	) {
+		const updatePrev = async () => {
+			if (!prev) return null;
+			const { metaData } = await this.id(prev);
+
+			mtdt = metaData;
+
+			await this.modify(prev, { owner: null, metaData: {} }, true);
+
+			return prev;
+		};
+
+		const bloc = new Bloc({ owner, prev: await updatePrev(), metaData: mtdt });
+
+		return this.save(bloc);
+	}
+
+	public modify(
+		id: string,
+		update: DeepPartial<Bloc>,
+		raw: boolean = false,
+	): Promise<void> {
+		return this.update({ id }, update, raw);
 	}
 }

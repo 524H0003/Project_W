@@ -2,7 +2,6 @@ import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
 import { IBlocEntity } from './bloc.model';
 import { dataHashing } from 'app/utils/auth.utils';
-import { InterfaceCasting } from 'app/utils/utils';
 import { IBlocInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 import { User } from 'user/user.entity';

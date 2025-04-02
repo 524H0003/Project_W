@@ -2,12 +2,13 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Employee } from './employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { UserRole } from 'user/user.model';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IEmployeeHook, IEmployeeSignUp } from './employee.model';
 import { MetaData } from 'auth/guards';
+import { IEmployeeRelationshipKeys } from 'build/models';
 
 /**
  * Employee service
@@ -51,6 +52,7 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 		);
 	}
 
+	// Abstract
 	/**
 	 * Sign up for employee
 	 * @param {IEmployeeSignUp} input - the sign up input
@@ -72,5 +74,15 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 			eventCreator = await this.svc.eventCreator.assign(user);
 
 		return this.save({ eventCreator, enterprise, position });
+	}
+
+	public modify(
+		id: string,
+		update: DeepPartial<Employee>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, IEmployeeRelationshipKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

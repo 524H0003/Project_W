@@ -41,17 +41,9 @@ export class StudentController extends BaseController {
 		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('hostname') hostname: string,
 	): Promise<UserRecieve> {
-		try {
-			await this.svc.student.signUp(body);
-		} catch (error) {
-			const { message } = error as ServerException;
-			switch (true) {
-				case message.includes(err('Success', 'User', 'SignUp')):
-					return this.resetPasswordViaEmail(hostname, body, mtdt);
+		const student = await this.svc.student.assign(body);
 
-				default:
-					throw error;
-			}
-		}
+		if (!student.isNull())
+			return this.resetPasswordViaEmail(hostname, body, mtdt);
 	}
 }

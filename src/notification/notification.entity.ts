@@ -6,7 +6,6 @@ import {
 	INotificationInfo,
 	NotificationType,
 } from './notification.model';
-import { InterfaceCasting } from 'app/utils/utils';
 import { INotificationInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { GeneratedId } from 'app/utils/typeorm.utils';

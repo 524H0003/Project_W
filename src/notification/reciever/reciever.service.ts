@@ -4,6 +4,7 @@ import { Reciever } from './reciever.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
+import { IRecieverRelationshipsKeys } from 'build/models';
 
 @Injectable()
 export class RecieverService extends DatabaseRequests<Reciever> {
@@ -15,22 +16,6 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 		@Inject(forwardRef(() => AppService)) private svc: AppService,
 	) {
 		super(repo, Reciever);
-	}
-
-	/**
-	 * Assign notification to user
-	 * @param {string} notificationId - the notification's id
-	 * @param {string} recievedUserId - the recieved user's id
-	 * @return {Promise<Reciever>}
-	 */
-	async assign(
-		notificationId: string,
-		recievedUserId: string,
-	): Promise<Reciever> {
-		const fromNotification = await this.svc.notification.id(notificationId),
-			toUser = await this.svc.user.id(recievedUserId);
-
-		return this.save({ fromNotification, toUser });
 	}
 
 	/**
@@ -51,11 +36,9 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	/**
 	 * Read a notification
 	 * @param {string} recieverId - the reciever's id
-	 * @return {Promise<Reciever>}
 	 */
-	async read(recieverId: string): Promise<Reciever> {
+	async read(recieverId: string): Promise<void> {
 		await this.modify(recieverId, { isRead: true, readAt: new Date() });
-		return this.id(recieverId);
 	}
 
 	/**
@@ -63,16 +46,34 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 * @param {string[]} notificationsId - the notification's id
 	 * @return {Promise<Reciever[]>}
 	 */
-	readMany(notificationsId: string[]): Promise<Reciever[]> {
-		return Promise.all(notificationsId.map((id) => this.read(id)));
+	async readMany(notificationsId: string[]): Promise<void> {
+		await Promise.all(notificationsId.map((id) => this.read(id)));
 	}
 
+	// Abstract
 	/**
-	 * Modify reciever
-	 * @param {string} entityId - reciever's id
-	 * @param {DeepPartial<Reciever>} updatedEntity - modified reciever
+	 * Assign notification to user
+	 * @param {string} notificationId - the notification's id
+	 * @param {string} recievedUserId - the recieved user's id
+	 * @return {Promise<Reciever>}
 	 */
-	async modify(entityId: string, updatedEntity: DeepPartial<Reciever>) {
-		await this.update({ id: entityId }, updatedEntity);
+	async assign(
+		notificationId: string,
+		recievedUserId: string,
+	): Promise<Reciever> {
+		const fromNotification = await this.svc.notification.id(notificationId),
+			toUser = await this.svc.user.id(recievedUserId);
+
+		return this.save({ fromNotification, toUser });
+	}
+
+	public modify(
+		id: string,
+		update: DeepPartial<Reciever>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, IRecieverRelationshipsKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

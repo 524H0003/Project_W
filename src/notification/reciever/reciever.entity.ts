@@ -2,7 +2,6 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { Notification } from 'notification/notification.entity';
 import { IRecieverEntity } from './reciever.model';
-import { InterfaceCasting } from 'app/utils/utils';
 import { IRecieverInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';

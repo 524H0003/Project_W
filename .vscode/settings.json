@@ -60,97 +60,127 @@
 			"backgroundColor": "#00bfff",
 			"color": "#4b3621",
 			"isWholeLine": true,
-			"text": " Queries"
+			"text": "// Queries"
 		},
 		{
 			"backgroundColor": "#69359c",
 			"color": "#e3a857",
 			"isWholeLine": true,
-			"text": " Mutations"
+			"text": "// Mutations"
 		},
 		{
 			"backgroundColor": "#E4D6A7",
 			"color": "#1C110A",
 			"isWholeLine": true,
-			"text": " Relationships"
+			"text": "// Relationships"
 		},
 		{
 			"backgroundColor": "#CDE7B0",
 			"color": "#BE6E46",
 			"isWholeLine": true,
-			"text": " Infomations"
+			"text": "// Infomations"
 		},
 		{
 			"backgroundColor": "#FF3366",
 			"color": "#011627",
 			"isWholeLine": true,
-			"text": " Sensitive infomations"
+			"text": "// Sensitive infomations"
 		},
 		{
 			"backgroundColor": "#4464AD",
 			"color": "#FFC759",
 			"isWholeLine": true,
-			"text": " Methods"
+			"text": "// Methods"
 		},
 		{
 			"backgroundColor": "#420039",
 			"color": "#FFC1CF",
 			"isWholeLine": true,
-			"text": " Database requests"
+			"text": "// Database requests"
 		},
 		{
 			"backgroundColor": "#ECB0E1",
 			"color": "#A31621",
 			"isWholeLine": true,
-			"text": " Interfaces"
+			"text": "// Interfaces"
 		},
 		{
 			"backgroundColor": "#E94F37",
 			"color": "#F6F7EB",
 			"isWholeLine": true,
-			"text": " Enums"
+			"text": "// Enums"
 		},
 		{
 			"backgroundColor": "#A50104",
 			"color": "#FCBA04",
 			"isWholeLine": true,
-			"text": " Number.prototype"
+			"text": "// Number.prototype"
 		},
 		{
 			"backgroundColor": "#659157",
 			"color": "#FFCAB1",
 			"isWholeLine": true,
-			"text": " Array.prototype"
+			"text": "// Array.prototype"
 		},
 		{
 			"backgroundColor": "#022B3A",
 			"color": "#B89685",
 			"isWholeLine": true,
-			"text": " String.prototype"
+			"text": "// String.prototype"
 		},
 		{
 			"backgroundColor": "#FDFFFF",
 			"color": "#B10F2E",
 			"isWholeLine": true,
-			"text": " Global functions"
+			"text": "// Global functions"
 		},
 		{
 			"backgroundColor": "#E27396",
 			"color": "#7DDF64",
 			"isWholeLine": true,
-			"text": " Defines"
+			"text": "// Defines"
 		},
 		{
 			"backgroundColor": "#32021F",
 			"color": "#99E1D9",
 			"isWholeLine": true,
-			"text": " Embedded Entity"
+			"text": "// Embedded Entity"
 		},
 		{
 			"backgroundColor": "#FBFEF9",
 			"color": "#191923",
 			"isWholeLine": true,
-			"text": " Core Entity"
+			"text": "// Core Entity"
+		},
+		{
+			"backgroundColor": "#61E8E1",
+			"color": "#071E22",
+			"isWholeLine": true,
+			"text": "// Read"
+		},
+		{
+			"backgroundColor": "#E3C567",
+			"color": "#16302B",
+			"isWholeLine": true,
+			"text": "// Create"
+		},
+		{
+			"backgroundColor": "#8C1C13",
+			"color": "#D3D0CB",
+			"isWholeLine": true,
+			"text": "// Delete"
+		},
+		{
+			"backgroundColor": "#C6D4FF",
+			"color": "#14281D",
+			"isWholeLine": true,
+			"text": "// Update"
+		},
+		{
+			"backgroundColor": "#F4D06F",
+			"color": "#586BA4",
+			"isWholeLine": true,
+			"text": "// Abstract"
 		}
 	]
 }

@@ -64,7 +64,7 @@ export class AppController extends BaseController {
 		@GetRequest('hostname') hostname: string,
 	): Promise<UserRecieve> {
 		try {
-			await this.svc.student.signUp(body);
+			await this.svc.student.assign(body);
 		} catch (error) {
 			const { message } = error as ServerException;
 			switch (true) {

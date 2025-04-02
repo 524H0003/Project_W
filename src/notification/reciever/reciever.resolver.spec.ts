@@ -171,9 +171,9 @@ describe('readNotification', () => {
 					)
 				).readNotification,
 			{
-				exps: [{ type: 'toHaveProperty', params: ['isRead', true] }],
-				onFinish: async (result) => {
-					await execute(async () => (await svc.recie.id(result.id)).isRead, {
+				exps: [{ type: 'toThrow', not: true, params: [] }],
+				onFinish: async () => {
+					await execute(async () => (await svc.recie.id(reciever.id)).isRead, {
 						exps: [{ type: 'toEqual', params: [true] }],
 					});
 				},

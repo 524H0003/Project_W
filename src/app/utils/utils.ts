@@ -1,7 +1,7 @@
 /**
  * Casting object to interface
  */
-export class InterfaceCasting<T, K extends keyof T> {
+class InterfaceCasting<T, K extends keyof T> {
 	[key: string]: any;
 
 	/**
@@ -95,6 +95,29 @@ export function allImplement(decorator: MethodDecorator) {
 				);
 			}
 		}
+	};
+}
+
+/**
+ * Fix circular JSON
+ */
+export function censor(censor: any) {
+	var i = 0;
+
+	return function (key: any, value: any) {
+		if (
+			i !== 0 &&
+			typeof censor === 'object' &&
+			typeof value == 'object' &&
+			censor == value
+		)
+			return '[Circular]';
+
+		if (i >= 29) return '[Unknown]';
+
+		++i;
+
+		return value;
 	};
 }
 
@@ -319,6 +342,17 @@ declare global {
 		destiny: K,
 		property: U,
 	): void;
+
+	/**
+	 * Interface casting class
+	 */
+	class InterfaceCasting<T, K extends keyof T> {
+		constructor(input: T, get: readonly K[]);
+
+		static quick<T, K extends keyof T>(input: T, get: readonly K[]): T;
+
+		static delete<T, K extends keyof T>(input: T, get: readonly K[]): T;
+	}
 }
 
 /**
@@ -421,6 +455,7 @@ export const funcs = {
 		if (payload && Object.keys(payload).length)
 			destiny[property] = new entity(payload);
 	},
+	InterfaceCasting,
 };
 Object.assign(globalThis, funcs);
 // String.prototype

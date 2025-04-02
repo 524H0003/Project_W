@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
+import { IEventCreatorRelationshipKeys } from 'build/models';
 
 /**
  * Event creator service
@@ -22,6 +23,7 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 		super(repo, EventCreator);
 	}
 
+	// Abstract
 	/**
 	 * Assign event creator
 	 * @param {User} user - the user assign for event creator
@@ -30,15 +32,13 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 		return this.save({ user });
 	}
 
-	/**
-	 * Remove event creator
-	 * @param {DeepPartial<EventCreator>} criteria - deleting event creator
-	 */
-	async remove(criteria: DeepPartial<EventCreator>) {
-		const id =
-			(criteria.user as User).id || (await this.findOne(criteria)).user.id;
-
-		await this.delete({ user: { baseUser: { id } } });
-		await this.svc.user.remove(id);
+	public modify(
+		id: string,
+		update: DeepPartial<EventCreator>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, IEventCreatorRelationshipKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

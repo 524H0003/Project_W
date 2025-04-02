@@ -79,6 +79,7 @@
 		"adminjs": "^7.8.15",
 		"argon2": "^0.41.1",
 		"aws-sdk": "^2.1692.0",
+		"axios": "^1.8.4",
 		"cacheControl": "link:@apollo/server/plugin/cacheControl",
 		"cacheable": "^1.8.9",
 		"class-transformer": "^0.5.1",
@@ -103,6 +104,7 @@
 		"picocolors": "^1.1.1",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
+		"react-router": "^7.4.1",
 		"rxjs": "^7.8.1",
 		"smtp-tester": "^2.1.0",
 		"sqlite3": "^5.1.7",
@@ -177,7 +179,7 @@
 	"engines": {
 		"node": "23.x"
 	},
-	"packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b",
+	"packageManager": "pnpm@10.7.0",
 	"release": {
 		"branches": [
 			"master"

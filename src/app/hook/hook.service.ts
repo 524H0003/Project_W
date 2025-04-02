@@ -2,10 +2,11 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Hook } from './hook.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
 import { MetaData } from 'auth/guards';
 import { BaseUser } from 'user/base/baseUser.entity';
+import { IHookRelationshipsKeys } from 'build/models';
 
 /**
  * Hook service
@@ -22,6 +23,23 @@ export class HookService extends DatabaseRequests<Hook> {
 		super(repo, Hook);
 	}
 
+	/**
+	 * Validating hook
+	 * @param {string} signature - hook's signature
+	 * @param {MetaData} mtdt - client's metadata
+	 * @param {Hook} hook - recieved hook from client
+	 */
+	async validating(signature: string, mtdt: MetaData, hook: Hook) {
+		if (
+			hook.mtdt.toString() !== mtdt.toString() ||
+			signature !== hook.signature
+		)
+			throw new ServerException('Invalid', 'Hook', '');
+
+		await this.remove(hook.id);
+	}
+
+	// Abstract
 	/**
 	 * Assigning hook via email
 	 * @param {MetaData} mtdt - client's metadata
@@ -40,26 +58,11 @@ export class HookService extends DatabaseRequests<Hook> {
 	}
 
 	/**
-	 * Validating hook
-	 * @param {string} signature - hook's signature
-	 * @param {MetaData} mtdt - client's metadata
-	 * @param {Hook} hook - recieved hook from client
+	 * Modify hook
 	 */
-	async validating(signature: string, mtdt: MetaData, hook: Hook) {
-		if (
-			hook.mtdt.toString() !== mtdt.toString() ||
-			signature !== hook.signature
-		)
-			throw new ServerException('Invalid', 'Hook', '');
-
-		await this.delete({ id: hook.id });
-	}
-
-	/**
-	 * Removing hook
-	 * @param {string} id - hook id
-	 */
-	async remove(id: string) {
-		await this.delete({ id });
+	public modify(id: string, update: DeepPartial<Hook>): Promise<void> {
+		update = InterfaceCasting.delete(update, IHookRelationshipsKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update);
 	}
 }

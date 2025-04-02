@@ -8,7 +8,6 @@ import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { IUserEntity, IUserInfo, UserRole } from './user.model';
 import { AppService } from 'app/app.service';
-import { InterfaceCasting } from 'app/utils/utils';
 import { IUserRelationshipKeys } from 'build/models';
 
 /**
@@ -35,34 +34,21 @@ export class UserService extends DatabaseRequests<User> {
 		role,
 		password,
 	}: NonFunctionProperties<IUserEntity>): Promise<User> {
-		const assignedBaseUser = await this.svc.baseUser.assign(baseUser),
-			user = new User({ baseUser: assignedBaseUser, role, password });
-
-		return this.save(user);
+		return this.save({
+			baseUser: await this.svc.baseUser.assign(baseUser),
+			role,
+			password,
+		});
 	}
 
 	/**
 	 * Modify user
-	 * @param {string} entityId - user's id
-	 * @param {DeepPartial<User>} updatedEntity - modified user
 	 */
-	async modify(entityId: string, updatedEntity: DeepPartial<User>) {
-		await this.svc.baseUser.modify(entityId, updatedEntity.baseUser);
-		updatedEntity = InterfaceCasting.delete(
-			updatedEntity,
-			IUserRelationshipKeys,
-		);
-		if (!Object.keys(updatedEntity).length) return;
-		await this.update({ id: entityId }, updatedEntity);
-	}
-
-	/**
-	 * Remove user
-	 * @param {string} entityId - user's id
-	 */
-	async remove(entityId: string) {
-		await this.delete({ baseUser: { id: entityId } });
-		await this.svc.baseUser.remove(entityId);
+	async modify(id: string, update: DeepPartial<User>) {
+		await this.svc.baseUser.modify(id, update.baseUser);
+		update = InterfaceCasting.delete(update, IUserRelationshipKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update);
 	}
 
 	/**
@@ -87,8 +73,6 @@ export class UserService extends DatabaseRequests<User> {
 	 * @param {string} id - user id
 	 */
 	async info(id: string): Promise<{ user: IUserInfo }> {
-		if (!id) throw new ServerException('Invalid', 'ID', '');
-
 		const student = await this.svc.student.id(id),
 			employee = await this.svc.employee.id(id),
 			faculty = await this.svc.faculty.id(id);

@@ -43,19 +43,23 @@ export class RecieverResolver {
 	/**
 	 * Read notification
 	 */
-	@Mutation(() => Reciever) @Allow([UserRole.student]) readNotification(
-		@Args('input') input: ReadNotification,
+	@Mutation(() => Reciever) @Allow([UserRole.student]) async readNotification(
+		@Args('input') { recieverId }: ReadNotification,
 	) {
-		return this.svc.recie.read(input.recieverId);
+		await this.svc.recie.read(recieverId);
+		return this.svc.recie.id(recieverId);
 	}
 
 	/**
 	 * Read many notifications
 	 */
-	@Mutation(() => [Reciever]) @Allow([UserRole.student]) readNotificationMany(
-		@Args('input') input: ReadNotificationMany,
+	@Mutation(() => [Reciever])
+	@Allow([UserRole.student])
+	async readNotificationMany(
+		@Args('input') { recieversId }: ReadNotificationMany,
 	) {
-		return this.svc.recie.readMany(input.recieversId);
+		await this.svc.recie.readMany(recieversId);
+		return Promise.all(recieversId.map((i) => this.svc.recie.id(i)));
 	}
 
 	// Queries

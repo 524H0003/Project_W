@@ -3,7 +3,7 @@ import {
 	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
 import { BaseUser } from './baseUser.entity';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { IBaseUserEntity } from './baseUser.model';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -19,30 +19,6 @@ export class BaseUserService extends DatabaseRequests<BaseUser> {
 	}
 
 	/**
-	 * Assign new base user
-	 * @param {BaseUser} entity - assigning user
-	 * @param {SaveOptions} options - function's option
-	 * @return {Promise<BaseUser>}
-	 */
-	async assign(
-		entity: NonFunctionProperties<IBaseUserEntity>,
-		options?: SaveOptions,
-	): Promise<BaseUser> {
-		return this.save(entity, options);
-	}
-
-	/**
-	 * Modify new base user
-	 * @param {string} entityId - base user's id
-	 * @param {DeepPartial<BaseUser>} updatedEntity - modified base user
-	 */
-	async modify(entityId: string, updatedEntity: DeepPartial<BaseUser>) {
-		if (!updatedEntity) return;
-
-		await this.update({ id: entityId }, updatedEntity);
-	}
-
-	/**
 	 * Find by email
 	 * @param {string} input - the email address
 	 * @return {Promise<BaseUser>}
@@ -51,10 +27,22 @@ export class BaseUserService extends DatabaseRequests<BaseUser> {
 		return this.findOne({ cache: false, email: input.lower });
 	}
 
+	// Abstract
 	/**
-	 * Remove base user by id
+	 * Assign new base user
+	 * @param {BaseUser} entity - assigning user
+	 * @return {Promise<BaseUser>}
 	 */
-	remove(id: string) {
-		return this.delete({ id });
+	async assign(
+		entity: NonFunctionProperties<IBaseUserEntity>,
+	): Promise<BaseUser> {
+		return this.save(entity);
+	}
+
+	/**
+	 * Modify base user
+	 */
+	async modify(id: string, update: DeepPartial<BaseUser>): Promise<void> {
+		return this.update({ id }, update);
 	}
 }
