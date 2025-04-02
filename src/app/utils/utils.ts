@@ -457,7 +457,7 @@ export const funcs = {
 	},
 	InterfaceCasting,
 };
-Object.assign(global, funcs);
+Object.assign(globalThis, funcs);
 // String.prototype
 Object.defineProperty(String.prototype, 'toBase64Url', {
 	get: function () {
