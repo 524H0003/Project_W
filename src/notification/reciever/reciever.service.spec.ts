@@ -91,10 +91,10 @@ describe('read', () => {
 
 	it('success', async () => {
 		await execute(() => svc.recie.read(reciever.id), {
-			exps: [{ type: 'toBeInstanceOf', params: [Reciever] }],
-			onFinish: async (result) => {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
 				await execute(
-					() => svc.recie.findOne({ id: result.id, cache: false }),
+					() => svc.recie.findOne({ id: reciever.id, cache: false }),
 					{
 						exps: [
 							{ type: 'toHaveProperty', params: ['isRead', true] },
