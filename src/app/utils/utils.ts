@@ -455,9 +455,9 @@ export const funcs = {
 		if (payload && Object.keys(payload).length)
 			destiny[property] = new entity(payload);
 	},
+	InterfaceCasting,
 };
-Object.assign(globalThis, funcs);
-Object.assign(global, { InterfaceCasting });
+Object.assign(global, funcs);
 // String.prototype
 Object.defineProperty(String.prototype, 'toBase64Url', {
 	get: function () {

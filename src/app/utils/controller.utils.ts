@@ -6,6 +6,7 @@ import { UserAuthencation } from 'user/user.dto';
 import { Hook } from 'app/hook/hook.entity';
 import { MetaData } from 'auth/guards';
 import { BaseUserEmail } from 'user/base/baseUser.dto';
+import 'app/utils/utils';
 
 /**
  * Base controller
