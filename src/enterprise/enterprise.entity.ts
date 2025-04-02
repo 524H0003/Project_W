@@ -83,7 +83,7 @@ export class Enterprise extends ParentId implements IEnterpriseEntity {
 	/**
 	 * Get parent's id
 	 */
-	get pid(): string {
+	get pid() {
 		return this.baseUser.id;
 	}
 }

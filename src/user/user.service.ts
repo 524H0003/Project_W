@@ -4,12 +4,10 @@ import {
 	DatabaseRequests,
 	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
-import { DeepPartial, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { IUserEntity, IUserInfo, UserRole } from './user.model';
 import { AppService } from 'app/app.service';
-import { InterfaceCasting } from 'app/utils/utils';
-import { IUserRelationshipKeys } from 'build/models';
 
 /**
  * Services for user
@@ -42,30 +40,6 @@ export class UserService extends DatabaseRequests<User> {
 	}
 
 	/**
-	 * Modify user
-	 * @param {string} entityId - user's id
-	 * @param {DeepPartial<User>} updatedEntity - modified user
-	 */
-	async modify(entityId: string, updatedEntity: DeepPartial<User>) {
-		await this.svc.baseUser.modify(entityId, updatedEntity.baseUser);
-		updatedEntity = InterfaceCasting.delete(
-			updatedEntity,
-			IUserRelationshipKeys,
-		);
-		if (!Object.keys(updatedEntity).length) return;
-		await this.update({ id: entityId }, updatedEntity);
-	}
-
-	/**
-	 * Remove user
-	 * @param {string} entityId - user's id
-	 */
-	async remove(entityId: string) {
-		await this.delete({ baseUser: { id: entityId } });
-		await this.svc.baseUser.remove(entityId);
-	}
-
-	/**
 	 * Find user with email
 	 * @param {string} input - user's email
 	 */
@@ -87,8 +61,6 @@ export class UserService extends DatabaseRequests<User> {
 	 * @param {string} id - user id
 	 */
 	async info(id: string): Promise<{ user: IUserInfo }> {
-		if (!id) throw new ServerException('Invalid', 'ID', '');
-
 		const student = await this.svc.student.id(id),
 			employee = await this.svc.employee.id(id),
 			faculty = await this.svc.faculty.id(id);

@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Event } from './event.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository, SaveOptions } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
 
 /**
@@ -26,27 +26,7 @@ export class EventService extends DatabaseRequests<Event> {
 	 * @param {SaveOptions} options - function's option
 	 * @return {Promise<Event>}
 	 */
-	async assign(
-		entity: DeepPartial<Event>,
-		options?: SaveOptions,
-	): Promise<Event> {
-		return this.save(entity, options);
-	}
-
-	/**
-	 * Modify event
-	 * @param {string} entityId - event's id
-	 * @param {DeepPartial<Event>} updatedEntity - modified event
-	 */
-	async modify(entityId: string, updatedEntity: DeepPartial<Event>) {
-		await this.update({ id: entityId }, updatedEntity);
-	}
-
-	/**
-	 * Remove event
-	 * @param {string} entityId - event's id
-	 */
-	async remove(entityId: string) {
-		await this.delete({ id: entityId });
+	async assign(entity: DeepPartial<Event>): Promise<Event> {
+		return this.save(entity);
 	}
 }

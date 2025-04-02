@@ -52,14 +52,6 @@ export class HookService extends DatabaseRequests<Hook> {
 		)
 			throw new ServerException('Invalid', 'Hook', '');
 
-		await this.delete({ id: hook.id });
-	}
-
-	/**
-	 * Removing hook
-	 * @param {string} id - hook id
-	 */
-	async remove(id: string) {
-		await this.delete({ id });
+		await this.remove(hook.id);
 	}
 }

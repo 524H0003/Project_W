@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Reciever } from './reciever.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
 
 @Injectable()
@@ -51,11 +51,9 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	/**
 	 * Read a notification
 	 * @param {string} recieverId - the reciever's id
-	 * @return {Promise<Reciever>}
 	 */
-	async read(recieverId: string): Promise<Reciever> {
+	async read(recieverId: string): Promise<void> {
 		await this.modify(recieverId, { isRead: true, readAt: new Date() });
-		return this.id(recieverId);
 	}
 
 	/**
@@ -63,16 +61,7 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 	 * @param {string[]} notificationsId - the notification's id
 	 * @return {Promise<Reciever[]>}
 	 */
-	readMany(notificationsId: string[]): Promise<Reciever[]> {
-		return Promise.all(notificationsId.map((id) => this.read(id)));
-	}
-
-	/**
-	 * Modify reciever
-	 * @param {string} entityId - reciever's id
-	 * @param {DeepPartial<Reciever>} updatedEntity - modified reciever
-	 */
-	async modify(entityId: string, updatedEntity: DeepPartial<Reciever>) {
-		await this.update({ id: entityId }, updatedEntity);
+	async readMany(notificationsId: string[]): Promise<void> {
+		await Promise.all(notificationsId.map((id) => this.read(id)));
 	}
 }

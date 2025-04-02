@@ -3,7 +3,7 @@ import { extname, join } from 'path';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
@@ -74,7 +74,7 @@ export class FileService extends DatabaseRequests<File> {
 	 * @param {Buffer} file.buffer - buffer of file
 	 * @param {NodeJS.ReadableStream} file.stream - stream of file
 	 * @param {string} file.originalname - name of file
-	 * @param {User} userId - the file's assigner id
+	 * @param {string} userId - the file's assigner id
 	 * @param {string} serverFileName - name of file to assign as server file
 	 * @return {Promise<File>}
 	 */
@@ -119,13 +119,6 @@ export class FileService extends DatabaseRequests<File> {
 			return this.svc.aws.download(filename);
 
 		throw new ServerException('Forbidden', 'File', 'Access');
-	}
-
-	/**
-	 * Remove file on server
-	 */
-	async remove(criteria: FindOptionsWhere<File>) {
-		await super.delete(criteria);
 	}
 
 	/**

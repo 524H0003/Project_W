@@ -51,7 +51,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 			mtdt = metaData;
 
-			await this.update({ id: prev }, { owner: null, metaData: {} }, true);
+			await this.modify(prev, { owner: null, metaData: {} }, true);
 
 			return prev;
 		};
@@ -71,7 +71,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		const { prev } = await this.id(blocId),
 			{ id } = await this.findContinuousBloc(blocId);
 
-		await this.delete({ id: blocId });
+		await this.remove(blocId);
 
 		await this.removeSnake(prev);
 		await this.removeSnake(id);

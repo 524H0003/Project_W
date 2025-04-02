@@ -199,7 +199,7 @@ export class User extends ParentId implements IUserEntity {
 	/**
 	 * Get parent's id
 	 */
-	get pid(): string {
+	get pid() {
 		return this.baseUser.id;
 	}
 

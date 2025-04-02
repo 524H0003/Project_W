@@ -5,9 +5,9 @@ import {
 	FindOptionsWhere,
 	PrimaryGeneratedColumn,
 	Repository,
-	SaveOptions,
 	PrimaryColumn,
 	BeforeInsert,
+  ObjectId,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
@@ -83,7 +83,7 @@ export class ParentId extends BaseEntity {
 	/**
 	 * Parent identifier
 	 */
-	@Field() @PrimaryColumn() id: string;
+	@Field() @PrimaryColumn('uuid') id: string;
 
 	/**
 	 * Set id before insert
@@ -113,23 +113,11 @@ export class ParentId extends BaseEntity {
 /**
  * Generic database requests
  */
-export class DatabaseRequests<T extends TypeOrmBaseEntity> {
+export abstract class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	/**
 	 * Entity relationships
 	 */
 	private relations: string[];
-
-	/**
-	 * Initiate database for entity
-	 */
-	constructor(
-		protected repo: Repository<T>,
-		private ctor: new (...args: any[]) => T,
-	) {
-		this.relations = [].concat(
-			...this.repo.metadata.relations.map((i) => this.exploreEntityMetadata(i)),
-		);
-	}
 
 	/**
 	 * Exploring entity relationships
@@ -162,6 +150,31 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 				),
 			),
 		);
+	}
+
+	/**
+	 * Initiate database for entity
+	 */
+	constructor(
+		protected repo: Repository<T>,
+		private ctor: new (...args: any[]) => T,
+	) {
+		this.relations = [].concat(
+			...this.repo.metadata.relations.map((i) => this.exploreEntityMetadata(i)),
+		);
+	}
+
+	// Read
+	/**
+	 * Get entity from id
+	 * @param {string} id - the entity's id
+	 * @return {Promise<T>} found entity
+	 */
+	id(id: string): Promise<T> {
+		return this.findOne({
+			id,
+			cache: false,
+		} as unknown as FindOptionsWithCustom<T>);
 	}
 
 	/**
@@ -221,59 +234,36 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 		return new this.ctor(result);
 	}
 
-	/**
-	 * Saving entities
-	 * @param {NonFunctionProperties<T>[]} entities - the saving entity
-	 * @param {SaveOptions} options - function's option
-	 */
-	protected saveMany(
-		entities: NonFunctionProperties<T>[],
-		options?: SaveOptions,
-	): Promise<T[]> {
-		return this.repo.save(entities as DeepPartial<T>[], options);
-	}
-
+	// Create
 	/**
 	 * Saving an entity
 	 * @param {NonFunctionProperties<T>} entity - the saving entity
-	 * @param {SaveOptions} options - function's option
 	 */
 	protected async save(
 		entity: DeepPartial<NonFunctionProperties<T>>,
-		options?: SaveOptions,
 	): Promise<T> {
-		const { ...rest } = options || {},
-			result = await this.repo.save(new this.ctor(entity), rest);
+		const result = await this.repo.save(new this.ctor(entity));
 
 		return new this.ctor(result);
 	}
 
-	/**
-	 * Assign an entity
-	 */
-	// eslint-disable-next-line tsEslint/no-unused-vars
-	assign(...args: any): Promise<T> {
-		throw new ServerException('Invalid', 'Method', 'Implementation');
-	}
+	abstract assign(...args: any[]): void;
 
-	/**
-	 * Deleting an entity
-	 * @param {FindOptionsWhere<T>} criteria - the deleting entity
-	 */
-	protected async delete(criteria: FindOptionsWhere<T>) {
-		await this.repo.delete(criteria);
-	}
-
+	// Update
 	/**
 	 * Push an entity to field's array
 	 * @param {string} id - the id of entity
 	 * @param {K} field - the pushing field
 	 * @param {NonArray<T[K]>} entity - the push entity
 	 */
-	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
+	async push<K extends keyof T>(
+		id: string,
+		field: K,
+		entity: NonArray<T[K]>,
+	) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
-		return this.save(obj);
+		return this.modify(id, obj);
 	}
 
 	/**
@@ -285,53 +275,50 @@ export class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	async pushMany<K extends keyof T>(id: string, field: K, entities: T[K]) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entities);
-		return this.save(obj);
+		return this.modify(id, obj);
 	}
 
 	/**
-	 * Removing an entity
+	 * Modify entity by identifier string
+	 * @param {string} id - the target entity indentifier string
+	 * @param {DeepPartial<T>} updatedEntity - function's option
 	 */
-	// eslint-disable-next-line tsEslint/no-unused-vars
-	remove(...args: any) {
-		throw new ServerException('Invalid', 'Method', 'Implementation');
-	}
-
-	/**
-	 * Updating entity
-	 * @param {DeepPartial<T>} entity - the updating entity
-	 * @param {QueryDeepPartialEntity<T>} updatedEntity - function's option
-	 */
-	protected async update(
-		entity: DeepPartial<T>,
-		updatedEntity?: QueryDeepPartialEntity<T>,
+	async modify(
+		id: string,
+		updatedEntity: DeepPartial<T>,
 		raw: boolean = false,
 	) {
 		await this.repo.update(
-			entity as FindOptionsWhere<T>,
-			raw
+			new ObjectId(id),
+			(raw
 				? updatedEntity
-				: (new this.ctor(updatedEntity) as QueryDeepPartialEntity<T>),
+				: new this.ctor(updatedEntity)) as QueryDeepPartialEntity<T>,
+		);
+	}
+	/**
+	 * Updating entity
+	 * @param {DeepPartial<T>} targetEntity - the target entity indentifier string
+	 * @param {DeepPartial<T>} updatedEntity - function's option
+	 */
+	async update(
+		targetEntity: FindOptionsWhere<T>,
+		updatedEntity: DeepPartial<T>,
+		raw: boolean = false,
+	) {
+		await this.repo.update(
+			targetEntity,
+			(raw
+				? updatedEntity
+				: new this.ctor(updatedEntity)) as QueryDeepPartialEntity<T>,
 		);
 	}
 
+	// Delete
 	/**
-	 * Modifying entity
+	 * Removing an entity by identifier string
+	 * @param {string} id - the entity identifier string
 	 */
-	// eslint-disable-next-line tsEslint/no-unused-vars
-	modify(...args: any): Promise<void> {
-		throw new ServerException('Fatal', 'Method', 'Implementation');
-	}
-
-	/**
-	 * Get entity from id
-	 * @param {string} id - the entity's id
-	 * @return {Promise<T>} found entity
-	 */
-	id(id: string): Promise<T> {
-		if (!id) throw new ServerException('Invalid', 'ID', '');
-		return this.findOne({
-			id,
-			cache: false,
-		} as unknown as FindOptionsWithCustom<T>);
+	async remove(id: string): Promise<void> {
+		await this.repo.delete(new ObjectId(id));
 	}
 }

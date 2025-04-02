@@ -31,7 +31,7 @@ export class StudentService extends DatabaseRequests<Student> {
 	 * @param {IStudentSignUp} input - the sign up form
 	 * @return {Promise<void>}
 	 */
-	async signUp({
+	async assign({
 		email,
 	}: Required<Pick<IStudentSignUp, 'email'>>): Promise<void> {
 		const existedUser = await this.svc.baseUser.email(email);
