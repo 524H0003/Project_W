@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
+import { InterfaceCasting } from './utils';
 
 /**
  * Modified find option
@@ -48,6 +49,10 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
 	}
 
 	abstract id: string;
+
+	constructor(public relationshipsKey: readonly string[]) {
+		super();
+	}
 }
 
 /**
@@ -55,13 +60,6 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
  */
 @ObjectType()
 export class GeneratedId extends BaseEntity {
-	/**
-	 * Entity initiation
-	 */
-	constructor() {
-		super();
-	}
-
 	// Sensitive Infomations
 	/**
 	 * Unique identifier
@@ -74,13 +72,6 @@ export class GeneratedId extends BaseEntity {
  */
 @ObjectType()
 export class ParentId extends BaseEntity {
-	/**
-	 * Entity initiation
-	 */
-	constructor() {
-		super();
-	}
-
 	/**
 	 * Parent identifier
 	 */
@@ -157,7 +148,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * Initiate database for entity
 	 */
 	constructor(
-		protected repo: Repository<T>,
+		private repo: Repository<T>,
 		private ctor: new (...args: any[]) => T,
 	) {
 		this.relations = [].concat(
@@ -291,6 +282,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 			raw,
 		);
 	}
+
 	/**
 	 * Updating entity
 	 * @param {DeepPartial<T>} targetEntity - the target entity indentifier string
@@ -301,6 +293,12 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 		updatedEntity: DeepPartial<T>,
 		raw: boolean = false,
 	) {
+		const remaining = InterfaceCasting.quick(
+			updatedEntity,
+			(this.ctor as unknown as T).relationshipsKey as unknown as any,
+		);
+		if (Object.keys(remaining).length)
+			throw new ServerException('Invalid', 'Entity', '');
 		await this.repo.update(
 			targetEntity,
 			(raw

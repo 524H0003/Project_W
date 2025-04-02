@@ -5,6 +5,7 @@ import { Event } from 'event/event.entity';
 import { ITagEntity } from './tag.model';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { CacheControl } from 'app/graphql/graphql.decorator';
+import { ITagRelationshipsKeys } from 'build/models';
 
 /**
  * Tag entity
@@ -18,7 +19,7 @@ export class EventTag extends GeneratedId implements ITagEntity {
 	 * @param {ITagInfo} input - entity input
 	 */
 	constructor(input: NonFunctionProperties<ITagEntity>) {
-		super();
+		super(ITagRelationshipsKeys);
 
 		if (input) Object.assign(this, input);
 	}

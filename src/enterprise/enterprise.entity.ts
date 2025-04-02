@@ -6,7 +6,10 @@ import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IEnterpriseInfoKeys } from 'build/models';
+import {
+	IEnterpriseInfoKeys,
+	IEnterpriseRelationshipsKeys,
+} from 'build/models';
 import { BaseUser } from 'user/base/baseUser.entity';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
@@ -22,7 +25,7 @@ export class Enterprise extends ParentId implements IEnterpriseEntity {
 	 * @param {NonFunctionProperties<IEnterpriseEntity>} payload - the infomations
 	 */
 	constructor(payload: NonFunctionProperties<IEnterpriseEntity>) {
-		super();
+		super(IEnterpriseRelationshipsKeys);
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IEnterpriseInfoKeys));

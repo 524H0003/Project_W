@@ -9,6 +9,7 @@ import {
 	IUserAuthenticationKeys,
 	IUserInfoKeys,
 	IUserRecieveKeys,
+	IUserRelationshipKeys,
 } from 'build/models';
 import {
 	BeforeInsert,
@@ -49,7 +50,7 @@ export class User extends ParentId implements IUserEntity {
 	 * @param {NonFunctionProperties<IUserEntity>} payload - the user's infomations
 	 */
 	constructor(payload: NonFunctionProperties<IUserEntity>) {
-		super();
+		super(IUserRelationshipKeys);
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(

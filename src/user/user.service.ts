@@ -4,10 +4,12 @@ import {
 	DatabaseRequests,
 	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { IUserEntity, IUserInfo, UserRole } from './user.model';
 import { AppService } from 'app/app.service';
+import { InterfaceCasting } from 'app/utils/utils';
+import { IUserRelationshipKeys } from 'build/models';
 
 /**
  * Services for user
@@ -33,10 +35,26 @@ export class UserService extends DatabaseRequests<User> {
 		role,
 		password,
 	}: NonFunctionProperties<IUserEntity>): Promise<User> {
-		const assignedBaseUser = await this.svc.baseUser.assign(baseUser),
-			user = new User({ baseUser: assignedBaseUser, role, password });
+		return this.save({
+			baseUser: await this.svc.baseUser.assign(baseUser),
+			role,
+			password,
+		});
+	}
 
-		return this.save(user);
+	/**
+	 * Modify user
+	 * @param {string} entityId - user's id
+	 * @param {DeepPartial<User>} updatedEntity - modified user
+	 */
+	async modify(entityId: string, updatedEntity: DeepPartial<User>) {
+		await this.svc.baseUser.modify(entityId, updatedEntity.baseUser);
+		updatedEntity = InterfaceCasting.delete(
+			updatedEntity,
+			IUserRelationshipKeys,
+		);
+		if (!Object.keys(updatedEntity).length) return;
+		await this.modify(entityId, updatedEntity);
 	}
 
 	/**

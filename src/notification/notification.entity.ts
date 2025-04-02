@@ -7,7 +7,10 @@ import {
 	NotificationType,
 } from './notification.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { INotificationInfoKeys } from 'build/models';
+import {
+	INotificationInfoKeys,
+	INotificationRelationshipKeys,
+} from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { GeneratedId } from 'app/utils/typeorm.utils';
 import { CacheControl } from 'app/graphql/graphql.decorator';
@@ -24,7 +27,7 @@ export class Notification extends GeneratedId implements INotificationEntity {
 	 * @param {INotificationInfo} input - entity input
 	 */
 	constructor(input: INotificationInfo) {
-		super();
+		super(INotificationRelationshipKeys);
 
 		if (input) {
 			Object.assign(this, InterfaceCasting.quick(input, INotificationInfoKeys));

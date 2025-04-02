@@ -4,7 +4,7 @@ import { BlackBox } from 'app/utils/model.utils';
 import { MetaData } from 'auth/guards';
 import { InterfaceCasting } from 'app/utils/utils';
 import { IHookEntity } from './hook.model';
-import { IHookInfoKeys } from 'build/models';
+import { IHookInfoKeys, IHookRelationshipsKeys } from 'build/models';
 import { BaseUser } from 'user/base/baseUser.entity';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
@@ -19,7 +19,7 @@ export class Hook extends GeneratedId implements IHookEntity {
 	 * @param {NonFunctionProperties<IHookEntity>} payload - the hook's infomations
 	 */
 	constructor(payload: NonFunctionProperties<IHookEntity>) {
-		super();
+		super(IHookRelationshipsKeys);
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IHookInfoKeys));
