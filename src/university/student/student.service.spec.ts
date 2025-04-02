@@ -19,7 +19,7 @@ describe('StudentService', () => {
 		student = Student.test(fileName);
 
 		await execute(() => svc.student.assign({ ...student.user.baseUser }), {
-			exps: [{ type: 'toThrow', params: [err('Success', 'User', 'SignUp')] }],
+			exps: [{ type: 'toBeInstanceOf', params: [Student] }],
 		});
 	});
 
