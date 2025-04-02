@@ -42,10 +42,12 @@ export type NonArray<T> = T extends (infer U)[] ? U : T;
 /**
  * Server entity base
  */
-export class BaseEntity extends TypeOrmBaseEntity {
+export abstract class BaseEntity extends TypeOrmBaseEntity {
 	isNull() {
 		return Object.keys(this).length == 0;
 	}
+
+	abstract id: string;
 }
 
 /**
@@ -82,7 +84,7 @@ export class ParentId extends BaseEntity {
 	/**
 	 * Parent identifier
 	 */
-	@Field() @PrimaryColumn('uuid') id: string;
+	@Field() @PrimaryColumn() id: string;
 
 	/**
 	 * Set id before insert
@@ -112,7 +114,7 @@ export class ParentId extends BaseEntity {
 /**
  * Generic database requests
  */
-export abstract class DatabaseRequests<T extends TypeOrmBaseEntity> {
+export abstract class DatabaseRequests<T extends BaseEntity> {
 	/**
 	 * Entity relationships
 	 */
@@ -283,11 +285,10 @@ export abstract class DatabaseRequests<T extends TypeOrmBaseEntity> {
 		updatedEntity: DeepPartial<T>,
 		raw: boolean = false,
 	) {
-		await this.repo.update(
+		await this.update(
 			{ id } as unknown as FindOptionsWhere<T>,
-			(raw
-				? updatedEntity
-				: new this.ctor(updatedEntity)) as QueryDeepPartialEntity<T>,
+			updatedEntity,
+			raw,
 		);
 	}
 	/**

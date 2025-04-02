@@ -2,6 +2,7 @@ import { AppService } from 'app/app.service';
 import { User } from './user.entity';
 import { execute, initJest } from 'app/utils/test.utils';
 import { UserRole } from './user.model';
+import { it } from '@jest/globals';
 
 const fileName = curFile(__filename);
 
