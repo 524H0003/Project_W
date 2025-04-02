@@ -15,6 +15,7 @@ import {
 	BeforeUpdate,
 	Column,
 	Entity,
+	JoinColumn,
 	OneToMany,
 	OneToOne,
 } from 'typeorm';
@@ -79,6 +80,7 @@ export class User extends ParentId implements IUserEntity {
 	 * Base user
 	 */
 	@OneToOne(() => BaseUser, { eager: true, onDelete: 'CASCADE' })
+	@JoinColumn()
 	baseUser: BaseUser;
 
 	@Field() private name: string;
