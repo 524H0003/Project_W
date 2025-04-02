@@ -2,9 +2,10 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { EventTag } from './tag.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
 import { ITagInfo } from './tag.model';
+import { ITagRelationshipsKeys } from 'build/models';
 
 /**
  * Event's tag service
@@ -22,6 +23,18 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 	}
 
 	/**
+	 * Attach tag to event
+	 * @param {ITagInfo} tag - tag's infomations
+	 * @param {string} eventId - event's id to assign tag to
+	 */
+	async attach(tag: ITagInfo, eventId: string) {
+		const assignedTag = await this.svc.eventTag.assign(tag);
+		await this.svc.event.push(eventId, 'tags', assignedTag);
+		return this.id(assignedTag.id);
+	}
+
+	// Abstract
+	/**
 	 * Create tag
 	 * @param {ITagInfo} input - tag's infomations
 	 */
@@ -36,14 +49,13 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 		return this.save({ name: input.name });
 	}
 
-	/**
-	 * Attach tag to event
-	 * @param {ITagInfo} tag - tag's infomations
-	 * @param {string} eventId - event's id to assign tag to
-	 */
-	async attach(tag: ITagInfo, eventId: string) {
-		const assignedTag = await this.svc.eventTag.assign(tag);
-		await this.svc.event.push(eventId, 'tags', assignedTag);
-		return this.id(assignedTag.id);
+	public modify(
+		id: string,
+		update: DeepPartial<EventTag>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, ITagRelationshipsKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { Bloc } from './bloc.entity';
 import { User } from 'user/user.entity';
 import { MetaData } from 'auth/guards';
 import { RequireOnlyOne } from 'app/utils/model.utils';
+import { IBlocRelationshipsKeys } from 'build/models';
 
 /**
  * Bloc identifier
@@ -36,6 +37,47 @@ export class BlocService extends DatabaseRequests<Bloc> {
 	}
 
 	/**
+	 * Remove snake by id
+	 * @param {string} blocId - removing bloc id
+	 */
+	async removeSnake(blocId: string) {
+		if (!blocId) return;
+
+		const { prev } = await this.id(blocId),
+			{ id } = await this.findContinuousBloc(blocId);
+
+		await this.remove(blocId);
+
+		await this.removeSnake(prev);
+		await this.removeSnake(id);
+	}
+
+	/**
+	 * Issuing current bloc
+	 * @param {object} identifier - bloc indentifier
+	 */
+	async issue({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
+		return this.update({ hash, id }, { lastIssue: currentTime() });
+	}
+
+	/**
+	 * Find continuous bloc
+	 * @param {string} id - current bloc id
+	 */
+	async findContinuousBloc(id: string) {
+		return this.findOne({ cache: false, prev: id });
+	}
+
+	/**
+	 * Find bloc by hash
+	 * @param {string} hash - current bloc hash
+	 */
+	async findBlocByHash(hash: string) {
+		return this.findOne({ hash, cache: false });
+	}
+
+	// Abstract
+	/**
 	 * Assign new bloc
 	 * @param {User} owner - the owner of bloc id
 	 * @param {string} prev - previous bloc id
@@ -61,43 +103,13 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		return this.save(bloc);
 	}
 
-	/**
-	 * Remove snake by id
-	 * @param {string} blocId - removing bloc id
-	 */
-	async removeSnake(blocId: string) {
-		if (!blocId) return;
-
-		const { prev } = await this.id(blocId),
-			{ id } = await this.findContinuousBloc(blocId);
-
-		await this.remove(blocId);
-
-		await this.removeSnake(prev);
-		await this.removeSnake(id);
-	}
-
-	/**
-	 * Issuing current bloc
-	 * @param {object} identifier - bloc indentifier
-	 */
-	async issue({ id, hash }: RequireOnlyOne<IdOrHash, 'hash' | 'id'>) {
-		await this.update({ hash, id }, { lastIssue: currentTime() });
-	}
-
-	/**
-	 * Find continuous bloc
-	 * @param {string} id - current bloc id
-	 */
-	async findContinuousBloc(id: string) {
-		return this.findOne({ cache: false, prev: id });
-	}
-
-	/**
-	 * Find bloc by hash
-	 * @param {string} hash - current bloc hash
-	 */
-	async findBlocByHash(hash: string) {
-		return this.findOne({ hash, cache: false });
+	public modify(
+		id: string,
+		update: DeepPartial<Bloc>,
+		raw: boolean = false,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, IBlocRelationshipsKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

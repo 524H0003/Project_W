@@ -3,7 +3,7 @@ import { extname, join } from 'path';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +12,7 @@ import { FileUpload } from 'graphql-upload-ts';
 import { createHmac } from 'node:crypto';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { RequireOnlyOneOptionalRest } from 'app/utils/model.utils';
+import { IFileRelationshipKeys } from 'build/models';
 
 /**
  * Convert a stream to buffer
@@ -33,6 +34,11 @@ async function stream2buffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
  */
 @Injectable()
 export class FileService extends DatabaseRequests<File> {
+	/**
+	 * Server file regular expression
+	 */
+	private serverFilesReg = /^[^.]+\.server\.[^.]+$/;
+
 	/**
 	 * Initiate file service
 	 */
@@ -60,51 +66,6 @@ export class FileService extends DatabaseRequests<File> {
 						);
 					} catch {}
 				}
-		});
-	}
-
-	/**
-	 * Server file regular expression
-	 */
-	private serverFilesReg = /^[^.]+\.server\.[^.]+$/;
-
-	/**
-	 * Assign file to server
-	 * @param {MulterFile} file - the file to assign
-	 * @param {Buffer} file.buffer - buffer of file
-	 * @param {NodeJS.ReadableStream} file.stream - stream of file
-	 * @param {string} file.originalname - name of file
-	 * @param {string} userId - the file's assigner id
-	 * @param {string} serverFileName - name of file to assign as server file
-	 * @return {Promise<File>}
-	 */
-	async assign(
-		{
-			buffer,
-			stream,
-			originalname,
-		}:
-			| (RequireOnlyOneOptionalRest<MulterFile, 'stream' | 'buffer'> &
-					Required<Pick<MulterFile, 'originalname'>>)
-			| MulterFile,
-		userId: string,
-		serverFileName?: string,
-	): Promise<File> {
-		buffer = buffer || (await stream2buffer(stream));
-
-		if (!buffer) return null;
-
-		const title = originalname,
-			path = serverFileName
-				? serverFileName + `.server${extname(title)}`
-				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(buffer).digest('base64url')}${extname(title)}`;
-
-		await this.svc.aws.upload(path, buffer);
-
-		return this.save({
-			path,
-			title,
-			fileCreatedBy: userId ? { id: userId } : null,
 		});
 	}
 
@@ -161,5 +122,56 @@ export class FileService extends DatabaseRequests<File> {
 		};
 
 		return uploadFile;
+	}
+
+	// Abstract
+	/**
+	 * Assign file to server
+	 * @param {MulterFile} file - the file to assign
+	 * @param {Buffer} file.buffer - buffer of file
+	 * @param {NodeJS.ReadableStream} file.stream - stream of file
+	 * @param {string} file.originalname - name of file
+	 * @param {string} userId - the file's assigner id
+	 * @param {string} serverFileName - name of file to assign as server file
+	 * @return {Promise<File>}
+	 */
+	async assign(
+		{
+			buffer,
+			stream,
+			originalname,
+		}:
+			| (RequireOnlyOneOptionalRest<MulterFile, 'stream' | 'buffer'> &
+					Required<Pick<MulterFile, 'originalname'>>)
+			| MulterFile,
+		userId: string,
+		serverFileName?: string,
+	): Promise<File> {
+		buffer = buffer || (await stream2buffer(stream));
+
+		if (!buffer) return null;
+
+		const title = originalname,
+			path = serverFileName
+				? serverFileName + `.server${extname(title)}`
+				: `${createHmac('sha256', this.cfg.get('SERVER_SECRET')).update(buffer).digest('base64url')}${extname(title)}`;
+
+		await this.svc.aws.upload(path, buffer);
+
+		return this.save({
+			path,
+			title,
+			fileCreatedBy: userId ? { id: userId } : null,
+		});
+	}
+
+	public modify(
+		id: string,
+		update: DeepPartial<File>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, IFileRelationshipKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

@@ -4,12 +4,13 @@ import {
 	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
 import { Faculty } from './faculty.entity';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validation } from 'app/utils/auth.utils';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IFacultyEntity } from './faculty.model';
+import { IFacultyRelationshipKeys } from 'build/models';
 
 /**
  * Faculty service
@@ -26,6 +27,7 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		super(repo, Faculty);
 	}
 
+	// Abstract
 	/**
 	 * Create faculty
 	 */
@@ -49,5 +51,15 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 
 			return this.save({ eventCreator, department });
 		});
+	}
+
+	public modify(
+		id: string,
+		update: DeepPartial<Faculty>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, IFacultyRelationshipKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

@@ -157,19 +157,21 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * @param {string} id - the entity's id
 	 * @return {Promise<T>} found entity
 	 */
-	id(id: string): Promise<T> {
+	public readonly id = (id: string): Promise<T> => {
 		return this.findOne({
 			id,
 			cache: false,
 		} as unknown as FindOptionsWithCustom<T>);
-	}
+	};
 
 	/**
 	 * Finding objects
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T[]>} array of found objects
 	 */
-	async find(options?: FindOptionsWithCustom<T>): Promise<T[]> {
+	public readonly find = async (
+		options?: FindOptionsWithCustom<T>,
+	): Promise<T[]> => {
 		const {
 				deep = 1,
 				relations = [''],
@@ -194,14 +196,16 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 				cache,
 			})
 		).map((i) => new this.ctor(i));
-	}
+	};
 
 	/**
 	 * Finding an entity
 	 * @param {FindOptionsWithCustom<T>} options - function's option
 	 * @return {Promise<T>}
 	 */
-	async findOne(options?: FindOptionsWithCustom<T>): Promise<T> {
+	public readonly findOne = async (
+		options?: FindOptionsWithCustom<T>,
+	): Promise<T> => {
 		const {
 				deep = 1,
 				relations = [''],
@@ -219,22 +223,22 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 				cache,
 			});
 		return new this.ctor(result);
-	}
+	};
 
 	// Create
 	/**
 	 * Saving an entity
 	 * @param {NonFunctionProperties<T>} entity - the saving entity
 	 */
-	protected async save(
+	protected readonly save = async (
 		entity: DeepPartial<NonFunctionProperties<T>>,
-	): Promise<T> {
+	): Promise<T> => {
 		const result = await this.repo.save(new this.ctor(entity));
 
 		return new this.ctor(result);
-	}
+	};
 
-	abstract assign(...args: any[]): void;
+	public abstract assign(...args: any[]): Promise<T>;
 
 	// Update
 	/**
@@ -243,11 +247,15 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {NonArray<T[K]>} entity - the push entity
 	 */
-	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
+	public readonly push = async <K extends keyof T>(
+		id: string,
+		field: K,
+		entity: NonArray<T[K]>,
+	) => {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
 		return this.save(obj);
-	}
+	};
 
 	/**
 	 * Push many entities to field's array
@@ -255,53 +263,53 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {T[K]} entities - the push entities
 	 */
-	async pushMany<K extends keyof T>(id: string, field: K, entities: T[K]) {
+	public readonly pushMany = async <K extends keyof T>(
+		id: string,
+		field: K,
+		entities: T[K],
+	) => {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entities);
 		return this.save(obj);
-	}
+	};
 
 	/**
-	 * Modify entity by identifier string
-	 * @param {string} id - the target entity indentifier string
-	 * @param {DeepPartial<T>} updatedEntity - function's option
+	 * Modify entity
+	 * @param {string} id - entity indentifier string
+	 * @param {DeepPartial<T>} update - update value
 	 */
-	async modify(
+	public abstract modify(
 		id: string,
-		updatedEntity: DeepPartial<T>,
-		raw: boolean = false,
-	) {
-		await this.update(
-			{ id } as unknown as FindOptionsWhere<T>,
-			updatedEntity,
-			raw,
-		);
-	}
+		update: DeepPartial<T>,
+		raw?: boolean,
+	): Promise<void>;
 
 	/**
 	 * Updating entity
 	 * @param {DeepPartial<T>} targetEntity - the target entity indentifier string
 	 * @param {DeepPartial<T>} updatedEntity - function's option
 	 */
-	async update(
+	protected readonly update = async (
 		targetEntity: FindOptionsWhere<T>,
 		updatedEntity: DeepPartial<T>,
 		raw: boolean = false,
-	) {
+	) => {
+		if (!updatedEntity) return;
+
 		await this.repo.update(
 			targetEntity,
 			(raw
 				? updatedEntity
 				: new this.ctor(updatedEntity)) as QueryDeepPartialEntity<T>,
 		);
-	}
+	};
 
 	// Delete
 	/**
 	 * Removing an entity by identifier string
 	 * @param {string} id - the entity identifier string
 	 */
-	async remove(id: string): Promise<void> {
+	public readonly remove = async (id: string): Promise<void> => {
 		await this.repo.delete({ id } as unknown as FindOptionsWhere<T>);
-	}
+	};
 }

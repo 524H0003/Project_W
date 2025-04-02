@@ -2,7 +2,6 @@ import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BlackBox } from 'app/utils/model.utils';
 import { MetaData } from 'auth/guards';
-import { InterfaceCasting } from 'app/utils/utils';
 import { IHookEntity } from './hook.model';
 import { IHookInfoKeys } from 'build/models';
 import { BaseUser } from 'user/base/baseUser.entity';

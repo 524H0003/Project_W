@@ -2,10 +2,11 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRole } from 'user/user.model';
 import { Student } from './student.entity';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { IStudentSignUp } from './student.model';
 import { AppService } from 'app/app.service';
+import { ISutdentRelationshipKeys } from 'build/models';
 
 /**
  * Student service
@@ -26,6 +27,7 @@ export class StudentService extends DatabaseRequests<Student> {
 	 */
 	private studentMailRex = /(5{1})(.{7})(@student.tdtu.edu.vn){1}/g;
 
+	// Abstract
 	/**
 	 * Sign up for student
 	 * @param {IStudentSignUp} input - the sign up form
@@ -33,7 +35,7 @@ export class StudentService extends DatabaseRequests<Student> {
 	 */
 	async assign({
 		email,
-	}: Required<Pick<IStudentSignUp, 'email'>>): Promise<void> {
+	}: Required<Pick<IStudentSignUp, 'email'>>): Promise<Student> {
 		const existedUser = await this.svc.baseUser.email(email);
 
 		if (!existedUser.isNull())
@@ -47,11 +49,19 @@ export class StudentService extends DatabaseRequests<Student> {
 			{ role: UserRole.student },
 		);
 
-		await this.save({
+		return this.save({
 			user: student,
 			enrollmentYear: Number('20' + email.toString().slice(1, 3)),
 		});
+	}
 
-		throw new ServerException('Success', 'User', 'SignUp');
+	public modify(
+		id: string,
+		update: DeepPartial<Student>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, ISutdentRelationshipKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

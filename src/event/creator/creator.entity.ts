@@ -4,7 +4,6 @@ import { User } from 'user/user.entity';
 import { IEventCreatorEntity } from './creator.model';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { IEventCreatorInfoKeys } from 'build/models';
-import { InterfaceCasting } from 'app/utils/utils';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**

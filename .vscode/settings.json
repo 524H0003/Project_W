@@ -175,6 +175,12 @@
 			"color": "#14281D",
 			"isWholeLine": true,
 			"text": "// Update"
+		},
+		{
+			"backgroundColor": "#F4D06F",
+			"color": "#586BA4",
+			"isWholeLine": true,
+			"text": "// Abstract"
 		}
 	]
 }

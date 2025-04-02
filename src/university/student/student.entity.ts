@@ -2,7 +2,6 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { User } from 'user/user.entity';
 import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
-import { InterfaceCasting } from 'app/utils/utils';
 import { IStudentInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';

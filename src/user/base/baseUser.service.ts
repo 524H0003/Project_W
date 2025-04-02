@@ -3,7 +3,7 @@ import {
 	NonFunctionProperties,
 } from 'app/utils/typeorm.utils';
 import { BaseUser } from './baseUser.entity';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { IBaseUserEntity } from './baseUser.model';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -19,6 +19,16 @@ export class BaseUserService extends DatabaseRequests<BaseUser> {
 	}
 
 	/**
+	 * Find by email
+	 * @param {string} input - the email address
+	 * @return {Promise<BaseUser>}
+	 */
+	email(input: string): Promise<BaseUser> {
+		return this.findOne({ cache: false, email: input.lower });
+	}
+
+	// Abstract
+	/**
 	 * Assign new base user
 	 * @param {BaseUser} entity - assigning user
 	 * @return {Promise<BaseUser>}
@@ -30,11 +40,9 @@ export class BaseUserService extends DatabaseRequests<BaseUser> {
 	}
 
 	/**
-	 * Find by email
-	 * @param {string} input - the email address
-	 * @return {Promise<BaseUser>}
+	 * Modify base user
 	 */
-	email(input: string): Promise<BaseUser> {
-		return this.findOne({ cache: false, email: input.lower });
+	async modify(id: string, update: DeepPartial<BaseUser>): Promise<void> {
+		return this.update({ id }, update);
 	}
 }

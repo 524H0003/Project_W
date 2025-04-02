@@ -2,10 +2,11 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
 import { Enterprise } from './enterprise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { IEnterpriseAssign } from './enterprise.model';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import { IEnterpriseRelationshipsKeys } from 'build/models';
 
 /**
  * Enterprise service
@@ -22,6 +23,7 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 		super(repo, Enterprise);
 	}
 
+	// Abstract
 	/**
 	 * Assign enterprise
 	 * @param {IEnterpriseAssign} input - enterprise assign form
@@ -49,5 +51,15 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 			industry,
 			description,
 		});
+	}
+
+	public modify(
+		id: string,
+		update: DeepPartial<Enterprise>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, IEnterpriseRelationshipsKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

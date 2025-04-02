@@ -2,7 +2,6 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { IBaseUserInfoKeys } from 'build/models';
 import { IBaseUserEntity, IBaseUserInfo } from './baseUser.model';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
-import { InterfaceCasting } from 'app/utils/utils';
 import { Hook } from 'app/hook/hook.entity';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 

@@ -4,6 +4,7 @@ import { Notification } from './notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
+import { INotificationRelationshipKeys } from 'build/models';
 
 @Injectable()
 export class NotificationService extends DatabaseRequests<Notification> {
@@ -17,6 +18,7 @@ export class NotificationService extends DatabaseRequests<Notification> {
 		super(repo, Notification);
 	}
 
+	// Abstract
 	/**
 	 * Assign new notification
 	 * @param {DeepPartial<Notification>} entity - the assigning notification
@@ -24,5 +26,15 @@ export class NotificationService extends DatabaseRequests<Notification> {
 	 */
 	async assign(entity: DeepPartial<Notification>): Promise<Notification> {
 		return this.save(entity);
+	}
+
+	public modify(
+		id: string,
+		update: DeepPartial<Notification>,
+		raw?: boolean,
+	): Promise<void> {
+		update = InterfaceCasting.delete(update, INotificationRelationshipKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update, raw);
 	}
 }

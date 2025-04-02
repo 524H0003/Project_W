@@ -15,7 +15,6 @@ import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { EventCreator } from './creator/creator.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 import GQLJSON from 'graphql-type-json';
-import { InterfaceCasting } from 'app/utils/utils';
 import { IEventInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 

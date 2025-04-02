@@ -5,7 +5,6 @@ import { IEnterpriseEntity } from './enterprise.model';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
-import { InterfaceCasting } from 'app/utils/utils';
 import { IEnterpriseInfoKeys } from 'build/models';
 import { BaseUser } from 'user/base/baseUser.entity';
 import { CacheControl } from 'app/graphql/graphql.decorator';

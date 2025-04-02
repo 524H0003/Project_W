@@ -1,7 +1,7 @@
 /**
  * Casting object to interface
  */
-export class InterfaceCasting<T, K extends keyof T> {
+class InterfaceCasting<T, K extends keyof T> {
 	[key: string]: any;
 
 	/**
@@ -342,6 +342,17 @@ declare global {
 		destiny: K,
 		property: U,
 	): void;
+
+	/**
+	 * Interface casting class
+	 */
+	class InterfaceCasting<T, K extends keyof T> {
+		constructor(input: T, get: readonly K[]);
+
+		static quick<T, K extends keyof T>(input: T, get: readonly K[]): T;
+
+		static delete<T, K extends keyof T>(input: T, get: readonly K[]): T;
+	}
 }
 
 /**
@@ -446,6 +457,7 @@ export const funcs = {
 	},
 };
 Object.assign(globalThis, funcs);
+Object.assign(global, { InterfaceCasting });
 // String.prototype
 Object.defineProperty(String.prototype, 'toBase64Url', {
 	get: function () {
