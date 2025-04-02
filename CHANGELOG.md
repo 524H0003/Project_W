@@ -1,3 +1,10 @@
+## [1.2.35](https://github.com/524H0003/Project_W/compare/v1.2.34...v1.2.35) (2025-04-02)
+
+
+### Bug Fixes
+
+* **adminjs:** add csrf request to edit panel ([#182](https://github.com/524H0003/Project_W/issues/182)) ([13be9bd](https://github.com/524H0003/Project_W/commit/13be9bd8fe3fa8156c1bb45b8dc62aa50c686a2a))
+
 ## [1.2.34](https://github.com/524H0003/Project_W/compare/v1.2.33...v1.2.34) (2025-03-30)
 
 
