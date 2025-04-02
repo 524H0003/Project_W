@@ -6,7 +6,6 @@ import { Bloc } from './bloc.entity';
 import { User } from 'user/user.entity';
 import { MetaData } from 'auth/guards';
 import { RequireOnlyOne } from 'app/utils/model.utils';
-import { IBlocRelationshipsKeys } from 'build/models';
 
 /**
  * Bloc identifier
