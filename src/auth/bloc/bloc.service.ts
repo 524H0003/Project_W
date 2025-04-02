@@ -108,8 +108,6 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		update: DeepPartial<Bloc>,
 		raw: boolean = false,
 	): Promise<void> {
-		update = InterfaceCasting.delete(update, IBlocRelationshipsKeys);
-		if (!Object.keys(update).length) return;
 		return this.update({ id }, update, raw);
 	}
 }
