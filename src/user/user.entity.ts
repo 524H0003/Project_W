@@ -78,7 +78,8 @@ export class User extends ParentId implements IUserEntity {
 	/**
 	 * Base user
 	 */
-	@OneToOne(() => BaseUser, { eager: true, cascade: true }) baseUser: BaseUser;
+	@OneToOne(() => BaseUser, { eager: true, onDelete: 'CASCADE' })
+	baseUser: BaseUser;
 
 	@Field() private name: string;
 
