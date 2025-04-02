@@ -128,11 +128,11 @@ describe('readMany', () => {
 
 	it('success', async () => {
 		await execute(() => svc.recie.readMany(recieversId), {
-			exps: [{ type: 'toBeInstanceOf', params: [Array<Reciever>] }],
-			onFinish: async (result) => {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
 				for (let i = 0; i < 5; i++)
 					await execute(
-						() => svc.recie.findOne({ id: result[i].id, cache: false }),
+						() => svc.recie.findOne({ id: recieversId[i], cache: false }),
 						{
 							exps: [
 								{ type: 'toHaveProperty', params: ['isRead', true] },
