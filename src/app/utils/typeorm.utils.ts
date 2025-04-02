@@ -7,7 +7,7 @@ import {
 	Repository,
 	PrimaryColumn,
 	BeforeInsert,
-  ObjectId,
+	ObjectId,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
@@ -256,11 +256,7 @@ export abstract class DatabaseRequests<T extends TypeOrmBaseEntity> {
 	 * @param {K} field - the pushing field
 	 * @param {NonArray<T[K]>} entity - the push entity
 	 */
-	async push<K extends keyof T>(
-		id: string,
-		field: K,
-		entity: NonArray<T[K]>,
-	) {
+	async push<K extends keyof T>(id: string, field: K, entity: NonArray<T[K]>) {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
 		return this.modify(id, obj);
