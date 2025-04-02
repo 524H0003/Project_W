@@ -5,7 +5,7 @@ import { Event } from 'event/event.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IFileInfoKeys, IFileRelationshipKeys } from 'build/models';
+import { IFileInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
@@ -20,7 +20,7 @@ export class File extends GeneratedId implements IFileEntity {
 	 * @param {IFile} payload - file's infomations
 	 */
 	constructor(payload: NonFunctionProperties<IFileEntity>) {
-		super(IFileRelationshipKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IFileInfoKeys));

@@ -3,7 +3,7 @@ import { User } from 'user/user.entity';
 import { Notification } from 'notification/notification.entity';
 import { IRecieverEntity } from './reciever.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IRecieverInfoKeys, IRecieverRelationshipsKeys } from 'build/models';
+import { IRecieverInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { CacheControl } from 'app/graphql/graphql.decorator';
@@ -20,7 +20,7 @@ export class Reciever extends GeneratedId implements IRecieverEntity {
 	 * @param {NonFunctionProperties<IRecieverEntity>} input - entity input
 	 */
 	constructor(input: NonFunctionProperties<IRecieverEntity>) {
-		super(IRecieverRelationshipsKeys);
+		super();
 		if (!input || !Object.keys(input)) return;
 
 		Object.assign(this, InterfaceCasting.quick(input, IRecieverInfoKeys));

@@ -9,7 +9,7 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import { User } from 'user/user.entity';
 import { IUserInfo } from 'user/user.model';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IEmployeeInfoKeys, IEmployeeRelationshipKeys } from 'build/models';
+import { IEmployeeInfoKeys,  } from 'build/models';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { IBaseUserInfo } from 'user/base/baseUser.model';
 import { CacheControl } from 'app/graphql/graphql.decorator';
@@ -24,7 +24,7 @@ export class Employee extends ParentId implements IEmployeeEntity {
 	 * Create employee entity with infomations
 	 */
 	constructor(payload: NonFunctionProperties<IEmployeeEntity>) {
-		super(IEmployeeRelationshipKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IEmployeeInfoKeys));

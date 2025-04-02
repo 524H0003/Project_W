@@ -1,5 +1,5 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
-import { IBaseUserInfoKeys, IBaseUserRelationshipsKeys } from 'build/models';
+import { IBaseUserInfoKeys } from 'build/models';
 import { IBaseUserEntity, IBaseUserInfo } from './baseUser.model';
 import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
@@ -16,7 +16,7 @@ export class BaseUser extends GeneratedId implements IBaseUserEntity {
 	 * @param {NonFunctionProperties<IBaseUserEntity>} payload - entity payload
 	 */
 	constructor(payload: NonFunctionProperties<IBaseUserEntity>) {
-		super(IBaseUserRelationshipsKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IBaseUserInfoKeys));

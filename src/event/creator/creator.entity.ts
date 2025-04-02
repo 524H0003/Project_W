@@ -3,10 +3,7 @@ import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IEventCreatorEntity } from './creator.model';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
-import {
-	IEventCreatorInfoKeys,
-	IEventCreatorRelationshipKeys,
-} from 'build/models';
+import { IEventCreatorInfoKeys } from 'build/models';
 import { InterfaceCasting } from 'app/utils/utils';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
@@ -21,7 +18,7 @@ export class EventCreator extends ParentId implements IEventCreatorEntity {
 	 * @param {NonFunctionProperties<IEventCreatorEntity>} payload - entity payload
 	 */
 	constructor(payload: NonFunctionProperties<IEventCreatorEntity>) {
-		super(IEventCreatorRelationshipKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IEventCreatorInfoKeys));

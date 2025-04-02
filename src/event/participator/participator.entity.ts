@@ -10,10 +10,7 @@ import { User } from 'user/user.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 import GQLJSON from 'graphql-type-json';
 import { InterfaceCasting } from 'app/utils/utils';
-import {
-	IEventParticipatorInfoKeys,
-	IEventParticipatorRelationshipsKeys,
-} from 'build/models';
+import { IEventParticipatorInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
@@ -31,7 +28,7 @@ export class EventParticipator
 	 * @param {NonFunctionProperties<IEventParticipatorEntiy>} payload - entity payload
 	 */
 	constructor(payload: NonFunctionProperties<IEventParticipatorEntiy>) {
-		super(IEventParticipatorRelationshipsKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(

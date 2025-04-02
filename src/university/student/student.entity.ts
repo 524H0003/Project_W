@@ -3,7 +3,7 @@ import { User } from 'user/user.entity';
 import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IStudentInfoKeys, ISutdentRelationshipKeys } from 'build/models';
+import { IStudentInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { Field, ObjectType } from '@nestjs/graphql';
@@ -22,7 +22,7 @@ export class Student extends ParentId implements IStudentEntity {
 	 * @param {NonFunctionProperties<IStudentEntity>} payload - entity payload
 	 */
 	constructor(payload: NonFunctionProperties<IStudentEntity>) {
-		super(ISutdentRelationshipKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IStudentInfoKeys));

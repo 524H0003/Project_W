@@ -16,7 +16,7 @@ import { EventCreator } from './creator/creator.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 import GQLJSON from 'graphql-type-json';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IEventInfoKeys, IEventRelationshipsKeys } from 'build/models';
+import { IEventInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**
@@ -31,7 +31,7 @@ export class Event extends GeneratedId implements IEventEntity {
 	 * @param {NonFunctionProperties<IEventEntity>} payload - entity input
 	 */
 	constructor(payload: NonFunctionProperties<IEventEntity>) {
-		super(IEventRelationshipsKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IEventInfoKeys));

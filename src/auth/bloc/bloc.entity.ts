@@ -3,7 +3,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
 import { IBlocEntity } from './bloc.model';
 import { dataHashing } from 'app/utils/auth.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IBlocInfoKeys, IBlocRelationshipsKeys } from 'build/models';
+import { IBlocInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 import { User } from 'user/user.entity';
 import { MetaData } from 'auth/guards';
@@ -20,7 +20,7 @@ export class Bloc extends GeneratedId implements IBlocEntity {
 	 * @param {NonFunctionProperties<IBlocEntity>} payload - the device's infomations
 	 */
 	constructor(payload: NonFunctionProperties<IBlocEntity>) {
-		super(IBlocRelationshipsKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IBlocInfoKeys));

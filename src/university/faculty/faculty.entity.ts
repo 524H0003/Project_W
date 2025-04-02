@@ -4,7 +4,7 @@ import { EventCreator } from 'event/creator/creator.entity';
 import { IsString } from 'class-validator';
 import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
 import { InterfaceCasting } from 'app/utils/utils';
-import { IFacultyInfoKeys, IFacultyRelationshipKeys } from 'build/models';
+import { IFacultyInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
 import { IBaseUserInfo } from 'user/base/baseUser.model';
 import { CacheControl } from 'app/graphql/graphql.decorator';
@@ -19,7 +19,7 @@ export class Faculty extends ParentId implements IFacultyEntity {
 	 * Initiate faculty object
 	 */
 	constructor(payload: NonFunctionProperties<IFacultyEntity>) {
-		super(IFacultyRelationshipKeys);
+		super();
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IFacultyInfoKeys));
