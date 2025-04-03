@@ -11,7 +11,7 @@ import 'app/utils/utils';
 /**
  * Base controller
  */
-export class BaseController {
+export abstract class BaseController {
 	/**
 	 * Initiate base controller
 	 */

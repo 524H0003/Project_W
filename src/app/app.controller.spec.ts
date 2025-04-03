@@ -8,15 +8,17 @@ import { User } from 'user/user.entity';
 import { AppService } from './app.service';
 import { expect, it } from '@jest/globals';
 import { OutgoingHttpHeaders } from 'http';
+import { MailerService } from '@nestjs-modules/mailer';
+import { HttpStatus } from '@nestjs/common';
 
 const fileName = curFile(__filename);
 
-let req: RequesterType, user: User, svc: AppService;
+let req: RequesterType, user: User, svc: AppService, mailerSvc: MailerService;
 
 beforeAll(async () => {
-	const { appSvc, requester } = await initJest();
+	const { appSvc, requester, module } = await initJest();
 
-	(svc = appSvc), (req = requester);
+	(mailerSvc = module.get(MailerService)), (svc = appSvc), (req = requester);
 });
 
 beforeEach(() => {
@@ -105,17 +107,8 @@ describe('login', () => {
 					await req()
 						.post('/login')
 						.body({ ...user, ...user.baseUser })
-				).headers['set-cookie'],
-			{
-				exps: [
-					{
-						type: 'toEqual',
-						params: [
-							expect.arrayContaining([expect.anything(), expect.anything()]),
-						],
-					},
-				],
-			},
+				).statusCode,
+			{ exps: [{ type: 'toEqual', params: [HttpStatus.CREATED] }] },
 		);
 
 		await execute(
@@ -312,23 +305,63 @@ describe('refresh', () => {
 });
 
 describe('change-password', () => {
-	let user: User;
+	let user: User, recievedHeaders: OutgoingHttpHeaders;
 
 	it('success', async () => {
 		const rawUser = User.test(fileName);
 		user = await svc.auth.signUp({ ...rawUser, ...rawUser.baseUser }, null);
 
 		await execute(
-			async () =>
-				(
-					await req()
-						.post('/change-password')
-						.body({ email: user.baseUser.email })
-				).body,
+			async () => {
+				const { body, headers } = await req()
+					.post('/change-password')
+					.body({ email: user.baseUser.email });
+
+				recievedHeaders = headers;
+
+				return body;
+			},
 			{
 				exps: [
 					{ type: 'toContain', params: [err('Success', 'Signature', 'Sent')] },
 				],
+				onFinish: async () => {
+					const signature = (mailerSvc.sendMail as jest.Mock).mock.lastCall[0][
+							'context'
+						]['url']
+							.split('/')
+							.at(-1),
+						password = (32).string;
+
+					await execute(
+						async () =>
+							(
+								await req()
+									.post('/change-password/' + signature)
+									.headers({ cookie: getCookie(recievedHeaders['set-cookie']) })
+									.body({ password })
+							).body,
+						{
+							exps: [
+								{
+									type: 'toContain',
+									params: [err('Success', 'Password', 'Implementation')],
+								},
+							],
+							onFinish: async () => {
+								await execute(
+									async () =>
+										(
+											await req()
+												.post('/login')
+												.body({ email: user.baseUser.email, password })
+										).statusCode,
+									{ exps: [{ type: 'toEqual', params: [HttpStatus.CREATED] }] },
+								);
+							},
+						},
+					);
+				},
 			},
 		);
 	});
