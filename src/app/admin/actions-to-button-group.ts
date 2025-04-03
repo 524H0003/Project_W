@@ -1,5 +1,12 @@
 import { ButtonGroupProps, ButtonInGroupProps } from '@adminjs/design-system';
-import { ActionJSON, DifferentActionParams, TranslateFunctions, ModalFunctions, actionHref, buildActionTestId } from 'adminjs';
+import {
+	ActionJSON,
+	DifferentActionParams,
+	TranslateFunctions,
+	ModalFunctions,
+	actionHref,
+	buildActionTestId,
+} from 'adminjs';
 
 export type actionsToButtonGroupOptions = {
 	actions: Array<ActionJSON>;
@@ -44,15 +51,9 @@ export const actionsToButtonGroup = (
 
 				parent.buttons = parent.buttons || [];
 				parent.buttons.push(button);
-				return {
-					...memo,
-					[action.parent]: parent,
-				};
+				return { ...memo, [action.parent]: parent };
 			}
-			return {
-				...memo,
-				[button.source.name]: button,
-			};
+			return { ...memo, [button.source.name]: button };
 		},
 		{} as Record<string, ButtonInGroupProps>,
 	);

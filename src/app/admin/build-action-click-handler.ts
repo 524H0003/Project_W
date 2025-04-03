@@ -1,6 +1,6 @@
-/* eslint-disable no-restricted-globals */
-/* eslint-disable no-undef */
-/* eslint-disable no-alert */
+ 
+ 
+ 
 import {
 	ActionJSON,
 	DifferentActionParams,

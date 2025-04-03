@@ -1,4 +1,4 @@
-/* eslint-disable arrow-parens */
+ 
 import {
 	ActionResponse,
 	ActionJSON,

@@ -36,9 +36,7 @@ export async function callActionApi<K extends ActionResponse>(
 				recordId,
 				search,
 				method,
-				headers: {
-					'csrf-token': await getCsrfToken('/admin'),
-				},
+				headers: { 'csrf-token': await getCsrfToken('/admin') },
 			}) as any;
 			break;
 		case 'resource':
