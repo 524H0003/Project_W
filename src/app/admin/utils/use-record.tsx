@@ -17,6 +17,7 @@ import {
 } from 'adminjs';
 import { filterRecordParams, isPropertyPermitted } from './filter-record.js';
 import mergeRecordResponse from './merge-record-response.js';
+import { getCsrfToken } from '../utils.js';
 
 const api = new ApiClient();
 
@@ -34,7 +35,6 @@ const api = new ApiClient();
 export const useRecord = (
 	initialRecord: RecordJSON | undefined,
 	resourceId: string,
-	getCsrf: () => Promise<string>,
 	options?: UseRecordOptions,
 ): UseRecordResult => {
 	// setting up state
@@ -112,7 +112,7 @@ export const useRecord = (
 				params: parsedQuery,
 				headers: {
 					'Content-Type': 'multipart/form-data',
-					'csrf-token': await getCsrf(),
+					'csrf-token': await getCsrfToken('/admin'),
 				},
 			};
 

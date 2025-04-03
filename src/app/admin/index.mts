@@ -284,6 +284,7 @@ const uuidRegex =
 					take: limit,
 					skip: offset,
 					order: { [sortBy]: (direction || 'asc').toUpperCase() },
+					cache: false,
 				});
 				return instances.map(
 					(instance: ParamsType) => new BaseRecord(instance, this),
@@ -309,7 +310,8 @@ const uuidRegex =
 						instance[paramName] = preparedParams[paramName];
 				});
 
-				return svc[this.resourceName].modify(id, instance);
+				await svc[this.resourceName].modify(id, instance);
+				return svc[this.resourceName].id(id);
 			}
 
 			delete(id: string) {
