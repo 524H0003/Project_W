@@ -13,6 +13,7 @@ import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { BaseController } from 'app/utils/controller.utils';
 import { StudentSignUp } from './student.dto';
 import { UserRecieve } from 'user/user.entity';
+import { RequireOnlyOne } from 'app/utils/model.utils';
 
 /**
  * Student controller
@@ -37,13 +38,14 @@ export class StudentController extends BaseController {
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor())
 	async signUp(
-		@Body() body: StudentSignUp,
+		@Body() { email }: RequireOnlyOne<StudentSignUp, 'email'>,
 		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('hostname') hostname: string,
 	): Promise<UserRecieve> {
-		const student = await this.svc.student.assign(body);
-
-		if (!student.isNull())
-			return this.resetPasswordViaEmail(hostname, body, mtdt);
+		return this.resetPasswordViaEmail(
+			hostname,
+			(await this.svc.student.assign({ email })).user.baseUser,
+			mtdt,
+		);
 	}
 }

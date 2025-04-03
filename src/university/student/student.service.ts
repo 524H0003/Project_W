@@ -4,9 +4,9 @@ import { UserRole } from 'user/user.model';
 import { Student } from './student.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { DatabaseRequests } from 'app/utils/typeorm.utils';
-import { IStudentSignUp } from './student.model';
 import { AppService } from 'app/app.service';
 import { ISutdentRelationshipKeys } from 'build/models';
+import { IStudentSignUp } from './student.model';
 
 /**
  * Student service
@@ -31,7 +31,6 @@ export class StudentService extends DatabaseRequests<Student> {
 	/**
 	 * Sign up for student
 	 * @param {IStudentSignUp} input - the sign up form
-	 * @return {Promise<void>}
 	 */
 	async assign({
 		email,

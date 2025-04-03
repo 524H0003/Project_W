@@ -37,6 +37,7 @@ import {
 	RefreshGuard,
 } from 'auth/guards';
 import { BaseUserEmail } from 'user/base/baseUser.dto';
+import { StudentController } from 'university/student/student.controller';
 
 /**
  * Application Controller
@@ -51,6 +52,7 @@ export class AppController extends BaseController {
 	constructor(
 		@Inject(forwardRef(() => AppService)) protected svc: AppService,
 		protected cfg: ConfigService,
+		private studentController: StudentController,
 	) {
 		super(svc, cfg);
 	}
@@ -64,7 +66,7 @@ export class AppController extends BaseController {
 		@GetRequest('hostname') hostname: string,
 	): Promise<UserRecieve> {
 		try {
-			await this.svc.student.assign(body);
+			return await this.studentController.signUp(body, mtdt, hostname);
 		} catch (error) {
 			const { message } = error as ServerException;
 			switch (true) {
@@ -76,12 +78,6 @@ export class AppController extends BaseController {
 						blocInfo: { id, hash },
 						response: await this.svc.user.info(user.id),
 					});
-
-				case message.includes(err('Success', 'User', 'SignUp')):
-					return this.resetPasswordViaEmail(hostname, body, mtdt);
-
-				default:
-					throw error;
 			}
 		}
 	}
