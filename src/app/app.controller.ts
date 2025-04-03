@@ -78,6 +78,9 @@ export class AppController extends BaseController {
 						blocInfo: { id, hash },
 						response: await this.svc.user.info(user.id),
 					});
+
+				default:
+					throw error;
 			}
 		}
 	}
