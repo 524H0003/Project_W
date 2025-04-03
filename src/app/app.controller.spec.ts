@@ -338,9 +338,7 @@ describe('change-password', () => {
 							(
 								await req()
 									.post('/change-password/' + signature)
-									.headers({
-										cookie: getCookie(recievedHeaders['set-cookie']),
-									})
+									.headers({ cookie: getCookie(recievedHeaders['set-cookie']) })
 									.body({ password })
 							).body,
 						{
