@@ -1,4 +1,4 @@
-import { IEntityId } from 'app/app.model';
+import { IEntityId } from 'app/typeorm/typeorm.model';
 import { IEventCreatorEntity } from 'event/creator/creator.model';
 import { IUserSignUp } from 'user/user.model';
 

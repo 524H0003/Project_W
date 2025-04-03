@@ -1,7 +1,7 @@
 import { IStudentEntity } from 'university/student/student.model';
 import { IEmployeeEntity } from './employee/employee.model';
 import { IBaseUserEntity, IBaseUserInfo } from 'user/base/baseUser.model';
-import { IEntityId } from 'app/app.model';
+import { IEntityId } from 'app/typeorm/typeorm.model';
 
 // Interfaces
 /**

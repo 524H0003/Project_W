@@ -4,7 +4,7 @@ import {
 	IEmployeeHook,
 	IEmployeeSignUp,
 } from './employee.model';
-import { ISignature } from 'app/app.model';
+import { ISignature } from 'app/hook/hook.model';
 
 export class EmployeeHook implements IEmployeeHook {
 	enterpriseName: string;

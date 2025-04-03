@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import { DatabaseRequests } from 'app/typeorm/typeorm.utils';
 import { Event } from './event.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';

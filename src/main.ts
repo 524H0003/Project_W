@@ -20,8 +20,8 @@ import { createServer, Server } from 'http';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { join } from 'path';
 import fastifyStatic from '@fastify/static';
-import { dataHashing, passwordHashing } from 'app/utils/auth.utils';
 import { censor } from 'app/utils/utils';
+import { dataHashing, passwordHashing } from 'auth/auth.utils';
 
 async function bootstrap() {
 	let server: Server;

@@ -4,7 +4,7 @@ import { Notification } from 'notification/notification.entity';
 import { IRecieverEntity } from './reciever.model';
 import { IRecieverInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/typeorm/typeorm.utils';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**

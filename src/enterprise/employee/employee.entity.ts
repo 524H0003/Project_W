@@ -9,7 +9,7 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import { User } from 'user/user.entity';
 import { IUserInfo } from 'user/user.model';
 import { IEmployeeInfoKeys } from 'build/models';
-import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/typeorm/typeorm.utils';
 import { IBaseUserInfo } from 'user/base/baseUser.model';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 

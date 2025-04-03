@@ -1,4 +1,4 @@
-import { IEntityId } from 'app/app.model';
+import { IEntityId } from 'app/typeorm/typeorm.model';
 import { IHookEntity } from 'app/hook/hook.model';
 
 // Interfaces

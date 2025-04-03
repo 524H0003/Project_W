@@ -1,8 +1,15 @@
-import { IEntityId, ISignature } from 'app/app.model';
+import { IEntityId } from 'app/typeorm/typeorm.model';
 import { IResult } from 'ua-parser-js';
 import { IBaseUserEntity } from 'user/base/baseUser.model';
 
 // Interfaces
+/**
+ * Signature interface
+ */
+export interface ISignature {
+	signature: string;
+}
+
 /**
  * Hook relationships
  */

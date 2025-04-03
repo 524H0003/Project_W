@@ -1,6 +1,6 @@
 import { BaseUser } from 'user/base/baseUser.entity';
-import { AppService } from './app.service';
-import { execute, initJest } from './utils/test.utils';
+import { AppService } from '../../app/app.service';
+import { execute, initJest } from '../../app/utils/test.utils';
 
 const fileName = curFile(__filename);
 

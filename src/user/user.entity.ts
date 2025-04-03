@@ -28,14 +28,14 @@ import {
 import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
-import { passwordHashing } from 'app/utils/auth.utils';
 import { IsStrongPassword } from 'class-validator';
-import { NonFunctionProperties, ParentId } from 'app/utils/typeorm.utils';
+import { NonFunctionProperties, ParentId } from 'app/typeorm/typeorm.utils';
 import { ApiHideProperty } from '@nestjs/swagger';
 import { BaseUser } from './base/baseUser.entity';
 import { IBaseUserInfo } from './base/baseUser.model';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 import { IBlocCompulsory } from 'auth/bloc/bloc.model';
+import { passwordHashing } from 'auth/auth.utils';
 
 /**
  * User entity

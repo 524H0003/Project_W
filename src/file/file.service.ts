@@ -2,7 +2,7 @@ import { createReadStream, readdir } from 'fs';
 import { extname, join } from 'path';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import { DatabaseRequests } from 'app/typeorm/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';

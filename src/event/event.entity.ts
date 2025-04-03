@@ -11,7 +11,7 @@ import { EventParticipator } from './participator/participator.entity';
 import { File } from 'file/file.entity';
 import { EventTag } from './tag/tag.entity';
 import { BlackBox } from 'app/utils/model.utils';
-import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/typeorm/typeorm.utils';
 import { EventCreator } from './creator/creator.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 import GQLJSON from 'graphql-type-json';

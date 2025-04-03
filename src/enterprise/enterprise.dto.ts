@@ -1,4 +1,4 @@
-import { ISignature } from 'app/app.model';
+import { ISignature } from 'app/hook/hook.model';
 import { IEnterpriseAssign } from './enterprise.model';
 import { ApiHideProperty } from '@nestjs/swagger';
 

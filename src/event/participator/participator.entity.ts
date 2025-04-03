@@ -4,7 +4,7 @@ import {
 	EventParticipatorStatus,
 	IEventParticipatorEntiy,
 } from './participator.model';
-import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/typeorm/typeorm.utils';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { Field, ObjectType } from '@nestjs/graphql';

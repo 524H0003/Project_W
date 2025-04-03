@@ -2,9 +2,8 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataHashing } from 'app/utils/auth.utils';
+import { dataHashing } from 'auth/auth.utils';
 import { readFileSync } from 'fs';
-import { join } from 'path';
 import { TlsOptions } from 'tls';
 import { DataSourceOptions, QueryRunner } from 'typeorm';
 import { createPostgresDatabase } from 'typeorm-extension';

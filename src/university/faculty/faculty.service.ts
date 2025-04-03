@@ -2,15 +2,15 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
 	DatabaseRequests,
 	NonFunctionProperties,
-} from 'app/utils/typeorm.utils';
+} from 'app/typeorm/typeorm.utils';
 import { Faculty } from './faculty.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { validation } from 'app/utils/auth.utils';
 import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IFacultyEntity } from './faculty.model';
 import { IFacultyRelationshipKeys } from 'build/models';
+import { validation } from 'auth/auth.utils';
 
 /**
  * Faculty service
