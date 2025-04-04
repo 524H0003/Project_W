@@ -10,6 +10,7 @@ const config: Config = {
 		'!**/?(*.)+(controller.spec).ts',
 		'!**/?(*.)+(resolver.spec).ts',
 		'!**/?(*.)+(service.spec).ts',
+		'!src/auth/guards/**/*',
 	],
 	reporters: [
 		'default',
@@ -21,6 +22,7 @@ const config: Config = {
 	collectCoverageFrom: [
 		'src/**/*.ts',
 		'!src/*.ts',
+		'!src/auth/guards/**/*',
 		'!src/build/*',
 		'!src/app/admin/*',
 		'!src/app/graphql/*',

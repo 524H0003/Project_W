@@ -5,7 +5,7 @@ const config: Config = {
 	detectOpenHandles: true,
 	moduleDirectories: ['node_modules', 'src'],
 	transform: { '^.+.tsx?$': ['ts-jest', {}] },
-	testMatch: ['**/?(*.)+(controller.spec).ts'],
+	testMatch: ['**/?(*.)+(controller.spec).ts', 'src/auth/guards/**/*.spec.ts'],
 	reporters: [
 		'default',
 		['github-actions', { silent: false }],
@@ -16,7 +16,7 @@ const config: Config = {
 	],
 	collectCoverage: true,
 	coverageReporters: [['text', { file: 'controller.txt' }]],
-	collectCoverageFrom: ['src/**/*.controller.ts'],
+	collectCoverageFrom: ['src/**/*.controller.ts', 'src/auth/guards/**/*'],
 	forceExit: true,
 };
 
