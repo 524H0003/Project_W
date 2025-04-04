@@ -9,6 +9,7 @@ const config: Config = {
 		'**/?(*.)+(controller.spec).ts',
 		'**/?(*.)+(resolver.spec).ts',
 		'src/auth/guards/**/*.spec.ts',
+		'src/app/*.spec.ts',
 	],
 	reporters: [
 		'default',
@@ -24,6 +25,7 @@ const config: Config = {
 		'src/**/*.controller.ts',
 		'src/**/*.resolver.ts',
 		'src/auth/guards/**/*',
+		'src/app/*.ts',
 		'!src/auth/guards/**/*.spec.ts',
 	],
 	forceExit: true,
