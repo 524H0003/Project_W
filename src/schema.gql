@@ -213,6 +213,7 @@ input Paging {
 }
 
 type Query {
+  getCurrent: User!
   getEvents(input: FindEvent!, page: Paging): [Event!]!
   getStudents(input: FindStudent!, page: Paging): [Student!]!
   getUsers(input: FindUser!, page: Paging): [User!]!

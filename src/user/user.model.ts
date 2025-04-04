@@ -1,4 +1,4 @@
-import { IEntityId } from 'app/app.model';
+import { IEntityId } from 'app/typeorm/typeorm.model';
 import { IEventParticipatorEntiy } from 'event/participator/participator.model';
 import { IFileEntity } from 'file/file.model';
 import { IRecieverEntity } from 'notification/reciever/reciever.model';

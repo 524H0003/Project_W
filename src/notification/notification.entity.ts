@@ -8,7 +8,7 @@ import {
 } from './notification.model';
 import { INotificationInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { GeneratedId } from 'app/utils/typeorm.utils';
+import { GeneratedId } from 'app/typeorm/typeorm.utils';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
 /**

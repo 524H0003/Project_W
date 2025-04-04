@@ -97,51 +97,11 @@ jobs:
             ./reports/service.xml
             ./coverage/service.txt
 
-  Test_resolver:
+  Test_requester:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
 
-    name: 'Test resolvers'
-
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 3
-
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-
-      - uses: supercharge/redis-github-action@1.8.0
-        with:
-          redis-password: ''
-
-      - uses: ikalnytskyi/action-setup-postgres@v6
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 23
-          cache: 'pnpm'
-
-      - run: npm run prebuild:dev && npm run test:resolver
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: resolver
-          path: |
-            ./reports/resolver.xml
-            ./coverage/resolver.txt
-
-  Test_controller:
-    needs: changes
-    if: ${{ needs.changes.outputs.project == 'true' }}
-
-    name: 'Test controllers'
+    name: 'Test requesters'
 
     runs-on: ubuntu-latest
 
@@ -168,14 +128,14 @@ jobs:
           node-version: 23
           cache: 'pnpm'
 
-      - run: npm run prebuild:dev && npm run test:controller
+      - run: npm run prebuild:dev && npm run test:requesters
 
       - uses: actions/upload-artifact@v4
         with:
-          name: controller
+          name: requesters
           path: |
-            ./reports/controller.xml
-            ./coverage/controller.txt
+            ./reports/requesters.xml
+            ./coverage/requesters.txt
 
   Test_etc:
     needs: changes
@@ -258,8 +218,7 @@ jobs:
   FormatAndLint:
     needs:
       - Test_service
-      - Test_resolver
-      - Test_controller
+      - Test_requester
       - Test_web
       - Test_etc
 
@@ -288,21 +247,13 @@ jobs:
 
       - uses: actions/download-artifact@v4
 
-      - name: Controller
+      - name: Requesters
         uses: MishaKav/jest-coverage-comment@main
         with:
-          title: Controller test result
-          coverage-path: ./controller/coverage/controller.txt
+          title: Requesters test result
+          coverage-path: ./requesters/coverage/requesters.txt
           create-new-comment: true
-          junitxml-path: ./controller/reports/controller.xml
-
-      - name: Resolver
-        uses: MishaKav/jest-coverage-comment@main
-        with:
-          title: Resolver test result
-          coverage-path: ./resolver/coverage/resolver.txt
-          create-new-comment: true
-          junitxml-path: ./resolver/reports/resolver.xml
+          junitxml-path: ./requesters/reports/requesters.xml
 
       - name: Service
         uses: MishaKav/jest-coverage-comment@main

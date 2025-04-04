@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AppService } from 'app/app.service';
-import { AccessGuard, Allow } from 'auth/guards';
+import { AccessGuard, Allow, GetServerKey } from 'auth/guards';
 import { User } from './user.entity';
 import { FindUser } from './user.dto';
 import { Paging } from 'app/app.graphql';
@@ -40,5 +40,12 @@ export class UserResolver {
 			take,
 			skip: index * take,
 		});
+	}
+
+	/**
+	 * Get current user
+	 */
+	@Query(() => User) @Allow([]) getCurrent(@GetServerKey('user') user: User) {
+		return user;
 	}
 }

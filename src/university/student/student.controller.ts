@@ -10,10 +10,11 @@ import { GetRequest, LocalhostGuard, MetaData } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
-import { BaseController } from 'app/utils/controller.utils';
 import { StudentSignUp } from './student.dto';
 import { UserRecieve } from 'user/user.entity';
 import { RequireOnlyOne } from 'app/utils/model.utils';
+import { BaseController } from 'app/base.app.controller';
+import { ApiSecurity } from '@nestjs/swagger';
 
 /**
  * Student controller
@@ -34,6 +35,7 @@ export class StudentController extends BaseController {
 	/**
 	 * Student login request
 	 */
+	@ApiSecurity('CsrfToken')
 	@Post('sign-up')
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor())

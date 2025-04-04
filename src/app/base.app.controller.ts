@@ -1,12 +1,10 @@
-import { AppService } from 'app/app.service';
-import { UserRecieve } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
-import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
-import { UserAuthencation } from 'user/user.dto';
-import { Hook } from 'app/hook/hook.entity';
 import { MetaData } from 'auth/guards';
 import { BaseUserEmail } from 'user/base/baseUser.dto';
-import 'app/utils/utils';
+import { UserAuthencation } from 'user/user.dto';
+import { UserRecieve } from 'user/user.entity';
+import { AppService } from './app.service';
+import { Hook } from './hook/hook.entity';
 
 /**
  * Base controller
@@ -64,14 +62,3 @@ export abstract class BaseController {
 		});
 	}
 }
-
-/**
- * Server global avatar file upload properties
- */
-export const AvatarFileUpload = new ParseFilePipeBuilder()
-	.addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-	.addMaxSizeValidator({ maxSize: (0.3).mb2b })
-	.build({
-		fileIsRequired: false,
-		errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-	});

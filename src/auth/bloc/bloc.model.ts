@@ -1,4 +1,4 @@
-import { IEntityId } from 'app/app.model';
+import { IEntityId } from 'app/typeorm/typeorm.model';
 import { IUserEntity } from 'user/user.model';
 
 // Interfaces

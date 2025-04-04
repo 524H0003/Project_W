@@ -17,59 +17,74 @@ beforeEach(async () => {
 		(mtdt = new UAParser(fileName + '_' + (20).string).getResult());
 });
 
-it('assign', async () => {
-	let user: User;
+describe('assign', () => {
+	it('success', async () => {
+		let user: User;
 
-	await execute(
-		() =>
-			svc.hook.assign(mtdt, async () => {
-				user = User.test(fileName);
+		await execute(
+			() =>
+				svc.hook.assign(mtdt, async () => {
+					user = User.test(fileName);
 
-				return (await svc.auth.signUp({ ...user, ...user.baseUser }, null))
-					.baseUser;
-			}),
-		{
-			exps: [{ type: 'toBeDefined', params: [] }],
-			onFinish: async ({ id }) => {
-				await execute(() => svc.hook.id(id), {
-					exps: [
-						{ type: 'toBeDefined', params: [] },
-						{ type: 'toBeInstanceOf', params: [Hook] },
-					],
-				});
-			},
-		},
-	);
-});
-
-it('validating', async () => {
-	let signature: string;
-
-	const hook = await svc.hook.assign(mtdt, (s: string) => {
-		signature = s;
-		return BaseUser.test(fileName);
-	});
-
-	await execute(() => svc.hook.validating(signature, mtdt, hook), {
-		exps: [{ type: 'toThrow', not: true, params: [] }],
-	});
-});
-
-it('validating failed', async () => {
-	const signature = (5).string;
-
-	await execute(
-		() =>
-			svc.hook.validating(
-				signature,
-				mtdt,
-				new Hook({
-					mtdt,
-					signature: signature + '-',
-					note: null,
-					fromBaseUser: null,
+					return (await svc.auth.signUp({ ...user, ...user.baseUser }, null))
+						.baseUser;
 				}),
-			),
-		{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Hook', '')] }] },
-	);
+			{
+				exps: [{ type: 'toBeDefined', params: [] }],
+				onFinish: async ({ id }) => {
+					await execute(() => svc.hook.id(id), {
+						exps: [
+							{ type: 'toBeDefined', params: [] },
+							{ type: 'toBeInstanceOf', params: [Hook] },
+						],
+					});
+				},
+			},
+		);
+	});
+});
+
+describe('validating', () => {
+	it('success', async () => {
+		let signature: string;
+
+		const hook = await svc.hook.assign(mtdt, (s: string) => {
+			signature = s;
+			return BaseUser.test(fileName);
+		});
+
+		await execute(() => svc.hook.validating(signature, mtdt, hook), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+		});
+	});
+
+	it('failed', async () => {
+		const signature = (5).string;
+
+		await execute(
+			() =>
+				svc.hook.validating(
+					signature,
+					mtdt,
+					new Hook({
+						mtdt,
+						signature: signature + '-',
+						note: null,
+						fromBaseUser: null,
+					}),
+				),
+			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Hook', '')] }] },
+		);
+	});
+});
+
+describe('modify', () => {
+	it('success', async () => {
+		await execute(() => svc.hook.modify(null, null), {
+			exps: [
+				{ type: 'toThrow', not: true, params: [] },
+				{ type: 'toBeUndefined', params: [] },
+			],
+		});
+	});
 });

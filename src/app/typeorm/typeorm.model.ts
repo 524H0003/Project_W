@@ -8,10 +8,3 @@ export interface IEntityId {
 	 */
 	id?: string;
 }
-
-/**
- * Signature interface
- */
-export interface ISignature {
-	signature: string;
-}

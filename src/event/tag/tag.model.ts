@@ -1,4 +1,4 @@
-import { IEntityId } from 'app/app.model';
+import { IEntityId } from 'app/typeorm/typeorm.model';
 import { IEventEntity } from 'event/event.model';
 
 // Interfaces

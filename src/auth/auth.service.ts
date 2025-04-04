@@ -1,5 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { compare, SecurityService, validation } from 'app/utils/auth.utils';
 import { User } from 'user/user.entity';
 import { IUserLogIn, IUserSignUp, UserRole } from 'user/user.model';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
@@ -7,6 +6,7 @@ import { IAuthSignUpOption } from './auth.interface';
 import { JwtService } from '@nestjs/jwt';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
+import { compare, SecurityService, validation } from './auth.utils';
 
 /**
  * Auth service

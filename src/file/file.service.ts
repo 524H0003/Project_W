@@ -2,7 +2,7 @@ import { createReadStream, readdir } from 'fs';
 import { extname, join } from 'path';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import { DatabaseRequests } from 'app/typeorm/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { File } from './file.entity';
 import { AppService } from 'app/app.service';
@@ -89,7 +89,7 @@ export class FileService extends DatabaseRequests<File> {
 	 * @return {Promise<boolean>}
 	 */
 	async isOwner(path: string, ownerId: string): Promise<boolean> {
-		const file = await this.findOne({ path, deep: 2 });
+		const file = await this.findOne({ path });
 
 		return (
 			this.serverFilesReg.test(`${path}`) || file?.fileCreatedBy.id == ownerId

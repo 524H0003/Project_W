@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
 	DatabaseRequests,
 	NonFunctionProperties,
-} from 'app/utils/typeorm.utils';
+} from 'app/typeorm/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { IUserEntity, IUserInfo, UserRole } from './user.model';

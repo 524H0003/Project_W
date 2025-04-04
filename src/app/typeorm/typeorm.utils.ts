@@ -213,7 +213,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 				...newOptions
 			} = options || {},
 			result = await this.repo.findOne({
-				where: <FindOptionsWhere<T>>newOptions,
+				where: <FindOptionsWhere<T>>new this.ctor(newOptions),
 				relations: deep
 					? this.relations
 							.map((i) => i.split('.').slice(0, deep).join('.'))

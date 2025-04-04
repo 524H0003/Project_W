@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { SecurityService } from 'app/utils/auth.utils';
 import { DoneFuncWithErrOrRes, FastifyReply, FastifyRequest } from 'fastify';
 import { processRequest } from 'graphql-upload-ts';
 import { UserRecieve } from 'user/user.entity';
 import { cookieOptions } from './utils/server.utils';
 import { UAParser } from 'ua-parser-js';
 import { CookieSerializeOptions } from '@fastify/cookie';
+import { SecurityService } from 'auth/auth.utils';
 
 /**
  * App middleware

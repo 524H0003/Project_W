@@ -1,4 +1,4 @@
-import { IEntityId } from 'app/app.model';
+import { IEntityId } from 'app/typeorm/typeorm.model';
 import { IEventCreatorEntity } from './creator/creator.model';
 import { ITagEntity } from './tag/tag.model';
 import { IEventParticipatorEntiy } from './participator/participator.model';

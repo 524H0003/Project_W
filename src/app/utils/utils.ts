@@ -1,3 +1,5 @@
+import { IResult as MetaData } from 'ua-parser-js';
+
 /**
  * Casting object to interface
  */
@@ -344,6 +346,13 @@ declare global {
 	): void;
 
 	/**
+	 * Compare client's metadata
+	 * @param {MetaData} a - object
+	 * @param {MetaData} b - target
+	 */
+	function compareMetaData(a: MetaData, b: MetaData): boolean;
+
+	/**
 	 * Interface casting class
 	 */
 	class InterfaceCasting<T, K extends keyof T> {
@@ -437,7 +446,8 @@ export const funcs = {
 		Object.keys(input)
 			.sort()
 			.reduce((obj, key) => {
-				obj[key] = input[key];
+				if (input[key] instanceof Object) obj[key] = sortObjectKeys(input[key]);
+				else obj[key] = input[key];
 				return obj;
 			}, {}),
 	setEntity: <
@@ -455,6 +465,8 @@ export const funcs = {
 		if (payload && Object.keys(payload).length)
 			destiny[property] = new entity(payload);
 	},
+	compareMetaData: (a: MetaData, b: MetaData) =>
+		JSON.stringify(sortObjectKeys(a)) == JSON.stringify(sortObjectKeys(b)),
 	InterfaceCasting,
 };
 Object.assign(globalThis, funcs);

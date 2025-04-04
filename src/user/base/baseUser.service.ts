@@ -1,7 +1,7 @@
 import {
 	DatabaseRequests,
 	NonFunctionProperties,
-} from 'app/utils/typeorm.utils';
+} from 'app/typeorm/typeorm.utils';
 import { BaseUser } from './baseUser.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { IBaseUserEntity } from './baseUser.model';

@@ -1,8 +1,8 @@
 import { JwtService } from '@nestjs/jwt';
-import { initJest } from './test.utils';
 import { ConfigService } from '@nestjs/config';
 import { SecurityService } from './auth.utils';
 import { expect } from '@jest/globals';
+import { initJest } from 'app/utils/test.utils';
 
 let securityService: SecurityService;
 

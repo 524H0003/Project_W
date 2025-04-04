@@ -1,12 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DatabaseRequests } from 'app/utils/typeorm.utils';
+import { DatabaseRequests } from 'app/typeorm/typeorm.utils';
 import { Hook } from './hook.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { AppService } from 'app/app.service';
 import { MetaData } from 'auth/guards';
 import { BaseUser } from 'user/base/baseUser.entity';
-import { IHookRelationshipsKeys } from 'build/models';
 
 /**
  * Hook service
@@ -29,14 +28,15 @@ export class HookService extends DatabaseRequests<Hook> {
 	 * @param {MetaData} mtdt - client's metadata
 	 * @param {Hook} hook - recieved hook from client
 	 */
-	async validating(signature: string, mtdt: MetaData, hook: Hook) {
-		if (
-			hook.mtdt.toString() !== mtdt.toString() ||
-			signature !== hook.signature
-		)
-			throw new ServerException('Invalid', 'Hook', '');
+	async validating(
+		signature: string,
+		mtdt: MetaData,
+		{ mtdt: hMtdt, id, signature: hSignature }: Hook,
+	) {
+		await this.remove(id);
 
-		await this.remove(hook.id);
+		if (!compareMetaData(mtdt, hMtdt) || signature !== hSignature)
+			throw new ServerException('Invalid', 'Hook', '');
 	}
 
 	// Abstract
@@ -57,12 +57,8 @@ export class HookService extends DatabaseRequests<Hook> {
 		return this.save({ signature, mtdt, note, fromBaseUser });
 	}
 
-	/**
-	 * Modify hook
-	 */
+	// eslint-disable-next-line tsEslint/no-unused-vars
 	public modify(id: string, update: DeepPartial<Hook>): Promise<void> {
-		update = InterfaceCasting.delete(update, IHookRelationshipsKeys);
-		if (!Object.keys(update).length) return;
-		return this.update({ id }, update);
+		return;
 	}
 }

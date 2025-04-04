@@ -13,7 +13,11 @@ import { HttpStatus } from '@nestjs/common';
 
 const fileName = curFile(__filename);
 
-let req: RequesterType, user: User, svc: AppService, mailerSvc: MailerService;
+let req: RequesterType,
+	user: User,
+	svc: AppService,
+	mailerSvc: MailerService,
+	headers: OutgoingHttpHeaders;
 
 beforeAll(async () => {
 	const { appSvc, requester, module } = await initJest();
@@ -197,8 +201,6 @@ describe('logout', () => {
 });
 
 describe('refresh', () => {
-	let headers: OutgoingHttpHeaders;
-
 	beforeEach(
 		async () =>
 			({ headers } = await req()
@@ -305,7 +307,7 @@ describe('refresh', () => {
 });
 
 describe('change-password', () => {
-	let user: User, recievedHeaders: OutgoingHttpHeaders;
+	let user: User;
 
 	it('success', async () => {
 		const rawUser = User.test(fileName);
@@ -313,11 +315,11 @@ describe('change-password', () => {
 
 		await execute(
 			async () => {
-				const { body, headers } = await req()
+				const { body, headers: h } = await req()
 					.post('/change-password')
 					.body({ email: user.baseUser.email });
 
-				recievedHeaders = headers;
+				headers = h;
 
 				return body;
 			},
@@ -338,7 +340,7 @@ describe('change-password', () => {
 							(
 								await req()
 									.post('/change-password/' + signature)
-									.headers({ cookie: getCookie(recievedHeaders['set-cookie']) })
+									.headers({ cookie: getCookie(headers['set-cookie']) })
 									.body({ password })
 							).body,
 						{

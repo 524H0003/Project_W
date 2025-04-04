@@ -1,4 +1,4 @@
-import { GeneratedId, NonFunctionProperties } from 'app/utils/typeorm.utils';
+import { GeneratedId, NonFunctionProperties } from 'app/typeorm/typeorm.utils';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BlackBox } from 'app/utils/model.utils';
 import { MetaData } from 'auth/guards';

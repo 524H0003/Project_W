@@ -8,8 +8,6 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from 'app/app.service';
-import { ConfigService } from '@nestjs/config';
-import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { memoryStorage } from 'fastify-multer';
@@ -18,26 +16,24 @@ import { FacultyAssign } from './faculty.dto';
 import { GetRequest, HookGuard, MetaData } from 'auth/guards';
 import { UserRole } from 'user/user.model';
 import { UserRecieve } from 'user/user.entity';
+import { AvatarFileUpload } from 'app/app.controller';
+import { ApiSecurity } from '@nestjs/swagger';
 
 /**
  * Faculty controller
  */
 @Injectable()
 @Controller({ version: '1', path: 'faculty' })
-export class FacultyController extends BaseController {
+export class FacultyController {
 	/**
 	 * Initiate controller
 	 */
-	constructor(
-		protected svc: AppService,
-		protected cfg: ConfigService,
-	) {
-		super(svc, cfg);
-	}
+	constructor(protected svc: AppService) {}
 
 	/**
 	 * Assign faculty
 	 */
+	@ApiSecurity('CsrfToken')
 	@Post('assign')
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
