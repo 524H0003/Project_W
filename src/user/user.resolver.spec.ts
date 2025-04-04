@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, expect } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AppService } from 'app/app.service';
 import {
@@ -8,6 +8,9 @@ import {
 	sendGQL,
 } from 'app/utils/test.utils';
 import {
+	GetCurrent,
+	GetCurrentQuery,
+	GetCurrentQueryVariables,
 	GetUsers,
 	GetUsersQuery,
 	GetUsersQueryVariables,
@@ -110,5 +113,20 @@ describe('getUsers', () => {
 				],
 			},
 		);
+	});
+});
+
+describe('getCurrent', () => {
+	const send = sendGQL<GetCurrentQuery, GetCurrentQueryVariables>(GetCurrent);
+
+	it('success', async () => {
+		await execute(async () => (await send({}, { headers })).getCurrent, {
+			exps: [
+				{
+					type: 'toHaveProperty',
+					params: ['name', employee.eventCreator.user.baseUser.name],
+				},
+			],
+		});
 	});
 });
