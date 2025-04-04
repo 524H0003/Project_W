@@ -1,10 +1,10 @@
-import { ConfigService } from "@nestjs/config";
-import { MetaData } from "auth/guards";
-import { BaseUserEmail } from "user/base/baseUser.dto";
-import { UserAuthencation } from "user/user.dto";
-import { UserRecieve } from "user/user.entity";
-import { AppService } from "./app.service";
-import { Hook } from "./hook/hook.entity";
+import { ConfigService } from '@nestjs/config';
+import { MetaData } from 'auth/guards';
+import { BaseUserEmail } from 'user/base/baseUser.dto';
+import { UserAuthencation } from 'user/user.dto';
+import { UserRecieve } from 'user/user.entity';
+import { AppService } from './app.service';
+import { Hook } from './hook/hook.entity';
 
 /**
  * Base controller
