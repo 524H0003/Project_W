@@ -24,6 +24,7 @@ const config: Config = {
 		'src/**/*.controller.ts',
 		'src/**/*.resolver.ts',
 		'src/auth/guards/**/*',
+		'!src/auth/guards/**/*.spec.ts',
 	],
 	forceExit: true,
 };

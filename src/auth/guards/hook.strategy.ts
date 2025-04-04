@@ -15,12 +15,12 @@ export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
 	 * Initiate hook strategy
 	 */
 	constructor(
-		cfgSvc: ConfigService,
-		private hookSvc: HookService,
+		private config: ConfigService,
+		private hook: HookService,
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			secretOrKey: cfgSvc.get('ACCESS_SECRET'),
+			secretOrKey: config.get('ACCESS_SECRET'),
 			ignoreExpiration: false,
 		});
 	}
@@ -30,8 +30,6 @@ export class HookStrategy extends PassportStrategy(Strategy, 'hook') {
 	 * @param {IPayload} payload - the payload from token
 	 */
 	async validate({ accessToken }: IPayload): Promise<Hook> {
-		if (accessToken) return this.hookSvc.id(accessToken);
-
-		throw new ServerException('Invalid', 'Hook', '');
+		return this.hook.id(accessToken);
 	}
 }
