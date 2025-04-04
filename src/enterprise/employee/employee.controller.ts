@@ -7,8 +7,6 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from 'app/app.service';
-import { ConfigService } from '@nestjs/config';
-import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
@@ -18,23 +16,18 @@ import { Hook } from 'app/hook/hook.entity';
 import { IEmployeeSignUp } from './employee.model';
 import { GetRequest, MetaData } from 'auth/guards';
 import { UserRecieve } from 'user/user.entity';
+import { AvatarFileUpload } from 'app/app.controller';
 
 /**
  * Employee controller
  */
 @Controller({ version: '1', path: 'employee' })
-export class EmployeeController extends BaseController {
+export class EmployeeController {
 	/**
 	 * Initiate employee controller
 	 * @param {AppService} svc - general app service
-	 * @param {ConfigService} cfg - general app config
 	 */
-	constructor(
-		protected svc: AppService,
-		protected cfg: ConfigService,
-	) {
-		super(svc, cfg);
-	}
+	constructor(protected svc: AppService) {}
 
 	/**
 	 * Employee request hook

@@ -8,8 +8,6 @@ import {
 } from '@nestjs/common';
 import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
-import { ConfigService } from '@nestjs/config';
-import { AvatarFileUpload, BaseController } from 'app/utils/controller.utils';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
@@ -17,21 +15,17 @@ import { HookGuard } from 'auth/guards';
 import { EnterpriseAssign } from './enterprise.dto';
 import { Hook } from 'app/hook/hook.entity';
 import { GetRequest, MetaData } from 'auth/guards';
+import { AvatarFileUpload } from 'app/app.controller';
 
 /**
  * Enterprise controller
  */
 @Controller({ version: '1', path: 'enterprise' })
-export class EnterpriseController extends BaseController {
+export class EnterpriseController {
 	/**
 	 * Initiate enterprise controller
 	 */
-	constructor(
-		protected svc: AppService,
-		protected cfg: ConfigService,
-	) {
-		super(svc, cfg);
-	}
+	constructor(protected svc: AppService) {}
 
 	/**
 	 * Assign enterprise request
