@@ -16,6 +16,7 @@ import { EnterpriseAssign } from './enterprise.dto';
 import { Hook } from 'app/hook/hook.entity';
 import { GetRequest, MetaData } from 'auth/guards';
 import { AvatarFileUpload } from 'app/app.controller';
+import { ApiSecurity } from '@nestjs/swagger';
 
 /**
  * Enterprise controller
@@ -30,6 +31,7 @@ export class EnterpriseController {
 	/**
 	 * Assign enterprise request
 	 */
+	@ApiSecurity('CsrfToken')
 	@Post('assign')
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))

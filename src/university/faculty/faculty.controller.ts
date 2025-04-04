@@ -17,6 +17,7 @@ import { GetRequest, HookGuard, MetaData } from 'auth/guards';
 import { UserRole } from 'user/user.model';
 import { UserRecieve } from 'user/user.entity';
 import { AvatarFileUpload } from 'app/app.controller';
+import { ApiSecurity } from '@nestjs/swagger';
 
 /**
  * Faculty controller
@@ -32,6 +33,7 @@ export class FacultyController {
 	/**
 	 * Assign faculty
 	 */
+	@ApiSecurity('CsrfToken')
 	@Post('assign')
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))

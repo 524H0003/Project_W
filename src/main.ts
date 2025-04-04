@@ -80,6 +80,11 @@ async function bootstrap() {
 				'https://anhvietnguyen.id.vn',
 				'vietuk.nguyen.git@icloud.com',
 			)
+			.addSecurity('CsrfToken', {
+				type: 'apiKey',
+				in: 'header',
+				name: 'csrf-token',
+			})
 			.build(),
 		documentFactory = () => SwaggerModule.createDocument(nest, docConfig);
 	SwaggerModule.setup('api', nest, documentFactory);

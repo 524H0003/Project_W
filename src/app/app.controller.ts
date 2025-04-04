@@ -40,6 +40,7 @@ import {
 import { BaseUserEmail } from 'user/base/baseUser.dto';
 import { StudentController } from 'university/student/student.controller';
 import { BaseController } from './base.app.controller';
+import { ApiSecurity } from '@nestjs/swagger';
 
 /**
  * Application Controller
@@ -62,7 +63,11 @@ export class AppController extends BaseController {
 	/**
 	 * Login request
 	 */
-	@Post('login') @UseInterceptors(FileInterceptor()) async login(
+
+	@ApiSecurity('CsrfToken')
+	@Post('login')
+	@UseInterceptors(FileInterceptor())
+	async login(
 		@Body() body: UserLogIn,
 		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('hostname') hostname: string,
@@ -90,6 +95,7 @@ export class AppController extends BaseController {
 	/**
 	 * Sign up request
 	 */
+	@ApiSecurity('CsrfToken')
 	@Post('sign-up')
 	@UseGuards(LocalhostGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
@@ -110,7 +116,10 @@ export class AppController extends BaseController {
 	/**
 	 * Logout request
 	 */
-	@Post('logout') @UseGuards(RefreshGuard) async logout(
+	@ApiSecurity('CsrfToken')
+	@Post('logout')
+	@UseGuards(RefreshGuard)
+	async logout(
 		@GetRequest('refresh') refresh: IRefreshResult,
 	): Promise<UserRecieve> {
 		const { blocId } = refresh;
@@ -126,7 +135,10 @@ export class AppController extends BaseController {
 	/**
 	 * Refreshing tokens request
 	 */
-	@Post('refresh') @UseGuards(RefreshGuard) async refresh(
+	@ApiSecurity('CsrfToken')
+	@Post('refresh')
+	@UseGuards(RefreshGuard)
+	async refresh(
 		@GetRequest('metaData') mtdt: MetaData,
 		@GetRequest('refresh') refresh: IRefreshResult,
 	): Promise<UserRecieve> {
@@ -150,6 +162,7 @@ export class AppController extends BaseController {
 	 * Change password via console
 	 */
 	@Throttle({ requestSignature: { limit: 1, ttl: 600000 } })
+	@ApiSecurity('CsrfToken')
 	@Post('request-signature')
 	protected async requestSignatureViaConsole(
 		@Body() { email }: BaseUserEmail,
@@ -177,6 +190,7 @@ export class AppController extends BaseController {
 	 * Change password
 	 */
 	@Throttle({ changePassword: { limit: 3, ttl: 240000 } })
+	@ApiSecurity('CsrfToken')
 	@Post('change-password/:token')
 	@UseGuards(HookGuard)
 	protected changePassword(
@@ -192,6 +206,7 @@ export class AppController extends BaseController {
 	 * Send signature to email
 	 */
 	@Throttle({ changePasswordRequest: { limit: 1, ttl: 300000 } })
+	@ApiSecurity('CsrfToken')
 	@Post('change-password')
 	protected async resetPasswordViaEmail(
 		@GetRequest('hostname') hostname: string,

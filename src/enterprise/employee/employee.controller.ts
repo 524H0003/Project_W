@@ -17,6 +17,7 @@ import { IEmployeeSignUp } from './employee.model';
 import { GetRequest, MetaData } from 'auth/guards';
 import { UserRecieve } from 'user/user.entity';
 import { AvatarFileUpload } from 'app/app.controller';
+import { ApiSecurity } from '@nestjs/swagger';
 
 /**
  * Employee controller
@@ -32,7 +33,10 @@ export class EmployeeController {
 	/**
 	 * Employee request hook
 	 */
-	@Post('hook') @UseInterceptors(FileInterceptor()) async employeeHook(
+	@ApiSecurity('CsrfToken')
+	@Post('hook')
+	@UseInterceptors(FileInterceptor())
+	async employeeHook(
 		@Body() body: EmployeeHook,
 		@GetRequest('metaData') mtdt: MetaData,
 	) {
@@ -47,6 +51,7 @@ export class EmployeeController {
 	/**
 	 * Employee sign up request
 	 */
+	@ApiSecurity('CsrfToken')
 	@Post('sign-up')
 	@UseGuards(HookGuard)
 	@UseInterceptors(FileInterceptor('avatar', { storage: memoryStorage() }))
