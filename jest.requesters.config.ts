@@ -24,8 +24,10 @@ const config: Config = {
 	collectCoverageFrom: [
 		'src/**/*.controller.ts',
 		'src/**/*.resolver.ts',
-		'src/auth/guards/**/*',
 		'src/app/*.ts',
+		'!src/app/app.{fix, filter}.ts',
+		'!src/app/*.spec.ts',
+		'src/auth/guards/**/*',
 		'!src/auth/guards/**/*.spec.ts',
 	],
 	forceExit: true,
