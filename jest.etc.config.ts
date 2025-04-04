@@ -24,6 +24,8 @@ const config: Config = {
 		'src/**/*.ts',
 		'!src/*.ts',
 		'!src/app/*.ts',
+		'!src/app/utils/server.utils.ts',
+		'!src/app/utils/test.utils.ts',
 		'!src/app/admin/**/*',
 		'!src/app/interceptor/**/*',
 		'!src/auth/guards/**/*',
