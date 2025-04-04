@@ -13,7 +13,7 @@ import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { StudentSignUp } from './student.dto';
 import { UserRecieve } from 'user/user.entity';
 import { RequireOnlyOne } from 'app/utils/model.utils';
-import { BaseController } from 'app/app.controller';
+import { BaseController } from 'app/base.app.controller';
 
 /**
  * Student controller
