@@ -132,10 +132,7 @@ export class AppController extends BaseController {
 	): Promise<UserRecieve> {
 		const { metaData, blocHash, blocId } = refresh;
 
-		if (
-			JSON.stringify(sortObjectKeys(metaData)) !==
-			JSON.stringify(sortObjectKeys(mtdt))
-		) {
+		if (!compareMetaData(metaData, mtdt)) {
 			await this.svc.bloc.removeSnake(blocId);
 			return new UserRecieve({
 				isClearCookie: true,

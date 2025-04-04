@@ -16,11 +16,7 @@ import {
 	MoreThanOrEqual,
 	Raw,
 } from 'typeorm';
-import {
-	AuthenticationOptions,
-	buildRouter,
-	buildAuthenticatedRouter,
-} from '@adminjs/fastify';
+import { AuthenticationOptions, buildRouter } from '@adminjs/fastify';
 import { Database, Resource } from '@adminjs/typeorm';
 import { componentLoader, Components } from './components.mjs';
 import { ConfigService } from '@nestjs/config';
@@ -29,6 +25,7 @@ import { withLogin } from './authentication/login.handler.mjs';
 import { withLogout } from './authentication/logout.handler.mjs';
 import { withRefresh } from './authentication/refresh.handler.mjs';
 import { cookieProps, FilterParser, WrongArgumentError } from './types.mjs';
+import { HookGuard } from '../../auth/guards/hook.guard.js';
 
 const uuidRegex =
 		/^[0-9A-F]{8}-[0-9A-F]{4}-[5|4|3|2|1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
@@ -159,11 +156,6 @@ const uuidRegex =
 					'hashedPassword',
 					'eventCreator.user.hashedPassword',
 					'user.hashedPassword',
-					'user.blackBox.createdAt',
-					'user.baseUser.avatarPath',
-					'user.blackBox.updatedAt',
-					'user.lastLogin',
-					'user.isActive',
 				].map((i) => ({ [i]: { isVisible: fullyHideActions } })),
 			),
 		},
@@ -178,13 +170,26 @@ const uuidRegex =
 		customBuildAuthenticatedRouter(
 			admin,
 			{
-				authenticate: async (email, password) => {
-					const hook = await appService.hook.findOne({ signature: password });
+				authenticate: async (email, password, { request, reply }) => {
+					try {
+						const canActivate = await new HookGuard().canActivate({
+							switchToHttp: () => ({
+								getRequest: () => request as any,
+								getResponse: () => reply as any,
+							}),
+						} as unknown as any);
 
-					if (hook.isNull() || email !== config.get('ADMIN_EMAIL')) return null;
-					await appService.hook.remove(hook.id);
+						if (email == config.get('ADMIN_EMAIL') && canActivate) {
+							await appService.hook.validating(
+								password,
+								request['metaData'],
+								request['hook'],
+							);
 
-					return { email, password };
+							return { email, password };
+						}
+					} catch {}
+					return null;
 				},
 				cookieName: name,
 				cookiePassword: password,
