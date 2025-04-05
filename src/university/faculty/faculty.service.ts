@@ -10,7 +10,6 @@ import { AppService } from 'app/app.service';
 import { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { IFacultyEntity } from './faculty.model';
 import { IFacultyRelationshipKeys } from 'build/models';
-import { validation } from 'auth/auth.utils';
 
 /**
  * Faculty service
@@ -38,18 +37,16 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		const { user } = eventCreator,
 			{ baseUser, password, role } = user,
 			{ email, name } = baseUser,
-			existedUser = await this.svc.baseUser.email(email),
-			rawFaculty = new Faculty({ eventCreator, department });
+			existedUser = await this.svc.baseUser.email(email);
 
 		if (!existedUser.isNull())
 			throw new ServerException('Invalid', 'Email', '');
 
-		return validation<Faculty>(rawFaculty, async () => {
-			const eventCreator = await this.svc.eventCreator.assign(
+		return this.save({
+			eventCreator: await this.svc.eventCreator.assign(
 				await this.svc.auth.signUp({ name, email, password }, avatar, { role }),
-			);
-
-			return this.save({ eventCreator, department });
+			),
+			department,
 		});
 	}
 

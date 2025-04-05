@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { validation } from 'auth/auth.utils';
 import {
 	BaseEntity as TypeOrmBaseEntity,
 	DeepPartial,
@@ -233,9 +234,9 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	protected readonly save = async (
 		entity: DeepPartial<NonFunctionProperties<T>>,
 	): Promise<T> => {
-		const result = await this.repo.save(new this.ctor(entity));
-
-		return new this.ctor(result);
+		return new this.ctor(
+			await this.repo.save(await validation(new this.ctor(entity))),
+		);
 	};
 
 	public abstract assign(...args: any[]): Promise<T>;
