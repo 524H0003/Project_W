@@ -52,7 +52,7 @@ describe('assign', () => {
 
 describe('modify', () => {
 	it('success', async () => {
-		const dbUser = await svc.faculty.assign(
+		const { id } = await svc.faculty.assign(
 				{
 					...faculty.eventCreator.user.baseUser,
 					...faculty.eventCreator.user,
@@ -60,17 +60,17 @@ describe('modify', () => {
 				},
 				null,
 			),
-			name = (20).string,
+			name = (40).string,
 			newFaculty = {
 				eventCreator: { user: { baseUser: { name } } },
-				department: name,
+				department: (100).string,
 			};
 
-		await execute(() => svc.faculty.modify(dbUser.id, newFaculty), {
+		await execute(() => svc.faculty.modify(id, newFaculty), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 			onFinish: async () => {
 				await execute(
-					() => svc.employee.find({ ...newFaculty, cache: false }),
+					() => svc.faculty.find({ ...newFaculty, id, cache: false }),
 					{ exps: [{ type: 'toHaveLength', params: [1] }] },
 				);
 				await execute(() => svc.baseUser.find({ name, cache: false }), {
