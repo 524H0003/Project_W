@@ -5,6 +5,7 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import { UAParser } from 'ua-parser-js';
 import { Hook } from 'app/hook/hook.entity';
 import { randomUUID } from 'node:crypto';
+import { beforeEach } from '@jest/globals';
 
 const fileName = curFile(__filename);
 
@@ -13,14 +14,16 @@ let svc: AppService, employee: Employee, enterprise: Enterprise;
 beforeAll(async () => {
 	const { appSvc } = await initJest();
 
-	(svc = appSvc),
-		(employee = Employee.test(fileName)),
-		(enterprise = Enterprise.test(fileName));
+	(svc = appSvc), (enterprise = Enterprise.test(fileName));
 
 	enterprise = await svc.enterprise.assign(
 		{ ...enterprise, ...enterprise.baseUser },
 		null,
 	);
+});
+
+beforeEach(() => {
+	employee = Employee.test(fileName);
 });
 
 describe('hook', () => {
