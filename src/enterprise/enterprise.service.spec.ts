@@ -35,10 +35,7 @@ describe('EnterpriseService', () => {
 
 	it('modify', async () => {
 		const dbUser = await svc.enterprise.assign(
-				{
-					...enterprise,
-					...enterprise.baseUser,
-				},
+				{ ...enterprise, ...enterprise.baseUser },
 				null,
 			),
 			newName = (20).string;
