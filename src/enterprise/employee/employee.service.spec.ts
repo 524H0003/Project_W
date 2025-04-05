@@ -117,11 +117,7 @@ describe('modify', () => {
 					await execute(
 						() =>
 							svc.employee.find({
-								eventCreator: {
-									user: {
-										baseUser: { name: newName },
-									},
-								},
+								eventCreator: { user: { baseUser: { name: newName } } },
 								cache: false,
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [1] }] },

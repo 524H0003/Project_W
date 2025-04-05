@@ -44,9 +44,7 @@ describe('modify', () => {
 		await execute(
 			() =>
 				svc.student.modify(dbUser.id, {
-					user: {
-						baseUser: { name: newName },
-					},
+					user: { baseUser: { name: newName } },
 				}),
 			{
 				exps: [{ type: 'toThrow', not: true, params: [] }],
@@ -54,9 +52,7 @@ describe('modify', () => {
 					await execute(
 						() =>
 							svc.student.find({
-								user: {
-									baseUser: { name: newName },
-								},
+								user: { baseUser: { name: newName } },
 								cache: false,
 							}),
 						{ exps: [{ type: 'toHaveLength', params: [1] }] },
