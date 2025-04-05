@@ -25,59 +25,72 @@ beforeAll(async () => {
 
 beforeEach(() => {});
 
-describe('EmployeeService', () => {
-	describe('hook', () => {
-		it('success', async () => {
-			await execute(
-				async () =>
-					svc.employee.hook(
-						{
-							enterpriseName: enterprise.baseUser.name,
-							...employee.eventCreator.user.baseUser,
-							...employee,
-						},
-						new UAParser().getResult(),
-					),
-				{ exps: [{ type: 'toBeInstanceOf', params: [Hook] }] },
-			);
-		});
+describe('hook', () => {
+	it('success', async () => {
+		await execute(
+			async () =>
+				svc.employee.hook(
+					{
+						enterpriseName: enterprise.baseUser.name,
+						...employee.eventCreator.user.baseUser,
+						...employee,
+					},
+					new UAParser().getResult(),
+				),
+			{ exps: [{ type: 'toBeInstanceOf', params: [Hook] }] },
+		);
 	});
 
-	describe('assign', () => {
-		it('success', async () => {
-			await execute(
-				() =>
-					svc.employee.assign(
-						{
-							...employee.eventCreator.user,
-							...employee.eventCreator.user.baseUser,
-							...employee,
-							id: enterprise.id,
-						},
-						null,
-					),
-				{ exps: [{ type: 'toBeDefined', params: [] }] },
-			);
-		});
+	it('failed due to non existed enterprise', async () => {
+		await execute(
+			async () =>
+				svc.employee.hook(
+					{
+						enterpriseName: (20).string,
+						...employee.eventCreator.user.baseUser,
+						...employee,
+					},
+					new UAParser().getResult(),
+				),
+			{
+				exps: [{ type: 'toThrow', params: [err('Invalid', 'Enterprise', '')] }],
+			},
+		);
+	});
+});
 
-		it('failed due to non existed enterprise', async () => {
-			await execute(
-				() =>
-					svc.employee.assign(
-						{
-							...employee.eventCreator.user,
-							...employee.eventCreator.user.baseUser,
-							...employee,
-							id: randomUUID(),
-						},
-						null,
-					),
-				{
-					exps: [
-						{ type: 'toThrow', params: [err('Invalid', 'Enterprise', '')] },
-					],
-				},
-			);
-		});
+describe('assign', () => {
+	it('success', async () => {
+		await execute(
+			() =>
+				svc.employee.assign(
+					{
+						...employee.eventCreator.user,
+						...employee.eventCreator.user.baseUser,
+						...employee,
+						id: enterprise.id,
+					},
+					null,
+				),
+			{ exps: [{ type: 'toBeDefined', params: [] }] },
+		);
+	});
+
+	it('failed due to non existed enterprise', async () => {
+		await execute(
+			() =>
+				svc.employee.assign(
+					{
+						...employee.eventCreator.user,
+						...employee.eventCreator.user.baseUser,
+						...employee,
+						id: randomUUID(),
+					},
+					null,
+				),
+			{
+				exps: [{ type: 'toThrow', params: [err('Invalid', 'Enterprise', '')] }],
+			},
+		);
 	});
 });

@@ -32,11 +32,12 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 		return this.save({ user });
 	}
 
-	public modify(
+	public async modify(
 		id: string,
 		update: DeepPartial<EventCreator>,
 		raw?: boolean,
 	): Promise<void> {
+		await this.svc.user.modify(id, update.user);
 		update = InterfaceCasting.delete(update, IEventCreatorRelationshipKeys);
 		if (!Object.keys(update).length) return;
 		return this.update({ id }, update, raw);
