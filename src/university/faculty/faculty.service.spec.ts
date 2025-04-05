@@ -12,12 +12,12 @@ beforeAll(async () => {
 	svc = appSvc;
 });
 
-beforeEach(() => {});
+beforeEach(() => {
+	faculty = Faculty.test(fileName);
+});
 
 describe('assign', () => {
 	it('success', async () => {
-		faculty = Faculty.test(fileName);
-
 		await execute(
 			() =>
 				svc.faculty.assign(
@@ -33,8 +33,6 @@ describe('assign', () => {
 	});
 
 	it('failed due to email already taken', async () => {
-		faculty = Faculty.test(fileName);
-
 		await svc.baseUser.assign({ ...faculty.eventCreator.user.baseUser });
 
 		await execute(
