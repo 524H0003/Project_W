@@ -85,11 +85,7 @@ it('changePassword', async () => {
 		onFinish: async () => {
 			await execute(
 				() =>
-					svc.auth.login({
-						...user,
-						...user.baseUser,
-						password: newPassword,
-					}),
+					svc.auth.login({ ...user, ...user.baseUser, password: newPassword }),
 				{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
 			);
 		},
