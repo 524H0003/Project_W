@@ -6,7 +6,7 @@ import { IAuthSignUpOption } from './auth.interface';
 import { JwtService } from '@nestjs/jwt';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
-import { compare, SecurityService, validation } from './auth.utils';
+import { compare, SecurityService } from './auth.utils';
 
 /**
  * Auth service
@@ -37,31 +37,33 @@ export class AuthService extends SecurityService {
 		options?: IAuthSignUpOption,
 	): Promise<User> {
 		const user = await this.svc.user.email(email),
-			{ role = UserRole.undefined } = options || {},
-			rawUser = { password, baseUser: { email, name }, role };
+			{ role = UserRole.undefined } = options || {};
 
 		if (!user.isNull()) throw new ServerException('Invalid', 'User', 'SignUp');
 
 		try {
-			return validation(rawUser, async () => {
-				const { id } = await this.svc.user.assign(rawUser);
-
-				await this.svc.user.modify(
-					id,
-					avatar
-						? {
-								baseUser: {
-									avatarPath: (await this.svc.file.assign(avatar, id)).path,
-								},
-							}
-						: {},
-				);
-
-				return this.svc.user.id(id);
+			const { id } = await this.svc.user.assign({
+				password,
+				baseUser: { email, name },
+				role,
 			});
+
+			await this.svc.user.modify(
+				id,
+				avatar
+					? {
+							baseUser: {
+								avatarPath: (await this.svc.file.assign(avatar, id)).path,
+							},
+						}
+					: {},
+			);
+
+			return this.svc.user.id(id);
 		} catch (error) {
-			switch ((error as { name: string }).name) {
-				case 'BadRequestException':
+			const { message } = error as ServerException;
+			switch (true) {
+				case message.includes(err('Invalid', 'Entity', '')):
 					throw new ServerException('Invalid', 'Entity', 'SignUp');
 
 				default:

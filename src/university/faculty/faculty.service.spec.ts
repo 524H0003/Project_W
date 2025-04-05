@@ -12,12 +12,12 @@ beforeAll(async () => {
 	svc = appSvc;
 });
 
-beforeEach(() => {});
+beforeEach(() => {
+	faculty = Faculty.test(fileName);
+});
 
-describe('FacultyService', () => {
-	it('assign', async () => {
-		faculty = Faculty.test(fileName);
-
+describe('assign', () => {
+	it('success', async () => {
 		await execute(
 			() =>
 				svc.faculty.assign(
@@ -32,9 +32,7 @@ describe('FacultyService', () => {
 		);
 	});
 
-	it('assign failed due to email already taken', async () => {
-		faculty = Faculty.test(fileName);
-
+	it('failed due to email already taken', async () => {
 		await svc.baseUser.assign({ ...faculty.eventCreator.user.baseUser });
 
 		await execute(
@@ -49,5 +47,36 @@ describe('FacultyService', () => {
 				),
 			{ exps: [{ type: 'toThrow', params: ['Invalid_Email'] }] },
 		);
+	});
+});
+
+describe('modify', () => {
+	it('success', async () => {
+		const { id } = await svc.faculty.assign(
+				{
+					...faculty.eventCreator.user.baseUser,
+					...faculty.eventCreator.user,
+					...faculty,
+				},
+				null,
+			),
+			name = (40).string,
+			newFaculty = {
+				eventCreator: { user: { baseUser: { name } } },
+				department: (100).string,
+			};
+
+		await execute(() => svc.faculty.modify(id, newFaculty), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(
+					() => svc.faculty.find({ ...newFaculty, id, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
+				await execute(() => svc.baseUser.find({ name, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
+			},
+		});
 	});
 });

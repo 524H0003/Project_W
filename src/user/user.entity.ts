@@ -131,7 +131,7 @@ export class User extends ParentId implements IUserEntity {
 	 * ! WARNING: Weak password validation
 	 */
 	@IsStrongPassword({
-		minLength: 1, // 16
+		minLength: 2, // 16
 		minLowercase: 0, // 1
 		minUppercase: 0, // 1
 		minNumbers: 0, // 1

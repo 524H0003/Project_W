@@ -76,11 +76,12 @@ export class EmployeeService extends DatabaseRequests<Employee> {
 		return this.save({ eventCreator, enterprise, position });
 	}
 
-	public modify(
+	public async modify(
 		id: string,
 		update: DeepPartial<Employee>,
 		raw?: boolean,
 	): Promise<void> {
+		await this.svc.eventCreator.modify(id, update.eventCreator);
 		update = InterfaceCasting.delete(update, IEmployeeRelationshipKeys);
 		if (!Object.keys(update).length) return;
 		return this.update({ id }, update, raw);

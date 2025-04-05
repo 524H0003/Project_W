@@ -18,19 +18,15 @@ export type Argon2Options = Required<
 /**
  * Validator for class
  * @param {object} input - the object need to validate
- * @param {Function} then - The procedure aftermath
  * @return {Promise<T>}
  */
-export async function validation<T>(
-	input: object,
-	then: () => Promise<T>,
-): Promise<T> {
+export async function validation<T>(input: T): Promise<T> {
 	const errors = Object.assign(
 		{},
-		...(await validate(input)).map((i) => i.constraints),
+		...(await validate(input as object)).map((i) => i.constraints),
 	) as object;
 
-	if (!Object.keys(errors).length) return then();
+	if (!Object.keys(errors).length) return input;
 	else throw new ServerException('Invalid', 'Entity', '');
 }
 

@@ -26,32 +26,6 @@ export class UserService extends DatabaseRequests<User> {
 	}
 
 	/**
-	 * Assign new user
-	 * @param {User} entity - the assigning user
-	 */
-	async assign({
-		baseUser,
-		role,
-		password,
-	}: NonFunctionProperties<IUserEntity>): Promise<User> {
-		return this.save({
-			baseUser: await this.svc.baseUser.assign(baseUser),
-			role,
-			password,
-		});
-	}
-
-	/**
-	 * Modify user
-	 */
-	async modify(id: string, update: DeepPartial<User>) {
-		await this.svc.baseUser.modify(id, update.baseUser);
-		update = InterfaceCasting.delete(update, IUserRelationshipKeys);
-		if (!Object.keys(update).length) return;
-		return this.update({ id }, update);
-	}
-
-	/**
 	 * Find user with email
 	 * @param {string} input - user's email
 	 */
@@ -90,5 +64,32 @@ export class UserService extends DatabaseRequests<User> {
 			default:
 				return { user: (await this.id(id)).info };
 		}
+	}
+
+	// Abstract
+	/**
+	 * Assign new user
+	 * @param {User} entity - the assigning user
+	 */
+	async assign({
+		baseUser,
+		role,
+		password,
+	}: NonFunctionProperties<IUserEntity>): Promise<User> {
+		return this.save({
+			baseUser: await this.svc.baseUser.assign(baseUser),
+			role,
+			password,
+		});
+	}
+
+	/**
+	 * Modify user
+	 */
+	async modify(id: string, update: DeepPartial<User>) {
+		await this.svc.baseUser.modify(id, update.baseUser);
+		update = InterfaceCasting.delete(update, IUserRelationshipKeys);
+		if (!Object.keys(update).length) return;
+		return this.update({ id }, update);
 	}
 }

@@ -63,6 +63,10 @@ it('modify', async () => {
 					() => svc.user.find({ baseUser: { name: newName }, cache: false }),
 					{ exps: [{ type: 'toHaveLength', params: [1] }] },
 				);
+				await execute(
+					() => svc.baseUser.find({ name: newName, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
 			},
 		},
 	);

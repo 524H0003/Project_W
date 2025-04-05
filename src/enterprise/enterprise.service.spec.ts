@@ -16,8 +16,8 @@ beforeEach(() => {
 	enterprise = Enterprise.test(fileName);
 });
 
-describe('EnterpriseService', () => {
-	it('assign', async () => {
+describe('assign', () => {
+	it('success', async () => {
 		await execute(
 			() =>
 				svc.enterprise.assign({ ...enterprise, ...enterprise.baseUser }, null),
@@ -31,5 +31,29 @@ describe('EnterpriseService', () => {
 				},
 			},
 		);
+	});
+});
+
+describe('modify', () => {
+	it('success', async () => {
+		const dbUser = await svc.enterprise.assign(
+				{ ...enterprise, ...enterprise.baseUser },
+				null,
+			),
+			name = (20).string,
+			newEnterprise = { baseUser: { name }, industry: 'a' };
+
+		await execute(() => svc.enterprise.modify(dbUser.id, newEnterprise), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(
+					() => svc.enterprise.find({ ...newEnterprise, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
+				await execute(() => svc.baseUser.find({ name, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
+			},
+		});
 	});
 });

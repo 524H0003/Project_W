@@ -5,6 +5,8 @@ import { Enterprise } from 'enterprise/enterprise.entity';
 import { UAParser } from 'ua-parser-js';
 import { Hook } from 'app/hook/hook.entity';
 import { randomUUID } from 'node:crypto';
+import { beforeEach } from '@jest/globals';
+import { EmployeePosition } from './employee.model';
 
 const fileName = curFile(__filename);
 
@@ -13,9 +15,7 @@ let svc: AppService, employee: Employee, enterprise: Enterprise;
 beforeAll(async () => {
 	const { appSvc } = await initJest();
 
-	(svc = appSvc),
-		(employee = Employee.test(fileName)),
-		(enterprise = Enterprise.test(fileName));
+	(svc = appSvc), (enterprise = Enterprise.test(fileName));
 
 	enterprise = await svc.enterprise.assign(
 		{ ...enterprise, ...enterprise.baseUser },
@@ -23,61 +23,108 @@ beforeAll(async () => {
 	);
 });
 
-beforeEach(() => {});
+beforeEach(() => {
+	employee = Employee.test(fileName);
+});
 
-describe('EmployeeService', () => {
-	describe('hook', () => {
-		it('success', async () => {
-			await execute(
-				async () =>
-					svc.employee.hook(
-						{
-							enterpriseName: enterprise.baseUser.name,
-							...employee.eventCreator.user.baseUser,
-							...employee,
-						},
-						new UAParser().getResult(),
-					),
-				{ exps: [{ type: 'toBeInstanceOf', params: [Hook] }] },
-			);
-		});
+describe('hook', () => {
+	it('success', async () => {
+		await execute(
+			async () =>
+				svc.employee.hook(
+					{
+						enterpriseName: enterprise.baseUser.name,
+						...employee.eventCreator.user.baseUser,
+						...employee,
+					},
+					new UAParser().getResult(),
+				),
+			{ exps: [{ type: 'toBeInstanceOf', params: [Hook] }] },
+		);
 	});
 
-	describe('assign', () => {
-		it('success', async () => {
-			await execute(
-				() =>
-					svc.employee.assign(
-						{
-							...employee.eventCreator.user,
-							...employee.eventCreator.user.baseUser,
-							...employee,
-							id: enterprise.id,
-						},
-						null,
-					),
-				{ exps: [{ type: 'toBeDefined', params: [] }] },
-			);
-		});
+	it('failed due to non existed enterprise', async () => {
+		await execute(
+			async () =>
+				svc.employee.hook(
+					{
+						enterpriseName: (20).string,
+						...employee.eventCreator.user.baseUser,
+						...employee,
+					},
+					new UAParser().getResult(),
+				),
+			{
+				exps: [{ type: 'toThrow', params: [err('Invalid', 'Enterprise', '')] }],
+			},
+		);
+	});
+});
 
-		it('failed due to non existed enterprise', async () => {
-			await execute(
-				() =>
-					svc.employee.assign(
-						{
-							...employee.eventCreator.user,
-							...employee.eventCreator.user.baseUser,
-							...employee,
-							id: randomUUID(),
-						},
-						null,
-					),
+describe('assign', () => {
+	it('success', async () => {
+		await execute(
+			() =>
+				svc.employee.assign(
+					{
+						...employee.eventCreator.user,
+						...employee.eventCreator.user.baseUser,
+						...employee,
+						id: enterprise.id,
+					},
+					null,
+				),
+			{ exps: [{ type: 'toBeDefined', params: [] }] },
+		);
+	});
+
+	it('failed due to non existed enterprise', async () => {
+		await execute(
+			() =>
+				svc.employee.assign(
+					{
+						...employee.eventCreator.user,
+						...employee.eventCreator.user.baseUser,
+						...employee,
+						id: randomUUID(),
+					},
+					null,
+				),
+			{
+				exps: [{ type: 'toThrow', params: [err('Invalid', 'Enterprise', '')] }],
+			},
+		);
+	});
+});
+
+describe('modify', () => {
+	it('success', async () => {
+		const dbUser = await svc.employee.assign(
 				{
-					exps: [
-						{ type: 'toThrow', params: [err('Invalid', 'Enterprise', '')] },
-					],
+					...employee.eventCreator.user,
+					...employee.eventCreator.user.baseUser,
+					...employee,
+					id: enterprise.id,
 				},
-			);
+				null,
+			),
+			name = (20).string,
+			newEmployee = {
+				eventCreator: { user: { baseUser: { name } } },
+				position: EmployeePosition.Manager,
+			};
+
+		await execute(() => svc.employee.modify(dbUser.id, newEmployee), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(
+					() => svc.employee.find({ ...newEmployee, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
+				await execute(() => svc.baseUser.find({ name, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
+			},
 		});
 	});
 });
