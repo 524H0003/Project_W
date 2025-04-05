@@ -23,8 +23,6 @@ beforeAll(async () => {
 	);
 });
 
-beforeEach(() => {});
-
 describe('hook', () => {
 	it('success', async () => {
 		await execute(
@@ -90,6 +88,49 @@ describe('assign', () => {
 				),
 			{
 				exps: [{ type: 'toThrow', params: [err('Invalid', 'Enterprise', '')] }],
+			},
+		);
+	});
+});
+
+describe('modify', () => {
+	it('success', async () => {
+		const dbUser = await svc.employee.assign(
+				{
+					...employee.eventCreator.user,
+					...employee.eventCreator.user.baseUser,
+					...employee,
+					id: enterprise.id,
+				},
+				null,
+			),
+			newName = (20).string;
+
+		await execute(
+			() =>
+				svc.employee.modify(dbUser.id, {
+					eventCreator: { user: { baseUser: { name: newName } } },
+				}),
+			{
+				exps: [{ type: 'toThrow', not: true, params: [] }],
+				onFinish: async () => {
+					await execute(
+						() =>
+							svc.employee.find({
+								eventCreator: {
+									user: {
+										baseUser: { name: newName },
+									},
+								},
+								cache: false,
+							}),
+						{ exps: [{ type: 'toHaveLength', params: [1] }] },
+					);
+					await execute(
+						() => svc.baseUser.find({ name: newName, cache: false }),
+						{ exps: [{ type: 'toHaveLength', params: [1] }] },
+					);
+				},
 			},
 		);
 	});

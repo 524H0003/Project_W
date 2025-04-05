@@ -16,8 +16,8 @@ beforeEach(() => {
 	enterprise = Enterprise.test(fileName);
 });
 
-describe('EnterpriseService', () => {
-	it('assign', async () => {
+describe('assign', () => {
+	it('success', async () => {
 		await execute(
 			() =>
 				svc.enterprise.assign({ ...enterprise, ...enterprise.baseUser }, null),
@@ -32,8 +32,10 @@ describe('EnterpriseService', () => {
 			},
 		);
 	});
+});
 
-	it('modify', async () => {
+describe('modify', () => {
+	it('success', async () => {
 		const dbUser = await svc.enterprise.assign(
 				{ ...enterprise, ...enterprise.baseUser },
 				null,
