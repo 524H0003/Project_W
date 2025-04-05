@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
-import { IEventCreatorRelationshipKeys } from 'build/models';
 
 /**
  * Event creator service
@@ -35,11 +34,9 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 	public async modify(
 		id: string,
 		update: DeepPartial<EventCreator>,
+		// eslint-disable-next-line tsEslint/no-unused-vars
 		raw?: boolean,
 	): Promise<void> {
 		await this.svc.user.modify(id, update.user);
-		update = InterfaceCasting.delete(update, IEventCreatorRelationshipKeys);
-		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
 	}
 }

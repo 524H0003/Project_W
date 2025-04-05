@@ -40,27 +40,20 @@ describe('modify', () => {
 				{ ...enterprise, ...enterprise.baseUser },
 				null,
 			),
-			newName = (20).string;
+			name = (20).string,
+			newEnterprise = { baseUser: { name }, industry: 'a' };
 
-		await execute(
-			() => svc.enterprise.modify(dbUser.id, { baseUser: { name: newName } }),
-			{
-				exps: [{ type: 'toThrow', not: true, params: [] }],
-				onFinish: async () => {
-					await execute(
-						() =>
-							svc.enterprise.find({
-								baseUser: { name: newName },
-								cache: false,
-							}),
-						{ exps: [{ type: 'toHaveLength', params: [1] }] },
-					);
-					await execute(
-						() => svc.baseUser.find({ name: newName, cache: false }),
-						{ exps: [{ type: 'toHaveLength', params: [1] }] },
-					);
-				},
+		await execute(() => svc.enterprise.modify(dbUser.id, newEnterprise), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(
+					() => svc.enterprise.find({ ...newEnterprise, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
+				await execute(() => svc.baseUser.find({ name, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
 			},
-		);
+		});
 	});
 });

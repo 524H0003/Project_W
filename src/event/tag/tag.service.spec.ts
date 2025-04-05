@@ -67,3 +67,19 @@ describe('attach', () => {
 		});
 	});
 });
+
+describe('modify', () => {
+	it('success', async () => {
+		const name = (30).string,
+			{ id } = await svc.eventTag.assign(eventTag);
+
+		await execute(() => svc.eventTag.modify(id, { name }), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(() => svc.eventTag.find({ name, id, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
+			},
+		});
+	});
+});

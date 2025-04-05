@@ -39,30 +39,22 @@ describe('modify', () => {
 
 	it('success', async () => {
 		const dbUser = await svc.student.assign({ ...student.user.baseUser }),
-			newName = (20).string;
+			name = (20).string,
+			newStudent = {
+				user: { baseUser: { name } },
+				enrollmentYear: (2000).random,
+			};
 
-		await execute(
-			() =>
-				svc.student.modify(dbUser.id, {
-					user: { baseUser: { name: newName } },
-				}),
-			{
-				exps: [{ type: 'toThrow', not: true, params: [] }],
-				onFinish: async () => {
-					await execute(
-						() =>
-							svc.student.find({
-								user: { baseUser: { name: newName } },
-								cache: false,
-							}),
-						{ exps: [{ type: 'toHaveLength', params: [1] }] },
-					);
-					await execute(
-						() => svc.baseUser.find({ name: newName, cache: false }),
-						{ exps: [{ type: 'toHaveLength', params: [1] }] },
-					);
-				},
+		await execute(() => svc.student.modify(dbUser.id, newStudent), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(() => svc.student.find({ ...newStudent, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
+				await execute(() => svc.baseUser.find({ name, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
 			},
-		);
+		});
 	});
 });

@@ -6,6 +6,7 @@ import { UAParser } from 'ua-parser-js';
 import { Hook } from 'app/hook/hook.entity';
 import { randomUUID } from 'node:crypto';
 import { beforeEach } from '@jest/globals';
+import { EmployeePosition } from './employee.model';
 
 const fileName = curFile(__filename);
 
@@ -107,30 +108,23 @@ describe('modify', () => {
 				},
 				null,
 			),
-			newName = (20).string;
+			name = (20).string,
+			newEmployee = {
+				eventCreator: { user: { baseUser: { name } } },
+				position: EmployeePosition.Manager,
+			};
 
-		await execute(
-			() =>
-				svc.employee.modify(dbUser.id, {
-					eventCreator: { user: { baseUser: { name: newName } } },
-				}),
-			{
-				exps: [{ type: 'toThrow', not: true, params: [] }],
-				onFinish: async () => {
-					await execute(
-						() =>
-							svc.employee.find({
-								eventCreator: { user: { baseUser: { name: newName } } },
-								cache: false,
-							}),
-						{ exps: [{ type: 'toHaveLength', params: [1] }] },
-					);
-					await execute(
-						() => svc.baseUser.find({ name: newName, cache: false }),
-						{ exps: [{ type: 'toHaveLength', params: [1] }] },
-					);
-				},
+		await execute(() => svc.employee.modify(dbUser.id, newEmployee), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(
+					() => svc.employee.find({ ...newEmployee, cache: false }),
+					{ exps: [{ type: 'toHaveLength', params: [1] }] },
+				);
+				await execute(() => svc.baseUser.find({ name, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
 			},
-		);
+		});
 	});
 });
