@@ -1,3 +1,10 @@
+## [1.2.36](https://github.com/524H0003/Project_W/compare/v1.2.35...v1.2.36) (2025-04-05)
+
+
+### Bug Fixes
+
+* **typeorm:** missing class-validator on save entity ([#187](https://github.com/524H0003/Project_W/issues/187)) ([89e5666](https://github.com/524H0003/Project_W/commit/89e566679a659e0b58fa21c072b23002527050c0))
+
 ## [1.2.35](https://github.com/524H0003/Project_W/compare/v1.2.34...v1.2.35) (2025-04-02)
 
 
