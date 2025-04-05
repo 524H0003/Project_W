@@ -76,22 +76,28 @@ describe('login', () => {
 	});
 });
 
-it('changePassword', async () => {
-	const dbUser = await svc.auth.signUp({ ...user, ...user.baseUser }, null),
-		newPassword = (20).string + 'aA1!';
+describe('changePassword', () => {
+	it('success', async () => {
+		const dbUser = await svc.auth.signUp({ ...user, ...user.baseUser }, null),
+			newPassword = (20).string + 'aA1!';
 
-	await execute(() => svc.auth.changePassword(dbUser, newPassword), {
-		exps: [{ type: 'toThrow', not: true, params: [] }],
-		onFinish: async () => {
-			await execute(
-				() =>
-					svc.auth.login({ ...user, ...user.baseUser, password: newPassword }),
-				{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
-			);
-		},
+		await execute(() => svc.auth.changePassword(dbUser, newPassword), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(
+					() =>
+						svc.auth.login({
+							...user,
+							...user.baseUser,
+							password: newPassword,
+						}),
+					{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
+				);
+			},
+		});
+		await execute(
+			() => svc.auth.login({ ...user.baseUser, password: newPassword }),
+			{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
+		);
 	});
-	await execute(
-		() => svc.auth.login({ ...user.baseUser, password: newPassword }),
-		{ exps: [{ type: 'toBeInstanceOf', params: [User] }] },
-	);
 });

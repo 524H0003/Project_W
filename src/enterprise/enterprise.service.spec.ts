@@ -32,4 +32,36 @@ describe('EnterpriseService', () => {
 			},
 		);
 	});
+
+	it('modify', async () => {
+		const dbUser = await svc.enterprise.assign(
+				{
+					...enterprise,
+					...enterprise.baseUser,
+				},
+				null,
+			),
+			newName = (20).string;
+
+		await execute(
+			() => svc.enterprise.modify(dbUser.id, { baseUser: { name: newName } }),
+			{
+				exps: [{ type: 'toThrow', not: true, params: [] }],
+				onFinish: async () => {
+					await execute(
+						() =>
+							svc.enterprise.find({
+								baseUser: { name: newName },
+								cache: false,
+							}),
+						{ exps: [{ type: 'toHaveLength', params: [1] }] },
+					);
+					await execute(
+						() => svc.baseUser.find({ name: newName, cache: false }),
+						{ exps: [{ type: 'toHaveLength', params: [1] }] },
+					);
+				},
+			},
+		);
+	});
 });
