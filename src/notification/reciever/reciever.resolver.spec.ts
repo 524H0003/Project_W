@@ -227,10 +227,9 @@ describe('readNotificationMany', () => {
 });
 
 describe('getNotifications', () => {
-	const send = sendGQL<
-			GetNotificationsQuery,
-			GetNotificationsQueryVariables
-		>(GetNotifications),
+	const send = sendGQL<GetNotificationsQuery, GetNotificationsQueryVariables>(
+			GetNotifications,
+		),
 		recieversId: string[] = [];
 
 	let userHeaders: OutgoingHttpHeaders, numRead: number;
@@ -255,7 +254,8 @@ describe('getNotifications', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({}, { headers: userHeaders })).getNotifications.items.length,
+				(await send({}, { headers: userHeaders })).getNotifications.items
+					.length,
 			{ exps: [{ type: 'toEqual', params: [5] }] },
 		);
 	});
