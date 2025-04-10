@@ -91,6 +91,16 @@ input EventTagAttach {
   name: String!
 }
 
+type EventTagPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [EventTag!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
+}
+
 input EventUpdate {
   additionalFields: JSON
   applicationDeadline: DateTime
@@ -217,8 +227,8 @@ type Query {
   getEvents(input: FindEvent!, page: Paging): [Event!]!
   getNotifications(isRead: Boolean, page: Paging): RecieverPage!
   getStudents(input: FindStudent!, page: Paging): StudentPage!
+  getTags(input: FindTag!, page: Paging): EventTagPage!
   getUsers(input: FindUser!, page: Paging): UserPage!
-  listAllTags(input: FindTag!, page: Paging): [EventTag!]!
 }
 
 input ReadNotification {

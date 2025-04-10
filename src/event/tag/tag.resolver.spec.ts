@@ -20,9 +20,9 @@ import {
 	AttachEventTag,
 	AttachEventTagMutation,
 	AttachEventTagMutationVariables,
-	ListAllTags,
-	ListAllTagsQuery,
-	ListAllTagsQueryVariables,
+	GetTags,
+	GetTagsQuery,
+	GetTagsQueryVariables,
 } from 'build/compiled_graphql';
 import { Event } from 'event/event.entity';
 import { OutgoingHttpHeaders } from 'http';
@@ -118,10 +118,8 @@ describe('attachEventTag', () => {
 	});
 });
 
-describe('listAllTags', () => {
-	const send = sendGQL<ListAllTagsQuery, ListAllTagsQueryVariables>(
-		ListAllTags,
-	);
+describe('getTags', () => {
+	const send = sendGQL<GetTagsQuery, GetTagsQueryVariables>(GetTags);
 	let tagId: string;
 
 	beforeEach(async () => {
@@ -134,7 +132,8 @@ describe('listAllTags', () => {
 
 	it('success', async () => {
 		await execute(
-			async () => (await send({ input: {} }, { headers: headers })).listAllTags,
+			async () =>
+				(await send({ input: {} }, { headers: headers })).getTags.items,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
