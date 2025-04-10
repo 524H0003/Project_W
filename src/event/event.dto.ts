@@ -1,6 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { EventStatus, EventType, IEventInfo } from './event.model';
 import GQLJSON from 'graphql-type-json';
+import { PaginateResult } from 'app/graphql/graphql.dto';
+import { Event } from './event.entity';
 
 @InputType()
 export class EventAssign implements IEventInfo {
@@ -53,3 +55,6 @@ export class FindEvent implements IEventInfo {
 	@Field({ nullable: true }) requiredSkills: string;
 	@Field({ nullable: true }) id: string;
 }
+
+@ObjectType()
+export class EventPage extends PaginateResult(Event) {}

@@ -226,6 +226,14 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 		return new this.ctor(result);
 	};
 
+	/**
+	 * Get total of entity
+	 * @return {Promise<number>}
+	 */
+	public readonly total = async (): Promise<number> => {
+		return this.repo.count();
+	};
+
 	// Create
 	/**
 	 * Saving an entity

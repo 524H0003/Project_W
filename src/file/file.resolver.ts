@@ -15,6 +15,7 @@ export class FileResolver {
 	 */
 	constructor(protected svc: AppService) {}
 
+	// Mutations
 	/**
 	 * Upload file
 	 */

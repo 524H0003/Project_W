@@ -43,7 +43,7 @@ describe('getStudent', () => {
 
 	it('success', async () => {
 		await execute(
-			async () => (await send({ input: {} }, { headers })).getStudents,
+			async () => (await send({ input: {} }, { headers })).getStudents.items,
 			{
 				exps: [
 					{
@@ -65,7 +65,8 @@ describe('getStudent', () => {
 	it('success with id', async () => {
 		await execute(
 			async () =>
-				(await send({ input: { id: student.id } }, { headers })).getStudents,
+				(await send({ input: { id: student.id } }, { headers })).getStudents
+					.items,
 			{
 				exps: [
 					{
@@ -88,7 +89,7 @@ describe('getStudent', () => {
 		await execute(
 			async () =>
 				(await send({ input: { name: student.user.info.name } }, { headers }))
-					.getStudents,
+					.getStudents.items,
 			{
 				exps: [
 					{

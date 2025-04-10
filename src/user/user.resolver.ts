@@ -1,10 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { AppService } from 'app/app.service';
 import { AccessGuard, Allow, GetServerKey } from 'auth/guards';
 import { User } from './user.entity';
-import { FindUser } from './user.dto';
+import { FindUser, UserPage } from './user.dto';
 import { Paging } from 'app/app.graphql';
+import { UserService } from './user.service';
+import { paginateResponse } from 'app/graphql/graphql.utils';
 
 @Resolver(() => User)
 @UseGuards(AccessGuard)
@@ -12,7 +13,7 @@ export class UserResolver {
 	/**
 	 * Initiate user resolver
 	 */
-	constructor(protected svc: AppService) {}
+	constructor(private user: UserService) {}
 
 	@ResolveField(() => String) name(@Parent() { baseUser }: User) {
 		return baseUser.name;
@@ -29,17 +30,21 @@ export class UserResolver {
 	/**
 	 * Query user by request
 	 */
-	@Query(() => [User]) @Allow([]) getUsers(
+	@Query(() => UserPage) @Allow([]) async getUsers(
 		@Args('input') user: FindUser,
 		@Args('page', { nullable: true })
 		{ index, take }: Paging = { index: 0, take: 10e10 },
-	) {
-		return this.svc.user.find({
-			...user,
-			baseUser: user,
-			take,
-			skip: index * take,
-		});
+	): Promise<UserPage> {
+		return paginateResponse(
+			this.user,
+			await this.user.find({
+				...user,
+				baseUser: user,
+				take,
+				skip: index * take,
+			}),
+			{ take, index },
+		);
 	}
 
 	/**

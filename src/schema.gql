@@ -49,6 +49,16 @@ input EventAssign {
   type: String = "internship"
 }
 
+type EventPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [Event!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
+}
+
 type EventParticipator {
   additionalData: JSON!
   id: String!
@@ -89,6 +99,16 @@ input EventTagAssign {
 input EventTagAttach {
   eventId: String!
   name: String!
+}
+
+type EventTagPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [EventTag!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
 }
 
 input EventUpdate {
@@ -214,11 +234,11 @@ input Paging {
 
 type Query {
   getCurrent: User!
-  getEvents(input: FindEvent!, page: Paging): [Event!]!
-  getStudents(input: FindStudent!, page: Paging): [Student!]!
-  getUsers(input: FindUser!, page: Paging): [User!]!
-  listAllNotifications(isRead: Boolean, page: Paging): [Reciever!]!
-  listAllTags(input: FindTag!, page: Paging): [EventTag!]!
+  getEvents(input: FindEvent!, page: Paging): EventPage!
+  getNotifications(isRead: Boolean, page: Paging): RecieverPage!
+  getStudents(input: FindStudent!, page: Paging): StudentPage!
+  getTags(input: FindTag!, page: Paging): EventTagPage!
+  getUsers(input: FindUser!, page: Paging): UserPage!
 }
 
 input ReadNotification {
@@ -245,6 +265,16 @@ input RecieverAssignMany {
   usersId: [String!]!
 }
 
+type RecieverPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [Reciever!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
+}
+
 type Student {
   currentEnterprise: Enterprise
   enrollmentYear: Float!
@@ -253,6 +283,16 @@ type Student {
   major: String!
   skills: String!
   user: User!
+}
+
+type StudentPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [Student!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -266,6 +306,16 @@ type User {
   lastLogin: DateTime!
   name: String!
   role: UserRole!
+}
+
+type UserPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [User!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
 }
 
 enum UserRole {

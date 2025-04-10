@@ -1,5 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { ITagInfo } from './tag.model';
+import { PaginateResult } from 'app/graphql/graphql.dto';
+import { EventTag } from './tag.entity';
 
 @InputType()
 export class EventTagAssign implements ITagInfo {
@@ -17,3 +19,6 @@ export class FindTag implements ITagInfo {
 	@Field({ nullable: true }) name: string;
 	@Field({ nullable: true }) id: string;
 }
+
+@ObjectType()
+export class EventTagPage extends PaginateResult(EventTag) {}
