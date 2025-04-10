@@ -1,16 +1,15 @@
-# Contributor Covenant Code of Conduct
+# Quy tắc ứng xử của Người đóng góp
 
-## Our Pledge
+## Cam kết của chúng tôi
 
-We as members, contributors, and leaders pledge to make participation in our
-community a harassment-free experience for everyone, regardless of age, body
-size, visible or invisible disability, ethnicity, sex characteristics, gender
-identity and expression, level of experience, education, socio-economic status,
-nationality, personal appearance, race, religion, or sexual identity
-and orientation.
+Với tư cách là thành viên, người đóng góp và người lãnh đạo, chúng tôi cam kết biến việc tham gia vào
+cộng đồng thành trải nghiệm được tôn trọng cho mọi người, bất kể tuổi tác, kích thước cơ thể, 
+khuyết tật có thể nhìn thấy hoặc không nhìn thấy, dân tộc, đặc điểm giới tính, bản dạng và biểu hiện giới tính, 
+trình độ kinh nghiệm, trình độ học vấn, địa vị kinh tế xã hội,
+quốc tịch, ngoại hình, chủng tộc, tôn giáo hoặc bản dạng và khuynh hướng tình dục.
 
-We pledge to act and interact in ways that contribute to an open, welcoming,
-diverse, inclusive, and healthy community.
+Chúng tôi cam kết hành động và tương tác theo những cách góp phần tạo nên một 
+cộng đồng cởi mở, chào đón, đa dạng, hòa nhập và lành mạnh.
 
 ## Our Standards
 
