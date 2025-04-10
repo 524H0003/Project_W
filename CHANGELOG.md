@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/524H0003/Project_W/compare/v1.2.36...v1.3.0) (2025-04-10)
+
+
+### Features
+
+* **graphql:** better response with paginate ([#190](https://github.com/524H0003/Project_W/issues/190)) ([240461e](https://github.com/524H0003/Project_W/commit/240461e8b98c88b1e443453131936d9a4f904945))
+
 ## [1.2.36](https://github.com/524H0003/Project_W/compare/v1.2.35...v1.2.36) (2025-04-05)
 
 
