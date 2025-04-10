@@ -7,26 +7,19 @@ export function PaginateResult<T>(
 ): abstract new (...args: any[]) => IPaginateResult<T> {
 	@ObjectType({ isAbstract: true })
 	abstract class PageClass implements IPaginateResult<T> {
-		@Field(() => [ItemType])
-		items: T[];
+		@Field(() => [ItemType]) items: T[];
 
-		@Field()
-		total: number;
+		@Field() total: number;
 
-		@Field()
-		currentPage: number;
+		@Field() currentPage: number;
 
-		@Field()
-		totalPages: number;
+		@Field() totalPages: number;
 
-		@Field()
-		pageSize: number;
+		@Field() pageSize: number;
 
-		@Field()
-		hasNext: boolean;
+		@Field() hasNext: boolean;
 
-		@Field()
-		hasPrevious: boolean;
+		@Field() hasPrevious: boolean;
 	}
 
 	return PageClass;
