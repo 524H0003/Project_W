@@ -6,8 +6,10 @@ import {
 	IUserSignUp,
 	UserRole,
 } from './user.model';
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IBaseUserInfo } from './base/baseUser.model';
+import { PaginateResult } from 'app/graphql/graphql.dto';
+import { User } from './user.entity';
 
 export class UserSignUp implements IUserSignUp {
 	password: string;
@@ -36,3 +38,6 @@ export class FindUser implements IUserInfo, IBaseUserInfo {
 	@Field({ nullable: true }) isActive: boolean;
 	@Field({ nullable: true }) role: UserRole;
 }
+
+@ObjectType()
+export class UserPage extends PaginateResult(User) {}
