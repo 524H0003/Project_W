@@ -63,7 +63,7 @@ describe('getEvents', () => {
 
 	it('success', async () => {
 		await execute(
-			async () => (await send({ input: {} }, { headers })).getEvents,
+			async () => (await send({ input: {} }, { headers })).getEvents.items,
 			{
 				exps: [
 					{
@@ -82,7 +82,7 @@ describe('getEvents', () => {
 	it('success with id', async () => {
 		await execute(
 			async () =>
-				(await send({ input: { id: eventId } }, { headers })).getEvents,
+				(await send({ input: { id: eventId } }, { headers })).getEvents.items,
 			{
 				exps: [
 					{

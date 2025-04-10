@@ -5,8 +5,9 @@ import { AccessGuard, Allow, GetServerKey } from 'auth/guards';
 import { UserRole } from 'user/user.model';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Event } from './event.entity';
-import { EventAssign, EventUpdate, FindEvent } from './event.dto';
+import { EventAssign, EventPage, EventUpdate, FindEvent } from './event.dto';
 import { Paging } from 'app/app.graphql';
+import { paginateResponse } from 'app/graphql/graphql.utils';
 
 @Resolver(() => Event)
 @UseGuards(AccessGuard)
@@ -14,18 +15,22 @@ export class EventResolver {
 	/**
 	 * Initiate event resolver
 	 */
-	constructor(protected svc: AppService) {}
+	constructor(private svc: AppService) {}
 
 	// Queries
 	/**
 	 * Query all events
 	 */
-	@Query(() => [Event]) @Allow([]) getEvents(
+	@Query(() => EventPage) @Allow([]) async getEvents(
 		@Args('input') event: FindEvent,
 		@Args('page', { nullable: true })
 		{ index, take }: Paging = { index: 0, take: 10e10 },
-	) {
-		return this.svc.event.find({ ...event, skip: index * take, take });
+	): Promise<EventPage> {
+		return paginateResponse(
+			this.svc.event,
+			await this.svc.event.find({ ...event, skip: index * take, take }),
+			{ index, take },
+		);
 	}
 
 	// Mutations

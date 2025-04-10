@@ -49,6 +49,16 @@ input EventAssign {
   type: String = "internship"
 }
 
+type EventPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [Event!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
+}
+
 type EventParticipator {
   additionalData: JSON!
   id: String!
@@ -224,7 +234,7 @@ input Paging {
 
 type Query {
   getCurrent: User!
-  getEvents(input: FindEvent!, page: Paging): [Event!]!
+  getEvents(input: FindEvent!, page: Paging): EventPage!
   getNotifications(isRead: Boolean, page: Paging): RecieverPage!
   getStudents(input: FindStudent!, page: Paging): StudentPage!
   getTags(input: FindTag!, page: Paging): EventTagPage!
