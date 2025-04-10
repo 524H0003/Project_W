@@ -232,7 +232,7 @@ jobs:
       contents: read
       pull-requests: write
 
-    if: always()
+    if: ${{ needs.changes.outputs.project == 'true' }}
 
     steps:
       - run: exit 1
