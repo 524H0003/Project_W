@@ -1,4 +1,6 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { PaginateResult } from 'app/graphql/graphql.dto';
+import { Reciever } from './reciever.entity';
 
 @InputType()
 export class RecieverAssign {
@@ -21,3 +23,6 @@ export class ReadNotification {
 export class ReadNotificationMany {
 	@Field(() => [String]) recieversId: string[];
 }
+
+@ObjectType()
+export class RecieverPage extends PaginateResult(Reciever) {}
