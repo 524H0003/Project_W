@@ -51,7 +51,7 @@ describe('getUsers', () => {
 
 	it('success', async () => {
 		await execute(
-			async () => (await send({ input: {} }, { headers })).getUsers,
+			async () => (await send({ input: {} }, { headers })).getUsers.items,
 			{
 				exps: [
 					{
@@ -73,7 +73,8 @@ describe('getUsers', () => {
 	it('success with id', async () => {
 		await execute(
 			async () =>
-				(await send({ input: { id: employee.id } }, { headers })).getUsers,
+				(await send({ input: { id: employee.id } }, { headers })).getUsers
+					.items,
 			{
 				exps: [
 					{
@@ -96,7 +97,7 @@ describe('getUsers', () => {
 		await execute(
 			async () =>
 				(await send({ input: { name: employee.info.user.name } }, { headers }))
-					.getUsers,
+					.getUsers.items,
 			{
 				exps: [
 					{

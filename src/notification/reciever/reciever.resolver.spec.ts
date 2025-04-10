@@ -13,9 +13,9 @@ import {
 	AssignRecieverManyMutationVariables,
 	AssignRecieverMutation,
 	AssignRecieverMutationVariables,
-	ListAllNotifications,
-	ListAllNotificationsQuery,
-	ListAllNotificationsQueryVariables,
+	GetNotifications,
+	GetNotificationsQuery,
+	GetNotificationsQueryVariables,
 	ReadNotification,
 	ReadNotificationMany,
 	ReadNotificationManyMutation,
@@ -226,11 +226,11 @@ describe('readNotificationMany', () => {
 	});
 });
 
-describe('listAllNotifications', () => {
+describe('getNotifications', () => {
 	const send = sendGQL<
-			ListAllNotificationsQuery,
-			ListAllNotificationsQueryVariables
-		>(ListAllNotifications),
+			GetNotificationsQuery,
+			GetNotificationsQueryVariables
+		>(GetNotifications),
 		recieversId: string[] = [];
 
 	let userHeaders: OutgoingHttpHeaders, numRead: number;
@@ -255,7 +255,7 @@ describe('listAllNotifications', () => {
 	it('success', async () => {
 		await execute(
 			async () =>
-				(await send({}, { headers: userHeaders })).listAllNotifications.length,
+				(await send({}, { headers: userHeaders })).getNotifications.items.length,
 			{ exps: [{ type: 'toEqual', params: [5] }] },
 		);
 	});
@@ -264,7 +264,7 @@ describe('listAllNotifications', () => {
 		await execute(
 			async () =>
 				(await send({ isRead: false }, { headers: userHeaders }))
-					.listAllNotifications,
+					.getNotifications.items,
 			{
 				exps: [{ type: 'toBeDefined', params: [] }],
 				onFinish: async (result) => {
