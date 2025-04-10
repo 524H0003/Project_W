@@ -4,8 +4,8 @@
 
 | Phiên bản | Đang duy trì       |
 | --------- | ------------------ |
-| 1.2.x     | :white_check_mark: |
-| < 1.2     | :x:                |
+| 1.3.x     | :white_check_mark: |
+| < 1.3     | :x:                |
 
 ## Báo cáo lỗ hổng bảo mật
 
