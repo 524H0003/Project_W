@@ -68,9 +68,7 @@ export class RecieverResolver {
 	/**
 	 * list all notification
 	 */
-	@Query(() => RecieverPage)
-	@Allow([UserRole.student])
-	async getNotifications(
+	@Query(() => RecieverPage) @Allow([UserRole.student]) async getNotifications(
 		@Args('isRead', { nullable: true }) isRead: boolean,
 		@Args('page', { nullable: true })
 		{ index, take }: Paging = { index: 0, take: 10e10 },
