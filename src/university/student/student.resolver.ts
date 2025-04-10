@@ -5,8 +5,9 @@ import { FindStudent, StudentPage } from './student.dto';
 import { Paging } from 'app/app.graphql';
 import { StudentService } from './student.service';
 import { paginateResponse } from 'app/graphql/graphql.utils';
+import { Student } from './student.entity';
 
-@Resolver()
+@Resolver(() => Student)
 @UseGuards(AccessGuard)
 export class StudentResolver {
 	/**

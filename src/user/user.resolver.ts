@@ -7,7 +7,7 @@ import { Paging } from 'app/app.graphql';
 import { UserService } from './user.service';
 import { paginateResponse } from 'app/graphql/graphql.utils';
 
-@Resolver()
+@Resolver(() => User)
 @UseGuards(AccessGuard)
 export class UserResolver {
 	/**

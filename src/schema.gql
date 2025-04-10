@@ -215,9 +215,9 @@ input Paging {
 type Query {
   getCurrent: User!
   getEvents(input: FindEvent!, page: Paging): [Event!]!
+  getNotifications(isRead: Boolean, page: Paging): RecieverPage!
   getStudents(input: FindStudent!, page: Paging): StudentPage!
-  getUsers(input: FindUser!, page: Paging): [User!]!
-  listAllNotifications(isRead: Boolean, page: Paging): [Reciever!]!
+  getUsers(input: FindUser!, page: Paging): UserPage!
   listAllTags(input: FindTag!, page: Paging): [EventTag!]!
 }
 
@@ -243,6 +243,16 @@ input RecieverAssign {
 input RecieverAssignMany {
   notificationId: String!
   usersId: [String!]!
+}
+
+type RecieverPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [Reciever!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
 }
 
 type Student {
@@ -276,6 +286,16 @@ type User {
   lastLogin: DateTime!
   name: String!
   role: UserRole!
+}
+
+type UserPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [User!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
 }
 
 enum UserRole {
