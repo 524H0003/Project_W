@@ -215,7 +215,7 @@ input Paging {
 type Query {
   getCurrent: User!
   getEvents(input: FindEvent!, page: Paging): [Event!]!
-  getStudents(input: FindStudent!, page: Paging): [Student!]!
+  getStudents(input: FindStudent!, page: Paging): StudentPage!
   getUsers(input: FindUser!, page: Paging): [User!]!
   listAllNotifications(isRead: Boolean, page: Paging): [Reciever!]!
   listAllTags(input: FindTag!, page: Paging): [EventTag!]!
@@ -253,6 +253,16 @@ type Student {
   major: String!
   skills: String!
   user: User!
+}
+
+type StudentPage {
+  currentPage: Float!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+  items: [Student!]!
+  pageSize: Float!
+  total: Float!
+  totalPages: Float!
 }
 
 """The `Upload` scalar type represents a file upload."""
