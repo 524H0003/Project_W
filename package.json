@@ -63,7 +63,7 @@
 		"@nestjs/apollo": "^13.0.2",
 		"@nestjs/cache-manager": "^3.0.0",
 		"@nestjs/cli": "^11.0.2",
-		"@nestjs/common": "^11.0.9",
+		"@nestjs/common": "^11.0.16",
 		"@nestjs/config": "^4.0.0",
 		"@nestjs/core": "^11.0.9",
 		"@nestjs/graphql": "^13.0.2",
@@ -169,7 +169,7 @@
 			"@fastify/session": "11.1.0",
 			"@fastify/formbody": "8.0.2",
 			"@fastify/multipart": "9.0.3",
-			"@nestjs/common": "11.0.12",
+			"@nestjs/common": "11.0.16",
 			"esbuild": "0.25.0",
 			"tinymce": "7.2.0"
 		},
