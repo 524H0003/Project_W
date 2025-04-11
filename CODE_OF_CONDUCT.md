@@ -2,38 +2,34 @@
 
 ## Cam kết của chúng tôi
 
-Với tư cách là thành viên, người đóng góp và người lãnh đạo, chúng tôi cam kết biến việc tham gia vào
-cộng đồng thành trải nghiệm được tôn trọng cho mọi người, bất kể tuổi tác, kích thước cơ thể, 
-khuyết tật có thể nhìn thấy hoặc không nhìn thấy, dân tộc, đặc điểm giới tính, bản dạng và biểu hiện giới tính, 
-trình độ kinh nghiệm, trình độ học vấn, địa vị kinh tế xã hội,
-quốc tịch, ngoại hình, chủng tộc, tôn giáo hoặc bản dạng và khuynh hướng tình dục.
+Với tư cách là thành viên, người đóng góp và người lãnh đạo, chúng tôi cam kết biến việc tham gia 
+vào cộng đồng thành trải nghiệm được tôn trọng cho mọi người, bất kể tuổi tác, kích thước cơ thể, 
+khuyết tật có thể nhìn thấy hoặc không nhìn thấy, dân tộc, đặc điểm giới tính, bản dạng và biểu hiện
+giới tính, trình độ kinh nghiệm, trình độ học vấn, địa vị kinh tế xã hội, quốc tịch, ngoại hình, 
+chủng tộc, tôn giáo hoặc bản dạng và khuynh hướng tình dục.
 
-Chúng tôi cam kết hành động và tương tác theo những cách góp phần tạo nên một 
-cộng đồng cởi mở, chào đón, đa dạng, hòa nhập và lành mạnh.
+Chúng tôi cam kết hành động và tương tác theo những cách góp phần tạo nên một cộng đồng cởi mở, 
+chào đón, đa dạng, hòa nhập và lành mạnh.
 
-## Our Standards
+## Quy chuẩn chung
 
-Examples of behavior that contributes to a positive environment for our
-community include:
+Ví dụ về hành vi góp phần tạo nên môi trường tích cực cho cộng đồng chung bao gồm:
 
-* Demonstrating empathy and kindness toward other people
-* Being respectful of differing opinions, viewpoints, and experiences
-* Giving and gracefully accepting constructive feedback
-* Accepting responsibility and apologizing to those affected by our mistakes,
-  and learning from the experience
-* Focusing on what is best not just for us as individuals, but for the
-  overall community
+* Thể hiện sự đồng cảm và lòng tốt với người khác
+* Tôn trọng các ý kiến, quan điểm và kinh nghiệm khác nhau
+* Đưa ra và tích cực chấp nhận phản hồi mang tính xây dựng
+* Nhận trách nhiệm và xin lỗi những người bị ảnh hưởng bởi sai lầm của bản thân, và rút kinh nghiệm từ đó
+* Tập trung vào những gì tốt nhất không chỉ cho bản thân mà còn cho toàn thể cộng đồng
 
-Examples of unacceptable behavior include:
+Ví dụ về hành vi không thể chấp nhận được bao gồm:
 
-* The use of sexualized language or imagery, and sexual attention or
-  advances of any kind
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or email
-  address, without their explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
-  professional setting
+* Việc sử dụng ngôn ngữ hoặc hình ảnh mang tính tình dục, và sự chú ý hoặc những hành động tán tỉnh
+  mang tính tình dục dưới bất kỳ hình thức nào
+* Chơi khăm, bình luận lăng mạ hoặc hạ thấp danh dự và tấn công cá nhân hoặc chính trị 
+* Quấy rối công khai hoặc xâm phạm quyền riêng tư
+* Công khai thông tin riêng tư của người khác, ví dụ như địa chỉ nhà hoặc địa chỉ thư điện tử,
+  mà không có sự cho phép rõ ràng của họ
+* Các hành vi khác có thể được coi là không phù hợp trong môi trường chuyên nghiệp
 
 ## Enforcement Responsibilities
 
