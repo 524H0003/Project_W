@@ -31,25 +31,24 @@ Ví dụ về hành vi không thể chấp nhận được bao gồm:
   mà không có sự cho phép rõ ràng của họ
 * Các hành vi khác có thể được coi là không phù hợp trong môi trường chuyên nghiệp
 
-## Enforcement Responsibilities
+## Trách nhiệm thực thi
 
-Community leaders are responsible for clarifying and enforcing our standards of
-acceptable behavior and will take appropriate and fair corrective action in
-response to any behavior that they deem inappropriate, threatening, offensive,
-or harmful.
+Các quản trị cộng đồng có trách nhiệm về làm rõ và thực thi các quy chuẩn chung về hành vi 
+chuẩn mực. Xử lý thích hợp và công bằng để ứng phó với bất kỳ hành vi nào được cho là 
+không phù hợp, đe dọa, xúc phạm hoặc có hại.
 
-Community leaders have the right and responsibility to remove, edit, or reject
-comments, commits, code, wiki edits, issues, and other contributions that are
-not aligned to this Code of Conduct, and will communicate reasons for moderation
-decisions when appropriate.
+Các quản trị cộng đồng có quyền và trách nhiệm xóa, chỉnh sửa hoặc bác bỏ các bình luận,
+cam kết đóng góp, văn bản lập trình, chỉnh sửa wiki, vấn đề và các hình thức đóng góp
+khác không phù hợp với quy chuẩn chung và sẽ thông báo lý do cho các quyết định điều chỉnh 
+khi thích hợp.
 
-## Scope
+## Phạm vi áp dụng
 
-This Code of Conduct applies within all community spaces, and also applies when
-an individual is officially representing the community in public spaces.
-Examples of representing our community include using an official e-mail address,
-posting via an official social media account, or acting as an appointed
-representative at an online or offline event.
+Quy chuẩn chung này áp dụng trong mọi không gian cộng đồng và cũng áp dụng khi
+một cá nhân chính thức đại diện cho cộng đồng tại các không gian công cộng.
+Ví dụ về việc đại diện cho cộng đồng bao gồm sử dụng địa chỉ email chính thức,
+đăng bài qua tài khoản mạng xã hội chính thức hoặc hành động như một
+đại diện được chỉ định tại một sự kiện trực tuyến hoặc trực tiếp.
 
 ## Enforcement
 
