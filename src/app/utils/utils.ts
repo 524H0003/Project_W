@@ -398,7 +398,8 @@ export type ErrorObject =
 	| 'Signature'
 	| 'Enterprise'
 	| 'Event'
-	| 'Password';
+	| 'Password'
+	| 'Input';
 
 /**
  * Server error action type

@@ -21,7 +21,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { join } from 'path';
 import fastifyStatic from '@fastify/static';
 import { censor } from 'app/utils/utils';
-import { dataHashing, passwordHashing } from 'auth/auth.utils';
+import { dataHashing } from 'auth/auth.utils';
 
 async function bootstrap() {
 	let server: Server;
@@ -36,11 +36,11 @@ async function bootstrap() {
 			new FastifyAdapter(fastify),
 			{
 				cors: {
-					origin:
-						process.env.NODE_ENV != 'production' ||
-						process.argv.some((i) => i == '--disable-CORS')
+					origin: process.argv.some((i) => i == '--localhost')
+						? /^https?:\/\/localhost(:\d+)?$/
+						: process.argv.some((i) => i == '--disable-CORS')
 							? '*'
-							: /^(https:\/\/){1}(.*)(anhvietnguyen.id.vn){1}$/,
+							: /^https:\/\/\.(.*)\.anhvietnguyen.id.vn$/,
 					methods: '*',
 					credentials: true,
 				},
@@ -50,14 +50,7 @@ async function bootstrap() {
 		config = nest.get(ConfigService),
 		cookie: CookieProps = {
 			name: (6).string,
-			password: (
-				await passwordHashing((6).string, {
-					hashLength: 6,
-					timeCost: 2,
-					memoryCost: 6262,
-					parallelism: 2,
-				})
-			).redudeArgon2,
+			password: config.get('SERVER_SECRET'),
 		};
 
 	await registerServerPlugins(fastify, cookie);
