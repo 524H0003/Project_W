@@ -204,7 +204,7 @@ jobs:
           node-version: 23
           cache: 'pnpm'
 
-      - run: rm -fr public/* && npm run genkey
+      - run: rm -fr public/*
 
       - run: npm run start:ci
 

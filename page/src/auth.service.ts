@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
   funcs,
   IEmployeeHook,
@@ -106,9 +106,12 @@ export async function action(
       break;
   }
 
-  const { token } = (await axios.get(`${API_URL}/csrf-token`)).data,
+  const { token } = (
+      await axios.get(`${API_URL}/csrf-token`, { withCredentials: true })
+    ).data,
     { data } = await axios.post(url, input, {
       headers: { 'csrf-token': token },
+      withCredentials: true,
     });
 
   return data;
@@ -163,49 +166,37 @@ export async function apiErrorHandler(response: Promise<IResponse>) {
         break;
     }
   } catch (e) {
-    switch (
-      (e as { response: { data: { message: string } } }).response.data.message
-    ) {
-      case 'Invalid_Password':
+    const { message } = (e as AxiosError<IResponse, unknown>).response!.data;
+
+    switch (true) {
+      case message.includes(funcs.err('Invalid', 'Password', '')):
         alert.message = 'Wrong password, please re-enter your password';
         alert.type = 'error';
         alert.object = 'password';
         break;
 
-      case 'Invalid_Email':
+      case message.includes(funcs.err('Invalid', 'Email', '')):
         alert.message = 'Email not found, please re-enter your email';
         alert.type = 'error';
         alert.object = 'account';
         break;
 
-      case 'Invalid_Hook_Signature':
-      case 'Invalid_Hook_Cookie':
-        alert.message =
-          'Signature has been out of dated, please request new signature';
-        alert.type = 'error';
-        alert.object = 'signature';
-        break;
-
-      case 'Internal server error':
-      case 'Unauthorized':
-        alert.message = 'Something went wrong after sent your request';
-        alert.type = 'error';
-        alert.object = 'api';
-        break;
-
-      case 'Exist_User':
+      case message.includes(funcs.err('Invalid', 'User', 'SignUp')):
         alert.message = 'This email address has been assigned to an account';
         alert.type = 'error';
         alert.object = 'account';
         break;
 
-      case 'Invalid_Enterprise_Name':
-        alert.message = 'Invalid enterprise name';
+      case message.includes(funcs.err('Invalid', 'Enterprise', '')):
+        alert.message = 'Invalid enterprise';
         alert.type = 'error';
         alert.object = 'enterprise';
         break;
 
       default:
+        alert.message = 'Something went wrong after sent your request';
+        alert.type = 'error';
+        alert.object = 'api';
         break;
     }
   }

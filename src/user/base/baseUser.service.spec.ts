@@ -36,10 +36,11 @@ describe('BaseUserService', () => {
 					() => svc.baseUser.find({ name: newName, cache: false }),
 					{ exps: [{ type: 'toHaveLength', params: [1] }] },
 				);
+				await execute(
+					() => svc.baseUser.findOne({ email, name, cache: false }),
+					{ exps: [{ type: 'toEqual', params: [{}] }] },
+				);
 			},
-		});
-		await execute(() => svc.baseUser.findOne({ email, name, cache: false }), {
-			exps: [{ type: 'toEqual', params: [{}] }],
 		});
 	});
 

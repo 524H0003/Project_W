@@ -8,7 +8,7 @@
       "type": "msedge",
       "request": "launch",
       "name": "Edge debug",
-      "url": "https://localhost:5173/",
+      "url": "http://localhost:5173/",
       "runtimeArgs": ["--auto-open-devtools-for-tabs"]
     }
   ]
