@@ -21,7 +21,8 @@
 		"strictNullChecks": false,
 		"target": "ESNext",
 		"useDefineForClassFields": false,
-		"jsx": "react"
+		"jsx": "react",
+		"isolatedModules": true,
 	},
 	"exclude": [
 		"./**/*.d.ts",
