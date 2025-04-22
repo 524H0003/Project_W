@@ -1,4 +1,7 @@
-import { GeneratedId, type NonFunctionProperties } from 'app/typeorm/typeorm.utils';
+import {
+	GeneratedId,
+	type NonFunctionProperties,
+} from 'app/typeorm/typeorm.utils';
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
 import { IBlocEntity } from './bloc.model';
 import { IBlocInfoKeys } from 'build/models';
