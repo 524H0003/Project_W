@@ -29,11 +29,12 @@ import {
 	TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
 import { join } from 'path';
-import type { MetaData, IRefreshResult } from 'auth/guards';
 import {
 	GetRequest,
 	HookGuard,
+	type IRefreshResult,
 	LocalhostGuard,
+	type MetaData,
 	RefreshGuard,
 } from 'auth/guards';
 import { BaseUserEmail } from 'user/base/baseUser.dto';

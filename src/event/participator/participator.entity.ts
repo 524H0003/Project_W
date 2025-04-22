@@ -105,7 +105,7 @@ export class EventParticipator
 		enumName: 'participation_status',
 		default: EventParticipatorStatus.registered,
 	})
-	status: EventParticipatorStatus;
+	status: typeof EventParticipatorStatus;
 
 	/**
 	 * The role in event
@@ -118,5 +118,5 @@ export class EventParticipator
 		enumName: 'participation_role',
 		default: EventParticipatorRole.attendee,
 	})
-	role: EventParticipatorRole;
+	role: typeof EventParticipatorRole;
 }

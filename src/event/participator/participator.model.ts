@@ -25,12 +25,12 @@ export interface IEventParticipatorInfo extends IEntityId {
 	/**
 	 * The role in event
 	 */
-	role: EventParticipatorRole;
+	role: typeof EventParticipatorRole;
 
 	/**
 	 * The status in event
 	 */
-	status: EventParticipatorStatus;
+	status: typeof EventParticipatorStatus;
 
 	/**
 	 * If participator attended
