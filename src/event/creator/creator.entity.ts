@@ -2,7 +2,10 @@ import { Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Event } from 'event/event.entity';
 import { User } from 'user/user.entity';
 import { IEventCreatorEntity } from './creator.model';
-import { type NonFunctionProperties, ParentId } from 'app/typeorm/typeorm.utils';
+import {
+	type NonFunctionProperties,
+	ParentId,
+} from 'app/typeorm/typeorm.utils';
 import { IEventCreatorInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
