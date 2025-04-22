@@ -15,7 +15,7 @@ export class EventParticipatorAssign {
 @InputType()
 export class EventParticipatorUpdate implements IEventParticipatorInfo {
 	@Field({ nullable: true }) role: typeof EventParticipatorRole;
-	@Field({ nullable: true }) status:typeof EventParticipatorStatus;
+	@Field({ nullable: true }) status: typeof EventParticipatorStatus;
 	@Field({ nullable: true }) isAttended: boolean;
 	@Field({ nullable: true }) registeredAt: Date;
 	@Field({ nullable: true }) interviewAt: Date;
