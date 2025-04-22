@@ -1,10 +1,10 @@
-import { GeneratedId, NonFunctionProperties } from 'app/typeorm/typeorm.utils';
+import { GeneratedId, type NonFunctionProperties } from 'app/typeorm/typeorm.utils';
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
 import { IBlocEntity } from './bloc.model';
 import { IBlocInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 import { User } from 'user/user.entity';
-import { MetaData } from 'auth/guards';
+import { type MetaData } from 'auth/guards';
 import { UAParser } from 'ua-parser-js';
 import { dataHashing } from 'auth/auth.utils';
 

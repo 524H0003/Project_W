@@ -9,12 +9,12 @@ import {
 import { AppService } from 'app/app.service';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
-import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import type { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards';
 import { EmployeeHook, EmployeeSignUp } from './employee.dto';
 import { Hook } from 'app/hook/hook.entity';
 import { IEmployeeSignUp } from './employee.model';
-import { GetRequest, MetaData } from 'auth/guards';
+import { GetRequest, type MetaData } from 'auth/guards';
 import { UserRecieve } from 'user/user.entity';
 import { AvatarFileUpload } from 'app/app.controller';
 import { ApiSecurity } from '@nestjs/swagger';

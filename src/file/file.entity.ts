@@ -3,7 +3,10 @@ import { User } from 'user/user.entity';
 import { FileType, IFileEntity } from './file.model';
 import { Event } from 'event/event.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { GeneratedId, NonFunctionProperties } from 'app/typeorm/typeorm.utils';
+import {
+	GeneratedId,
+	type NonFunctionProperties,
+} from 'app/typeorm/typeorm.utils';
 import { IFileInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
 
