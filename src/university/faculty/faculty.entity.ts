@@ -2,7 +2,10 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { IFacultyEntity, IFacultyInfo } from './faculty.model';
 import { EventCreator } from 'event/creator/creator.entity';
 import { IsString } from 'class-validator';
-import { NonFunctionProperties, ParentId } from 'app/typeorm/typeorm.utils';
+import {
+	type NonFunctionProperties,
+	ParentId,
+} from 'app/typeorm/typeorm.utils';
 import { IFacultyInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
 import { IBaseUserInfo } from 'user/base/baseUser.model';

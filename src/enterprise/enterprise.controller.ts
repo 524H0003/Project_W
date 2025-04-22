@@ -10,11 +10,11 @@ import { UserRecieve } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
-import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import type { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { HookGuard } from 'auth/guards';
 import { EnterpriseAssign } from './enterprise.dto';
 import { Hook } from 'app/hook/hook.entity';
-import { GetRequest, MetaData } from 'auth/guards';
+import { GetRequest, type MetaData } from 'auth/guards';
 import { AvatarFileUpload } from 'app/app.controller';
 import { ApiSecurity } from '@nestjs/swagger';
 

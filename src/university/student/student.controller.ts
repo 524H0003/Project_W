@@ -6,13 +6,13 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
-import { GetRequest, LocalhostGuard, MetaData } from 'auth/guards';
+import { GetRequest, LocalhostGuard, type MetaData } from 'auth/guards';
 import { AppService } from 'app/app.service';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from 'app/interceptor/file.interceptor';
 import { StudentSignUp } from './student.dto';
 import { UserRecieve } from 'user/user.entity';
-import { RequireOnlyOne } from 'app/utils/model.utils';
+import type { RequireOnlyOne } from 'app/utils/model.utils';
 import { BaseController } from 'app/base.app.controller';
 import { ApiSecurity } from '@nestjs/swagger';
 

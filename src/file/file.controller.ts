@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
 import { FileGuard, GetServerKey } from 'auth/guards';
-import { FastifyReply } from 'fastify';
+import type { FastifyReply } from 'fastify';
 import { User } from 'user/user.entity';
 import { AppService } from 'app/app.service';
 

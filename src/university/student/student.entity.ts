@@ -4,7 +4,10 @@ import { IStudentInfo, IStudentEntity } from './student.model';
 import { Enterprise } from 'enterprise/enterprise.entity';
 import { IStudentInfoKeys } from 'build/models';
 import { IUserInfo } from 'user/user.model';
-import { NonFunctionProperties, ParentId } from 'app/typeorm/typeorm.utils';
+import {
+	type NonFunctionProperties,
+	ParentId,
+} from 'app/typeorm/typeorm.utils';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IBaseUserInfo } from 'user/base/baseUser.model';
 import { CacheControl } from 'app/graphql/graphql.decorator';

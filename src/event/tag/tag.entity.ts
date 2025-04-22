@@ -1,4 +1,7 @@
-import { GeneratedId, NonFunctionProperties } from 'app/typeorm/typeorm.utils';
+import {
+	GeneratedId,
+	type NonFunctionProperties,
+} from 'app/typeorm/typeorm.utils';
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { BlackBox } from 'app/utils/model.utils';
 import { Event } from 'event/event.entity';

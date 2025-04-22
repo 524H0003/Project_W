@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import multer from 'fastify-multer';
 import { Observable } from 'rxjs';
-import { MulterOptions } from './multer/options.interface';
+import type { MulterOptions } from './multer/options.interface';
 import { transformException } from './multer/utils';
 
 /**

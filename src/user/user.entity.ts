@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import {
 	BlackBox,
-	RequireOnlyOne,
-	RequireOnlyOneRequiredRest,
+	type RequireOnlyOne,
+	type RequireOnlyOneRequiredRest,
 } from 'app/utils/model.utils';
 import {
 	IUserAuthenticationKeys,
@@ -29,7 +29,10 @@ import { Reciever } from 'notification/reciever/reciever.entity';
 import { EventParticipator } from 'event/participator/participator.entity';
 import { File } from 'file/file.entity';
 import { IsStrongPassword } from 'class-validator';
-import { NonFunctionProperties, ParentId } from 'app/typeorm/typeorm.utils';
+import {
+	type NonFunctionProperties,
+	ParentId,
+} from 'app/typeorm/typeorm.utils';
 import { ApiHideProperty } from '@nestjs/swagger';
 import { BaseUser } from './base/baseUser.entity';
 import { IBaseUserInfo } from './base/baseUser.model';

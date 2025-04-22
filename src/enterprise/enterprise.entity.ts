@@ -4,7 +4,10 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { IEnterpriseEntity } from './enterprise.model';
 import { Employee } from 'enterprise/employee/employee.entity';
 import { Student } from 'university/student/student.entity';
-import { NonFunctionProperties, ParentId } from 'app/typeorm/typeorm.utils';
+import {
+	type NonFunctionProperties,
+	ParentId,
+} from 'app/typeorm/typeorm.utils';
 import { IEnterpriseInfoKeys } from 'build/models';
 import { BaseUser } from 'user/base/baseUser.entity';
 import { CacheControl } from 'app/graphql/graphql.decorator';

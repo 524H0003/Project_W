@@ -17,7 +17,7 @@ import { UserRecieve } from 'user/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from './interceptor/file.interceptor';
 import { memoryStorage } from 'fastify-multer';
-import { File as MulterFile } from 'fastify-multer/lib/interfaces';
+import type { File as MulterFile } from 'fastify-multer/lib/interfaces';
 import { UserAuthencation, UserLogIn, UserSignUp } from 'user/user.dto';
 import { Throttle } from '@nestjs/throttler';
 import { Hook } from './hook/hook.entity';
@@ -32,9 +32,9 @@ import { join } from 'path';
 import {
 	GetRequest,
 	HookGuard,
-	IRefreshResult,
+	type IRefreshResult,
 	LocalhostGuard,
-	MetaData,
+	type MetaData,
 	RefreshGuard,
 } from 'auth/guards';
 import { BaseUserEmail } from 'user/base/baseUser.dto';
