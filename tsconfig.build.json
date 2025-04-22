@@ -12,5 +12,8 @@
 		"./src/app/utils/test.utils.ts",
 		"./src/build"
 	],
+	"compilerOptions": {
+		"isolatedModules": true
+	},
 	"extends": "./tsconfig.json"
 }
