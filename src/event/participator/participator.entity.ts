@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import {
 	EventParticipatorRole,
 	EventParticipatorStatus,
+	type EventParticipatorStatus as TEventParticipatorStatus,
 	IEventParticipatorEntiy,
 } from './participator.model';
 import {
@@ -105,7 +106,7 @@ export class EventParticipator
 		enumName: 'participation_status',
 		default: EventParticipatorStatus.registered,
 	})
-	status: typeof EventParticipatorStatus;
+	status: TEventParticipatorStatus;
 
 	/**
 	 * The role in event
@@ -118,5 +119,5 @@ export class EventParticipator
 		enumName: 'participation_role',
 		default: EventParticipatorRole.attendee,
 	})
-	role: typeof EventParticipatorRole;
+	role: EventParticipatorRole;
 }
