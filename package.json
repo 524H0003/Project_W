@@ -171,6 +171,7 @@
 			"@fastify/multipart": "9.0.3",
 			"@nestjs/common": "11.0.16",
 			"esbuild": "0.25.0",
+			"fastify": "^5.3.1",
 			"tinymce": "7.2.0"
 		},
 		"onlyBuiltDependencies": [
