@@ -247,26 +247,15 @@ jobs:
 
       - uses: actions/download-artifact@v4
 
-      - name: Requesters
-        uses: MishaKav/jest-coverage-comment@main
+      - uses: MishaKav/jest-coverage-comment@main
         with:
-          title: Requesters test result
-          coverage-path: ./requesters/coverage/requesters.txt
-          create-new-comment: true
-          junitxml-path: ./requesters/reports/requesters.xml
+          multiple-files: |
+            Requesters, ./requesters/coverage/requesters.txt
+            Service, ./service/coverage/service.txt
+            Et cetera, ./etc/coverage/etc.txt
 
-      - name: Service
-        uses: MishaKav/jest-coverage-comment@main
+      - uses: dorny/test-reporter@v2
         with:
-          title: Service test result
-          coverage-path: ./service/coverage/service.txt
-          create-new-comment: true
-          junitxml-path: ./service/reports/service.xml
-
-      - name: Et cetera
-        uses: MishaKav/jest-coverage-comment@main
-        with:
-          title: Et cetera test result
-          coverage-path: ./etc/coverage/etc.txt
-          create-new-comment: true
-          junitxml-path: ./etc/reports/etc.xml
+          name: Tests runtime
+          path: '**/*.xml'
+          reporter: jest-junit 
