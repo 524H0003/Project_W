@@ -250,11 +250,6 @@ jobs:
           delete_user_name: 'github-actions[bot]'
           issue_number: ${{ github.event.number }}
 
-      - uses: actions/download-artifact@v4
-        with:
-          path: reports
-          merge-multiple: true
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
@@ -268,6 +263,7 @@ jobs:
 
       - uses: dorny/test-reporter@v2
         with:
+          artifact: /(.*)/
           name: Tests runtime
-          path: 'reports/**/*.xml'
+          path: '*.xml'
           reporter: jest-junit
