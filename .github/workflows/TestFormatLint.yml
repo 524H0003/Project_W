@@ -266,5 +266,5 @@ jobs:
       - uses: dorny/test-reporter@v2
         with:
           name: Tests runtime
-          path: '**/*.xml'
+          path: './**/*.xml'
           reporter: jest-junit
