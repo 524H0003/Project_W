@@ -199,12 +199,5 @@
 			],
 			"@semantic-release/github"
 		]
-	},
-	"jest": {
-		"globals": {
-			"ts-jest": {
-				"isolatedModules": false
-			}
-		}
 	}
 }
