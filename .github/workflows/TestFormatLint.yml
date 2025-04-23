@@ -186,7 +186,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 5
+    timeout-minutes: 3
 
     permissions:
       contents: read
@@ -249,6 +249,8 @@ jobs:
           github_token: ${{ github.token }}
           delete_user_name: 'github-actions[bot]'
           issue_number: ${{ github.event.number }}
+
+      - uses: actions/download-artifact@v4
 
       - uses: actions/checkout@v4
         with:
