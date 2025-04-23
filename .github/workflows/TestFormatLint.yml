@@ -230,6 +230,8 @@ jobs:
 
     permissions:
       contents: read
+			actions: read
+      checks: write
       pull-requests: write
 
     if: ${{ needs.changes.outputs.project == 'true' }}
