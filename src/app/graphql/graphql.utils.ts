@@ -18,3 +18,4 @@ export async function paginateResponse<T>(
 		hasPrevious: index != 0,
 	};
 }
+
