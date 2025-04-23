@@ -256,12 +256,26 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: MishaKav/jest-coverage-comment@main
+      - name: Requesters
+        uses: MishaKav/jest-coverage-comment@main
         with:
-          multiple-files: |
-            Requesters, ./requesters/coverage/requesters.txt
-            Service, ./service/coverage/service.txt
-            Et cetera, ./etc/coverage/etc.txt
+          title: Requesters test result
+          coverage-path: ./requesters/coverage/requesters.txt
+          create-new-comment: true
+
+      - name: Service
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          title: Service test result
+          coverage-path: ./service/coverage/service.txt
+          create-new-comment: true
+
+      - name: Et cetera
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          title: Et cetera test result
+          coverage-path: ./etc/coverage/etc.txt
+          create-new-comment: true
 
       - uses: dorny/test-reporter@v2
         with:
@@ -269,4 +283,3 @@ jobs:
           name: Tests runtime
           path: '**/*.xml'
           reporter: jest-junit
-          only-summary: 'true'
