@@ -269,3 +269,4 @@ jobs:
           name: Tests runtime
           path: '**/*.xml'
           reporter: jest-junit
+          only-summary: 'true'
