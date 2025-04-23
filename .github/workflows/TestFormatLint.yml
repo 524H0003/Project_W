@@ -253,6 +253,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: reports
+          merge-multiple: true
 
       - uses: actions/checkout@v4
         with:
