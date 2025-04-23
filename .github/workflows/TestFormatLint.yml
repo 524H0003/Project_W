@@ -251,6 +251,8 @@ jobs:
           issue_number: ${{ github.event.number }}
 
       - uses: actions/download-artifact@v4
+        with:
+          path: reports
 
       - uses: actions/checkout@v4
         with:
@@ -266,5 +268,5 @@ jobs:
       - uses: dorny/test-reporter@v2
         with:
           name: Tests runtime
-          path: './**/*.xml'
+          path: 'reports/**/*.xml'
           reporter: jest-junit
