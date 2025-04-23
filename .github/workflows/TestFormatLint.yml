@@ -14,6 +14,11 @@ env:
   REFRESH_SECRET: 'REFRESH_SECRET'
   SERVER_SECRET: 'SERVER_SECRET'
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -230,8 +235,6 @@ jobs:
 
     permissions:
       contents: read
-			actions: read
-      checks: write
       pull-requests: write
 
     if: ${{ needs.changes.outputs.project == 'true' }}
@@ -260,4 +263,4 @@ jobs:
         with:
           name: Tests runtime
           path: '**/*.xml'
-          reporter: jest-junit 
+          reporter: jest-junit
