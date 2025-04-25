@@ -33,11 +33,11 @@ import { JwtModule } from '@nestjs/jwt';
 				stores: [
 					new Keyv({
 						store: new Cacheable({
-							primary: new Keyv({
+							primary: createRedisKeyv({ url: config.get('REDIS_URL') }),
+							secondary: new Keyv({
 								store: new KeyvSqlite('sqlite://cache.sqlite'),
 								useKeyPrefix: false,
 							}),
-							secondary: createRedisKeyv({ url: config.get('REDIS_URL') }),
 							ttl: (10).m2s.s2ms,
 							namespace: 'Cache0',
 							nonBlocking: true,

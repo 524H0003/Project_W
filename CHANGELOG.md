@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/524H0003/Project_W/compare/v1.3.0...v1.3.1) (2025-04-22)
+
+
+### Bug Fixes
+
+* **html-minifier:** patch vulnerability ([#196](https://github.com/524H0003/Project_W/issues/196)) ([9a63396](https://github.com/524H0003/Project_W/commit/9a63396690beae6e0b06a4c4ed40fd22f9f20fe7))
+
 # [1.3.0](https://github.com/524H0003/Project_W/compare/v1.2.36...v1.3.0) (2025-04-10)
 
 

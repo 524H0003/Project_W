@@ -2,9 +2,9 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { BlackBox } from 'app/utils/model.utils';
 import { Reciever } from './reciever/reciever.entity';
 import {
-	INotificationEntity,
-	INotificationInfo,
 	NotificationType,
+	type INotificationEntity,
+	type INotificationInfo,
 } from './notification.model';
 import { INotificationInfoKeys } from 'build/models';
 import { Field, ObjectType } from '@nestjs/graphql';
