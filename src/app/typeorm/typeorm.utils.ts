@@ -284,7 +284,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	) => {
 		const obj = await this.id(id, { writeLock: true });
 		obj[field as unknown as string].push(entity);
-		return this.save(obj);
+		await this.save(obj);
 	};
 
 	/**
@@ -300,7 +300,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	) => {
 		const obj = await this.id(id, { writeLock: true });
 		obj[field as unknown as string].push(entities);
-		return this.save(obj);
+		await this.save(obj);
 	};
 
 	/**

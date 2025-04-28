@@ -45,32 +45,31 @@ describe('assign', () => {
 });
 
 describe('validating', () => {
-	it('success', async () => {
-		let signature: string;
+	let hook: Hook = null,
+		signature: string;
 
-		const hook = await svc.hook.assign(mtdt, (s: string) => {
+	beforeEach(async () => {
+		hook = await svc.hook.assign(mtdt, (s: string) => {
 			signature = s;
 			return BaseUser.test(fileName);
 		});
+	});
 
+	it('success', async () => {
 		await execute(() => svc.hook.validating(signature, mtdt, hook), {
 			exps: [{ type: 'toThrow', not: true, params: [] }],
 		});
 	});
 
-	it('failed', async () => {
-		const signature = (5).string;
-
+	it('failed due to invalid signature', async () => {
 		await execute(
 			() =>
 				svc.hook.validating(
 					signature,
 					mtdt,
 					new Hook({
-						mtdt,
+						...hook,
 						signature: signature + '-',
-						note: null,
-						fromBaseUser: null,
 					}),
 				),
 			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Hook', '')] }] },
