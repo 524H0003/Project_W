@@ -11,6 +11,7 @@ import {
 } from 'build/models';
 import {
 	BeforeInsert,
+	BeforeUpdate,
 	Column,
 	Entity,
 	JoinColumn,
@@ -167,7 +168,7 @@ export class User extends ParentId implements IUserEntity {
 	/**
 	 * Hash the current password
 	 */
-	@BeforeInsert() private async hashingPassword() {
+	@BeforeInsert() @BeforeUpdate() private async hashingPassword() {
 		if (this.password)
 			this.hashedPassword = await passwordHashing(this.password, {
 				parallelism: 3 + (3).random,
