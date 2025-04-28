@@ -11,6 +11,7 @@ import {
 	FindOneOptions,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 /**
  * Extend find options
@@ -315,16 +316,22 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 
 	/**
 	 * Updating entity
-	 * @param {DeepPartial<T>} targetEntity - the target entity indentifier string
-	 * @param {DeepPartial<T>} updatedEntity - function's option
+	 * @param {DeepPartial<T>} targetEntity - target entity
+	 * @param {DeepPartial<T>} updatedEntity - updated entity
 	 */
 	protected readonly update = async (
 		targetEntity: FindOptionsWhere<T>,
 		updatedEntity: DeepPartial<T>,
+		raw?: boolean,
 	) => {
 		if (updatedEntity == null || !Object.keys(updatedEntity).length) return;
 
-		await this.save({ ...targetEntity, ...updatedEntity });
+		await this.repo.update(
+			targetEntity,
+			(raw
+				? updatedEntity
+				: new this.ctor(updatedEntity)) as unknown as QueryDeepPartialEntity<T>,
+		);
 	};
 
 	// Delete
