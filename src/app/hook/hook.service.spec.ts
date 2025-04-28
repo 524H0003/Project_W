@@ -67,10 +67,7 @@ describe('validating', () => {
 				svc.hook.validating(
 					signature,
 					mtdt,
-					new Hook({
-						...hook,
-						signature: signature + '-',
-					}),
+					new Hook({ ...hook, signature: signature + '-' }),
 				),
 			{ exps: [{ type: 'toThrow', params: [err('Invalid', 'Hook', '')] }] },
 		);
