@@ -318,12 +318,16 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 		targetEntity: FindOptionsWhere<T>,
 		updatedEntity: DeepPartial<T>,
 	) => {
-		if (
-			updatedEntity != null &&
-			Object.keys(updatedEntity).length &&
-			(await this.find({ ...targetEntity, writeLock: true })).length
-		)
-			await this.save({ ...targetEntity, ...updatedEntity });
+		if (updatedEntity == null || !Object.keys(updatedEntity).length) return;
+
+		await this.repo.manager.transaction(async (repo) => {
+			const entity = await repo.findOne(this.ctor, {
+				where: targetEntity,
+				lock: { mode: 'pessimistic_write' },
+			});
+
+			if (entity) await repo.save({ ...entity, ...updatedEntity });
+		});
 	};
 
 	// Delete
