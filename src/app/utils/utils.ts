@@ -34,8 +34,9 @@ class InterfaceCasting<T, K extends keyof T> {
 	 * @return {InterfaceCasting} the result of casting
 	 */
 	static delete<T, K extends keyof T>(input: T, get: readonly K[]): T {
-		get.forEach((_) => delete input[_]);
-		return input;
+		const output = Object.assign({}, input);
+		get.forEach((_) => delete output[_]);
+		return output;
 	}
 }
 /**

@@ -87,9 +87,10 @@ export class UserService extends DatabaseRequests<User> {
 	 * Modify user
 	 */
 	async modify(id: string, update: DeepPartial<User>) {
+		await this.update(
+			{ id },
+			InterfaceCasting.delete(update, IUserRelationshipKeys),
+		);
 		await this.svc.baseUser.modify(id, update.baseUser);
-		update = InterfaceCasting.delete(update, IUserRelationshipKeys);
-		if (!Object.keys(update).length) return;
-		return this.update({ id }, update);
 	}
 }

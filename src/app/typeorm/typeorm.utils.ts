@@ -326,18 +326,12 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	) => {
 		if (updatedEntity == null || !Object.keys(updatedEntity).length) return;
 
-		await this.repo.manager.transaction(async (repo) => {
-			await repo.update(
-				this.ctor,
-				(await repo.findOne(this.ctor, {
-					where: targetEntity,
-					lock: { mode: 'pessimistic_write' },
-				})) as unknown as FindOptionsWhere<T>,
-				(raw
-					? updatedEntity
-					: new this.ctor(updatedEntity)) as QueryDeepPartialEntity<T>,
-			);
-		});
+		await this.repo.update(
+			targetEntity,
+			(raw
+				? updatedEntity
+				: new this.ctor(updatedEntity)) as QueryDeepPartialEntity<T>,
+		);
 	};
 
 	// Delete
