@@ -27,10 +27,9 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 	 * @param {ITagInfo} tag - tag's infomations
 	 * @param {string} eventId - event's id to assign tag to
 	 */
-	async attach(tag: ITagInfo, eventId: string) {
+	async attach(tag: ITagInfo, eventId: string): Promise<void> {
 		const assignedTag = await this.svc.eventTag.assign(tag);
 		await this.svc.event.push(eventId, 'tags', assignedTag);
-		return this.id(assignedTag.id);
 	}
 
 	// Abstract

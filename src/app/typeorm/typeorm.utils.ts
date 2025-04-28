@@ -282,9 +282,9 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 		field: K,
 		entity: NonArray<T[K]>,
 	) => {
-		const obj = await this.id(id, { writeLock: true });
+		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
-		await this.save(obj);
+		await this.update({ id } as FindOptionsWhere<T>, obj);
 	};
 
 	/**
@@ -298,9 +298,9 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 		field: K,
 		entities: T[K],
 	) => {
-		const obj = await this.id(id, { writeLock: true });
+		const obj = await this.id(id);
 		obj[field as unknown as string].push(entities);
-		await this.save(obj);
+		await this.update({ id } as FindOptionsWhere<T>, obj);
 	};
 
 	/**
