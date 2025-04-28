@@ -65,7 +65,6 @@ export class AuthService extends SecurityService {
 			switch (true) {
 				case message.includes(err('Invalid', 'Entity', '')):
 					throw new ServerException('Invalid', 'Entity', 'SignUp');
-
 				default:
 					throw error;
 			}

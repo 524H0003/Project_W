@@ -324,8 +324,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 		updatedEntity: DeepPartial<T>,
 		raw: boolean = false,
 	) => {
-		if (updatedEntity == null)
-			throw new ServerException('Invalid', 'Input', '');
+		if (updatedEntity == null || !Object.keys(updatedEntity).length) return;
 
 		await this.repo.manager.transaction(async (repo) => {
 			await repo.update(
