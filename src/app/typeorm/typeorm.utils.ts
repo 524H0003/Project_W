@@ -308,11 +308,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * @param {string} id - entity indentifier string
 	 * @param {DeepPartial<T>} update - update value
 	 */
-	public abstract modify(
-		id: string,
-		update: DeepPartial<T>,
-		raw?: boolean,
-	): Promise<void>;
+	public abstract modify(id: string, update: DeepPartial<T>): Promise<void>;
 
 	/**
 	 * Updating entity
@@ -322,16 +318,10 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	protected readonly update = async (
 		targetEntity: FindOptionsWhere<T>,
 		updatedEntity: DeepPartial<T>,
-		raw?: boolean,
 	) => {
 		if (updatedEntity == null || !Object.keys(updatedEntity).length) return;
 
-		await this.repo.update(
-			targetEntity,
-			(raw
-				? updatedEntity
-				: new this.ctor(updatedEntity)) as unknown as QueryDeepPartialEntity<T>,
-		);
+		await this.save({ ...targetEntity, ...updatedEntity });
 	};
 
 	// Delete
