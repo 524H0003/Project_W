@@ -319,6 +319,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 		updatedEntity: DeepPartial<T>,
 	) => {
 		if (updatedEntity == null || !Object.keys(updatedEntity).length) return;
+		if (targetEntity == null || !Object.keys(targetEntity).length) return;
 
 		await this.repo.manager.transaction(async (repo) => {
 			const entity = await repo.findOne(this.ctor, {
@@ -326,7 +327,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 				lock: { mode: 'pessimistic_write' },
 			});
 
-			if (entity) await repo.save({ ...entity, ...updatedEntity });
+			if (entity) await repo.save(await validation(new this.ctor(entity)));
 		});
 	};
 
