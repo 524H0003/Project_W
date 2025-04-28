@@ -264,7 +264,11 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 		if (entity == null) throw new ServerException('Invalid', 'Input', '');
 
 		return new this.ctor(
-			await this.repo.save(await validation(new this.ctor(entity))),
+			await this.repo.insert(
+				(await validation(
+					new this.ctor(entity),
+				)) as unknown as QueryDeepPartialEntity<T>,
+			),
 		);
 	};
 
