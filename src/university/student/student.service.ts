@@ -54,14 +54,10 @@ export class StudentService extends DatabaseRequests<Student> {
 		});
 	}
 
-	public async modify(
-		id: string,
-		update: DeepPartial<Student>,
-		raw?: boolean,
-	): Promise<void> {
+	public async modify(id: string, update: DeepPartial<Student>): Promise<void> {
 		await this.svc.user.modify(id, update.user);
 		update = InterfaceCasting.delete(update, ISutdentRelationshipKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

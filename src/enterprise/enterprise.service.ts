@@ -56,11 +56,10 @@ export class EnterpriseService extends DatabaseRequests<Enterprise> {
 	public async modify(
 		id: string,
 		update: DeepPartial<Enterprise>,
-		raw?: boolean,
 	): Promise<void> {
 		await this.svc.baseUser.modify(id, update.baseUser);
 		update = InterfaceCasting.delete(update, IEnterpriseRelationshipsKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

@@ -51,13 +51,12 @@ export class EventParticipatorService extends DatabaseRequests<EventParticipator
 	public modify(
 		id: string,
 		update: DeepPartial<EventParticipator>,
-		raw?: boolean,
 	): Promise<void> {
 		update = InterfaceCasting.delete(
 			update,
 			IEventParticipatorRelationshipsKeys,
 		);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

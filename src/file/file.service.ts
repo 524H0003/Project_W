@@ -165,13 +165,9 @@ export class FileService extends DatabaseRequests<File> {
 		});
 	}
 
-	public modify(
-		id: string,
-		update: DeepPartial<File>,
-		raw?: boolean,
-	): Promise<void> {
+	public modify(id: string, update: DeepPartial<File>): Promise<void> {
 		update = InterfaceCasting.delete(update, IFileRelationshipKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

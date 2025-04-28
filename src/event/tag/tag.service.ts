@@ -51,10 +51,9 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 	public modify(
 		id: string,
 		update: DeepPartial<EventTag>,
-		raw?: boolean,
 	): Promise<void> {
 		update = InterfaceCasting.delete(update, ITagRelationshipsKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

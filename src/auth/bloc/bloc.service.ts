@@ -92,7 +92,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 			mtdt = metaData;
 
-			await this.modify(prev, { owner: null, metaData: {} }, true);
+			await this.modify(prev, { owner: null, metaData: {} });
 
 			return prev;
 		};
@@ -102,11 +102,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		return this.save(bloc);
 	}
 
-	public modify(
-		id: string,
-		update: DeepPartial<Bloc>,
-		raw: boolean = false,
-	): Promise<void> {
-		return this.update({ id }, update, raw);
+	public modify(id: string, update: DeepPartial<Bloc>): Promise<void> {
+		return this.update({ id }, update);
 	}
 }

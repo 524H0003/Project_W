@@ -50,14 +50,10 @@ export class FacultyService extends DatabaseRequests<Faculty> {
 		});
 	}
 
-	public async modify(
-		id: string,
-		update: DeepPartial<Faculty>,
-		raw?: boolean,
-	): Promise<void> {
+	public async modify(id: string, update: DeepPartial<Faculty>): Promise<void> {
 		await this.svc.eventCreator.modify(id, update.eventCreator);
 		update = InterfaceCasting.delete(update, IFacultyRelationshipKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }
