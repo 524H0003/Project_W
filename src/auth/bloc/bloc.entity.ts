@@ -2,7 +2,7 @@ import {
 	GeneratedId,
 	type NonFunctionProperties,
 } from 'app/typeorm/typeorm.utils';
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToOne } from 'typeorm';
 import { IBlocEntity } from './bloc.model';
 import { IBlocInfoKeys } from 'build/models';
 import { CacheControl } from 'app/graphql/graphql.decorator';
@@ -60,7 +60,7 @@ export class Bloc extends GeneratedId implements IBlocEntity {
 	/**
 	 * Hashing bloc
 	 */
-	@BeforeInsert() @BeforeUpdate() private hashBloc() {
+	@BeforeInsert() private hashBloc() {
 		const { prev, metaData, id, owner, lastIssue } = this;
 
 		return (this.hash = dataHashing(
