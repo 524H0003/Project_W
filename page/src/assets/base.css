@@ -1,13 +1,15 @@
 @import 'tailwindcss';
+@plugin "daisyui";
 
+@utility screen-center {
+  @apply flex items-center justify-center;
+}
 
-@layer components {
-  .screen-center {
-    @apply flex items-center justify-center;
-  }
+@utility non-screen-center {
+  @apply flex items-start justify-start;
+}
 
-  input,
-  input:focus {
-    @apply border-0 ring-0;
-  }
+input,
+input:focus {
+  @apply border-0 ring-0;
 }
