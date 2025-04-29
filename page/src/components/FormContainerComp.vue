@@ -1,9 +1,11 @@
 <template>
-  <div class="bg-base-200 flex items-center justify-center min-h-screen">
+  <div
+    class="@container bg-base-200 flex items-center justify-center min-h-screen"
+  >
     <div
-      class="iw-sm:ih-sm:card iw-sm:ih-sm:max-w-[500px] iw-sm:ih-sm:max-h-[80vh] iw-sm:ih-sm:min-h-0 min-h-screen w-dvw bg-base-100 shadow-xl ah-sm:screen-center aw-sm:screen-center overflow-y-auto"
+      class="@xl:card @xl:max-w-[500px] @xl:max-h-[80vh] @xl:min-h-0 min-h-screen w-dvw bg-base-100 shadow-xl @xl:non-screen-center screen-center overflow-y-auto"
     >
-      <div class="card-body flex items-center justify-center">
+      <div class="card-body flex items-center justify-center w-full">
         <div class="w-full">
           <h1 class="card-title text-4xl font-bold">{{ name }}</h1>
           <form @submit.prevent="btnHandle">
