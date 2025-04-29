@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
 
 @layer components {
   .screen-center {
@@ -9,6 +8,6 @@
 
   input,
   input:focus {
-    @apply border-0 ring-0 !important;
+    @apply border-0 ring-0;
   }
 }
