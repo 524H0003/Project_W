@@ -1,6 +1,3 @@
-/** @type {import('tailwindcss').Config} */
-import tailwindcss from '@tailwindcss/vite';
-
 export default {
   content: [
     './index.html',
@@ -15,7 +12,7 @@ export default {
     ],
   ],
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  plugins: [require('daisyui'), require('flowbite/plugin'), tailwindcss()],
+  plugins: [require('daisyui'), require('flowbite/plugin')],
   theme: {
     screens: {
       'ih-sm': { raw: '(min-height:640px)' },

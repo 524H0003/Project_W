@@ -4,7 +4,7 @@
       <span class="label-text">{{ name }}</span>
     </label>
     <label
-      class="input input-bordered flex items-center gap-2"
+      class="input input-bordered flex items-center gap-2 w-full"
       :class="{
         'input-error': object === alert?.object && alert?.type === 'error',
         'input-success': object === alert?.object && alert?.type === 'success',
@@ -19,7 +19,7 @@
         :disabled="disable"
       />
     </label>
-    <label v-if="object === alert?.object" class="label -my-1.5">
+    <label v-if="object === alert?.object && alert?.type" class="label -my-1.5">
       <span
         class="label-text-alt"
         :class="{
