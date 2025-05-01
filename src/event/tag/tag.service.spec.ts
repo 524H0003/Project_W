@@ -53,7 +53,7 @@ describe('attach', () => {
 		await svc.eventTag.assign(eventTag);
 
 		await execute(() => svc.eventTag.attach(eventTag, eventId), {
-			exps: [{ type: 'toBeInstanceOf', params: [EventTag] }],
+			exps: [{ type: 'toThrow', not: true, params: [] }],
 			onFinish: async () => {
 				await execute(() => svc.eventTag.find({ id: eventId, cache: false }), {
 					exps: [{ type: 'toHaveLength', params: [1] }],

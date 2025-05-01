@@ -32,6 +32,14 @@ export type FindExtendOptionsMany = FindExtendOptions & {
 };
 
 /**
+ * Saving options
+ */
+export type SaveOptions = {
+	raw?: boolean;
+	validate?: boolean;
+};
+
+/**
  * Extended find where
  */
 export type FindWhereExtended<T, K> = FindOptionsWhere<T> & K;
@@ -259,11 +267,17 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 */
 	protected readonly save = async (
 		entity: DeepPartial<NonFunctionProperties<T>>,
+		options?: SaveOptions,
 	): Promise<T> => {
 		if (entity == null) throw new ServerException('Invalid', 'Input', '');
 
+		const { raw: r = false, validate: v = true } = options || {},
+			forgedEntity = r ? entity : new this.ctor(entity);
+
 		return new this.ctor(
-			await this.repo.save(await validation(new this.ctor(entity))),
+			await this.repo.save(
+				(v ? await validation(forgedEntity) : forgedEntity) as DeepPartial<T>,
+			),
 		);
 	};
 
@@ -307,7 +321,11 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * @param {string} id - entity indentifier string
 	 * @param {DeepPartial<T>} update - update value
 	 */
-	public abstract modify(id: string, update: DeepPartial<T>): Promise<void>;
+	public abstract modify(
+		id: string,
+		update: DeepPartial<T>,
+		options?: SaveOptions,
+	): Promise<void>;
 
 	/**
 	 * Updating entity
@@ -317,6 +335,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	protected readonly update = async (
 		targetEntity: FindOptionsWhere<T>,
 		updatedEntity: DeepPartial<T>,
+		options?: SaveOptions,
 	) => {
 		if (
 			updatedEntity != null &&
@@ -325,7 +344,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 			Object.keys(targetEntity).length &&
 			(await this.find(targetEntity)).length
 		)
-			await this.save({ ...targetEntity, ...updatedEntity });
+			await this.save({ ...targetEntity, ...updatedEntity }, options);
 	};
 
 	// Delete

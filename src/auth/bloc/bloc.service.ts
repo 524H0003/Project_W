@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseRequests } from 'app/typeorm/typeorm.utils';
+import { DatabaseRequests, SaveOptions } from 'app/typeorm/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { Bloc } from './bloc.entity';
 import { User } from 'user/user.entity';
@@ -92,7 +92,7 @@ export class BlocService extends DatabaseRequests<Bloc> {
 
 			mtdt = metaData;
 
-			await this.modify(prev, { owner: null, metaData: {} });
+			await this.modify(prev, { owner: null, metaData: {} }, { raw: true });
 
 			return prev;
 		};
@@ -102,7 +102,11 @@ export class BlocService extends DatabaseRequests<Bloc> {
 		return this.save(bloc);
 	}
 
-	public modify(id: string, update: DeepPartial<Bloc>): Promise<void> {
-		return this.update({ id }, update);
+	public modify(
+		id: string,
+		update: DeepPartial<Bloc>,
+		options?: SaveOptions,
+	): Promise<void> {
+		return this.update({ id }, update, options);
 	}
 }
