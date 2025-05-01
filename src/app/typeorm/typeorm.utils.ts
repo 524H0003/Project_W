@@ -34,10 +34,7 @@ export type FindExtendOptionsMany = FindExtendOptions & {
 /**
  * Saving options
  */
-export type SaveOptions = {
-	raw?: boolean;
-	validate?: boolean;
-};
+export type SaveOptions = { raw?: boolean; validate?: boolean };
 
 /**
  * Extended find where
