@@ -41,7 +41,8 @@ export class EventTagResolver {
 	@Mutation(() => EventTag)
 	@Allow([UserRole.faculty, UserRole.enterprise])
 	async attachEventTag(@Args('input') { name, eventId }: EventTagAttach) {
-		return this.tag.attach({ name }, eventId);
+		await this.tag.attach({ name }, eventId);
+		return this.tag.findOne({ name });
 	}
 
 	// Queries
