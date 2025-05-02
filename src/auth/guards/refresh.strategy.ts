@@ -33,7 +33,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	async validate({ refreshToken }: IPayload): Promise<IRefreshResult> {
 		const current = await this.bloc.id(refreshToken);
 
-		if (current.isNull() || current.owner.isNull()) {
+		if (current.isNull() || current.owner == null) {
 			await this.bloc.removeSnake(current.id);
 			throw new ServerException('Invalid', 'User', 'Access');
 		}
