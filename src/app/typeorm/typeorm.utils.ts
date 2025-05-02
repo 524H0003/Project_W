@@ -273,7 +273,9 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 
 		return new this.ctor(
 			await this.repo.save(
-				(v ? await validation(forgedEntity) : forgedEntity) as DeepPartial<T>,
+				(v && !r
+					? await validation(forgedEntity)
+					: forgedEntity) as DeepPartial<T>,
 			),
 		);
 	};

@@ -26,7 +26,7 @@ export class Bloc extends GeneratedId implements IBlocEntity {
 		if (!payload || !Object.keys(payload).length) return;
 
 		Object.assign(this, InterfaceCasting.quick(payload, IBlocInfoKeys));
-		this.owner = new User(payload.owner);
+		if (payload.owner != null) this.owner = new User(payload.owner);
 	}
 
 	// Relationships
@@ -64,7 +64,7 @@ export class Bloc extends GeneratedId implements IBlocEntity {
 		const { prev, metaData, id, owner, lastIssue } = this;
 
 		return (this.hash = dataHashing(
-			JSON.stringify({ metaData, lastIssue, prev, id, owner: owner.id }),
+			JSON.stringify({ metaData, lastIssue, prev, id, owner: owner?.id }),
 		));
 	}
 
