@@ -74,7 +74,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    timeout-minutes: 10
+    timeout-minutes: 3
 
     permissions:
       contents: read
@@ -86,6 +86,10 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
+      - uses: supercharge/redis-github-action@1.8.0
+        with:
+          redis-password: ''
+
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
@@ -93,7 +97,7 @@ jobs:
           node-version: 23.7
           cache: 'pnpm'
 
-      - run: npm run build && npm run test
+      - run: npm run build && npm run test:service
 
       - uses: actions/upload-artifact@v4
         with:
@@ -106,7 +110,7 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
 
-    name: 'Test requesters'
+    name: 'Test Requesters'
 
     runs-on: ubuntu-latest
 
