@@ -34,8 +34,6 @@ export class EventCreatorService extends DatabaseRequests<EventCreator> {
 	public async modify(
 		id: string,
 		update: DeepPartial<EventCreator>,
-		// eslint-disable-next-line tsEslint/no-unused-vars
-		raw?: boolean,
 	): Promise<void> {
 		await this.svc.user.modify(id, update.user);
 	}

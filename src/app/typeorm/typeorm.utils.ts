@@ -8,24 +8,38 @@ import {
 	Repository,
 	PrimaryColumn,
 	BeforeInsert,
+	FindOneOptions,
 } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata.js';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 /**
- * Modified find option
+ * Extend find options
  */
-export type FindOptionsWithCustom<T> = (
-	| DeepPartial<T>
-	| FindOptionsWhere<T>
-) & {
+export type FindExtendOptions = {
 	deep?: number;
-	take?: number;
-	skip?: number;
 	order?: object;
 	relations?: string[];
 	cache?: boolean;
+	writeLock?: boolean;
 };
+
+/**
+ * Extend find options for many
+ */
+export type FindExtendOptionsMany = FindExtendOptions & {
+	take?: number;
+	skip?: number;
+};
+
+/**
+ * Saving options
+ */
+export type SaveOptions = { raw?: boolean; validate?: boolean };
+
+/**
+ * Extended find where
+ */
+export type FindWhereExtended<T, K> = FindOptionsWhere<T> & K;
 
 /**
  * Non function properties
@@ -158,11 +172,17 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * @param {string} id - the entity's id
 	 * @return {Promise<T>} found entity
 	 */
-	public readonly id = (id: string): Promise<T> => {
+	public readonly id = (
+		id: string,
+		options?: FindExtendOptions,
+	): Promise<T> => {
+		if (id == null) throw new ServerException('Invalid', 'ID', '');
+
 		return this.findOne({
+			...options,
 			id,
 			cache: false,
-		} as unknown as FindOptionsWithCustom<T>);
+		} as unknown as FindWhereExtended<T, FindExtendOptions>);
 	};
 
 	/**
@@ -171,59 +191,62 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * @return {Promise<T[]>} array of found objects
 	 */
 	public readonly find = async (
-		options?: FindOptionsWithCustom<T>,
+		options?: FindWhereExtended<T, FindExtendOptionsMany>,
 	): Promise<T[]> => {
 		const {
 				deep = 1,
-				relations = [''],
+				relations: requestRelation = [''],
 				take = 10e10,
 				skip = 0,
 				order = undefined,
 				cache = true,
-				...newOptions
+				writeLock = false,
+				...entity
 			} = options || {},
-			findRelations = this.relations
+			{ ctor, relations: coreRelations } = this,
+			relations = coreRelations
 				.map((i) => i.split('.').slice(0, deep).join('.'))
-				.filter((i) => relations.some((j) => i.includes(j)))
-				.filter((value, index, self) => self.indexOf(value) === index);
+				.filter((i) => requestRelation.some((j) => i.includes(j)))
+				.filter((value, index, self) => self.indexOf(value) === index),
+			where = new ctor(entity) as FindOptionsWhere<T>,
+			lock: FindOneOptions['lock'] = writeLock
+				? { mode: 'pessimistic_write' }
+				: undefined;
 
 		return (
-			await this.repo.find({
-				where: <FindOptionsWhere<T>>new this.ctor(newOptions),
-				take,
-				skip,
-				order,
-				relations: findRelations,
-				cache,
-			})
-		).map((i) => new this.ctor(i));
+			await this.repo.find({ where, take, skip, order, relations, cache, lock })
+		).map((i) => new ctor(i));
 	};
 
 	/**
 	 * Finding an entity
-	 * @param {FindOptionsWithCustom<T>} options - function's option
+	 * @param {FindWhereExtended<T>} options - function's option
 	 * @return {Promise<T>}
 	 */
 	public readonly findOne = async (
-		options?: FindOptionsWithCustom<T>,
+		options?: FindWhereExtended<T, FindExtendOptions>,
 	): Promise<T> => {
 		const {
 				deep = 1,
-				relations = [''],
+				relations: requestRelation = [''],
+				order = undefined,
 				cache = true,
-				...newOptions
+				writeLock = false,
+				...entity
 			} = options || {},
-			result = await this.repo.findOne({
-				where: <FindOptionsWhere<T>>new this.ctor(newOptions),
-				relations: deep
-					? this.relations
-							.map((i) => i.split('.').slice(0, deep).join('.'))
-							.filter((i) => relations.some((j) => i.includes(j)))
-							.filter((value, index, self) => self.indexOf(value) === index)
-					: undefined,
-				cache,
-			});
-		return new this.ctor(result);
+			{ ctor, relations: coreRelations } = this,
+			relations = coreRelations
+				.map((i) => i.split('.').slice(0, deep).join('.'))
+				.filter((i) => requestRelation.some((j) => i.includes(j)))
+				.filter((value, index, self) => self.indexOf(value) === index),
+			where = new ctor(entity) as FindOptionsWhere<T>,
+			lock: FindOneOptions['lock'] = writeLock
+				? { mode: 'pessimistic_write' }
+				: undefined;
+
+		return new this.ctor(
+			await this.repo.findOne({ where, order, relations, cache, lock }),
+		);
 	};
 
 	/**
@@ -241,9 +264,19 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 */
 	protected readonly save = async (
 		entity: DeepPartial<NonFunctionProperties<T>>,
+		options?: SaveOptions,
 	): Promise<T> => {
+		if (entity == null) throw new ServerException('Invalid', 'Input', '');
+
+		const { raw: r = false, validate: v = true } = options || {},
+			forgedEntity = r ? entity : new this.ctor(entity);
+
 		return new this.ctor(
-			await this.repo.save(await validation(new this.ctor(entity))),
+			await this.repo.save(
+				(v && !r
+					? await validation(forgedEntity)
+					: forgedEntity) as DeepPartial<T>,
+			),
 		);
 	};
 
@@ -263,7 +296,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	) => {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entity);
-		return this.save(obj);
+		await this.update({ id } as FindOptionsWhere<T>, obj);
 	};
 
 	/**
@@ -279,7 +312,7 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	) => {
 		const obj = await this.id(id);
 		obj[field as unknown as string].push(entities);
-		return this.save(obj);
+		await this.update({ id } as FindOptionsWhere<T>, obj);
 	};
 
 	/**
@@ -290,27 +323,27 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	public abstract modify(
 		id: string,
 		update: DeepPartial<T>,
-		raw?: boolean,
+		options?: SaveOptions,
 	): Promise<void>;
 
 	/**
 	 * Updating entity
-	 * @param {DeepPartial<T>} targetEntity - the target entity indentifier string
-	 * @param {DeepPartial<T>} updatedEntity - function's option
+	 * @param {DeepPartial<T>} targetEntity - target entity
+	 * @param {DeepPartial<T>} updatedEntity - updated entity
 	 */
 	protected readonly update = async (
 		targetEntity: FindOptionsWhere<T>,
 		updatedEntity: DeepPartial<T>,
-		raw: boolean = false,
+		options?: SaveOptions,
 	) => {
-		if (!updatedEntity) return;
-
-		await this.repo.update(
-			targetEntity,
-			(raw
-				? updatedEntity
-				: new this.ctor(updatedEntity)) as QueryDeepPartialEntity<T>,
-		);
+		if (
+			updatedEntity != null &&
+			Object.keys(updatedEntity).length &&
+			targetEntity != null &&
+			Object.keys(targetEntity).length &&
+			(await this.find(targetEntity)).length
+		)
+			await this.save({ ...targetEntity, ...updatedEntity }, options);
 	};
 
 	// Delete
@@ -319,6 +352,8 @@ export abstract class DatabaseRequests<T extends BaseEntity> {
 	 * @param {string} id - the entity identifier string
 	 */
 	public readonly remove = async (id: string): Promise<void> => {
+		if (id == null) throw new ServerException('Invalid', 'ID', '');
+
 		await this.repo.delete({ id } as unknown as FindOptionsWhere<T>);
 	};
 }

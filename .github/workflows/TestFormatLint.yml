@@ -44,7 +44,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
       - run: pnpm i && npm run format && npm run lint
@@ -86,14 +86,18 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
+      - uses: supercharge/redis-github-action@1.8.0
+        with:
+          redis-password: ''
+
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
-      - run: npm run prebuild:dev && npm run test:service
+      - run: npm run build && npm run test:service
 
       - uses: actions/upload-artifact@v4
         with:
@@ -106,7 +110,7 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
 
-    name: 'Test requesters'
+    name: 'Test Requesters'
 
     runs-on: ubuntu-latest
 
@@ -130,10 +134,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
-      - run: npm run prebuild:dev && npm run test:requesters
+      - run: npm run build && npm run test:requesters
 
       - uses: actions/upload-artifact@v4
         with:
@@ -166,10 +170,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
-      - run: npm run prebuild:dev && npm run test:etc
+      - run: npm run build && npm run test:etc
 
       - uses: actions/upload-artifact@v4
         with:
@@ -206,10 +210,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
-      - run: rm -fr public/* && npm run genkey
+      - run: rm -fr public/*
 
       - run: npm run start:ci
 

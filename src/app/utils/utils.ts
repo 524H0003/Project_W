@@ -34,8 +34,9 @@ class InterfaceCasting<T, K extends keyof T> {
 	 * @return {InterfaceCasting} the result of casting
 	 */
 	static delete<T, K extends keyof T>(input: T, get: readonly K[]): T {
-		get.forEach((_) => delete input[_]);
-		return input;
+		const output = Object.assign({}, input);
+		get.forEach((_) => delete output[_]);
+		return output;
 	}
 }
 /**
@@ -353,6 +354,12 @@ declare global {
 	function compareMetaData(a: MetaData, b: MetaData): boolean;
 
 	/**
+	 * Sleep function
+	 * @param {number} ms - sleep in milisecond
+	 */
+	function sleep(ms: number): Promise<void>;
+
+	/**
 	 * Interface casting class
 	 */
 	class InterfaceCasting<T, K extends keyof T> {
@@ -398,7 +405,8 @@ export type ErrorObject =
 	| 'Signature'
 	| 'Enterprise'
 	| 'Event'
-	| 'Password';
+	| 'Password'
+	| 'Input';
 
 /**
  * Server error action type
@@ -467,6 +475,7 @@ export const funcs = {
 	},
 	compareMetaData: (a: MetaData, b: MetaData) =>
 		JSON.stringify(sortObjectKeys(a)) == JSON.stringify(sortObjectKeys(b)),
+	sleep: (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)),
 	InterfaceCasting,
 };
 Object.assign(globalThis, funcs);

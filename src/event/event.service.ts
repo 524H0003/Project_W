@@ -32,13 +32,9 @@ export class EventService extends DatabaseRequests<Event> {
 		return this.save(entity);
 	}
 
-	public modify(
-		id: string,
-		update: DeepPartial<Event>,
-		raw?: boolean,
-	): Promise<void> {
+	public modify(id: string, update: DeepPartial<Event>): Promise<void> {
 		update = InterfaceCasting.delete(update, IEventRelationshipsKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

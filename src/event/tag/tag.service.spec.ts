@@ -48,19 +48,22 @@ describe('assign', () => {
 describe('attach', () => {
 	it('success', async () => {
 		const event = Event.test(fileName),
-			assignedEvent = await svc.event.assign(event);
+			{ id: eventId } = await svc.event.assign(event),
+			{ id: tagId } = await svc.eventTag.assign(eventTag);
 
-		await svc.eventTag.assign(eventTag);
-
-		await execute(() => svc.eventTag.attach(eventTag, assignedEvent.id), {
-			exps: [{ type: 'toBeInstanceOf', params: [EventTag] }],
-			onFinish: async (result: EventTag) => {
+		await execute(() => svc.eventTag.attach(eventTag, eventId), {
+			exps: [{ type: 'toThrow', not: true, params: [] }],
+			onFinish: async () => {
+				await execute(() => svc.eventTag.find({ id: tagId, cache: false }), {
+					exps: [{ type: 'toHaveLength', params: [1] }],
+				});
 				await execute(
-					() => svc.eventTag.find({ id: result.id, cache: false }),
-					{ exps: [{ type: 'toHaveLength', params: [1] }] },
-				);
-				await execute(
-					() => svc.event.findOne({ tags: [{ id: result.id }], cache: false }),
+					() =>
+						svc.event.findOne({
+							id: eventId,
+							tags: [{ id: eventId }],
+							cache: false,
+						}),
 					{ exps: [{ type: 'toBeDefined', params: [] }] },
 				);
 			},

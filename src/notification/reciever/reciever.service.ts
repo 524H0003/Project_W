@@ -67,13 +67,9 @@ export class RecieverService extends DatabaseRequests<Reciever> {
 		return this.save({ fromNotification, toUser });
 	}
 
-	public modify(
-		id: string,
-		update: DeepPartial<Reciever>,
-		raw?: boolean,
-	): Promise<void> {
+	public modify(id: string, update: DeepPartial<Reciever>): Promise<void> {
 		update = InterfaceCasting.delete(update, IRecieverRelationshipsKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

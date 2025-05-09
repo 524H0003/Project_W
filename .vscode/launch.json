@@ -13,7 +13,7 @@
 			"type": "node-terminal"
 		},
 		{
-			"command": "npm run start:debug",
+			"command": "npm run start:debug -- -- --localhost",
 			"name": "Debug NestJS",
 			"request": "launch",
 			"type": "node-terminal"

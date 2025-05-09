@@ -27,10 +27,9 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 	 * @param {ITagInfo} tag - tag's infomations
 	 * @param {string} eventId - event's id to assign tag to
 	 */
-	async attach(tag: ITagInfo, eventId: string) {
+	async attach(tag: ITagInfo, eventId: string): Promise<void> {
 		const assignedTag = await this.svc.eventTag.assign(tag);
 		await this.svc.event.push(eventId, 'tags', assignedTag);
-		return this.id(assignedTag.id);
 	}
 
 	// Abstract
@@ -49,13 +48,9 @@ export class EventTagService extends DatabaseRequests<EventTag> {
 		return this.save({ name: input.name });
 	}
 
-	public modify(
-		id: string,
-		update: DeepPartial<EventTag>,
-		raw?: boolean,
-	): Promise<void> {
+	public modify(id: string, update: DeepPartial<EventTag>): Promise<void> {
 		update = InterfaceCasting.delete(update, ITagRelationshipsKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

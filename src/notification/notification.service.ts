@@ -28,13 +28,9 @@ export class NotificationService extends DatabaseRequests<Notification> {
 		return this.save(entity);
 	}
 
-	public modify(
-		id: string,
-		update: DeepPartial<Notification>,
-		raw?: boolean,
-	): Promise<void> {
+	public modify(id: string, update: DeepPartial<Notification>): Promise<void> {
 		update = InterfaceCasting.delete(update, INotificationRelationshipKeys);
 		if (!Object.keys(update).length) return;
-		return this.update({ id }, update, raw);
+		return this.update({ id }, update);
 	}
 }

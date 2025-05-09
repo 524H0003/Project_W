@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
 	DatabaseRequests,
 	NonFunctionProperties,
+	SaveOptions,
 } from 'app/typeorm/typeorm.utils';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -39,7 +40,7 @@ export class UserService extends DatabaseRequests<User> {
 	 * @param {UserRole} updateRole - the role update to the user
 	 */
 	async updateRole(id: string, updateRole: UserRole) {
-		await this.modify(id, { role: updateRole });
+		await this.modify(id, { role: updateRole }, { validate: false });
 	}
 
 	/**
@@ -86,10 +87,12 @@ export class UserService extends DatabaseRequests<User> {
 	/**
 	 * Modify user
 	 */
-	async modify(id: string, update: DeepPartial<User>) {
+	async modify(id: string, update: DeepPartial<User>, options?: SaveOptions) {
+		await this.update(
+			{ id },
+			InterfaceCasting.delete(update, IUserRelationshipKeys),
+			options,
+		);
 		await this.svc.baseUser.modify(id, update.baseUser);
-		update = InterfaceCasting.delete(update, IUserRelationshipKeys);
-		if (!Object.keys(update).length) return;
-		return this.update({ id }, update);
 	}
 }

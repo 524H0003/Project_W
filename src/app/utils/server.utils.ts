@@ -18,7 +18,6 @@ import { OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import fastifyCsrf, { CookieSerializeOptions } from '@fastify/csrf-protection';
 import fastifySecuredSession from '@fastify/secure-session';
-import { readFileSync } from 'fs';
 import { AppMiddleware } from 'app/app.middleware';
 import fastifyCompression from '@fastify/compress';
 import { constants } from 'zlib';
@@ -98,7 +97,7 @@ export async function registerServerPlugins(
 			cookieName: 'session',
 			cookie: cookieOptions,
 			secret: password,
-			key: readFileSync('securedSessionKey'),
+			key: Buffer.from(password.slice(0, 32).padStart(32)),
 			salt: (256).string,
 		})
 		.register(fastifyCsrf, {
@@ -291,8 +290,7 @@ class ServerException extends HttpException {
 					font: 'yellow',
 					msg: `\tCause: ${cause || 'unknown'}\n\tMessage: ${message || 'N/A'}\n\tStack: ${stack}`,
 				}) +
-				'\n' +
-				color({ bg: 'red', msg: '-'.repeat(title.length) }),
+				'\n',
 		);
 	}
 }

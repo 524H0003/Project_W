@@ -1,4 +1,4 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { IBaseUserInfoKeys } from 'build/models';
 import { IBaseUserEntity, IBaseUserInfo } from './baseUser.model';
 import {
@@ -57,7 +57,7 @@ export class BaseUser extends GeneratedId implements IBaseUserEntity {
 	/**
 	 * Lower cassing email
 	 */
-	@BeforeUpdate() @BeforeInsert() private lowerCassingEmail() {
+	@BeforeInsert() private lowerCassingEmail() {
 		if (typeof this.email == 'string') this.email = this.email.lower;
 	}
 
