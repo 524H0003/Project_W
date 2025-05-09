@@ -68,7 +68,7 @@ jobs:
 
       - run: zip -r my-folder.zip ./*
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: my-folder
           path: my-folder.zip
@@ -87,7 +87,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: my-folder
 
@@ -126,7 +126,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: my-folder
 
@@ -165,7 +165,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: my-folder
 
@@ -200,7 +200,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: my-folder
 
