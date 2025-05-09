@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/524H0003/Project_W/compare/v1.3.1...v1.3.2) (2025-05-09)
+
+
+### Bug Fixes
+
+* **database:** implement database race ([#194](https://github.com/524H0003/Project_W/issues/194)) ([60182a2](https://github.com/524H0003/Project_W/commit/60182a28e30a75268428ef8f12ea3c2c87c73b1e))
+
 ## [1.3.1](https://github.com/524H0003/Project_W/compare/v1.3.0...v1.3.1) (2025-04-22)
 
 
