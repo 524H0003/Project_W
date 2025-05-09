@@ -47,7 +47,7 @@ jobs:
           node-version: 23.7
           cache: 'pnpm'
 
-      - run: pnpm i && npm run format && npm run lint && npm run build
+      - run: pnpm i && npm run format && npm run lint
 
       - uses: stefanzweifel/git-auto-commit-action@v5
         id: auto-commit-action
@@ -66,13 +66,6 @@ jobs:
               - 'page/**'
               - 'pnpm-lock.yaml'
 
-      - run: zip -r my-folder.zip ./*
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: my-folder
-          path: my-folder.zip
-
   Test_service:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
@@ -87,11 +80,9 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
         with:
-          name: my-folder
-
-      - run: unzip my-folder.zip
+          ref: ${{ github.head_ref }}
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
@@ -99,11 +90,14 @@ jobs:
         with:
           redis-password: ''
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 23.7
+          cache: 'pnpm'
 
-      - run: npm run test:service
+      - run: npm run build && npm run test:service
 
       - uses: actions/upload-artifact@v4
         with:
@@ -126,11 +120,9 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
         with:
-          name: my-folder
-
-      - run: unzip my-folder.zip
+          ref: ${{ github.head_ref }}
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
@@ -138,11 +130,14 @@ jobs:
         with:
           redis-password: ''
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 23.7
+          cache: 'pnpm'
 
-      - run: npm run test:requesters
+      - run: npm run build && npm run test:requesters
 
       - uses: actions/upload-artifact@v4
         with:
@@ -165,19 +160,20 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
         with:
-          name: my-folder
-
-      - run: unzip my-folder.zip
+          ref: ${{ github.head_ref }}
 
       - uses: ikalnytskyi/action-setup-postgres@v6
+
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 23.7
+          cache: 'pnpm'
 
-      - run: npm run test:etc
+      - run: npm run build && npm run test:etc
 
       - uses: actions/upload-artifact@v4
         with:
@@ -200,11 +196,9 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
         with:
-          name: my-folder
-
-      - run: unzip my-folder.zip
+          ref: ${{ github.head_ref }}
 
       - uses: supercharge/redis-github-action@1.8.0
         with:
@@ -212,9 +206,12 @@ jobs:
 
       - uses: ikalnytskyi/action-setup-postgres@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 23.7
+          cache: 'pnpm'
 
       - run: rm -fr public/*
 
