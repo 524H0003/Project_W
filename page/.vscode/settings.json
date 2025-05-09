@@ -2,7 +2,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "tsconfig.json": "tsconfig.*.json, env.d.ts",
-    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
+    "vite.config.*": "jsconfig*, *.config.ts, *.config.js",
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, *.config.ts"
   },
   "editor.codeActionsOnSave": { "source.fixAll": "explicit" },
