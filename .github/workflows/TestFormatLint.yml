@@ -44,7 +44,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
       - run: pnpm i && npm run format && npm run lint
@@ -90,7 +90,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
       - run: npm run prebuild:dev && npm run test:service
@@ -130,7 +130,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
       - run: npm run prebuild:dev && npm run test:requesters
@@ -166,7 +166,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
       - run: npm run prebuild:dev && npm run test:etc
@@ -206,7 +206,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 23.7
           cache: 'pnpm'
 
       - run: rm -fr public/*
