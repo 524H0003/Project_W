@@ -141,11 +141,9 @@ jobs:
 
   WrapUp:
     name: 'Wrap up'
-    if: ${{ needs.FormatAndLint.outputs.project == 'true' }}
     needs:
       - Test
       - Test_web
-      - FormatAndLint
     runs-on: ubuntu-latest
     timeout-minutes: 1
     permissions:
