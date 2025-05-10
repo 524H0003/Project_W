@@ -32,17 +32,17 @@ export class AccessGuard extends AuthGuard('access') {
 
 		await super.canActivate(context); // ! Must run to check passport
 
-		const allow = this.reflector.get(Allow, context.getHandler()) || [],
-			forbid = this.reflector.get(Forbid, context.getHandler()) || [];
+		const allowRoles = this.reflector.get(Allow, context.getHandler()) || [],
+			forbidRoles = this.reflector.get(Forbid, context.getHandler()) || [],
+			{ role: userRole } = this.getRequest(context).key.user;
 
-		const { role } = this.getRequest(context).key.user;
-
-		if (allow.some((i) => matching(i, forbid)))
+		if (allowRoles.some((i) => matching(i, forbidRoles)))
 			throw new ServerException('Fatal', 'Method', 'Implementation');
-		else if (!allow.length && !forbid.length) return true;
+		else if (!allowRoles.length && !forbidRoles.length) return true;
 
 		return (
-			(allow.length ? matching(role, allow) : true) && !matching(role, forbid)
+			(allowRoles.length ? matching(userRole, allowRoles) : true) &&
+			!matching(userRole, forbidRoles)
 		);
 	}
 }

@@ -4,7 +4,7 @@
       <span class="label-text">{{ name }}</span>
     </label>
     <label
-      class="input input-bordered flex items-center gap-2 relative"
+      class="input input-bordered flex items-center gap-2 relative w-full -mb-5"
       :class="{
         'input-error': object === alert?.object && alert?.type === 'error',
         'input-success': object === alert?.object && alert?.type === 'success',

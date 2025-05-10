@@ -4,7 +4,7 @@
       <span class="label-text">{{ name }}</span>
     </label>
     <select
-      class="select select-bordered"
+      class="select select-bordered w-full"
       v-model="model"
       :class="{
         'input-error': object === alert?.object && alert?.type === 'error',
