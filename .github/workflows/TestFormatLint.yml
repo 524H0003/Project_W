@@ -66,18 +66,17 @@ jobs:
               - 'page/**'
               - 'pnpm-lock.yaml'
 
-  Test_service:
+  Tests:
     needs: changes
     if: ${{ needs.changes.outputs.project == 'true' }}
-
-    name: 'Test Services'
-
     runs-on: ubuntu-latest
-
     timeout-minutes: 3
-
     permissions:
       contents: read
+
+    strategy:
+      matrix:
+        service: [service, requesters, etc]
 
     steps:
       - uses: actions/checkout@v4
@@ -94,93 +93,17 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 23.7
+          node-version: 23
           cache: 'pnpm'
 
-      - run: npm run build && npm run test:service
+      - run: npm run build && npm run test:${{ matrix.service }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: service
+          name: ${{ matrix.service }}
           path: |
-            ./reports/service.xml
-            ./coverage/service.txt
-
-  Test_requester:
-    needs: changes
-    if: ${{ needs.changes.outputs.project == 'true' }}
-
-    name: 'Test Requesters'
-
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 3
-
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-
-      - uses: ikalnytskyi/action-setup-postgres@v6
-
-      - uses: supercharge/redis-github-action@1.8.0
-        with:
-          redis-password: ''
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 23.7
-          cache: 'pnpm'
-
-      - run: npm run build && npm run test:requesters
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: requesters
-          path: |
-            ./reports/requesters.xml
-            ./coverage/requesters.txt
-
-  Test_etc:
-    needs: changes
-    if: ${{ needs.changes.outputs.project == 'true' }}
-
-    name: 'Test the rest'
-
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 3
-
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-
-      - uses: ikalnytskyi/action-setup-postgres@v6
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 23.7
-          cache: 'pnpm'
-
-      - run: npm run build && npm run test:etc
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: etc
-          path: |
-            ./reports/etc.xml
-            ./coverage/etc.txt
+            ./reports/${{ matrix.service }}.xml
+            ./coverage/${{ matrix.service }}.txt
 
   Test_web:
     needs: changes
@@ -226,10 +149,8 @@ jobs:
 
   FormatAndLint:
     needs:
-      - Test_service
-      - Test_requester
+      - Tests
       - Test_web
-      - Test_etc
 
     name: 'Format & Lint'
 
