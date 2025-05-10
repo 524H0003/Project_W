@@ -20,15 +20,13 @@ permissions:
   checks: write
 
 jobs:
-  changes:
+  FormatAndLint:
+    name: "Format & Lint"
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-
     outputs:
       project: ${{ steps.filter.outputs.project }}
-
     steps:
       - uses: actions/checkout@v4
 
@@ -66,18 +64,16 @@ jobs:
               - 'page/**'
               - 'pnpm-lock.yaml'
 
-  Tests:
-    needs: changes
+  Test:
+    needs: FormatAndLint
     if: ${{ needs.changes.outputs.project == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 3
     permissions:
       contents: read
-
     strategy:
       matrix:
         service: [service, requesters, etc]
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -106,18 +102,13 @@ jobs:
             ./coverage/${{ matrix.service }}.txt
 
   Test_web:
-    needs: changes
+    needs: FormatAndLint
     if: ${{ needs.changes.outputs.project == 'true' }}
-
     name: 'Test web'
-
     runs-on: ubuntu-latest
-
     timeout-minutes: 5
-
     permissions:
       contents: read
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -147,23 +138,17 @@ jobs:
           name: cypress-images
           path: ./cypress/screenshots
 
-  FormatAndLint:
+  WrapUp:
+    name: 'Wrap up'
+    if: ${{ needs.changes.outputs.project == 'true' }}
     needs:
-      - Tests
+      - Test
       - Test_web
-
-    name: 'Format & Lint'
-
     runs-on: ubuntu-latest
-
     timeout-minutes: 1
-
     permissions:
       contents: read
       pull-requests: write
-
-    if: ${{ needs.changes.outputs.project == 'true' }}
-
     steps:
       - run: exit 1
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped') || contains(needs.*.result, 'cancelled')
